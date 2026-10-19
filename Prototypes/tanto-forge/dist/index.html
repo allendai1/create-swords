@@ -1,0 +1,181 @@
+<meta charset="utf-8">
+<title>Tantō Forge Study</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+  /* Layout: a full-bleed forge scene with a thin instrument strip top and bottom, like a smith's tally board. */
+  :root {
+    --soot: #15110e;        /* workshop dark */
+    --charcoal: #221c18;    /* panels */
+    --ash: #a89c90;         /* secondary text */
+    --paper: #efe6da;       /* primary text, washi */
+    --ember: #f08a3c;       /* hot metal accent */
+    --steel: #c9d2da;       /* refined steel, grinding */
+    --line: rgba(239, 230, 218, 0.14);
+    --font-display: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif;
+    --font-body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; overflow: hidden; background: var(--soot); color: var(--paper);
+    font: 15px/1.5 var(--font-body);
+  }
+  #stage-canvas { position: fixed; inset: 0; display: block; width: 100%; height: 100%; touch-action: none; }
+  .hud {
+    position: fixed; left: 0; right: 0; pointer-events: none; display: flex; gap: 16px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .hud > * { pointer-events: auto; }
+  .hud-top {
+    top: 0; padding-block: calc(14px + env(safe-area-inset-top, 0px)) 12px;
+    justify-content: space-between; align-items: flex-start;
+    background: linear-gradient(var(--soot), transparent);
+  }
+  .hud-bottom {
+    bottom: 0; padding-block: 28px calc(14px + env(safe-area-inset-bottom, 0px));
+    flex-direction: column; align-items: center;
+    background: linear-gradient(transparent, var(--soot) 55%);
+  }
+  .eyebrow { margin: 0; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash); }
+  h1 { margin: 2px 0 0; font: 800 30px/1.1 var(--font-display); text-wrap: balance; }
+  h1 .kanji { font-weight: 600; font-size: 0.7em; color: var(--ash); margin-left: 6px; }
+  .stage-line { margin: 4px 0 0; color: var(--ember); font-weight: 500; }
+  .stage-line.cool { color: var(--steel); }
+  .quality { text-align: right; font-variant-numeric: tabular-nums; }
+  .quality .value { font: 800 44px/1 var(--font-display); }
+  .quality .pct { font: 600 20px var(--font-display); color: var(--ash); margin-left: 2px; }
+  .quality .note { display: block; font-size: 12px; color: var(--ash); }
+
+  .tally { display: flex; gap: 18px; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; justify-content: center; }
+  .tally li { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .tally .marks { display: flex; gap: 6px; }
+  .tally .mark { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--line); box-sizing: border-box; transition: background 0.2s, border-color 0.2s; }
+  .tally .mark.done { background: var(--ember); border-color: var(--ember); }
+  .tally .mark.next { border-color: var(--ember); }
+  .tally .mark.grind { border-radius: 3px; width: 40px; }
+  .tally .mark.grind > span { display: block; height: 100%; width: 0; background: var(--steel); border-radius: 2px; }
+  .tally .label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ash); }
+  .tally li.current .label { color: var(--paper); }
+
+  .hint { margin: 12px 0 10px; text-align: center; max-width: 60ch; color: var(--paper); min-height: 1.5em; }
+  .hint.nudge { color: var(--ember); }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  button {
+    font: 500 13px var(--font-body); color: var(--paper); background: var(--charcoal);
+    border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer;
+  }
+  button:hover { border-color: var(--ash); }
+  button:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+  button.primary { border-color: var(--ember); color: var(--ember); }
+
+  .sheet-backdrop {
+    position: fixed; inset: 0; background: rgba(10, 8, 6, 0.72); display: grid; place-items: center;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 24px; z-index: 10;
+  }
+  .sheet {
+    width: min(640px, 100%); max-height: 100%; overflow: auto; box-sizing: border-box;
+    background: var(--charcoal); border: 1px solid var(--line); border-radius: 10px; padding: 20px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .sheet h2 { margin: 0; font: 800 22px var(--font-display); }
+  .sheet h3 { margin: 6px 0 0; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ash); }
+  .sheet ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+  .sheet p { margin: 0; color: var(--ash); }
+  .sheet textarea {
+    width: 100%; box-sizing: border-box; min-height: 220px; resize: vertical;
+    font: 12px/1.45 ui-monospace, "SF Mono", Menlo, monospace; color: var(--paper);
+    background: var(--soot); border: 1px solid var(--line); border-radius: 6px; padding: 10px;
+  }
+  .sheet .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .sheet .status { font-size: 13px; color: var(--ember); }
+  .loading { position: fixed; inset: 0; display: grid; place-items: center; color: var(--ash); }
+
+  @media (max-width: 560px) {
+    h1 { font-size: 24px; }
+    .quality .value { font-size: 34px; }
+    .tally { gap: 12px; }
+    .tally .mark { width: 11px; height: 11px; }
+  }
+</style>
+
+<canvas id="stage-canvas" aria-label="Anvil with the blade being forged"></canvas>
+<p class="loading" id="loading">Heating the blank…</p>
+
+<header class="hud hud-top">
+  <div>
+    <p class="eyebrow">Create Swords! · forging study</p>
+    <h1>Tantō<span class="kanji" lang="ja">短刀</span></h1>
+    <p class="stage-line" id="stage-line">Stage 1 of 3 · Lengthen the blank</p>
+  </div>
+  <div class="quality" aria-live="polite">
+    <span class="value" id="quality">0</span><span class="pct">%</span>
+    <span class="note" id="quality-note">Quality</span>
+  </div>
+</header>
+
+<footer class="hud hud-bottom">
+  <ol class="tally" id="tally" aria-label="Forging progress"></ol>
+  <p class="hint" id="hint">Click the circle or press Space to strike.</p>
+  <div class="actions">
+    <button id="btn-reset" type="button">Start over</button>
+    <button id="btn-data" type="button">Blade data</button>
+    <button id="btn-about" type="button">About this study</button>
+    <button id="btn-sound" type="button" aria-pressed="true">Sound on</button>
+  </div>
+</footer>
+
+<div class="sheet-backdrop" id="data-sheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="data-title">
+    <h2 id="data-title">Blade data</h2>
+    <p>The saved state is only the strike count and per-section grinding. Strike progress is replayed from the recipe, which is how a server would validate it. Paste a saved state and choose Load to restore it.</p>
+    <div class="row">
+      <button id="btn-show-state" type="button" class="primary">Saved state</button>
+      <button id="btn-show-profile" type="button">Sampled profile</button>
+    </div>
+    <textarea id="data-text" spellcheck="false" aria-label="Blade data JSON"></textarea>
+    <div class="row">
+      <button id="btn-copy" type="button">Copy</button>
+      <button id="btn-load" type="button">Load state</button>
+      <button id="btn-close-data" type="button">Close</button>
+      <span class="status" id="data-status" role="status"></span>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-backdrop" id="about-sheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="about-title">
+    <h2 id="about-title">About this study</h2>
+    <p>A browser sketch of the approved tantō forging flow, built to judge feel before porting to Roblox. It does not prove Roblox performance or EditableMesh access in a published game.</p>
+    <h3>Approved design it follows</h3>
+    <ul>
+      <li>Untimed circles: every strike counts, no misses, all strikes reach 90%.</li>
+      <li>Three stages: lengthen, taper and curve, form the point.</li>
+      <li>One universal blank, stretched to the tantō.</li>
+      <li>Quick, smooth deformation under the hammer, blending into neighbouring metal.</li>
+      <li>The blade slides, turns and flips by itself under a fixed hammer. No tongs.</li>
+      <li>Slightly angled overhead camera with the whole blade in view.</li>
+      <li>The 90% blade is clean, with a little excess edge and a dull finish.</li>
+      <li>Optional grinding can only improve the blade, stops at the target edge, and reaches 100%.</li>
+    </ul>
+    <h3>Exploratory, not approved</h3>
+    <ul>
+      <li>12 strikes and their order, positions, turns and flips.</li>
+      <li>Swing, deformation and repositioning timings (about 0.2 s swing, 0.09 s impact, 0.34 s move).</li>
+      <li>Exact tantō proportions, the blank's size, the tang, and the heat glow.</li>
+      <li>Quality per strike (7.5%) and grinding speed.</li>
+    </ul>
+    <div class="row"><button id="btn-close-about" type="button">Close</button></div>
+  </div>
+</div>
+
+<script type="importmap">
+  { "imports": { "three": "./vendor/three.module.js" } }
+</script>
+<script type="module" src="./js/main.js"></script>

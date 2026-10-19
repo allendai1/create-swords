@@ -1,6 +1,6 @@
 ---
 title: Sell Swords! — Game Design Document
-status: draft v0.2
+status: draft v0.3 — approved direction, implementation pending
 source: "[[Create Swords!]]"
 tags: [gdd, roblox, create-swords]
 ---
@@ -10,100 +10,78 @@ tags: [gdd, roblox, create-swords]
 *Working title: **Sell Swords!** (alternatives were Create Swords! and Craft Swords!).*
 
 > Refined from the original brainstorm in [[Create Swords!]]. The brainstorm is left untouched; this note is the working design.
-> Decisions Allen has made are logged in [[#13. Decisions log]].
+> Current design direction approved 2026-10-19. This document describes the intended game, not a claim that the changes are implemented. Earlier prototype details remain in [[Code Map]], session notes, and [[References/Design Archive/GDD before 2026-10-19 revision]]. New onboarding proposals are separate in [[Core Loop Review]].
 
 ---
 
 ## 1. One-line pitch
 
-**Forge swords by hand, sell them to colorful heroes from your village shop, and grow a tiny smithy into a legendary forge.**
+**Build your smithy in a Japanese mountain village, forge swords by hand, and earn a reputation among sword wielders from across the world.**
 
-A cozy crafting tycoon in the style of *Create Pottery!*, where the pottery wheel becomes an anvil and clay becomes metal.
+A cozy crafting tycoon inspired by the atmosphere and craftsmanship of Demon Slayer's Swordsmith Village. Daily village life is peaceful, punctuated by spectacular individual visitors. Original locals share the world with recognizable fictional and historical sword users, including knights and other non-Japanese traditions. Their coexistence needs no crossover explanation. Village-wide events are deferred.
 
 ## 2. Pillars
 
-1. **The hammer feels good.** Shaping a sword on the anvil is the heart of the game; every hit should be satisfying (sparks, sound, visible dent).
-2. **Skill shows up in the price.** A better silhouette, a rarer metal and more finishing work always mean more money, and the player can see why.
-3. **Every customer is a little story.** NPCs are recognizable characters with tastes, so selling feels like matchmaking, not a menu.
-4. **Always something to unlock next.** A short loop (a few minutes per sword) feeding a long tycoon progression.
+1. **Making a sword feels satisfying.** Every hammer hit visibly shapes the blade, with sparks, sound, and movement.
+2. **Simple actions, optional extra care.** Untimed guided forging reaches 90%; safe freehand grinding can improve it to 100%. Quality remains a visible percentage and affects price.
+3. **Every customer is a little story.** Flexible everyday tastes, personal relationships, and specific special commissions give swords a purpose.
+4. **A workshop worth growing.** Sales fund functional upgrades; crafting milestones unlock fittings; commissions introduce sword traditions.
+5. **A cozy home for extraordinary visitors.** Japanese village identity, varied customers, no combat or testing-area scope for now.
 
 ## 3. Target & platform
 
 - **Platform:** Roblox (PC, mobile, console). All interactions must work with touch: the anvil minigame is tap/click based.
 - **Audience:** 9–16, fans of *Create Pottery!*, cozy tycoons and simulator games.
-- **Session:** 10–30 minutes, with offline-friendly quench timers that reward coming back.
+- **Session:** 10–30 minutes, with clear crafting and progression goals. No quench/temper step.
 
 ## 4. Core loop
 
-*Updated 2026-10-17 from Allen's start-to-finish loop in [[Create Swords!]].*
+```text
+Roll ingot → Heat → Hit every forging circle → Optional grind → Fit hilt
+    ↑                                                            ↓
+Upgrades ← Coins + reputation ← Display and haggle ← Complete sword
 
-```
- Roll ingot ──► Forge (drop in, ~15 s) ──► Anvil: pick ingot + blueprint, shape ──► Hilt Bench: pick hilt, seat it
-     ▲                                                                                        │
-     │                                                                                        ▼
- Upgrades ◄── Coins (& gems) ◄── NPC browses, offers, haggles ◄── Sword holder (+ → pick a sword) ◄── Inventory
-                     ▲
-                     └── Phone commissions (made-to-order swords for gems, later)
+Commissions and relationships provide goals alongside ordinary shop sales.
 ```
 
-| Step | Station | What the player does |
+| Step | Action | Current direction |
 |---|---|---|
-| 1. Roll ingot | **Ore Roller** (generator) | Roll a random material block (e.g. Iron, Common). Material rarity multiplies the sword's value (§6.1). |
-| 2. Heat | **Forge** | E opens the forge window: a row of your ingot cards. Tap one and the window closes and the forge starts heating it (~15 s, faster with upgrades; more forge slots later). The ingot glows in the fire, a toast says "Ingot loaded", and a small label above the forge shows "Iron · Heating" with a bar and the seconds left; when it's done it reads "Ready to collect" and a **Take out** (E) prompt appears on the forge. If both slots are busy, E doesn't open the window and a quick "Forge is full" message shows instead. No skill. The only timed step (the old quench/temper step is dropped). |
-| 3. Shape | **Anvil** | E opens the hot-ingot picker, then the shape picker ("Choose a shape to make.": every blueprint as a black blade silhouette with stars and its price in that metal); pick one, pick the blueprint, then shape it (§5; shaping mode still being chosen between the prototypes). |
-| 4. Hilt | **Hilt Bench** | E opens the picker twice: "Choose a blade.", then "Choose a hilt." (locked hilts dimmed with their unlock count). Then **seat the hilt**: three timed hammer taps on the pommel, a small bonus for good timing (~3 s). The sword is now complete. |
-| 5. Inventory | Toolbar / backpack | Completed swords go to the toolbar; extras go in the backpack (Roblox's built-in backpack for now). |
-| 6. Display | **Sword holders** in the shop | Use **"+ Display a sword"** (E) on a free holder and pick a sword from your toolbar/backpack; it goes on display with a price tag (hold F to take it back). More holders is an upgrade. |
-| 7. Sell | Shop floor | NPCs walk in, browse, inspect and make an offer; accept, decline or haggle (§8). |
-| 8. Upgrade | Shop / phone | Spend coins on more holders, forge slots and speed, better roll odds, new blueprints and hilts. That closes the loop. |
+| Roll | Ore Roller | Activate the shared lever: all empty stands cycle ore appearances together and reveal one result each in under five seconds. Occupied stands retain their ores and cannot roll until collected. Keep the full fantasy material roster. |
+| Heat | Forge | Load an ingot and collect it after heating. Base heating time is **10 seconds** (approved 2026-10-19), replacing the 15-second prototype duration. No quench or cooling countdown while shaping. |
+| Forge | Anvil | Choose a hot ingot and unlocked blueprint. Hit every circle, without timing windows or misses. Each hit improves the blade; completing all circles reaches 90% quality. |
+| Refine, optionally | Grinding | Freehand removal of excess metal stops at the target outline. Quality can only improve, up to 100%. |
+| Assemble | Hilt Bench | Choose fittings appropriate to the sword's tradition and attach them with three untimed taps. No timing bonus or penalty. |
+| Display | Sword holders | Put the complete sword on display. Stock influences regular visitors. |
+| Sell | Customer | Accept or haggle; pushing for more can cause the customer to leave. Sales earn coins and build reputation and familiarity. |
+| Grow | Workshop and commissions | Upgrade the workshop, unlock fittings through crafting, and learn new sword traditions through commissions. |
 
-Built (2026-10-17): the Ore Roller (hold E 1.5 s, odds as in §6.1) and the forge (2 shared slots, 15 s, owner-only collect). Material multiplies value and colours the blade. Carried ingots are capped at 6 and hot ingots don't cool for now.
+**Picker behavior (confirmed 2026-10-19):** every item-selection interaction opens its picker every time, even with only one valid item. Do not auto-select the current workpiece or bypass a picker. Commission delivery is a parallel route to ordinary display sales: open the commission, select the finished sword through a picker, and receive the agreed reward. No display listing or haggling is required for commission delivery.
 
-Still open: blueprint prices (Allen's loop says Dagger ≈ 50, §6.2 says 20), where spare ingots and blades are stored, and whether a hot ingot cools if left out.
+## 5. Forging and optional grinding
 
-## 5. The anvil (core minigame, the POC)
+**Approved 2026-10-19; replaces the timed Points and freehand hammering prototypes as the intended main mode.**
 
-Reference: ![[References/clay silhouette goal.png]]
+- **Forging camera (approved 2026-10-19):** slightly angled overhead, showing the blade outline clearly while retaining visible thickness, hammer movement, and the anvil. Keep the entire blade visible throughout lengthening and repositioning. Exact framing and camera movement remain to be tuned.
+- **Universal starting blank (approved 2026-10-19):** every sword blueprint starts from the same blank shape and size. Forging stretches it to the selected blade’s length and establishes its distinct profile; do not use blueprint-sized starting blanks. The rolled material still determines its material appearance.
+- Guided circles identify hammer strikes. **The blade moves by itself, without visible tongs:** it slides, turns, and flips beneath the fixed hammer point between strikes. Players do not manually reposition it.
+- Players hit every circle. No overall timer, timing window, misses, cooling countdown, or reheat loop during shaping. Earlier retry/minimum-hit discussions are superseded by this simpler rule.
+- **Staged shaping (approved 2026-10-19):** early hits lengthen the thick blank; middle hits establish the blade’s taper and curve where appropriate; final hits form the point and refine the rough outline. Each hammer impact visibly changes the section beneath it. The blade progresses from a thick blank to a long rough blade to a recognizable sword. Exact hit counts, intermediate shapes, and animation pacing remain to be designed.
+- **Impact deformation (approved 2026-10-19):** quickly and smoothly deform the struck area at hammer contact, blending the change into neighboring metal. Flatten or stretch the local section as appropriate to the shaping stage. Avoid discrete shape snaps, wobbling, or a slow melting effect. Exact deformation timing and falloff remain to be tuned.
+- Each completed circle shapes its section and increases quality. All circles completed gives **90%**. **Initial implementation uses the same circle/hit count across sword blueprints. Higher-tier swords should eventually require modestly more effort**, rather than making all larger swords automatically take longer. Exact tier thresholds, added effort, circle count, and transition pacing remain to be tuned; the previous 12 is only a prototype baseline. No timing challenge or failure penalty is introduced by this direction.
+- **90% blade appearance (approved 2026-10-19):** clean and recognizable, with the intended silhouette, subtle excess metal along the edge, and a dull finish. It should already look like a desirable finished sword after fitting the hilt, not a visibly jagged or misshapen failure. Optional grinding refines the small edge allowance and improves the finish toward the 100% appearance.
+- The player can finish forging at 90% and fit the hilt, or optionally grind first.
+- Grinding is freehand but constrained to remove only excess metal toward the target. It cannot overcut or reduce quality. Full refinement reaches **100%**.
+- Quality is shown as a percentage, not a grade name. It is now a guided completion/refinement measure; the old silhouette mismatch formula is not the new scoring specification.
+- Accent lines and bevels remain automatic visual details on finished swords, suited to the blueprint.
+- Server validation must enforce valid circle progress and bounded grinding improvements. Existing prototype validation needs updating before this design is shipped.
 
-**Setup.** The player brings an ingot (a rectangle) to the anvil and picks a blueprint. A panel on the left shows the **Target** silhouette (white) with **Yours** (orange) overlaid, exactly like the pottery panel. The 3D blade sits in front of the camera.
-
-**Strike point (2026-10-18).** In every mode where you tap, the hammer always lands on the middle of the anvil face. When you tap a part of the blade, the blade slides there (0.1 s) as a hammer swings down onto it, so a tap looks like hammering that exact part; sparks, clang and shake land on impact. In Points the blade is slid, turned and flipped under a fixed point (see Concept 3, guided). Grinding and Trace's cut don't move the blade.
-
-**Hand-forging rework (2026-10-18).** Modelled on how a sword is really made: hammer the hot metal close to shape, grind the edges to the exact outline (that's also where mistakes get fixed), and reheat when it cools.
-- **Hammer [1–3]:** blows dent the edges toward the white target line drawn on the metal. Heavy and Normal blows are much stronger now, so the rough shape takes about 15–25 blows.
-- **Grind [4]:** drag along an edge to grind it down to the line you drag. Works on cold metal. Each pass bites at most 0.3 of the blank's half-width, so a slip is small; a whole stroke undoes as one step.
-- **Heat:** each blow cools the metal (Heavy 7%, Normal 5%, Fine 2%, so about 15–20 blows per heat). Cold metal can't be hammered; grind it or **Reheat (R)**, which takes 3 s at the anvil for now.
-- Undo / Redo / free Reset stay, so a blade is never lost.
-
-**Input.** The player hammers the **edges** of the blank. Each hit:
-- dents the silhouette inward at the hit point with a soft falloff (neighbouring columns move a little less);
-- has a **strength** chosen by the hammer tool (like the pottery "Fine / Precise" tool picker): *Heavy* (big dents, fast), *Normal*, *Fine* (small, precise dents);
-- spawns sparks, a clang and a tiny camera shake.
-
-**Shaping model (for implementation).** The blade is a 2D profile: an array of N columns along the blade's length, each storing a half-width (left and right edges can be separate if blueprints are asymmetric, e.g. katana curve). A hit at column *i* subtracts `strength × falloff(distance)` from nearby columns. Metal can't be added back, but **a blade is never lost**: the player can **Undo/Redo** individual hits or **Reset** the blank to its original rectangle at no cost (same as the pottery wheel). Over-hammering only costs time.
-
-**Scoring.**
-- **Accuracy %** = 1 − (area of mismatch ÷ target area), clamped 0–100.
-- **Smoothness %**: penalises jagged neighbouring columns (pottery shows "Shape" and "Smooth" separately; we merge them into one bar for readability but keep both under the hood).
-- The player can press **Finish** at any time once Accuracy ≥ **80%**.
-- **Quality is just the percentage** (Allen, 2026-10-18): no grade names. A blade is "Iron Dagger (92%)". The price multiplier grows smoothly from **×1.0 at 80%** to **×2.0 at 100%** (90% = ×1.5).
-
-**Alternatives under test (2026-10-17).** Three other shaping concepts from [[Create Swords!]] will be prototyped as switchable modes and compared with this one in playtest: (1) hammer the blank bigger than the guide, then trace-cut the outline; (2) eight clicks shape it automatically, quality comes only from material and finishes; (3) osu-style points within 10 s, a minimum number of hits gives a lower-grade, imperfect sword. All three start at a **forge station** (no skill), and putting a sword back in the forge resets it to the blank. See [[Decisions Log]].
-
-**Concept 3, Points, guided (Allen, 2026-10-18).** The point never moves; the blade is moved under it like a smith working the piece. Tap the hot metal to start; it cools in 10 s. 12 points appear one at a time on the fixed strike point while the blade slides into place (0.3 s): the near edge hilt to tip (6 parts), the blade **flips over**, the far edge tip back to hilt, and the two parts nearest the tip are presented with the blade **turned 90°** (pointing up the screen).
-- Strike once the blade has stopped (the point turns solid): tap or click anywhere, or Space / gamepad A. A strike while it's still moving is a miss (so mashing doesn't work); a point that shrinks away (2 s) is a miss; points the metal cools before are misses.
-- Each hit dents **that part** to the target (neighbouring parts blend smoothly); a miss leaves it wide. This replaces the earlier "partly formed" even morph.
-- 6+ hits make a sword; its quality is the share hit (10 of 12 = 83%). Fewer and you tap the metal to start over (the ingot stays hot).
-- The server rebuilds the shape from which points were hit; the timing itself is trusted.
-- A separate "Hot spots" mode (concept 4, same idea with timing tiers) was built earlier the same day and merged into this.
-
-**Accent lines.** When a sword is finished it automatically gets ridge lines and, if its blueprint has one, a fuller (groove) down the middle. The ridge (the thickest part, where the bevels to each edge start) sits across the blade's own width (the middle 60% by default) on a smoothed path, so the lines run clean instead of copying every hammer dent; the lines are a slightly darker shade of the blade's metal. The Katana has one ridge line about a third of the way in from the spine (its shinogi) and a short yokote line across the blade where the point begins.
-
-**No timer.** Shaping is untimed, like the pottery wheel: nothing runs out while you think. Since 2026-10-18 the metal cools per hammer blow (not over time) and you reheat to keep hammering (see the hand-forging rework above).
+**Balance still to test:** whether grinding feels satisfying and genuinely optional; how many circles keep repeated crafting enjoyable; how grinding progress maps to the final ten percentage points.
 
 ## 6. Materials, blueprints & finishes
 
 ### 6.1 Materials (rolled at the Ore Roller)
+
+**Roller behavior (revised 2026-10-19):** one shared lever controls all owned material stands. Activating it starts a roulette-style reveal on every empty stand together: ore appearances rapidly cycle, then each stand stops on its rolled material in **under five seconds**. Each stand holds one result. An occupied stand cannot roll until its ore is collected; it is skipped while empty stands roll. Collecting ore does not start a roll. If every stand is occupied, none can roll. Buying another “roller” adds another stand to this shared-lever setup, not another lever. More stands provide more roll results per activation without changing per-result rarity odds. Changing the displayed object’s material/appearance is a suggested animation method; exact reveal duration remains to be tuned.
 
 | Rarity | Examples | Base multiplier | Roll odds (starting) |
 |---|---|---|---|
@@ -115,22 +93,17 @@ Reference: ![[References/clay silhouette goal.png]]
 
 - Each material has a distinct texture (Damascus swirls, rainbow shimmer), mirroring *Create Pottery!*'s "Cocoa Swirl / Porcelain" clays.
 - "NEW" badge and a small celebration the first time a material is rolled; a **Material Index** (collection book) tracks discoveries.
-- Rarer metals take longer to quench/temper.
+- Fantasy materials remain available from the start through the roller odds; they are not gated behind a grounded-materials phase.
 
 ### 6.2 Blueprints (sword shapes)
 
-Bought with coins; harder silhouettes sell for more.
+**Blade art direction (approved 2026-10-19):** grounded starter tantō, wakizashi, and katana, with slightly exaggerated proportions for clear readability. Give each its own silhouette rather than simply scaling one katana. Later special blueprints can introduce extravagant fantasy shapes and details. Exact profiles and forging transformation choreography remain under design.
 
-| Blueprint | Difficulty | Base price | Unlock |
-|---|---|---|---|
-| Dagger | ★ | 20 | Start |
-| Shortsword | ★ | 35 | Start |
-| Longsword | ★★ | 60 | Shop |
-| Cutlass | ★★ | 75 | Shop |
-| Katana | ★★★ (curved) | 110 | Shop (in the anvil picker for now). Drawn from real proportions: ~1.7× real width, smooth curve (~1.9% of length), pointed kissaki over the last 10% |
-| Rapier | ★★★ (thin) | 130 | Shop |
-| Claymore | ★★★★ | 200 | Shop |
-| Flamberge | ★★★★★ (wavy edge) | 350 | Late game |
+**Japanese starting progression: tantō → wakizashi → katana.** Players start with the **tantō blueprint** and simple on-screen instructions for their first sword. Later local teaching commissions introduce **wakizashi, then katana**, providing each blueprint when its commission begins.
+
+Later visitors introduce other sword traditions through a first commission that supplies its required pattern. Additional blueprints within that tradition can be purchased with coins. Longswords, cutlasses, rapiers, claymores, and flamberges remain expansion candidates; their order and prices are not yet tuned.
+
+Tantō and wakizashi replace the dagger/shortsword starting progression. The old blueprint price/difficulty table is historical, not the approved new progression. Katana's existing smooth curved profile remains a visual reference.
 
 ### 6.3 Finishes (optional value-adds)
 
@@ -139,7 +112,7 @@ Bought with coins; harder silhouettes sell for more.
 | **Polish** | Polishing Wheel | Coverage % rub, like pottery glaze | +10% (shiny look) |
 | **Color / Enamel** | Etching Table | Paint coverage, pick colours (rainbow = multi-colour) | +10–20%, matches NPC wants |
 | **Etching / Rune** | Etching Table | Trace a pattern | +15% |
-| **Hilt** | Hilt Bench | Pick a finished blade and an unlocked hilt; quick, no minigame. Completes the sword (see §6.5) | +0% to +40% price by hilt; some NPCs care |
+| **Hilt** | Hilt Bench | Choose matching fittings; three untimed assembly taps. Completes the sword (see §6.5) | +0% to +40% price by hilt; some NPCs care |
 | **Gem Socket** (late) | Hilt Bench | Insert a gem | Large bonus; consumes a gem item |
 
 ### 6.4 Sword value formula
@@ -152,41 +125,31 @@ Value = Blueprint base
       × NPC preference bonus (see §7)
 ```
 
-The tooltip on a finished sword shows each factor so players learn what to chase.
+The tooltip on a finished sword shows each factor so players learn what to chase. This is the existing economy baseline, not a newly tuned curve: ×1.5 at 90% versus ×2.0 at 100% gives full grinding about 33% more value. Review that incentive in [[Core Loop Review]]. Optional finish bonuses remain earlier proposals, not additions to the required loop.
 
-### 6.5 Hilt Bench (completing a sword)
+### 6.5 Hilt Bench and fittings
 
-- Finishing a blade at the anvil adds it to the player's **carried blades** (no limit for now).
-- At the **Hilt Bench** the player picks a blade, then a hilt (two pickers in a row), and seats it. The sword is then **complete** and goes to the player's inventory as a sword they can hold. Later it goes on a display rack to sell (Phase 1–2).
-- Hilts unlock by **swords completed** (forging milestones) until coins exist; later they can be bought.
-
-| Hilt | Price bonus | Unlocks after |
-|---|---|---|
-| Wooden Grip | +0% | start |
-| Leather Wrap | +5% | 2 swords |
-| Iron Crossguard | +10% | 4 swords |
-| Bronze Guard | +15% | 7 swords |
-| Gold Guard | +25% | 10 swords |
-| Gem Pommel | +40% | 15 swords |
+- Choose a blade and fittings, then attach with **three untimed taps**. No timing challenge or quality penalty.
+- Fittings **match the sword tradition**: Japanese blades use appropriate wrapped grips and tsuba; western swords use their own guards and pommels. No cross-tradition mixing.
+- Fittings unlock through **swords-crafted milestones**, without a later coin-purchase requirement.
+- Exact fitting sets, milestone counts, and price bonuses need tuning. The old universal Wooden Grip → Gem Pommel ladder is superseded.
+- Completed swords can be held, collected, displayed, or sold. Combat and a testing area are outside current scope.
 
 ## 7. Customers (NPCs)
 
-NPCs walk in from the village road, browse the racks, inspect a sword (pick it up, turn it over), then make an offer.
+**First-sale tutorial (approved 2026-10-19):** no customers visit the player’s shop while they make their first sword. Putting that sword on sale triggers the tutorial customer’s arrival. This replaces the proposed waiting customer/commission before the first craft. Players start with the tantō blueprint and simple on-screen guidance; local commissions introduce wakizashi and katana afterward. This rule applies to the beginning tutorial, not yet to all later crafting.
 
-| NPC | Wants | Pays extra for | Notes |
-|---|---|---|---|
-| Village Farmer | Anything cheap | — | Common, low offers, tutorial customer |
-| Knight | Longsword, Claymore | Polish (shiny), Steel+ | Haggles little |
-| Ninja | Katana, Dagger | Colour/Rainbow | Rare; big offers for rainbow katana |
-| Pirate | Cutlass | Gold | Haggles hard |
-| Noble | Rapier | Gem socket, 98%+ blades | Very high offers, picky |
-| Adventurer | Shortsword | Accuracy | Mid-tier regular |
-| Dragon Slayer (Special) | Claymore, Legendary metal | Everything | Special customer, gem tips |
-
-- **Preference bonus:** matching a wanted blueprint ×1.25, plus finish/material likes stack.
-- **Special customers** have a glow/aura and can tip gems.
+- Early customers are primarily original local villagers, guards, and wandering swordsmen, with an **early special outsider** hinting at the wider cast.
+- Later customers can include knights, pirates, and any fictional or historical sword wielders. The cast combines original regulars and recognizable special visitors; exact named roster is not selected.
+- **Displayed stock influences regular customer arrivals. Reputation unlocks surprise special visitors.**
+- Regular customers have flexible tastes (such as elegance, color, or craftsmanship); special commissions specify concrete combinations.
+- Repeat sales build familiarity. Relationship milestones unlock personal commission chains, stories, and rewards.
+- Individual special visitors bring distinctive commissions and rewards. No village-wide event system for now.
+- Existing preference bonuses are economy baselines; broad taste matching needs a defined rule before implementation.
 
 ## 8. Selling & haggling
+
+**Tutorial exception (approved 2026-10-19):** the first customer gives a guaranteed fair offer, providing a clear reward for the first sword. Haggling is introduced on the **second ordinary shop sale**, not the first. Commission deliveries pay their agreed reward and do not count as shop sales for this tutorial step. The exact fair-price calculation remains to be tuned. Regular negotiation rules below apply after the introductory sale.
 
 1. NPC inspects and offers a price (roughly 80–110% of value, nudged by personality).
 2. Player chooses **Accept** or **Decline**.
@@ -199,16 +162,20 @@ NPCs walk in from the village road, browse the racks, inspect a sword (pick it u
 
 **Cashier upgrade:** an NPC cashier auto-accepts offers above a threshold the player sets (e.g. "accept ≥ 100% of value").
 
-## 9. Phone & commissions
+## 9. In-person commissions and letters
 
-A smartphone in the HUD (as in *Create Pottery!*).
-
-- **Texts from clients:** "My blade snapped in a duel! Can you make me this?" with a picture of the target sword (blueprint + material + finish requirements).
-- Rewards: coins and **gems**; commissions are the main gem source.
-- Commissions have a soft timer (more reward if delivered quickly), never a hard fail in early game.
-- **Regular clients** re-text periodically and build loyalty (better rewards over time).
+- Customers introduce requests **in person**; returning customers can also send **letters**. This replaces the smartphone/text-message framing.
+- Special visitors leave **untimed commissions** and return when the sword is ready. Their requests do not expire or lose a speed bonus while the player prepares.
+- The tantō blueprint is available from the start with on-screen tutorial guidance. **After the first sale, the next goal is a local wakizashi teaching commission**, which provides its blueprint when the commission begins. A later local teaching commission introduces katana. No workshop purchase or additional tantō sale is required before introducing the wakizashi commission. **The first commission requests an Iron Wakizashi with at least 90% quality.** Completing all forging circles satisfies the quality requirement; grinding remains optional. Iron is available in the starter Ore Roller’s Common pool; no guaranteed roll or odds change has been approved.
+- Outside visitors introduce new traditions through a first commission; additional patterns in that tradition become coin purchases.
+- Relationships grow through ordinary sales and unlock personal commission chains.
+- Coins and gems remain proposed rewards; commissions remain a gem source.
+- **Commission delivery:** open the commission and select the finished sword through a picker, then receive the agreed reward. This also applies to the first Iron Wakizashi commission; it does not require putting the sword on sale or negotiating.
+- Exact letter interface, active-request capacity, and ordinary commission timing are not settled. The proposed first-session flow in [[Core Loop Review]] is not yet approved.
 
 ## 10. Economy & progression
+
+**Tutorial progression (approved 2026-10-19):** first tantō shop sale → Iron Wakizashi commission (90% minimum, delivered through a picker) → first workshop upgrade. This introduces spending earnings to grow the business. The first upgrade is **a second material stand for the Ore Roller**. One shared lever activates all empty stands together, giving more material results per activation. Occupied stands are skipped until their ores are collected. This increases roll opportunities, not per-result rarity odds. Upgrade price and exact reveal duration (under five seconds) remain undecided.
 
 ### 10.1 Currencies
 
@@ -220,18 +187,18 @@ A smartphone in the HUD (as in *Create Pottery!*).
 ### 10.2 Upgrades
 
 **Coin upgrades (smithy & shop):**
-- Extra **Ore Roller slot** (2 rolls at once, from pottery's "more space")
+- Additional **material stands for the Ore Roller** (the second stand is the first tutorial upgrade; one shared lever rolls all empty stands, separate from luck upgrades)
 - Extra **display racks** and **ingot shelf** space
-- Faster **quench** timers
+- Faster **heating** timers
 - Better **roll odds** (Lucky Roller I–V)
 - New **blueprints** and **finish stations**
-- **Shop expansions** (more floor, decor that raises reputation)
+- **Shop expansions** (one evolving open-front workshop; displays and functional facilities improve business, purely cosmetic decoration gives no stats)
 
 **Gem upgrades (customers):**
 - **More Customers**: shorter time between walk-ins
 - **More Special Customers**: higher chance of special NPCs
 - **More Clients**: more simultaneous commissions
-- **Regular Clients**: clients text sooner
+- **Regular Clients**: returning clients send letters sooner
 
 **Automation (late game):**
 - **Cashier**: auto-accept offers (see §8)
@@ -241,17 +208,19 @@ A smartphone in the HUD (as in *Create Pottery!*).
 
 | Stage | Player has | Goal |
 |---|---|---|
-| Early (0–30 min) | Roller, anvil, 1 rack, dagger/shortsword | Learn the anvil, first sales, first Uncommon |
-| Mid (1–5 h) | Polish + etching, katana/longsword, phone clients | Commissions, gem upgrades, 2nd roller slot |
-| Late (5 h+) | Cashier, Apprentice, Claymore/Flamberge | Legendary metals, 98%+ blades, Material Index completion |
+| Early (pacing to test) | Roller, forge, anvil, bench, display; local teaching commissions | First tantō sale, fittings milestone, progress toward wakizashi and katana |
+| Mid (pacing to test) | New traditions, letters, better workshop facilities | Customer relationships, additional blueprints and capacity |
+| Late (pacing to test) | Cashier, Apprentice, Claymore/Flamberge | Legendary metals, 98%+ blades, Material Index completion |
 
 ## 11. World & multiplayer
 
-- **The village:** **6 players per server**, and the village has **6 house plots** around a central square and road. Each player claims one plot on join, and it becomes their smithy + shop (loaded from their save).
-- **The shop building:** a medieval log cabin on a stone foundation with a blue shingle roof and a small porch roof over the door. The inside is 36.5 × 28.5 studs with 14-stud walls, room for sword holders and walking customers (`Models/SwordShop.fbx`).
-- NPCs walk the shared road and visit any shop, so players can see each other's storefronts.
-- Visiting another player's shop to admire their racks is a light social layer; no player-to-player trading in v1.
-- Art direction: low-poly, warm and cozy, matching the pottery references (soft wood, grass, stone paths).
+- **6 players per server**, each with a workshop plot in a Japanese mountain swordsmith village.
+- **Open-front Japanese workshop:** visible forging and sword displays face the village path. Players can see neighbors working as they pass.
+- Progression expands **one evolving workshop** with more elaborate roofing, timber, signage, and displays. A compound of separate buildings or freeform building placement is not the selected direction.
+- Warm, cozy, stylized art: timber, tiled roofs, lanterns, stone paths, streams, and mountain scenery. Demon Slayer's Swordsmith Village is an atmosphere reference.
+- NPCs travel through the village and visit shops. Admiring other players' shops remains the light social layer; no player trading in v1.
+- Cosmetic decoration is freely expressive; functional displays and facilities provide business benefits.
+- The previously built medieval cabin (`Models/SwordShop.fbx`) is a historical asset, not the target shop design. Existing concept art needs a Japanese-setting revision.
 
 ## 12. Technical notes (Roblox)
 
@@ -266,26 +235,21 @@ A smartphone in the HUD (as in *Create Pottery!*).
 
 ## 13. Decisions log
 
-| # | Question | Decision (Allen, 2026-10-17) |
-|---|---|---|
-| 1 | Name | **Sell Swords!** for now |
-| 2 | Does metal cool while hammering? | **No timer**: shaping is untimed, no forge/reheat step |
-| 3 | What does "6 houses" mean? | **6 players per server, 6 plots**, one per player |
-| 4 | Can a blade be ruined? | **Always recoverable** (undo/redo + free reset) |
-| 5 | Can gems be bought with Robux? | **Yes** (see §15) |
+The full dated record is [[Decisions Log]]. The approved 2026-10-19 decisions supersede conflicting prototype rules, including the medieval cabin, timed forging, minimum-hit failure, damaging grinding, timed hilt taps, smartphone commissions, and universal fitting ladder.
 
-Still open: shaping depth (2D outline only vs. thickness/bevel later).
+See [[Sessions/2026-10-19]] for this revision's scope and [[Core Loop Review]] for recommendations still awaiting discussion.
 
 ## 14. Build plan
 
-| Phase | Scope | Done when |
-|---|---|---|
-| **0. POC** | Ore roller (Common/Uncommon only) → anvil minigame with 2 blueprints, Accuracy bar, undo/reset, Finish at 80% | Hammering a blank to match a silhouette feels good and the score is right |
-| **1. Vertical slice** | Quench timer, polish finish, 1 display rack, 3 NPCs with accept/decline, coins, saving | A full roll → sell loop works |
-| **2. Shop tycoon** | Blueprint shop, upgrades, more NPCs + haggling, reputation, roller slots | 1 hour of progression |
-| **3. Phone & gems** | Commissions, gem upgrades, special customers | Gem economy works |
-| **4. Automation & polish** | Cashier, Apprentice, Material Index, village plots, juice | Ready for public test |
+See [[Roadmap]] for implementation status. Prior completed prototypes remain historical achievements, not evidence that the revised design is built.
 
+1. Update forging to untimed circle completion, 90% quality, safe optional grinding to 100%, and three untimed hilt taps.
+2. Establish one full first-session loop, starter Japanese blueprints and teaching commissions, sales, and saving.
+3. Build the open-front Japanese workshop/village, functional upgrades, reputation, and stock-influenced customers.
+4. Add letters, personal commissions, special visitors, and wider sword traditions.
+5. Add cashier/apprentice automation and finish balance, art, and launch testing.
+
+First-session pacing and interaction simplifications are proposed in [[Core Loop Review]], not approved implementation requirements yet.
 
 ## 15. Monetization (Robux)
 
@@ -298,7 +262,7 @@ Guiding rule: Robux speeds things up or adds style, but anyone can earn everythi
 | Auto Cashier | Game pass | Cashier from the start (still unlockable with coins later) |
 | VIP Rack | Game pass | Extra golden display rack, NPCs pay +10% there |
 | Lucky Roll | Developer product | One roll with boosted rare odds |
-| Instant Quench | Developer product | Skip the current quench timer (also purchasable with gems) |
+| Heating skip (earlier proposal, review pending) | Developer product | Potential skip for the forge heating wait; no quench step exists |
 
 Prices are set during Phase 3 tuning.
 

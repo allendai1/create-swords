@@ -9,6 +9,10 @@ tags: [concept-art, swords, blueprints]
 
 ![[References/Sword Silhouettes/common-sword-silhouettes-v1.png]]
 
+## Current direction — 2026-10-19
+
+Grounded starter tantō, wakizashi, and katana with slightly exaggerated proportions for readability and distinct silhouettes, followed by more extravagant special designs. Exact profiles are still being refined. The older sheet below is a broad concept reference, not the approved starter-blade specification.
+
 Ten simplified sword profiles for comparing possible blueprint shapes: **Dagger, Shortsword, Longsword, Katana, Rapier, Cutlass, Saber, Scimitar, Claymore, and Flamberge**.
 
 These are full-sword visual concepts. The anvil's shaping target would use the blade outline alone; hilts remain a separate choice at the Hilt Bench. Relative sizes are illustrative rather than a measured scale.

@@ -62,14 +62,89 @@ Every game-direction decision, newest at the bottom. Add a row whenever somethin
 | 2026-10-18 | **Katana redrawn from real katana proportions** (smooth curve, proper pointed tip, ~1.7× real width so it's playable), replacing the Creator Store trace | Allen: the silhouettes looked off; the trace had a zig-zag spine and a blunt tip. The curve is ~1.9% of the length (real ~2.6%): each edge must stay on its side of the blade's axis, so the axis runs hilt-to-point and held swords turn the blade ~7.6° at the guard | [[Sessions/2026-10-18]] |
 | 2026-10-18 | **Accent lines redone**: the ridge sits across the blade's own width on a smoothed path, lines are a darker shade of the metal; the Katana gets a single shinogi ridge (~1/3 from the spine) and a yokote line | Allen: the Katana's line looked like a sharpie: it hugged one edge (measured from the off-centre axis), copied hammer dents and was a fixed dark grey | [[Sessions/2026-10-18]] |
 
-## Open questions
+| 2026-10-18 | **Historical shop asset: medieval log cabin** | Superseded by the open-front Japanese workshop on 2026-10-19; retain model as an earlier asset | [[Sessions/2026-10-18]] |
 
-- [x] Quality: no grade names, just the percentage (Allen, 2026-10-18). Price still grows with it (×1.0 at 80% → ×2.0 at 100%).
-- [ ] Reheat: stay at the anvil, or carry the blade back to the forge?
+## Historical questions
 
-- [x] Shaping depth: shaping stays a 2D outline; bevels are automatic (light while shaping, sharp on Finish).
-- [ ] Blueprint prices: Dagger ≈ 50 (core-loop note) or 20 (GDD §6.2)?
-- [ ] Where do spare ingots and finished blades wait (ingot shelf / blade rack)? Does a hot ingot cool if left out?
-- [x] Concept 3: 12 points, 6+ for a sword, below that start over on the same hot ingot; each hit dents its part (2026-10-18).
-- [ ] Concept 1: how does the "hammer until bigger" step work, and how is the trace-cut scored?
-| 2026-10-18 | **Shop building is a log cabin** (stone foundation, blue shingle roof, porch roof over the door), made in Blockbench and imported as meshes | Allen asked for a medieval wooden cabin, mid-poly, enterable; the blue roof keeps the concept art's look | [[Sessions/2026-10-18]] |
+The earlier open questions about reheat, timed Points, Trace, and dagger starting prices are superseded by the 2026-10-19 direction. Historical prototype behavior remains in the session notes and archived GDD. Storage capacity and new progression prices still need design/tuning.
+
+## 2026-10-19 — Japanese village and simplified crafting
+
+These approved decisions supersede conflicting earlier rows. Implementation is pending.
+
+| Date | Decision | Details | Where |
+|---|---|---|---|
+| 2026-10-19 | **Setting and tone** | Japanese mountain swordsmith village inspired by Swordsmith Village; cozy daily life with spectacular individual visitors. Village-wide events deferred. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Workshop** | Open-front Japanese workshop, visible forging and displays facing the path; expand one increasingly elaborate workshop. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Starting blueprints** | Tantō → wakizashi → katana, taught through local commissions that provide the pattern when each request begins. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Early customers** | Mostly locals plus an early special outsider hinting at the wider world. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Commissions** | In-person requests and letters from returning customers replace smartphone texts. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Materials** | Keep the random Ore Roller, redesigned for the village, and the full fantasy material variety available from the start. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Wider traditions** | Visitors introduce new sword traditions through a first commission with its pattern; buy additional blueprints within that tradition. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Customer arrivals** | Displayed stock influences regular visitors; reputation unlocks surprise special visitors. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Special requests** | Untimed commissions; special visitors return when the requested sword is ready. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Customer tastes** | Regular customers have flexible tastes; special commissions specify combinations. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Haggling** | Retain negotiation and the risk that a customer leaves when pushed for a higher offer. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Fittings** | Match each sword tradition; unlock through crafting milestones, without a later coin-purchase requirement. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Scope** | Craft, collect, display, and sell; no combat or testing area for now. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Automation** | Keep both cashier and apprentice smith as later upgrades. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Decoration** | Functional displays and facilities improve business; purely decorative items are cosmetic. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Relationships** | Repeat sales build familiarity; milestones unlock personal commission chains and rewards. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Character roster** | Original village regulars plus recognizable fictional and historical special visitors. Leave their coexistence unexplained. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Quality** | Keep visible percentages and a price link, without named quality tiers. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Forging** | Hit every circle; each hit improves quality. No time limit, timing windows, misses, or cooling countdown. Supersedes earlier timed-strike/retry discussion. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Grinding** | All circles gives 90%; optional freehand grinding improves toward 100%. Remove only excess metal, stop at the target, never reduce quality. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Hilt assembly** | Three untimed taps, without timing bonuses or penalties. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **Always open pickers** | Every item-selection interaction opens its picker, even with one valid item. No automatic current-workpiece selection or picker bypass. Supersedes the review recommendation. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **10-second base heating** | Forge heating takes 10 seconds, replacing the 15-second prototype duration. Implementation pending. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **First customer arrives after listing** | No customers visit the player’s shop during the first sword craft. Putting the sword on sale triggers the tutorial customer arrival. Replaces the proposed pre-craft/waiting customer; later sales-interruption policy remains open. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **Starting tantō blueprint and guidance** | Players start with the tantō blueprint and simple on-screen instructions. Later local commissions introduce wakizashi and katana. Supersedes giving the first tantō pattern through a customer commission. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **First sale guaranteed fair; haggle on second** | First tutorial customer gives a guaranteed fair offer. Introduce haggling on the second sale, keeping the first reward straightforward. Exact fair-price calculation remains untuned. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **Wakizashi commission after first sale** | The next goal after selling the first tantō is a local wakizashi teaching commission, providing its blueprint at commission start. No required upgrade purchase or additional tantō sale first. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **Wakizashi commission specifies a rollable material** | Require a specific material available from the player’s current Ore Roller, rather than accepting any material. Exact material undecided; no guaranteed drop or odds change approved. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **First commission: Iron Wakizashi** | Iron chosen for the wakizashi teaching commission after the first tantō sale. Iron is in the starter roller’s Common pool. No guaranteed drop or altered odds approved. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **Deliver commissions through a picker** | Select the completed sword through the commission and receive the agreed reward, without listing or haggling. Applies to the first Iron Wakizashi. Haggling tutorial therefore belongs to the second ordinary shop sale, not commission delivery. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **Iron Wakizashi: minimum 90% quality** | Completing every forging circle meets the first commission’s quality requirement. Grinding remains optional; higher-quality swords also qualify. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **First upgrade after Iron Wakizashi** | Completing the Iron Wakizashi commission leads into the first workshop upgrade, introducing spending earnings to grow the business. Upgrade type and price remain undecided. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **First upgrade: second Ore Roller** | Each roller yields one material per roll; two rollers provide more chances to obtain a desirable material. This adds a roller rather than changing per-roll rarity odds. Price and activation/cooldown behavior remain undecided. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **Automatic rollers with one waiting output** | Each roller automatically produces one material, waits until it is collected, then starts its next roll. Replaces manual hold-to-roll activation. Roll duration remains undecided. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **Lever-operated ore roulette; under five seconds** | Player activates the lever; the stand rapidly cycles ore appearances and stops on the rolled material. Suggested visual method: change the displayed material. Result waits for collection; no automatic restart. Supersedes the earlier automatic-roller decision. Exact reveal duration remains untuned. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **One lever, multiple material stands** | Buying another roller adds a stand, not a lever. The shared lever rolls all empty stands together; occupied stands retain their ores and cannot roll until collected. More stands give more results per activation. Supersedes separate-lever wording. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **Grounded starter blades, extravagant later designs** | Tantō, wakizashi, and katana establish the craft with distinct silhouettes and slightly exaggerated readable proportions. Later special blueprints introduce unusual fantasy shapes. Exact profiles and shaping choreography remain open. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **Staged blade shaping** | Early hammer hits lengthen the blank, middle hits establish taper and curve, and final hits form the point and refine the outline. Each impact visibly changes the area beneath the hammer. Exact intermediate profiles, hit counts, and pacing remain open. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **Blade repositions without tongs** | The blade automatically slides, turns, and flips beneath the hammer between strikes, with no visible tongs or manual positioning. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **Smooth localized impact deformation** | Each hammer impact quickly deforms the struck area and blends into neighboring metal. Flatten/stretch according to the stage; avoid shape snapping, wobbling, and slow melting. Timing and falloff remain untuned. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **90% blade: clean, subtly rough** | Correct recognizable silhouette, subtle excess metal along the edge, and a dull finish. Grinding refines it; skipping grinding should still yield an attractive sword after assembly. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **One universal starting blank** | All sword blueprints start from the same blank shape and size, then stretch to the chosen blade’s length during forging. Material appearance still follows the rolled material. Replaces proposed blueprint-sized blanks. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **Equal initial hit count; modest tier effort later** | Start with the same hit count across sword blueprints. Higher-tier swords should eventually take a bit more effort. Exact scaling and form of extra effort remain undecided; preserve untimed forging. | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **Angled overhead forging camera** | Slightly angled overhead view preserves silhouette readability, blade thickness, hammer movement, and anvil depth. Keep the full blade visible as it lengthens and repositions. | [[Sessions/2026-10-19]] |
+
+## Current open design work
+
+- Review [[Core Loop Review]]: first-session flow, picker clarity, heating pace, sales interruptions, and grinding incentive.
+- Tune circle count, grinding duration/scoring, Japanese blueprint prices, fittings milestones, and visitor unlocks.
+- Define the letter interface, storage, and exact customer taste matching. Commission delivery is through a sword picker.
+- Choose specific special characters and their requests.

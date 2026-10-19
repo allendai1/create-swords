@@ -1,0 +1,10 @@
+{
+  "name": "tanto-forge-study",
+  "private": true,
+  "type": "module",
+  "description": "Browser study of the approved tantō forging and grinding flow. No build step: dist/ is the static site.",
+  "scripts": {
+    "test": "node tests/blade-core.test.js",
+    "serve": "python3 -m http.server 8765 --directory dist"
+  }
+}
