@@ -3,6 +3,8 @@ title: Blade Shaping Study
 status: concept draft — awaiting review
 date: 2026-10-19
 tags: [concept-art, swords, forging]
+type: "art"
+updated: "2026-10-19"
 ---
 
 # Blade Shaping Study
@@ -21,6 +23,6 @@ First visual exploration of tantō, wakizashi, and katana progressing from a uni
 
 Created with the built-in image generation tool. Exact prompt: [[References/Blade Shaping/generation-prompt-v1]].
 
-Implementation research: [[Blade Implementation Research]].
+Implementation research: [[Development/Blade Implementation Research|Blade Implementation Research]].
 
-Related: [[Create Swords! GDD]] · [[Sword Silhouettes]] · [[Sessions/2026-10-19]]
+Related: [[Design/Game Design Document|Game Design Document]] · [[Art/Sword Silhouettes|Sword Silhouettes]] · [[Sessions/2026-10-19]]

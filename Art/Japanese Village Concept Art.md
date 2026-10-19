@@ -3,6 +3,8 @@ title: Japanese Village Concept Art
 status: visual exploration — awaiting review
 date: 2026-10-19
 tags: [concept-art, environment, stations, create-swords]
+type: "art"
+updated: "2026-10-19"
 ---
 
 # Japanese Village Concept Art
@@ -68,9 +70,9 @@ An inviting evening smithy, active forging, colorful blades on display, a visiti
 - The atmosphere image takes liberties: it gives the anvil a tapered/horn-like shape and puts fittings on the heated blade. Use the standalone rectangular anvil reference and the approved blade-before-hilt crafting order for implementation.
 - The mood scene's extra background architecture is decorative exploration, not an expansion of the six-player map plan.
 - Surface texture density is higher than needed for production Roblox assets. Preserve strong silhouettes and material contrasts while simplifying details.
-- No live Studio changes. The browser prototype remains paused.
+- These image-generation steps made no Studio changes. Subsequent implementation status is maintained in [[Current Status]]; the earlier paused-prototype statement is no longer current.
 
-Related: [[Create Swords! GDD]] · [[Player Plot Concept Art]] · [[Blade Shaping Study]] · [[Home]]
+Related: [[Design/Game Design Document|Game Design Document]] · [[Archive/Player Plot Concept Art|Player Plot Concept Art]] · [[Art/Blade Shaping Study|Blade Shaping Study]] · [[Home]]
 
 ## Transparent progression cutout
 

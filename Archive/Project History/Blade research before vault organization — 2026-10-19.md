@@ -1,8 +1,9 @@
 ---
 title: Blade Implementation Research
-status: research recommendation — not an approved implementation spec
+status: historical snapshot
 date: 2026-10-19
 tags: [research, forging, roblox, modeling]
+type: archive
 ---
 
 # Blade Implementation Research
@@ -11,7 +12,7 @@ tags: [research, forging, roblox, modeling]
 
 Use a hybrid workflow: author precise silhouettes and intermediate shapes, then animate one continuous blade mesh in Studio through EditableMesh. Blender is valuable for reviewing proportions and making fittings, hammer, and anvil models. Image generation supplies art direction; it does not supply trustworthy model dimensions or deformation data.
 
-This is a researched recommendation, not a claim that the pipeline has been implemented or tested. The current Studio place was not accessible through a dedicated Studio tool in this session. Existing implementation details below come from [[Code Map]] and prior session notes; no local Luau source/place files were found in the vault.
+This is a researched recommendation, not a claim that the pipeline has been implemented or tested. The current Studio place was not accessible through a dedicated Studio tool in this session. Existing implementation details below come from [[Development/Code Map|Code Map]] and prior session notes; no local Luau source/place files were found in the vault.
 
 ## What we already have
 
@@ -103,4 +104,4 @@ Steps 2–4 and part of 5 are now done in the game's Studio place, using the bro
 ![[References/Blade Shaping/roblox-probe-tanto-ground-100.jpg]]
 ![[References/Blade Shaping/roblox-probe-katana-forged-90.jpg]]
 
-Related: [[Create Swords! GDD]] · [[Blade Shaping Study]] · [[Code Map]]
+Related: [[Design/Game Design Document|Game Design Document]] · [[Art/Blade Shaping Study|Blade Shaping Study]] · [[Development/Code Map|Code Map]]

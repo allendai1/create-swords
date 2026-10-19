@@ -1,11 +1,13 @@
 ---
 title: Decisions Log
 tags: [decisions, create-swords]
+type: "design"
+updated: "2026-10-19"
 ---
 
 # Decisions Log
 
-Every game-direction decision, newest at the bottom. Add a row whenever something is decided (in a Claude thread or on your own) and link the [[Sessions/2026-10-17|session note]] where it happened. The [[Create Swords! GDD]] should always match this log.
+Every game-direction decision, newest at the bottom. Add a row whenever something is decided (in a Claude thread or on your own) and link the [[Sessions/2026-10-17|session note]] where it happened. The [[Design/Game Design Document|Game Design Document]] should always match this log.
 
 | Date | Decision | Why / notes | Where |
 |---|---|---|---|
@@ -14,8 +16,8 @@ Every game-direction decision, newest at the bottom. Add a row whenever somethin
 | 2026-10-17 | **6 players per server, 6 plots**, one per player | | [[Sessions/2026-10-17]] |
 | 2026-10-17 | Blades are **always recoverable** (undo/redo + free reset) | Over-hammering only costs time | [[Sessions/2026-10-17]] |
 | 2026-10-17 | **Gems can be bought with Robux** | Everything stays earnable by playing (GDD §15) | [[Sessions/2026-10-17]] |
-| 2026-10-17 | **No Rojo:** code lives in the Studio place, edited through the Studio MCP | Simpler setup; replaces the Rojo/GitHub item in the [[Roadmap]] | [[Sessions/2026-10-17]] |
-| 2026-10-17 | **Prototype and compare** the three new shaping concepts from [[Create Swords!]] against the current silhouette anvil, as switchable modes; keep the winner after playtest | Current anvil stays as the baseline | [[Sessions/2026-10-17]] |
+| 2026-10-17 | **No Rojo:** code lives in the Studio place, edited through the Studio MCP | Simpler setup; replaces the Rojo/GitHub item in the [[Development/Roadmap|Roadmap]] | [[Sessions/2026-10-17]] |
+| 2026-10-17 | **Prototype and compare** the three new shaping concepts from [[Archive/Create Swords!|Create Swords!]] against the current silhouette anvil, as switchable modes; keep the winner after playtest | Current anvil stays as the baseline | [[Sessions/2026-10-17]] |
 | 2026-10-17 | **Forge is just a station** (put ingot in, wait, take out), no skill | Supersedes "no forge/reheat step" for the new concepts | [[Sessions/2026-10-17]] |
 | 2026-10-17 | **Forge resets the blade:** putting a sword back in the forge returns the metal to the rectangular blank | Keeps blades always recoverable | [[Sessions/2026-10-17]] |
 | 2026-10-17 | **Concept 3 (osu points, 10 s):** hitting at least a minimum number of points produces a sword with a lower grade and an imperfect shape; you can always reheat to start over | Adds a timer for this mode only | [[Sessions/2026-10-17]] |
@@ -39,7 +41,7 @@ Every game-direction decision, newest at the bottom. Add a row whenever somethin
 | 2026-10-17 | **Forge and anvil open a window of your ingots** (forge: put in / take out with timers; anvil: choose a hot ingot), the same picker as the sword holders | Allen: selecting from a window instead of holding the item | [[Sessions/2026-10-17]] |
 | 2026-10-17 | **Blades are 0.06 studs thick** (about 1/12 of the blank's width) | The held Dagger looked too thick | [[Sessions/2026-10-17]] |
 | 2026-10-17 | **Held swords: upright, sharp edge leading**, flat side sideways | Matches a real katana grip; replaced a flat-forward grip | [[Sessions/2026-10-17]] |
-| 2026-10-17 | **UI is designed in Figma first** ([[UI Design]]), starting with the forge window | Style follows the station-kit concept art; Luckiest Guy + Fredoka (both Roblox fonts) | [[Sessions/2026-10-17]] |
+| 2026-10-17 | **UI is designed in Figma first** ([[Art/UI Design|UI Design]]), starting with the forge window | Style follows the station-kit concept art; Luckiest Guy + Fredoka (both Roblox fonts) | [[Sessions/2026-10-17]] |
 | 2026-10-17 | **Forge window is just your ingot cards**: tap one, the window closes and the forge starts heating it. No Put in button, no slots or timers in the window | Allen: the first Figma draft was over-engineered. Replaces "take it out from the same window" | [[Sessions/2026-10-17]] |
 | 2026-10-17 | **Window titles name the action** ("PICK AN INGOT"), not the station ("FORGE") | Allen | [[Sessions/2026-10-17]] |
 | 2026-10-17 | **Taking a hot ingot out:** a timer floats above the forge while it heats; when done, a native **Take out** (E) prompt appears on the forge | Allen. Chosen over "goes straight to your inventory" | [[Sessions/2026-10-17]] |
@@ -47,7 +49,7 @@ Every game-direction decision, newest at the bottom. Add a row whenever somethin
 | 2026-10-17 | **One picker style** for every "put something into a station" window (forge, anvil, holders, Hilt Bench): icon + action title + close, row of cards, tap to pick | Allen | [[Sessions/2026-10-17]] |
 | 2026-10-17 | **Sword holder and Hilt Bench use the picker style**: "PICK A SWORD" (price tag); Hilt Bench is two pickers in a row, "PICK A BLADE" (grade tag) then "PICK A HILT" (bonus tag) | Allen asked for the same style; showing only unlocked hilts is Claude's default, easy to change | [[Sessions/2026-10-17]] |
 | 2026-10-17 | **Dark picker style after *Create Pottery!*'s "Select Wet Pottery" window**: translucent dark panel with dot texture, thin border, Montserrat Title Case titles ("Select Ingot"), ring close button; accents from rarity-glow cards and a title-bar shimmer; empty state with an orange hint | Allen: the first look was too basic and too bright. Replaces the chunky wood/parchment style and the "PICK AN INGOT" wording | [[Sessions/2026-10-17]] |
-| 2026-10-18 | **Pickers follow [[UI Concept - Furnace]]**: warm chocolate window, station name + action subtitle ("Forge" / "Choose an ingot to heat."), big 3D item cards, stacked quantities, muted rarity chips, amber hover; after picking a toast "Ingot loaded" + "Iron · Heating" billboard. Locked hilts show dimmed | Allen. The name stays **Forge** (not Furnace) and "Forge is full" stays. Replaces the dot texture, shimmer, rarity glow and "Select Ingot" titles | [[Sessions/2026-10-18]] |
+| 2026-10-18 | **Pickers follow [[Art/UI Concept - Furnace|UI Concept - Furnace]]**: warm chocolate window, station name + action subtitle ("Forge" / "Choose an ingot to heat."), big 3D item cards, stacked quantities, muted rarity chips, amber hover; after picking a toast "Ingot loaded" + "Iron · Heating" billboard. Locked hilts show dimmed | Allen. The name stays **Forge** (not Furnace) and "Forge is full" stays. Replaces the dot texture, shimmer, rarity glow and "Select Ingot" titles | [[Sessions/2026-10-18]] |
 | 2026-10-18 | **Forge Take out uses the same E prompt** ("Use forge" becomes "Take out" when your ingot is ready) instead of a second prompt | Two E prompts at one station would fight over the key | [[Sessions/2026-10-18]] |
 | 2026-10-18 | **Gotham font** for the game UI (pickers, toasts, notices, forge timer, seat panel) | Allen. Replaces Fredoka / Nunito in Studio; Figma keeps them since Gotham isn't in Figma | [[Sessions/2026-10-18]] |
 | 2026-10-18 | **Anvil: choose the hot ingot first, then the shape** from a picker of black blade silhouettes (priced for that metal) | Allen; replaces shape-first from earlier the same day. Dropping the < > buttons is Claude's default | [[Sessions/2026-10-18]] |
@@ -61,7 +63,6 @@ Every game-direction decision, newest at the bottom. Add a row whenever somethin
 | 2026-10-18 | Points: **each hit dents its own part** of the blade (misses leave that part wide); a strike while the blade is still moving is a miss | Follows from "hitting the point = hammering that part"; supersedes the 2026-10-17 "partly formed" even morph for Points. Claude's defaults | [[Sessions/2026-10-18]] |
 | 2026-10-18 | **Katana redrawn from real katana proportions** (smooth curve, proper pointed tip, ~1.7× real width so it's playable), replacing the Creator Store trace | Allen: the silhouettes looked off; the trace had a zig-zag spine and a blunt tip. The curve is ~1.9% of the length (real ~2.6%): each edge must stay on its side of the blade's axis, so the axis runs hilt-to-point and held swords turn the blade ~7.6° at the guard | [[Sessions/2026-10-18]] |
 | 2026-10-18 | **Accent lines redone**: the ridge sits across the blade's own width on a smoothed path, lines are a darker shade of the metal; the Katana gets a single shinogi ridge (~1/3 from the spine) and a yokote line | Allen: the Katana's line looked like a sharpie: it hugged one edge (measured from the off-centre axis), copied hammer dents and was a fixed dark grey | [[Sessions/2026-10-18]] |
-
 | 2026-10-18 | **Historical shop asset: medieval log cabin** | Superseded by the open-front Japanese workshop on 2026-10-19; retain model as an earlier asset | [[Sessions/2026-10-18]] |
 
 ## Historical questions
@@ -70,15 +71,15 @@ The earlier open questions about reheat, timed Points, Trace, and dagger startin
 
 ## 2026-10-19 — Japanese village and simplified crafting
 
-These approved decisions supersede conflicting earlier rows. Implementation is pending.
+This is chronological history, not an implementation tracker. Later decisions supersede earlier choices on the same topic. See [[Design/Game Design Document]] for current rules and [[Current Status]] for build status.
 
 | Date | Decision | Details | Where |
 |---|---|---|---|
 | 2026-10-19 | **Setting and tone** | Japanese mountain swordsmith village inspired by Swordsmith Village; cozy daily life with spectacular individual visitors. Village-wide events deferred. | [[Sessions/2026-10-19]] |
 | 2026-10-19 | **Workshop** | Open-front Japanese workshop, visible forging and displays facing the path; expand one increasingly elaborate workshop. | [[Sessions/2026-10-19]] |
-| 2026-10-19 | **Starting blueprints** | Tantō → wakizashi → katana, taught through local commissions that provide the pattern when each request begins. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Starting blueprints — superseded/clarified** | Tantō → wakizashi → katana, taught through local commissions that provide the pattern when each request begins. | [[Sessions/2026-10-19]] |
 | 2026-10-19 | **Early customers** | Mostly locals plus an early special outsider hinting at the wider world. | [[Sessions/2026-10-19]] |
-| 2026-10-19 | **Commissions** | In-person requests and letters from returning customers replace smartphone texts. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Commissions — superseded/clarified** | In-person requests and letters from returning customers replace smartphone texts. | [[Sessions/2026-10-19]] |
 | 2026-10-19 | **Materials** | Keep the random Ore Roller, redesigned for the village, and the full fantasy material variety available from the start. | [[Sessions/2026-10-19]] |
 | 2026-10-19 | **Wider traditions** | Visitors introduce new sword traditions through a first commission with its pattern; buy additional blueprints within that tradition. | [[Sessions/2026-10-19]] |
 | 2026-10-19 | **Customer arrivals** | Displayed stock influences regular visitors; reputation unlocks surprise special visitors. | [[Sessions/2026-10-19]] |
@@ -95,72 +96,45 @@ These approved decisions supersede conflicting earlier rows. Implementation is p
 | 2026-10-19 | **Forging** | Hit every circle; each hit improves quality. No time limit, timing windows, misses, or cooling countdown. Supersedes earlier timed-strike/retry discussion. | [[Sessions/2026-10-19]] |
 | 2026-10-19 | **Grinding** | All circles gives 90%; optional freehand grinding improves toward 100%. Remove only excess metal, stop at the target, never reduce quality. | [[Sessions/2026-10-19]] |
 | 2026-10-19 | **Hilt assembly** | Three untimed taps, without timing bonuses or penalties. | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **Always open pickers** | Every item-selection interaction opens its picker, even with one valid item. No automatic current-workpiece selection or picker bypass. Supersedes the review recommendation. | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **10-second base heating** | Forge heating takes 10 seconds, replacing the 15-second prototype duration. Implementation pending. | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **First customer arrives after listing** | No customers visit the player’s shop during the first sword craft. Putting the sword on sale triggers the tutorial customer arrival. Replaces the proposed pre-craft/waiting customer; later sales-interruption policy remains open. | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **Starting tantō blueprint and guidance** | Players start with the tantō blueprint and simple on-screen instructions. Later local commissions introduce wakizashi and katana. Supersedes giving the first tantō pattern through a customer commission. | [[Sessions/2026-10-19]] |
-
-| 2026-10-19 | **First sale guaranteed fair; haggle on second** | First tutorial customer gives a guaranteed fair offer. Introduce haggling on the second sale, keeping the first reward straightforward. Exact fair-price calculation remains untuned. | [[Sessions/2026-10-19]] |
-
+| 2026-10-19 | **First sale guaranteed fair; haggle on second — superseded/clarified** | First tutorial customer gives a guaranteed fair offer. Introduce haggling on the second sale, keeping the first reward straightforward. Exact fair-price calculation remains untuned. | [[Sessions/2026-10-19]] |
 | 2026-10-19 | **Wakizashi commission after first sale** | The next goal after selling the first tantō is a local wakizashi teaching commission, providing its blueprint at commission start. No required upgrade purchase or additional tantō sale first. | [[Sessions/2026-10-19]] |
-
-| 2026-10-19 | **Wakizashi commission specifies a rollable material** | Require a specific material available from the player’s current Ore Roller, rather than accepting any material. Exact material undecided; no guaranteed drop or odds change approved. | [[Sessions/2026-10-19]] |
-
+| 2026-10-19 | **Wakizashi commission specifies a rollable material — superseded/clarified** | Require a specific material available from the player’s current Ore Roller, rather than accepting any material. Exact material undecided; no guaranteed drop or odds change approved. | [[Sessions/2026-10-19]] |
 | 2026-10-19 | **First commission: Iron Wakizashi** | Iron chosen for the wakizashi teaching commission after the first tantō sale. Iron is in the starter roller’s Common pool. No guaranteed drop or altered odds approved. | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **Deliver commissions through a picker** | Select the completed sword through the commission and receive the agreed reward, without listing or haggling. Applies to the first Iron Wakizashi. Haggling tutorial therefore belongs to the second ordinary shop sale, not commission delivery. | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **Iron Wakizashi: minimum 90% quality** | Completing every forging circle meets the first commission’s quality requirement. Grinding remains optional; higher-quality swords also qualify. | [[Sessions/2026-10-19]] |
-
-| 2026-10-19 | **First upgrade after Iron Wakizashi** | Completing the Iron Wakizashi commission leads into the first workshop upgrade, introducing spending earnings to grow the business. Upgrade type and price remain undecided. | [[Sessions/2026-10-19]] |
-
-| 2026-10-19 | **First upgrade: second Ore Roller** | Each roller yields one material per roll; two rollers provide more chances to obtain a desirable material. This adds a roller rather than changing per-roll rarity odds. Price and activation/cooldown behavior remain undecided. | [[Sessions/2026-10-19]] |
-
-| 2026-10-19 | **Automatic rollers with one waiting output** | Each roller automatically produces one material, waits until it is collected, then starts its next roll. Replaces manual hold-to-roll activation. Roll duration remains undecided. | [[Sessions/2026-10-19]] |
-
-| 2026-10-19 | **Lever-operated ore roulette; under five seconds** | Player activates the lever; the stand rapidly cycles ore appearances and stops on the rolled material. Suggested visual method: change the displayed material. Result waits for collection; no automatic restart. Supersedes the earlier automatic-roller decision. Exact reveal duration remains untuned. | [[Sessions/2026-10-19]] |
-
+| 2026-10-19 | **First upgrade after Iron Wakizashi — superseded/clarified** | Completing the Iron Wakizashi commission leads into the first workshop upgrade, introducing spending earnings to grow the business. Upgrade type and price remain undecided. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **First upgrade: second Ore Roller — superseded/clarified** | Each roller yields one material per roll; two rollers provide more chances to obtain a desirable material. This adds a roller rather than changing per-roll rarity odds. Price and activation/cooldown behavior remain undecided. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Automatic rollers with one waiting output — superseded/clarified** | Each roller automatically produces one material, waits until it is collected, then starts its next roll. Replaces manual hold-to-roll activation. Roll duration remains undecided. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Lever-operated ore roulette; under five seconds — superseded/clarified** | Player activates the lever; the stand rapidly cycles ore appearances and stops on the rolled material. Suggested visual method: change the displayed material. Result waits for collection; no automatic restart. Supersedes the earlier automatic-roller decision. Exact reveal duration remains untuned. | [[Sessions/2026-10-19]] |
 | 2026-10-19 | **One lever, multiple material stands** | Buying another roller adds a stand, not a lever. The shared lever rolls all empty stands together; occupied stands retain their ores and cannot roll until collected. More stands give more results per activation. Supersedes separate-lever wording. | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **Grounded starter blades, extravagant later designs** | Tantō, wakizashi, and katana establish the craft with distinct silhouettes and slightly exaggerated readable proportions. Later special blueprints introduce unusual fantasy shapes. Exact profiles and shaping choreography remain open. | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **Staged blade shaping** | Early hammer hits lengthen the blank, middle hits establish taper and curve, and final hits form the point and refine the outline. Each impact visibly changes the area beneath the hammer. Exact intermediate profiles, hit counts, and pacing remain open. | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **Blade repositions without tongs** | The blade automatically slides, turns, and flips beneath the hammer between strikes, with no visible tongs or manual positioning. | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **Smooth localized impact deformation** | Each hammer impact quickly deforms the struck area and blends into neighboring metal. Flatten/stretch according to the stage; avoid shape snapping, wobbling, and slow melting. Timing and falloff remain untuned. | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **90% blade: clean, subtly rough** | Correct recognizable silhouette, subtle excess metal along the edge, and a dull finish. Grinding refines it; skipping grinding should still yield an attractive sword after assembly. | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **One universal starting blank** | All sword blueprints start from the same blank shape and size, then stretch to the chosen blade’s length during forging. Material appearance still follows the rolled material. Replaces proposed blueprint-sized blanks. | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **Equal initial hit count; modest tier effort later** | Start with the same hit count across sword blueprints. Higher-tier swords should eventually take a bit more effort. Exact scaling and form of extra effort remain undecided; preserve untimed forging. | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **Angled overhead forging camera** | Slightly angled overhead view preserves silhouette readability, blade thickness, hammer movement, and anvil depth. Keep the full blade visible as it lengthens and repositions. | [[Sessions/2026-10-19]] |
-
-| 2026-10-19 | **Starter blades use real lengths and curvature** | Tantō 25.8 cm with a slight inward curve (sori −0.1 cm), wakizashi 50 cm (sori 1.2 cm), katana 70 cm (sori 1.8 cm), measured the catalogue way. Representative values from research; sori varies by period. Widths, thickness, kissaki and tangs remain exploratory. Sources in [[Blade Profile Authoring]]. | [[Sessions/2026-10-19]] |
-
-| 2026-10-19 | **Smithy art direction: A/B mix** | Allen chose a mix of the two directions in [[Smithy Redesign Proposal]]: Direction A's materials and colours (white plaster, dark charred-cedar timber, grey tile roof, stone, iron, small vermilion and indigo accents) with Direction B's chunkier proportions (thicker posts and trim, bolder silhouettes) and extra lanterns (one on every front post). | [[Smithy Redesign Proposal]] |
-
-| 2026-10-19 | **Station shapes for the rebuild** | The proposal's defaults, which Allen didn't change: hornless kanatoko anvil (`Face` and `BladeMount` unchanged), upright-sword pedestals as sword holders, an "ore shrine" Ore Roller with stone stands and one shared lever, warm late-afternoon lighting, old prototype blocks moved to `ServerStorage.Archive`, cabin files moved to `Models/Archive/`. | [[Smithy Redesign Proposal]] |
-
-| 2026-10-19 | **Workshop built; choices made while building** | Claude's defaults, made during the build: holders at x 9.8 / 13 / 16.2 (3.2 apart, not 5, so the middle one stays at ShopService's inspect point), the Ore Roller lever post moved to x −12.2 and the stands to x ≈ −15, SpawnLocation moved to (1.5, 0.15, 9) as a low stone slab, Baseplate turned to grass, lighting set to ClockTime 16.4 with warm ambient (was 14.5 with grey 70/70/70). The anvil `Face` was darkened to 30/31/36 because the cooled steel blade was hard to see on it under the warm light. The noren were shortened to 1.4 studs so they don't block the player camera. | [[Smithy Redesign Proposal]] |
-
+| 2026-10-19 | **Starter blades use real lengths and curvature** | Tantō 25.8 cm with a slight inward curve (sori −0.1 cm), wakizashi 50 cm (sori 1.2 cm), katana 70 cm (sori 1.8 cm), measured the catalogue way. Representative values from research; sori varies by period. Widths, thickness, kissaki and tangs remain exploratory. Sources in [[Development/Blade Profile Authoring|Blade Profile Authoring]]. | [[Sessions/2026-10-19]] |
+| 2026-10-19 | **Smithy art direction: A/B mix** | Allen chose a mix of the two directions in [[Art/Smithy Redesign|Smithy Redesign]]: Direction A's materials and colours (white plaster, dark charred-cedar timber, grey tile roof, stone, iron, small vermilion and indigo accents) with Direction B's chunkier proportions (thicker posts and trim, bolder silhouettes) and extra lanterns (one on every front post). | [[Art/Smithy Redesign|Smithy Redesign]] |
+| 2026-10-19 | **Station shapes for the rebuild** | The proposal's defaults, which Allen didn't change: hornless kanatoko anvil (`Face` and `BladeMount` unchanged), upright-sword pedestals as sword holders, an "ore shrine" Ore Roller with stone stands and one shared lever, warm late-afternoon lighting, old prototype blocks moved to `ServerStorage.Archive`, cabin files moved to `Models/Archive/`. | [[Art/Smithy Redesign|Smithy Redesign]] |
+| 2026-10-19 | **Workshop built; choices made while building** | Claude's defaults, made during the build: holders at x 9.8 / 13 / 16.2 (3.2 apart, not 5, so the middle one stays at ShopService's inspect point), the Ore Roller lever post moved to x −12.2 and the stands to x ≈ −15, SpawnLocation moved to (1.5, 0.15, 9) as a low stone slab, Baseplate turned to grass, lighting set to ClockTime 16.4 with warm ambient (was 14.5 with grey 70/70/70). The anvil `Face` was darkened to 30/31/36 because the cooled steel blade was hard to see on it under the warm light. The noren were shortened to 1.4 studs so they don't block the player camera. | [[Art/Smithy Redesign|Smithy Redesign]] |
 | 2026-10-19 | **Starter blueprints replace the prototype set** | The game's blueprints are now the tantō, wakizashi and katana from the blade data, replacing Dagger, Shortsword and the old Katana. Placeholder prices 20 / 45 / 110 coins and 1–3 stars until the economy pass. The Adventurer now likes wakizashi (was Shortsword); the Knight likes 95%+ blades (was 90%, which every forged blade now reaches). | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **First-person hammering arm deferred** | Tried a first-person view with the character's arm swinging the hammer; Allen chose to leave the arm for later as unimportant for now. The anvil keeps the angled overhead camera with the hammer in view (pivoting from behind the anvil so it never covers the blade). | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **Larger plot with storefront and crafting area** | Each player needs a spacious property with distinct retail and crafting spaces. L-shaped connected wings are a visual proposal; exact layout and dimensions remain open. | [[Sessions/2026-10-19]] |
-
 | 2026-10-19 | **Visible early/mid/late plot growth** | Sparse shop/basic stations early; more swords and stations mid game; expanded shop, workers, and advanced upgrades late game. Concept capacities remain illustrative. | [[Sessions/2026-10-19]] |
+
+## How to read superseded entries
+
+Rows marked **superseded/clarified** remain as history. Current clarifications: rollers use one shared lever and collection-gated stands; the starting tantō pattern is available immediately; the first commission is Iron Wakizashi at 90% minimum; commission delivery is separate from the second ordinary shop sale; the first upgrade adds a second stand. Read the GDD for the complete current rules.
 
 ## Current open design work
 
-- Review [[Core Loop Review]]: first-session flow, picker clarity, heating pace, sales interruptions, and grinding incentive.
+- Review [[Design/Core Loop Review|Core Loop Review]]: first-session flow, picker clarity, heating pace, sales interruptions, and grinding incentive.
 - Tune circle count, grinding duration/scoring, Japanese blueprint prices, fittings milestones, and visitor unlocks.
 - Define the letter interface, storage, and exact customer taste matching. Commission delivery is through a sword picker.
 - Choose specific special characters and their requests.

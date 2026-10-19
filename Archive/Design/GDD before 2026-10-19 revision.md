@@ -1,15 +1,16 @@
 ---
 title: Sell Swords! — Game Design Document
-status: draft v0.2
-source: "[[Create Swords!]]"
+status: historical snapshot
+source: "[[Archive/Create Swords!|Create Swords!]]"
 tags: [gdd, roblox, create-swords]
+type: archive
 ---
 
 # Sell Swords! — Game Design Document
 
 *Working title: **Sell Swords!** (alternatives were Create Swords! and Craft Swords!).*
 
-> Refined from the original brainstorm in [[Create Swords!]]. The brainstorm is left untouched; this note is the working design.
+> Refined from the original brainstorm in [[Archive/Create Swords!|Create Swords!]]. The brainstorm is left untouched; this note is the working design.
 > Decisions Allen has made are logged in [[#13. Decisions log]].
 
 ---
@@ -35,7 +36,7 @@ A cozy crafting tycoon in the style of *Create Pottery!*, where the pottery whee
 
 ## 4. Core loop
 
-*Updated 2026-10-17 from Allen's start-to-finish loop in [[Create Swords!]].*
+*Updated 2026-10-17 from Allen's start-to-finish loop in [[Archive/Create Swords!|Create Swords!]].*
 
 ```
  Roll ingot ──► Forge (drop in, ~15 s) ──► Anvil: pick ingot + blueprint, shape ──► Hilt Bench: pick hilt, seat it
@@ -63,7 +64,7 @@ Still open: blueprint prices (Allen's loop says Dagger ≈ 50, §6.2 says 20), w
 
 ## 5. The anvil (core minigame, the POC)
 
-Reference: ![[References/clay silhouette goal.png]]
+Reference: ![[clay silhouette goal.png]]
 
 **Setup.** The player brings an ingot (a rectangle) to the anvil and picks a blueprint. A panel on the left shows the **Target** silhouette (white) with **Yours** (orange) overlaid, exactly like the pottery panel. The 3D blade sits in front of the camera.
 
@@ -88,7 +89,7 @@ Reference: ![[References/clay silhouette goal.png]]
 - The player can press **Finish** at any time once Accuracy ≥ **80%**.
 - **Quality is just the percentage** (Allen, 2026-10-18): no grade names. A blade is "Iron Dagger (92%)". The price multiplier grows smoothly from **×1.0 at 80%** to **×2.0 at 100%** (90% = ×1.5).
 
-**Alternatives under test (2026-10-17).** Three other shaping concepts from [[Create Swords!]] will be prototyped as switchable modes and compared with this one in playtest: (1) hammer the blank bigger than the guide, then trace-cut the outline; (2) eight clicks shape it automatically, quality comes only from material and finishes; (3) osu-style points within 10 s, a minimum number of hits gives a lower-grade, imperfect sword. All three start at a **forge station** (no skill), and putting a sword back in the forge resets it to the blank. See [[Decisions Log]].
+**Alternatives under test (2026-10-17).** Three other shaping concepts from [[Archive/Create Swords!|Create Swords!]] will be prototyped as switchable modes and compared with this one in playtest: (1) hammer the blank bigger than the guide, then trace-cut the outline; (2) eight clicks shape it automatically, quality comes only from material and finishes; (3) osu-style points within 10 s, a minimum number of hits gives a lower-grade, imperfect sword. All three start at a **forge station** (no skill), and putting a sword back in the forge resets it to the blank. See [[Design/Decisions Log|Decisions Log]].
 
 **Concept 3, Points, guided (Allen, 2026-10-18).** The point never moves; the blade is moved under it like a smith working the piece. Tap the hot metal to start; it cools in 10 s. 12 points appear one at a time on the fixed strike point while the blade slides into place (0.3 s): the near edge hilt to tip (6 parts), the blade **flips over**, the far edge tip back to hilt, and the two parts nearest the tip are presented with the blade **turned 90°** (pointing up the screen).
 - Strike once the blade has stopped (the point turns solid): tap or click anywhere, or Space / gamepad A. A strike while it's still moving is a miss (so mashing doesn't work); a point that shrinks away (2 s) is a miss; points the metal cools before are misses.
@@ -255,7 +256,7 @@ A smartphone in the HUD (as in *Create Pottery!*).
 
 ## 12. Technical notes (Roblox)
 
-*Updated 2026-10-17 to match what's built. The full file-by-file map is in [[Code Map]].*
+*Updated 2026-10-17 to match what's built. The full file-by-file map is in [[Development/Code Map|Code Map]].*
 
 - **Where the code lives:** directly in the Studio place, edited through the Studio MCP (no Rojo/Git).
 - **Server-authoritative.** The client runs the anvil minigame for responsiveness, then sends the shaping data (hit list, cut strokes or hit count). The server's `FinishCheck` replays it to compute the grade; it never trusts a client accuracy or price. The server owns ingots, blades, swords, coins, forge slots and the rack.
@@ -304,4 +305,4 @@ Prices are set during Phase 3 tuning.
 
 ---
 
-Related: [[Home]] · [[Roadmap]] · [[Decisions Log]] · [[Create Swords!]] · References: ![[References/Screenshot 2026-10-16 230815.png]]
+Related: [[Home]] · [[Development/Roadmap|Roadmap]] · [[Design/Decisions Log|Decisions Log]] · [[Archive/Create Swords!|Create Swords!]] · References: ![[Screenshot 2026-10-16 230815.png]]

@@ -1,15 +1,17 @@
 ---
 title: Player Plot Concept Art
-status: visual exploration
+status: "historical reference; superseded by Japanese Village Concept Art"
 date: 2026-10-17
 tags: [concept-art, create-swords, environment]
+type: "archive"
+updated: "2026-10-19"
 ---
 
 # Player Plot Concept Art
 
-**Latest Japanese-setting exploration:** [[Japanese Village Concept Art]]. Images below preserve the earlier visual direction.
+**Latest Japanese-setting exploration:** [[Art/Japanese Village Concept Art|Japanese Village Concept Art]]. Images below preserve the earlier visual direction.
 
-Concept images for **Sell Swords!**, based on [[Create Swords! GDD]], [[Decisions Log]], [[Sessions/2026-10-17]], and the saved visual references. These are visual explorations rather than implemented game changes.
+Concept images for **Sell Swords!**, based on [[Design/Game Design Document|Game Design Document]], [[Design/Decisions Log|Decisions Log]], [[Sessions/2026-10-17]], and the saved visual references. These are visual explorations rather than implemented game changes.
 
 The current Studio scene was not accessible in this chat. The existing forge, anvil, Hilt Bench, shared three-slot rack, and NPC behavior were reviewed through the vault's build notes.
 
@@ -50,5 +52,5 @@ For a Roblox build, simplify the illustrated grain, stone variation, foliage, an
 
 Created with the built-in image generation tool. The station sheet used the plot concept as a visual reference. Full prompts: [[References/Concept Art/generation-prompts-v1]].
 
-Related: [[Home]] · [[Create Swords! GDD]] · [[Roadmap]]
+Related: [[Home]] · [[Design/Game Design Document|Game Design Document]] · [[Development/Roadmap|Roadmap]]
 

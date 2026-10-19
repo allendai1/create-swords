@@ -2,11 +2,13 @@
 title: Core Loop Review
 status: proposal — awaiting discussion and playtest
 tags: [design, onboarding, gameplay, create-swords]
+type: "design"
+updated: "2026-10-19"
 ---
 
 # Core Loop Review
 
-Reviewed 2026-10-19 against the approved [[Create Swords! GDD]]. **Onboarding, pacing, and balance changes below remain proposals unless explicitly marked confirmed.** Allen confirmed that item pickers must open every time, even with one valid item; the automatic-selection proposal was rejected. Base heating is 10 seconds. The first-sale tutorial has no customers while the first sword is being made; putting it on sale triggers the first customer arrival.
+Reviewed 2026-10-19 against the approved [[Design/Game Design Document|Game Design Document]]. **Onboarding, pacing, and balance changes below remain proposals unless explicitly marked confirmed.** Allen confirmed that item pickers must open every time, even with one valid item; the automatic-selection proposal was rejected. Base heating is 10 seconds. The first-sale tutorial has no customers while the first sword is being made; putting it on sale triggers the first customer arrival.
 
 ## Assessment
 

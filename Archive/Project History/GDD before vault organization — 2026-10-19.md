@@ -1,16 +1,17 @@
 ---
 title: Sell Swords! — Game Design Document
-status: draft v0.3 — approved direction, implementation pending
-source: "[[Create Swords!]]"
+status: historical snapshot
+source: "[[Archive/Create Swords!|Create Swords!]]"
 tags: [gdd, roblox, create-swords]
+type: archive
 ---
 
 # Sell Swords! — Game Design Document
 
 *Working title: **Sell Swords!** (alternatives were Create Swords! and Craft Swords!).*
 
-> Refined from the original brainstorm in [[Create Swords!]]. The brainstorm is left untouched; this note is the working design.
-> Current design direction approved 2026-10-19. This document describes the intended game, not a claim that the changes are implemented. Earlier prototype details remain in [[Code Map]], session notes, and [[References/Design Archive/GDD before 2026-10-19 revision]]. New onboarding proposals are separate in [[Core Loop Review]].
+> Refined from the original brainstorm in [[Archive/Create Swords!|Create Swords!]]. The brainstorm is left untouched; this note is the working design.
+> Current design direction approved 2026-10-19. This document describes the intended game, not a claim that the changes are implemented. Earlier prototype details remain in [[Development/Code Map|Code Map]], session notes, and [[Archive/Design/GDD before 2026-10-19 revision|GDD before 2026-10-19 revision]]. New onboarding proposals are separate in [[Design/Core Loop Review|Core Loop Review]].
 
 ---
 
@@ -125,7 +126,7 @@ Value = Blueprint base
       × NPC preference bonus (see §7)
 ```
 
-The tooltip on a finished sword shows each factor so players learn what to chase. This is the existing economy baseline, not a newly tuned curve: ×1.5 at 90% versus ×2.0 at 100% gives full grinding about 33% more value. Review that incentive in [[Core Loop Review]]. Optional finish bonuses remain earlier proposals, not additions to the required loop.
+The tooltip on a finished sword shows each factor so players learn what to chase. This is the existing economy baseline, not a newly tuned curve: ×1.5 at 90% versus ×2.0 at 100% gives full grinding about 33% more value. Review that incentive in [[Design/Core Loop Review|Core Loop Review]]. Optional finish bonuses remain earlier proposals, not additions to the required loop.
 
 ### 6.5 Hilt Bench and fittings
 
@@ -171,7 +172,7 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 - Relationships grow through ordinary sales and unlock personal commission chains.
 - Coins and gems remain proposed rewards; commissions remain a gem source.
 - **Commission delivery:** open the commission and select the finished sword through a picker, then receive the agreed reward. This also applies to the first Iron Wakizashi commission; it does not require putting the sword on sale or negotiating.
-- Exact letter interface, active-request capacity, and ordinary commission timing are not settled. The proposed first-session flow in [[Core Loop Review]] is not yet approved.
+- Exact letter interface, active-request capacity, and ordinary commission timing are not settled. The proposed first-session flow in [[Design/Core Loop Review|Core Loop Review]] is not yet approved.
 
 ## 10. Economy & progression
 
@@ -206,7 +207,7 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 
 ### 10.3 Progression arc
 
-**Visual progression direction (2026-10-19):** early game starts sparse with basic stations; mid game adds displayed swords and stations; late game expands the shop with station workers and advanced upgrades. See [[Japanese Village Concept Art]] for the same-plot comparison. Illustrated capacities and precise unlocks are proposals, not fixed balance rules.
+**Visual progression direction (2026-10-19):** early game starts sparse with basic stations; mid game adds displayed swords and stations; late game expands the shop with station workers and advanced upgrades. See [[Art/Japanese Village Concept Art|Japanese Village Concept Art]] for the same-plot comparison. Illustrated capacities and precise unlocks are proposals, not fixed balance rules.
 
 | Stage | Player has | Goal |
 |---|---|---|
@@ -216,7 +217,7 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 
 ## 11. World & multiplayer
 
-**Plot scale clarification (2026-10-19):** each player needs a larger property with a distinct storefront for customers and a dedicated place for crafting, plus room to expand. Avoid compressing both into a small shop stall. A connected L-shaped retail/crafting layout is explored in [[Japanese Village Concept Art]]; its exact floor plan and dimensions are not yet approved.
+**Plot scale clarification (2026-10-19):** each player needs a larger property with a distinct storefront for customers and a dedicated place for crafting, plus room to expand. Avoid compressing both into a small shop stall. A connected L-shaped retail/crafting layout is explored in [[Art/Japanese Village Concept Art|Japanese Village Concept Art]]; its exact floor plan and dimensions are not yet approved.
 
 - **6 players per server**, each with a workshop plot in a Japanese mountain swordsmith village.
 - **Open-front Japanese workshop:** visible forging and sword displays face the village path. Players can see neighbors working as they pass.
@@ -224,11 +225,11 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 - Warm, cozy, stylized art: timber, tiled roofs, lanterns, stone paths, streams, and mountain scenery. Demon Slayer's Swordsmith Village is an atmosphere reference.
 - NPCs travel through the village and visit shops. Admiring other players' shops remains the light social layer; no player trading in v1.
 - Cosmetic decoration is freely expressive; functional displays and facilities provide business benefits.
-- The previously built medieval cabin (`Models/Archive/SwordShop.fbx`) is a historical asset, not the target shop design. The Japanese open-front workshop is now built in Studio from parts ([[Smithy Redesign Proposal]]).
+- The previously built medieval cabin (`Models/Archive/SwordShop.fbx`) is a historical asset, not the target shop design. The Japanese open-front workshop is now built in Studio from parts ([[Art/Smithy Redesign|Smithy Redesign]]).
 
 ## 12. Technical notes (Roblox)
 
-*Updated 2026-10-17 to match what's built. The full file-by-file map is in [[Code Map]].*
+*Updated 2026-10-17 to match what's built. The full file-by-file map is in [[Development/Code Map|Code Map]].*
 
 - **Where the code lives:** directly in the Studio place, edited through the Studio MCP (no Rojo/Git).
 - **Server-authoritative.** The client runs the anvil minigame for responsiveness, then sends the shaping data (hit list, cut strokes or hit count). The server's `FinishCheck` replays it to compute the grade; it never trusts a client accuracy or price. The server owns ingots, blades, swords, coins, forge slots and the rack.
@@ -239,13 +240,13 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 
 ## 13. Decisions log
 
-The full dated record is [[Decisions Log]]. The approved 2026-10-19 decisions supersede conflicting prototype rules, including the medieval cabin, timed forging, minimum-hit failure, damaging grinding, timed hilt taps, smartphone commissions, and universal fitting ladder.
+The full dated record is [[Design/Decisions Log|Decisions Log]]. The approved 2026-10-19 decisions supersede conflicting prototype rules, including the medieval cabin, timed forging, minimum-hit failure, damaging grinding, timed hilt taps, smartphone commissions, and universal fitting ladder.
 
-See [[Sessions/2026-10-19]] for this revision's scope and [[Core Loop Review]] for recommendations still awaiting discussion.
+See [[Sessions/2026-10-19]] for this revision's scope and [[Design/Core Loop Review|Core Loop Review]] for recommendations still awaiting discussion.
 
 ## 14. Build plan
 
-See [[Roadmap]] for implementation status. Prior completed prototypes remain historical achievements, not evidence that the revised design is built.
+See [[Development/Roadmap|Roadmap]] for implementation status. Prior completed prototypes remain historical achievements, not evidence that the revised design is built.
 
 1. Update forging to untimed circle completion, 90% quality, safe optional grinding to 100%, and three untimed hilt taps.
 2. Establish one full first-session loop, starter Japanese blueprints and teaching commissions, sales, and saving.
@@ -253,7 +254,7 @@ See [[Roadmap]] for implementation status. Prior completed prototypes remain his
 4. Add letters, personal commissions, special visitors, and wider sword traditions.
 5. Add cashier/apprentice automation and finish balance, art, and launch testing.
 
-First-session pacing and interaction simplifications are proposed in [[Core Loop Review]], not approved implementation requirements yet.
+First-session pacing and interaction simplifications are proposed in [[Design/Core Loop Review|Core Loop Review]], not approved implementation requirements yet.
 
 ## 15. Monetization (Robux)
 
@@ -272,4 +273,4 @@ Prices are set during Phase 3 tuning.
 
 ---
 
-Related: [[Home]] · [[Roadmap]] · [[Decisions Log]] · [[Create Swords!]] · References: ![[References/Screenshot 2026-10-16 230815.png]]
+Related: [[Home]] · [[Development/Roadmap|Roadmap]] · [[Design/Decisions Log|Decisions Log]] · [[Archive/Create Swords!|Create Swords!]] · References: ![[Screenshot 2026-10-16 230815.png]]

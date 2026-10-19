@@ -3,6 +3,8 @@ title: Sword Modeling Quality Checklist
 status: working reference
 date: 2026-10-19
 tags: [swords, modeling, blender, roblox, checklist]
+type: "development"
+updated: "2026-10-19"
 ---
 
 # Sword Modeling Quality Checklist
@@ -13,7 +15,7 @@ Use this checklist while modeling in Blender, reviewing a sword generated with C
 
 ## Fit the game's art direction
 
-For *Create Swords!*, the current direction is grounded starter tantō, wakizashi, and katana with slightly exaggerated proportions and distinct silhouettes, followed by more extravagant special designs. Check [[Create Swords! GDD]], [[Sword Silhouettes]], and [[Blade Profile Authoring]] before changing a blade's identity or dimensions. Reference illustrations are not dimensioned specifications.
+For *Create Swords!*, the current direction is grounded starter tantō, wakizashi, and katana with slightly exaggerated proportions and distinct silhouettes, followed by more extravagant special designs. Check [[Design/Game Design Document|Game Design Document]], [[Art/Sword Silhouettes|Sword Silhouettes]], and [[Development/Blade Profile Authoring|Blade Profile Authoring]] before changing a blade's identity or dimensions. Reference illustrations are not dimensioned specifications.
 
 A central ridge, crossguard, fuller, or European-style pommel is **not mandatory**. Choose construction appropriate to the sword. A flat-sided blade can look excellent when its thickness, edge planes, and tip are intentional.
 
@@ -297,6 +299,6 @@ identify a reason to propose a change.
 Give the review first. Do not modify the model unless I have authorized edits.
 ```
 
-Related: [[Home]] · [[Create Swords! GDD]] · [[Sword Silhouettes]] · [[Blade Shaping Study]] · [[Blade Profile Authoring]] · [[Blade Implementation Research]]
+Related: [[Home]] · [[Design/Game Design Document|Game Design Document]] · [[Art/Sword Silhouettes|Sword Silhouettes]] · [[Art/Blade Shaping Study|Blade Shaping Study]] · [[Development/Blade Profile Authoring|Blade Profile Authoring]] · [[Development/Blade Implementation Research|Blade Implementation Research]]
 
 Source: Adapted and expanded from the “Sword Model Checklist” conversation, with the vault's current art direction used as context.

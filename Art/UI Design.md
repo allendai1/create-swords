@@ -2,6 +2,8 @@
 title: UI Design
 status: in progress
 tags: [ui, figma, create-swords]
+type: "art"
+updated: "2026-10-19"
 ---
 
 # UI Design
@@ -12,7 +14,7 @@ The game's screens are designed in Figma first, then rebuilt in Studio.
 
 ## Style
 
-Follows [[UI Concept - Furnace]] (Allen's concept, built on *Create Pottery!*'s picker): warm dark chocolate, cream text, thin muted copper edge, big cards with a 3D item, one decision per window. No texture, no ornaments.
+Follows [[Art/UI Concept - Furnace|UI Concept - Furnace]] (Allen's concept, built on *Create Pottery!*'s picker): warm dark chocolate, cream text, thin muted copper edge, big cards with a 3D item, one decision per window. No texture, no ornaments.
 
 | Role | Value |
 |---|---|
@@ -62,11 +64,11 @@ Allen checked the v4 screens on 2026-10-18.
 
 ## In Studio
 
-Built on 2026-10-18 as the shared `ItemPicker` module ([[Code Map]]). Differences from Figma:
+Built on 2026-10-18 as the shared `ItemPicker` module ([[Development/Code Map|Code Map]]). Differences from Figma:
 - The 3D items are simple parts in a `ViewportFrame` (an ingot is a block with two sloped sides; swords are flat bars), so they're plainer than the Figma art. Swap in meshes or images in the art pass.
 - Fonts are Gotham (`GothamSSm`), not the Figma file's Fredoka / Nunito.
 - Hot ingots on the anvil get a 30% orange tint so the metal still shows.
 - The forge timer label isn't AlwaysOnTop (Studio's capture couldn't show it that way); it floats 4.6 studs up so it clears your head.
 - Phone (under 500 px tall): one row of compact cards, centred below the Roblox top bar.
 
-Related: [[Home]] · [[Create Swords! GDD]] · [[Code Map]]
+Related: [[Home]] · [[Design/Game Design Document|Game Design Document]] · [[Development/Code Map|Code Map]]

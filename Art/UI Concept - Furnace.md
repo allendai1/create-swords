@@ -2,13 +2,15 @@
 title: UI Concept - Furnace
 status: visual proposal
 tags: [concept-art, ui, create-swords]
+type: "art"
+updated: "2026-10-19"
 ---
 
 # UI Concept — Furnace
 
 ![[References/Concept Art/furnace-ui-v1.png]]
 
-A visual proposal based on the Create Pottery! ingot/clay selection reference and [[Player Plot Concept Art]]. Generated with the built-in image generation tool. This is a design mockup, not implemented UI.
+A visual proposal based on the Create Pottery! ingot/clay selection reference and [[Archive/Player Plot Concept Art|Player Plot Concept Art]]. Generated with the built-in image generation tool. This is a design mockup, not implemented UI.
 
 ## Visual language
 
@@ -42,7 +44,7 @@ Full generation prompt: [[References/Concept Art/furnace-ui-prompt-v1]].
 
 ## Status
 
-Adopted on 2026-10-18 for all pickers (see [[UI Design]]), with two changes: the station keeps the name **Forge**, and when both slots are busy E shows a quick "Forge is full" message instead of the slots' states.
+Adopted on 2026-10-18 for all pickers (see [[Art/UI Design|UI Design]]), with two changes: the station keeps the name **Forge**, and when both slots are busy E shows a quick "Forge is full" message instead of the slots' states.
 
-Related: [[Home]] · [[Create Swords! GDD]] · [[Player Plot Concept Art]]
+Related: [[Home]] · [[Design/Game Design Document|Game Design Document]] · [[Archive/Player Plot Concept Art|Player Plot Concept Art]]
 

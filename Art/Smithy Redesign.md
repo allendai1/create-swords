@@ -1,17 +1,20 @@
 ---
-title: Smithy Redesign Proposal
+title: Smithy Redesign
 status: built in Studio 2026-10-19 (A/B mix); playtested; place saved
 date: 2026-10-19
 tags: [art, environment, stations, studio, create-swords]
+type: "art"
+updated: "2026-10-19"
+aliases: ["Smithy Redesign Proposal"]
 ---
 
-# Smithy Redesign Proposal
+# Smithy Redesign
 
-The stations in `Workspace.Smithy` are still blockouts from the medieval-cabin prototype. This note looks at what's there now and proposes how to rebuild each station, and the workshop around them, for the approved Japanese mountain-village setting ([[Create Swords! GDD]] §11). It builds on [[Japanese Village Concept Art]] (forge, hornless anvil, village map, evening scene). **Chosen 2026-10-19: a mix.** Direction A's materials and colours, with Direction B's chunkier proportions and extra lanterns. See [[Decisions Log]].
+The stations in `Workspace.Smithy` were rebuilt from the medieval-cabin blockouts. This note records the completed rebuild and preserves the original critique and proposal for the approved Japanese mountain-village setting ([[Design/Game Design Document|Game Design Document]] §11). It builds on [[Art/Japanese Village Concept Art|Japanese Village Concept Art]] (forge, hornless anvil, village map, evening scene). **Chosen 2026-10-19: a mix.** Direction A's materials and colours, with Direction B's chunkier proportions and extra lanterns. See [[Design/Decisions Log|Decisions Log]].
 
 ## Built (2026-10-19)
 
-All five stations and the workshop are rebuilt in Studio in the chosen mix. The scripted parts are unchanged except where the table in [[Code Map]] says so. Allen saved the place with it on 2026-10-19.
+All five stations and the workshop are rebuilt in Studio in the chosen mix. The scripted parts are unchanged except where the table in [[Development/Code Map|Code Map]] says so. Allen saved the place with it on 2026-10-19.
 
 ![[References/Smithy Redesign/built-front.jpg]]
 
@@ -47,7 +50,7 @@ No script errors or warnings in the log, apart from Roblox's own UI warnings.
 - The forge chimney only just clears the ridge.
 - The plot is one workshop on open grass: no mountains, trees or neighbouring plots yet.
 
-## What's there now
+## Before the rebuild — historical blockout
 
 ![[References/Smithy Redesign/current-overview.jpg]]
 
@@ -69,7 +72,7 @@ Five props stand in a straight line on the default grey baseplate, about 6 studs
 
 Both use the same shapes, layout and kept parts. They differ in how stylised they are:
 
-- **A · Working kajiba (recommended).** A grounded Japanese smithy: white plaster, dark charred-cedar timber, grey tile roof, clay and stone hearth, iron, with vermilion and indigo as small accents. It matches [[Japanese Village Concept Art]] and the Swordsmith Village atmosphere reference. The props still use chunky Roblox proportions so they read at a distance.
+- **A · Working kajiba (recommended).** A grounded Japanese smithy: white plaster, dark charred-cedar timber, grey tile roof, clay and stone hearth, iron, with vermilion and indigo as small accents. It matches [[Art/Japanese Village Concept Art|Japanese Village Concept Art]] and the Swordsmith Village atmosphere reference. The props still use chunky Roblox proportions so they read at a distance.
 - **B · Festival smithy.** The same buildings, pushed toward *Create Pottery!* toy-likeness: posts and trim 20–30% thicker, brighter cream and red lacquer, teal tiles, round lanterns everywhere, a blossom tree at the gate. Friendlier to the 9–16 audience at a glance, but further from the concept art and noisier behind the blade.
 
 ![[References/Smithy Redesign/proposal-station-kit.svg]]
@@ -153,7 +156,7 @@ The forging camera sits about blade length × 1.1 above the strike point, tilted
 
 Created at runtime and left alone: `ForgeSlot1/2`, `ForgeTimers`, `AnvilHammer`, the anvil `Blade`, `TakeBackPrompt`, displayed sword models, `Customers`.
 
-## Build order once a direction is picked
+## Original proposed build order
 
 1. Workshop shell, ground and lighting first (around the stations, which aren't touched).
 2. Forge, Ore shrine, Hilt Bench, holders: one station at a time. Each gets a playtest of its own flow (roll, heat and take out, attach hilt, display and sell) with the console checked for errors.
@@ -162,7 +165,7 @@ Created at runtime and left alone: `ForgeSlot1/2`, `ForgeTimers`, `AnvilHammer`,
 
 Part budget: roughly 30–60 parts per station and under about 600 for the whole workshop. Stock materials only, no unions.
 
-## Pick a direction
+## Original direction-selection prompt
 
 1. **Direction:** A · Working kajiba (recommended) or B · Festival smithy.
 2. Defaults I'll use unless you say otherwise:
@@ -172,4 +175,4 @@ Part budget: roughly 30–60 parts per station and under about 600 for the whole
    - **Old prototype blocks:** move to `ServerStorage.Archive`. **Cabin files:** move to `Models/Archive/`.
    - **Lighting:** warm late afternoon.
 
-Related: [[Japanese Village Concept Art]] · [[Player Plot Concept Art]] · [[Create Swords! GDD]] · [[Code Map]] · [[Home]]
+Related: [[Art/Japanese Village Concept Art|Japanese Village Concept Art]] · [[Archive/Player Plot Concept Art|Player Plot Concept Art]] · [[Design/Game Design Document|Game Design Document]] · [[Development/Code Map|Code Map]] · [[Home]]

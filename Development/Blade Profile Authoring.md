@@ -3,6 +3,8 @@ title: Blade Profile Authoring
 status: working notes — all blade numbers are exploratory drafts, not approved
 date: 2026-10-19
 tags: [forging, swords, prototype, modeling]
+type: "development"
+updated: "2026-10-19"
 ---
 
 # Blade Profile Authoring
@@ -15,7 +17,7 @@ How the starter blades in `Prototypes/tanto-forge` got their shapes, and how to 
 
 ## How the tantō shape was chosen
 
-No reference was measured. Claude picked the numbers from general knowledge of real tantō, then exaggerated them slightly for readability, following the approved art direction ([[Create Swords! GDD]]: grounded starter blades, slightly exaggerated, distinct silhouettes). They haven't been checked against photos or against the wakizashi and katana at the same scale.
+No reference was measured. Claude picked the numbers from general knowledge of real tantō, then exaggerated them slightly for readability, following the approved art direction ([[Design/Game Design Document|Game Design Document]]: grounded starter blades, slightly exaggerated, distinct silhouettes). They haven't been checked against photos or against the wakizashi and katana at the same scale.
 
 | Property | Typical real tantō | Study value (`dist/data/tanto.json`) |
 |---|---|---|
@@ -87,4 +89,4 @@ Open `editor.html` next to the forge study (link in the study's bottom bar).
 
 Edits stay in the page until copied out. Nothing is saved to the files automatically.
 
-Related: [[Next Session Handoff]] · [[Blade Shaping Study]] · [[Sword Silhouettes]]
+Related: [[Current Status|Current Status]] · [[Art/Blade Shaping Study|Blade Shaping Study]] · [[Art/Sword Silhouettes|Sword Silhouettes]]

@@ -2,11 +2,13 @@
 title: Code Map
 status: current (2026-10-19)
 tags: [code, architecture, create-swords]
+type: "development"
+updated: "2026-10-19"
 ---
 
 # Code Map
 
-Where everything lives in the Studio place (`goku19876's Place: 10172026_1`) and how the pieces connect. The code exists only in the place file (no Rojo/Git; see [[Decisions Log]]), so **save the place** after every session. The design behind it is in [[Create Swords! GDD]]; day-by-day history is in [[Sessions/2026-10-17]].
+Where everything lives in the Studio place (`goku19876's Place: 10172026_1`) and how the pieces connect. The code exists only in the place file (no Rojo/Git; see [[Design/Decisions Log|Decisions Log]]), so **save the place** after every session. The design behind it is in [[Design/Game Design Document|Game Design Document]]; day-by-day history is in [[Sessions/2026-10-17]].
 
 ## How a sword is made (data flow)
 
@@ -62,7 +64,7 @@ The server owns all state (ingots, blades, swords, coins, forge slots, rack). Cl
 | `HiltBenchController` | E → picker "Choose a blade." → picker "Choose a hilt." → seat-the-hilt taps (Space / tap) → AttachHilt → toast |
 | `ForgeController` | E: "Take out" when your ingot is ready (the prompt text switches), "Forge is full" toast when both slots are busy, else the picker of your cold ingots stacked by material; picking closes it, puts one in and toasts "Ingot loaded" |
 | `ShopController` | "+ Display a sword" picker (sword cards with price), offer card, notices |
-| `ItemPicker` (module) | The shared picker (vault: [[UI Design]]; Gotham font), built in code into its own `PickerGui`: station title + action line, grid of cards (3D item in a ViewportFrame or a blade silhouette, name, chip, ×qty; hover / gamepad focus = amber edge), close ring (B closes), blur + dim behind, empty state. Compact one-row layout when the screen is under 500 px tall. Also `toast(text, "warn"?)`. Used by the forge, anvil, holders and Hilt Bench |
+| `ItemPicker` (module) | The shared picker (vault: [[Art/UI Design|UI Design]]; Gotham font), built in code into its own `PickerGui`: station title + action line, grid of cards (3D item in a ViewportFrame or a blade silhouette, name, chip, ×qty; hover / gamepad focus = amber edge), close ring (B closes), blur + dim behind, empty state. Compact one-row layout when the screen is under 500 px tall. Also `toast(text, "warn"?)`. Used by the forge, anvil, holders and Hilt Bench |
 | `SwordRenderer` | Draws held and displayed blades with BladeCore + BladeView (one EditableMesh per visible sword for now) |
 
 ## StarterGui
@@ -73,7 +75,7 @@ The server owns all state (ingots, blades, swords, coins, forge slots, rack). Cl
 
 `Smithy/` holds `OreRoller`, `Forge` (Base + HeatPrompt "Use forge"), `Anvil` (BladeMount, ForgePrompt, Clang sound), `HiltBench`, `DisplayRack` (Slots 1–3, each with a HolderPrompt). The blade on the anvil (`Blade`), the Trace guide and the `Customers` folder are created at runtime.
 
-Rebuilt 2026-10-19 in the Japanese style ([[Smithy Redesign Proposal]]). Each station keeps the parts scripts read, and its look lives in a `Dress` model (plus `Stand1` on the roller):
+Rebuilt 2026-10-19 in the Japanese style ([[Art/Smithy Redesign|Smithy Redesign]]). Each station keeps the parts scripts read, and its look lives in a `Dress` model (plus `Stand1` on the roller):
 
 | Station | Parts scripts read (don't move or rename) | Free to restyle |
 |---|---|---|
@@ -101,4 +103,4 @@ Rebuilt 2026-10-19 in the Japanese style ([[Smithy Redesign Proposal]]). Each st
 
 `ServerStorage/AnvilController_Backup` is the disabled pre-refactor controller. Safe to delete.
 
-Related: [[Home]] · [[Roadmap]] · [[Create Swords! GDD]]
+Related: [[Home]] · [[Development/Roadmap|Roadmap]] · [[Design/Game Design Document|Game Design Document]]

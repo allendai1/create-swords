@@ -1,8 +1,9 @@
 ---
 title: Next Session Handoff
-status: browser study, grinding map and blade profile editor built; awaiting Allen's review
+status: historical snapshot
 date: 2026-10-19
 tags: [handoff, prototype, create-swords]
+type: archive
 ---
 
 # Next Session Handoff
@@ -11,12 +12,12 @@ The browser tantō forging study that was paused earlier on 2026-10-19 has been 
 
 ## Read first
 
-- [[Create Swords! GDD]]: current agreed design; supersedes older prototypes.
-- [[Decisions Log]]: chronological record, including superseded choices.
+- [[Design/Game Design Document|Game Design Document]]: current agreed design; supersedes older prototypes.
+- [[Design/Decisions Log|Decisions Log]]: chronological record, including superseded choices.
 - [[Sessions/2026-10-19]]: session history.
-- [[Blade Implementation Research]]: the profile-driven mesh approach the prototype follows.
+- [[Development/Blade Implementation Research|Blade Implementation Research]]: the profile-driven mesh approach the prototype follows.
 - `Prototypes/tanto-forge/README.md`: how to run it, file roles, and how the blade model works.
-- [[Blade Profile Authoring]]: where the tantō numbers came from and what new sword shapes would take.
+- [[Development/Blade Profile Authoring|Blade Profile Authoring]]: where the tantō numbers came from and what new sword shapes would take.
 
 ## Try it
 
@@ -44,7 +45,7 @@ The earlier session registered a private OpenAI Site (project `appgprj_6ad655f29
 
 ## Blade profile editor and starter blade drafts
 
-Built at Allen's request after the grinding map. `editor.html` reshapes any blueprint by dragging outline points, editing curves on graphs, typing catalogue measurements, or tracing a reference photo. It shows the same checks as the tests, scrubs a 3D preview through every strike, compares all blueprints at one scale, and exports JSON in the files' own format (tantō round-trips unchanged). *Try in forge study* forges the draft right away (`index.html#draft`, stored in this browser only). Wakizashi (48 cm) and katana (72 cm) drafts now exist; the forge study has a blueprint picker. Grinding reach is now measured in cm, so longer blades take longer passes. 65 tests pass across the three blueprints. Details: [[Blade Profile Authoring]].
+Built at Allen's request after the grinding map. `editor.html` reshapes any blueprint by dragging outline points, editing curves on graphs, typing catalogue measurements, or tracing a reference photo. It shows the same checks as the tests, scrubs a 3D preview through every strike, compares all blueprints at one scale, and exports JSON in the files' own format (tantō round-trips unchanged). *Try in forge study* forges the draft right away (`index.html#draft`, stored in this browser only). Wakizashi (48 cm) and katana (72 cm) drafts now exist; the forge study has a blueprint picker. Grinding reach is now measured in cm, so longer blades take longer passes. 65 tests pass across the three blueprints. Details: [[Development/Blade Profile Authoring|Blade Profile Authoring]].
 
 Checked in the browser pane at desktop and phone sizes: editing, undo, add/delete points, a failing check, catalogue rebuild, derive, draft hand-off, and a full katana forge and grind.
 
@@ -56,14 +57,14 @@ Checked in the browser pane at desktop and phone sizes: editing, undo, add/delet
 4. Is the 90% blade clean enough, and is the edge excess visible enough, before grinding?
 5. Does grinding feel optional but worthwhile at about four passes?
 6. Keep the hot glow cooling to steel, or drop it? It's presentation only, with no timer.
-7. Lengths and curves now follow real swords (tantō 25.8 cm with a slight inward curve, wakizashi 50 cm / 1.2 cm sori, katana 70 cm / 1.8 cm sori; see [[Blade Profile Authoring]]). Keep them realistic, or exaggerate the differences for readability?
+7. Lengths and curves now follow real swords (tantō 25.8 cm with a slight inward curve, wakizashi 50 cm / 1.2 cm sori, katana 70 cm / 1.8 cm sori; see [[Development/Blade Profile Authoring|Blade Profile Authoring]]). Keep them realistic, or exaggerate the differences for readability?
 8. Are the kissaki (2.9 and 3.6 cm) the right size, or should they be bolder so the point reads from the forging camera?
 9. Forging camera: the camera stays still and is pulled back far enough that the longest the blade gets, plus the tang, fits on either side of the hammer. For the katana that means about 90 cm, so the 12 cm blank fills only a small part of the screen at the start. Options: keep that (nothing moves but the blade), frame each blueprint to its own maximum length (the katana stays small, the tantō gets bigger), or let the camera ease outward as the blade lengthens (the blank starts large, at the cost of some camera motion).
 
 ## Next steps once reviewed
 
-1. Tune pacing, camera and proportions from Allen's feedback, then add the approved values to [[Decisions Log]].
-2. Approve or adjust the wakizashi and katana drafts in the editor, then record the chosen proportions in [[Decisions Log]].
+1. Tune pacing, camera and proportions from Allen's feedback, then add the approved values to [[Design/Decisions Log|Decisions Log]].
+2. Approve or adjust the wakizashi and katana drafts in the editor, then record the chosen proportions in [[Design/Decisions Log|Decisions Log]].
 3. ~~Port the core to Luau and run a Studio probe.~~ Done 2026-10-19; see "Roblox port" below.
 4. ~~Replace the anvil's old shaping modes with BladeCore.~~ Done 2026-10-19 (see "Anvil integration" below). First-person arm deferred by Allen.
 5. Held and displayed swords: one static mesh per blueprint instead of an EditableMesh each (the current `SwordRenderer` makes one per sword, which risks the client memory budget).
@@ -71,7 +72,7 @@ Checked in the browser pane at desktop and phone sizes: editing, undo, add/delet
 
 ## Anvil integration (2026-10-19)
 
-The real anvil now runs the approved flow on BladeCore: hot ingot → tantō / wakizashi / katana → 12 untimed strikes to 90% → optional grinding with the GrindMap → Finish, checked on the server by `ForgeCheck` (all strikes, valid grinding, minimum time since `BeginForge`). Held and displayed swords draw from the same data. Old prototype modes are in `ServerStorage.Legacy`. Details in [[Code Map]].
+The real anvil now runs the approved flow on BladeCore: hot ingot → tantō / wakizashi / katana → 12 untimed strikes to 90% → optional grinding with the GrindMap → Finish, checked on the server by `ForgeCheck` (all strikes, valid grinding, minimum time since `BeginForge`). Held and displayed swords draw from the same data. Old prototype modes are in `ServerStorage.Legacy`. Details in [[Development/Code Map|Code Map]].
 
 - Verified in Studio playtests: forging, grinding, Finish accepted (Steel Tantō 94%, 51 coins), all three blueprints render as swords. Not yet walked through: Hilt Bench → held sword in hand, customers buying the new blades, two players at once.
 - **Save the place** if not done since this change.
@@ -83,21 +84,21 @@ The real anvil now runs the approved flow on BladeCore: hot ingot → tantō / w
 The core now runs in the game's Studio place. Allen had the place open with Mesh / Image APIs enabled.
 
 - **Added to the place:** `ReplicatedStorage.Shared.BladeCore`, `BladeData` and `BladeProbe`; `ServerStorage.Tests.BladeCoreSpec` and `BladeGolden`; `StarterPlayerScripts.BladeProbeLoader`. Nothing existing was changed. The probe only runs when `workspace` has the `BladeProbe` attribute, and that attribute was cleared afterwards. Allen saved the place with these added (2026-10-19).
-- **Results:** 31/31 Luau tests pass in Studio and the CLI. The tantō and katana forged to 90% with real key presses, and the tantō ground to 100% with mouse drags. Mesh updates took about 0.6 ms per frame. Details and screenshots: [[Blade Implementation Research]]. How to run: `Prototypes/tanto-forge/roblox/README.md`.
+- **Results:** 31/31 Luau tests pass in Studio and the CLI. The tantō and katana forged to 90% with real key presses, and the tantō ground to 100% with mouse drags. Mesh updates took about 0.6 ms per frame. Details and screenshots: [[Development/Blade Implementation Research|Blade Implementation Research]]. How to run: `Prototypes/tanto-forge/roblox/README.md`.
 - **Data flow:** edit JSON (or use the editor) → `node Prototypes/tanto-forge/tools/export-luau.js` → copy `BladeData` and `BladeGolden` into Studio.
 
 ## Additional concept art saved after pause
 
-Allen requested four environment/station images. See [[Japanese Village Concept Art]] for forge, anvil, village map, and overall feel; PNGs and exact prompts are in `References/Japanese Village/`. These are visual proposals with review limitations noted. Prototype remains paused.
+Allen requested four environment/station images. See [[Art/Japanese Village Concept Art|Japanese Village Concept Art]] for forge, anvil, village map, and overall feel; PNGs and exact prompts are in `References/Japanese Village/`. These are visual proposals with review limitations noted. Prototype remains paused.
 
 ## Latest plot correction
 
-Allen wants larger player properties with a storefront and separate crafting area. See the spacious v2 image in [[Japanese Village Concept Art]]. L-shaped wings are proposed, not approved; the six-player map needs enough space for larger plots.
+Allen wants larger player properties with a storefront and separate crafting area. See the spacious v2 image in [[Art/Japanese Village Concept Art|Japanese Village Concept Art]]. L-shaped wings are proposed, not approved; the six-player map needs enough space for larger plots.
 
 ## Labeled plot follow-up
 
-Allen liked the spacious connected layout and requested an overhead labeled plan. See `References/Japanese Village/player-plot-top-down-v1.png` and [[Japanese Village Concept Art]]. Exact dimensions remain open.
+Allen liked the spacious connected layout and requested an overhead labeled plan. See `References/Japanese Village/player-plot-top-down-v1.png` and [[Art/Japanese Village Concept Art|Japanese Village Concept Art]]. Exact dimensions remain open.
 
 ## Early/mid/late concept added
 
-See `References/Japanese Village/plot-progression-v1.png` in [[Japanese Village Concept Art]]. Allen requested sparse/basic early game, fuller mid game, and expanded staffed late game with advanced upgrades. Station counts remain illustrative.
+See `References/Japanese Village/plot-progression-v1.png` in [[Art/Japanese Village Concept Art|Japanese Village Concept Art]]. Allen requested sparse/basic early game, fuller mid game, and expanded staffed late game with advanced upgrades. Station counts remain illustrative.

@@ -3,6 +3,8 @@ title: Sword Silhouettes
 status: visual reference
 date: 2026-10-18
 tags: [concept-art, swords, blueprints]
+type: "art"
+updated: "2026-10-19"
 ---
 
 # Sword Silhouettes
@@ -19,5 +21,5 @@ These are full-sword visual concepts. The anvil's shaping target would use the b
 
 Created with the built-in image generation tool. Full prompt: [[References/Sword Silhouettes/generation-prompt-v1]].
 
-Related: [[Home]] · [[Create Swords! GDD]] · [[Player Plot Concept Art]]
+Related: [[Home]] · [[Design/Game Design Document|Game Design Document]] · [[Archive/Player Plot Concept Art|Player Plot Concept Art]]
 

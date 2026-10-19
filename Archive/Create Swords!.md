@@ -1,3 +1,9 @@
+---
+type: "archive"
+updated: "2026-10-19"
+status: "historical brainstorm; see Game Design Document"
+---
+
 brainstorm
 
 names: 
