@@ -65,9 +65,18 @@ Checked in the browser pane at desktop and phone sizes: editing, undo, add/delet
 1. Tune pacing, camera and proportions from Allen's feedback, then add the approved values to [[Decisions Log]].
 2. Approve or adjust the wakizashi and katana drafts in the editor, then record the chosen proportions in [[Decisions Log]].
 3. ~~Port the core to Luau and run a Studio probe.~~ Done 2026-10-19; see "Roblox port" below.
-4. Replace the anvil's old shaping modes with BladeCore: hook the probe's hammer, poses and grinding into `AnvilController`, move strike/grind validation to the server (`importState` already validates saves), and port the grinding map to UI frames.
+4. ~~Replace the anvil's old shaping modes with BladeCore.~~ Done 2026-10-19 (see "Anvil integration" below). First-person arm deferred by Allen.
 5. Held and displayed swords: one static mesh per blueprint instead of an EditableMesh each (the current `SwordRenderer` makes one per sword, which risks the client memory budget).
 6. Test on a published client and a phone; then multiplayer (others watching a forge).
+
+## Anvil integration (2026-10-19)
+
+The real anvil now runs the approved flow on BladeCore: hot ingot → tantō / wakizashi / katana → 12 untimed strikes to 90% → optional grinding with the GrindMap → Finish, checked on the server by `ForgeCheck` (all strikes, valid grinding, minimum time since `BeginForge`). Held and displayed swords draw from the same data. Old prototype modes are in `ServerStorage.Legacy`. Details in [[Code Map]].
+
+- Verified in Studio playtests: forging, grinding, Finish accepted (Steel Tantō 94%, 51 coins), all three blueprints render as swords. Not yet walked through: Hilt Bench → held sword in hand, customers buying the new blades, two players at once.
+- **Save the place** if not done since this change.
+- Open choices: blueprint prices and stars (placeholders 20/45/110), the hot glow, camera framing per blueprint, and when to add the first-person arm.
+- For playtests in Studio: `game.ServerStorage.DevGiveHotIngot:Invoke(player, "Steel")` from the Server command bar gives a hot ingot (Studio only).
 
 ## Roblox port (2026-10-19)
 

@@ -144,6 +144,10 @@ These approved decisions supersede conflicting earlier rows. Implementation is p
 
 | 2026-10-19 | **Starter blades use real lengths and curvature** | Tantō 25.8 cm with a slight inward curve (sori −0.1 cm), wakizashi 50 cm (sori 1.2 cm), katana 70 cm (sori 1.8 cm), measured the catalogue way. Representative values from research; sori varies by period. Widths, thickness, kissaki and tangs remain exploratory. Sources in [[Blade Profile Authoring]]. | [[Sessions/2026-10-19]] |
 
+| 2026-10-19 | **Starter blueprints replace the prototype set** | The game's blueprints are now the tantō, wakizashi and katana from the blade data, replacing Dagger, Shortsword and the old Katana. Placeholder prices 20 / 45 / 110 coins and 1–3 stars until the economy pass. The Adventurer now likes wakizashi (was Shortsword); the Knight likes 95%+ blades (was 90%, which every forged blade now reaches). | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **First-person hammering arm deferred** | Tried a first-person view with the character's arm swinging the hammer; Allen chose to leave the arm for later as unimportant for now. The anvil keeps the angled overhead camera with the hammer in view (pivoting from behind the anvil so it never covers the blade). | [[Sessions/2026-10-19]] |
+
 ## Current open design work
 
 - Review [[Core Loop Review]]: first-session flow, picker clarity, heating pace, sales interruptions, and grinding incentive.
