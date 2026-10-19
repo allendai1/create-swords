@@ -214,13 +214,15 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 
 ## 11. World & multiplayer
 
+**Plot scale clarification (2026-10-19):** each player needs a larger property with a distinct storefront for customers and a dedicated place for crafting, plus room to expand. Avoid compressing both into a small shop stall. A connected L-shaped retail/crafting layout is explored in [[Japanese Village Concept Art]]; its exact floor plan and dimensions are not yet approved.
+
 - **6 players per server**, each with a workshop plot in a Japanese mountain swordsmith village.
 - **Open-front Japanese workshop:** visible forging and sword displays face the village path. Players can see neighbors working as they pass.
 - Progression expands **one evolving workshop** with more elaborate roofing, timber, signage, and displays. A compound of separate buildings or freeform building placement is not the selected direction.
 - Warm, cozy, stylized art: timber, tiled roofs, lanterns, stone paths, streams, and mountain scenery. Demon Slayer's Swordsmith Village is an atmosphere reference.
 - NPCs travel through the village and visit shops. Admiring other players' shops remains the light social layer; no player trading in v1.
 - Cosmetic decoration is freely expressive; functional displays and facilities provide business benefits.
-- The previously built medieval cabin (`Models/SwordShop.fbx`) is a historical asset, not the target shop design. Existing concept art needs a Japanese-setting revision.
+- The previously built medieval cabin (`Models/Archive/SwordShop.fbx`) is a historical asset, not the target shop design. The Japanese open-front workshop is now built in Studio from parts ([[Smithy Redesign Proposal]]).
 
 ## 12. Technical notes (Roblox)
 

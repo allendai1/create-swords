@@ -144,9 +144,17 @@ These approved decisions supersede conflicting earlier rows. Implementation is p
 
 | 2026-10-19 | **Starter blades use real lengths and curvature** | Tantō 25.8 cm with a slight inward curve (sori −0.1 cm), wakizashi 50 cm (sori 1.2 cm), katana 70 cm (sori 1.8 cm), measured the catalogue way. Representative values from research; sori varies by period. Widths, thickness, kissaki and tangs remain exploratory. Sources in [[Blade Profile Authoring]]. | [[Sessions/2026-10-19]] |
 
+| 2026-10-19 | **Smithy art direction: A/B mix** | Allen chose a mix of the two directions in [[Smithy Redesign Proposal]]: Direction A's materials and colours (white plaster, dark charred-cedar timber, grey tile roof, stone, iron, small vermilion and indigo accents) with Direction B's chunkier proportions (thicker posts and trim, bolder silhouettes) and extra lanterns (one on every front post). | [[Smithy Redesign Proposal]] |
+
+| 2026-10-19 | **Station shapes for the rebuild** | The proposal's defaults, which Allen didn't change: hornless kanatoko anvil (`Face` and `BladeMount` unchanged), upright-sword pedestals as sword holders, an "ore shrine" Ore Roller with stone stands and one shared lever, warm late-afternoon lighting, old prototype blocks moved to `ServerStorage.Archive`, cabin files moved to `Models/Archive/`. | [[Smithy Redesign Proposal]] |
+
+| 2026-10-19 | **Workshop built; choices made while building** | Claude's defaults, made during the build: holders at x 9.8 / 13 / 16.2 (3.2 apart, not 5, so the middle one stays at ShopService's inspect point), the Ore Roller lever post moved to x −12.2 and the stands to x ≈ −15, SpawnLocation moved to (1.5, 0.15, 9) as a low stone slab, Baseplate turned to grass, lighting set to ClockTime 16.4 with warm ambient (was 14.5 with grey 70/70/70). The anvil `Face` was darkened to 30/31/36 because the cooled steel blade was hard to see on it under the warm light. The noren were shortened to 1.4 studs so they don't block the player camera. | [[Smithy Redesign Proposal]] |
+
 | 2026-10-19 | **Starter blueprints replace the prototype set** | The game's blueprints are now the tantō, wakizashi and katana from the blade data, replacing Dagger, Shortsword and the old Katana. Placeholder prices 20 / 45 / 110 coins and 1–3 stars until the economy pass. The Adventurer now likes wakizashi (was Shortsword); the Knight likes 95%+ blades (was 90%, which every forged blade now reaches). | [[Sessions/2026-10-19]] |
 
 | 2026-10-19 | **First-person hammering arm deferred** | Tried a first-person view with the character's arm swinging the hammer; Allen chose to leave the arm for later as unimportant for now. The anvil keeps the angled overhead camera with the hammer in view (pivoting from behind the anvil so it never covers the blade). | [[Sessions/2026-10-19]] |
+
+| 2026-10-19 | **Larger plot with storefront and crafting area** | Each player needs a spacious property with distinct retail and crafting spaces. L-shaped connected wings are a visual proposal; exact layout and dimensions remain open. | [[Sessions/2026-10-19]] |
 
 ## Current open design work
 

@@ -16,6 +16,8 @@ Start here. This vault is the record for the game: design, decisions, plans and 
 | [[Roadmap]] | Phases and tasks from POC to launch |
 | [[Code Map]] | Where every script and model lives in the Studio place, and how they connect |
 | [[UI Design]] | Figma file, UI style (colours, fonts) and which screens are designed |
+| [[Japanese Village Concept Art]] | Japanese forge, anvil, six-shop village map, and overall atmosphere concepts |
+| [[Smithy Redesign Proposal]] | Japanese workshop and station rebuild: critique, chosen A/B mix, what was built and playtested |
 | [[Player Plot Concept Art]] | Plot overview and matching forge, anvil, bench, and sword display concepts |
 | [[UI Concept - Furnace]] | Warm item-picker style and the furnace's one-click loading flow |
 | [[Blade Implementation Research]] | Studio/Blender options and recommended runtime deformation pipeline |

@@ -85,3 +85,11 @@ The core now runs in the game's Studio place. Allen had the place open with Mesh
 - **Added to the place:** `ReplicatedStorage.Shared.BladeCore`, `BladeData` and `BladeProbe`; `ServerStorage.Tests.BladeCoreSpec` and `BladeGolden`; `StarterPlayerScripts.BladeProbeLoader`. Nothing existing was changed. The probe only runs when `workspace` has the `BladeProbe` attribute, and that attribute was cleared afterwards. Allen saved the place with these added (2026-10-19).
 - **Results:** 31/31 Luau tests pass in Studio and the CLI. The tantō and katana forged to 90% with real key presses, and the tantō ground to 100% with mouse drags. Mesh updates took about 0.6 ms per frame. Details and screenshots: [[Blade Implementation Research]]. How to run: `Prototypes/tanto-forge/roblox/README.md`.
 - **Data flow:** edit JSON (or use the editor) → `node Prototypes/tanto-forge/tools/export-luau.js` → copy `BladeData` and `BladeGolden` into Studio.
+
+## Additional concept art saved after pause
+
+Allen requested four environment/station images. See [[Japanese Village Concept Art]] for forge, anvil, village map, and overall feel; PNGs and exact prompts are in `References/Japanese Village/`. These are visual proposals with review limitations noted. Prototype remains paused.
+
+## Latest plot correction
+
+Allen wants larger player properties with a storefront and separate crafting area. See the spacious v2 image in [[Japanese Village Concept Art]]. L-shaped wings are proposed, not approved; the six-player map needs enough space for larger plots.

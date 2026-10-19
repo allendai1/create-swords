@@ -73,9 +73,21 @@ The server owns all state (ingots, blades, swords, coins, forge slots, rack). Cl
 
 `Smithy/` holds `OreRoller`, `Forge` (Base + HeatPrompt "Use forge"), `Anvil` (BladeMount, ForgePrompt, Clang sound), `HiltBench`, `DisplayRack` (Slots 1–3, each with a HolderPrompt). The blade on the anvil (`Blade`), the Trace guide and the `Customers` folder are created at runtime.
 
+Rebuilt 2026-10-19 in the Japanese style ([[Smithy Redesign Proposal]]). Each station keeps the parts scripts read, and its look lives in a `Dress` model (plus `Stand1` on the roller):
+
+| Station | Parts scripts read (don't move or rename) | Free to restyle |
+|---|---|---|
+| `Forge` | `Base` (invisible box, exact old size and CFrame; ForgeService places `ForgeSlot1/2` and `ForgeTimers` from it) + `HeatPrompt` | `Fire` (Neon + PointLight in the chamber), `Chimney`, `Dress` |
+| `OreRoller` | `Machine` (now the lever post at −12.2, 1, −13.4) + `RollPrompt` | `Stand1` (`Ore` is the part a roulette reveal would recolour), `Dress` |
+| `Anvil` | `BladeMount`, `Face` + `ForgePrompt`, `Clang` | `Stump`, `Waist`, `Base` (now the hornless block and banded wood base), `Dress`. `Horn` was removed |
+| `HiltBench` | `Top` + `HiltPrompt` | everything else |
+| `DisplayRack` | `Slots/Slot1..3` + `HolderPrompt`. Slots now sit at x 9.8 / 13 / 16.2, z −10, same rotation (blade up, broad face to +Z). ShopService's `INSPECT_POINT` (13, 3, −6.5) assumes the middle one | `Base` (the deck), `Dress` (pedestals) |
+
+`Workshop/` is the building around them, with no scripts: `Ground` (plot pad, earth and stone floors, path), `Frame`, `Walls`, `Roof`, `Front` (signboard, noren), `Lanterns` (a chōchin on every front post, wall lamps inside). Tie beams skip the anvil bays so the forging camera stays clear. The open side faces +Z. `SpawnLocation` sits in front of it at (1.5, 0.15, 9); the Baseplate is grass. The old prototype blocks (`store`, `creation area`, two slabs) are in `ServerStorage.Archive`.
+
 ## Models (outside Studio)
 
-`Models/SwordShop.bbmodel` (Blockbench source) and `Models/SwordShop.fbx` (import file, 1 unit = 1 stud): the shop cabin as 17 named meshes on one palette texture. Not imported into the place yet.
+`Models/Archive/SwordShop.bbmodel` (Blockbench source) and `Models/Archive/SwordShop.fbx` (import file, 1 unit = 1 stud): the historical medieval cabin, 17 named meshes on one palette texture. Never imported; superseded by `Workspace.Workshop`.
 
 ## ServerStorage.Legacy
 

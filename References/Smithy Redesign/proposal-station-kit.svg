@@ -1,0 +1,196 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 620" font-family="Helvetica, Arial, sans-serif">
+  <rect width="1600" height="620" fill="#F4EEE2"/>
+  <text x="40" y="52" font-size="30" font-weight="700" fill="#2E2622">Smithy redesign: station kit, front views (Direction A, "working kajiba")</text>
+  <text x="40" y="82" font-size="16" fill="#5B514A">Sketch at true scale: 1 stud = 28 px; the figure is a 5.2-stud R15 character. Solid fills are new dress; red outlines mark scripted parts that keep their name, size and position (dashed = kept but hidden).</text>
+
+  <g transform="translate(0,-260)">
+  <!-- ground -->
+  <rect x="20" y="620" width="1560" height="34" fill="#6B5644"/>
+  <rect x="20" y="620" width="1560" height="5" fill="#57463A"/>
+
+  <!-- ===== ORE ROLLER (centre ~150) ===== -->
+  <!-- frame with a small tiled cap -->
+  <polygon points="22,470 278,470 262,452 38,452" fill="#5C6670"/>
+  <rect x="30" y="468" width="240" height="12" fill="#2E2622"/>
+  <rect x="40" y="480" width="10" height="140" fill="#2E2622"/>
+  <rect x="250" y="480" width="10" height="140" fill="#2E2622"/>
+  <!-- shimenawa-like straw cord with paper tags across the frame -->
+  <path d="M50,492 Q150,512 250,492" stroke="#D9C48A" stroke-width="5" fill="none"/>
+  <polygon points="100,503 108,503 104,513 110,513 104,524 98,513 104,513" fill="#FFFFFF" stroke="#BDB4A6" stroke-width="1"/>
+  <polygon points="196,503 204,503 200,513 206,513 200,524 194,513 200,513" fill="#FFFFFF" stroke="#BDB4A6" stroke-width="1"/>
+  <!-- stand 2 (upgrade slot, dashed) -->
+  <rect x="62" y="558" width="45" height="62" fill="none" stroke="#9A8F84" stroke-width="2" stroke-dasharray="6 5"/>
+  <text x="84" y="600" font-size="11" fill="#9A8F84" text-anchor="middle">stand 2</text>
+  <!-- stand 1: stone pedestal + wooden offering tray + ore -->
+  <rect x="128" y="558" width="45" height="62" fill="#8C8A84"/>
+  <rect x="128" y="558" width="45" height="6" fill="#A7A49D"/>
+  <rect x="122" y="547" width="57" height="11" fill="#B9875A"/>
+  <polygon points="134,547 141,530 152,523 164,527 170,538 168,547" fill="#7FB2D6" stroke="#2E2622" stroke-width="1.5"/>
+  <circle cx="151" cy="516" r="3" fill="#FFE9A8"/><circle cx="163" cy="520" r="2" fill="#FFE9A8"/>
+  <!-- shared lever = Machine (keeps RollPrompt) -->
+  <rect x="212" y="588" width="30" height="32" fill="none" stroke="#C8452F" stroke-width="2.5"/>
+  <rect x="214" y="590" width="26" height="30" fill="#B9875A"/>
+  <line x1="227" y1="592" x2="244" y2="505" stroke="#2E2622" stroke-width="9" stroke-linecap="round"/>
+  <line x1="241" y1="522" x2="245" y2="502" stroke="#D9C48A" stroke-width="12" stroke-linecap="round"/>
+  <text x="150" y="680" font-size="18" font-weight="700" fill="#2E2622" text-anchor="middle">Ore Roller: ore shrine</text>
+  <text x="150" y="702" font-size="13" fill="#5B514A" text-anchor="middle">one big shared lever, stone stands</text>
+  <text x="150" y="719" font-size="13" fill="#5B514A" text-anchor="middle">whose ore cycles, then stops</text>
+  <text x="150" y="740" font-size="12" fill="#C8452F" text-anchor="middle">keep: Machine + RollPrompt (the lever post)</text>
+
+  <!-- ===== FORGE (centre ~430) ===== -->
+  <!-- chimney with cap -->
+  <rect x="414" y="390" width="32" height="64" fill="#4A4F57"/>
+  <rect x="406" y="380" width="48" height="12" fill="#3A3D44"/>
+  <rect x="418" y="392" width="8" height="6" fill="#FF8A3A"/><rect x="434" y="392" width="8" height="6" fill="#FF8A3A"/>
+  <!-- plaster hood -->
+  <polygon points="372,500 488,500 458,452 402,452" fill="#E9E2D0" stroke="#2E2622" stroke-width="2"/>
+  <!-- timber frame + iron lintel -->
+  <rect x="372" y="500" width="116" height="14" fill="#3A3D44"/>
+  <rect x="368" y="500" width="10" height="102" fill="#6E4630"/><rect x="482" y="500" width="10" height="102" fill="#6E4630"/>
+  <!-- plaster body with recessed glowing chamber (Base = invisible hit box here) -->
+  <rect x="378" y="514" width="104" height="74" fill="#E9E2D0"/>
+  <rect x="392" y="524" width="76" height="58" fill="#C9502A"/>
+  <rect x="400" y="532" width="60" height="48" fill="#FF8A3A"/>
+  <rect x="410" y="548" width="40" height="28" rx="6" fill="#FFD27A"/>
+  <!-- two iron trays sliding into the chamber (ForgeSlot1/2) -->
+  <rect x="396" y="583" width="30" height="7" fill="#3A3D44"/><rect x="434" y="583" width="30" height="7" fill="#3A3D44"/>
+  <rect x="402" y="578" width="16" height="5" fill="#FFB347"/>
+  <!-- dark stone plinth -->
+  <rect x="366" y="590" width="128" height="30" fill="#4A4F57"/>
+  <line x1="366" y1="605" x2="494" y2="605" stroke="#3A3D44" stroke-width="2"/>
+  <line x1="400" y1="590" x2="400" y2="605" stroke="#3A3D44" stroke-width="2"/><line x1="450" y1="605" x2="450" y2="620" stroke="#3A3D44" stroke-width="2"/>
+  <!-- Base outline (kept size and CFrame) -->
+  <rect x="385" y="547" width="90" height="73" fill="none" stroke="#C8452F" stroke-width="2.5" stroke-dasharray="7 4"/>
+  <!-- shimenawa over the chamber -->
+  <path d="M378,518 Q430,532 482,518" stroke="#D9C48A" stroke-width="6" fill="none"/>
+  <polygon points="404,526 412,526 408,535 414,535 408,546 402,535 408,535" fill="#FFFFFF" stroke="#BDB4A6" stroke-width="1"/>
+  <polygon points="448,526 456,526 452,535 458,535 452,546 446,535 452,535" fill="#FFFFFF" stroke="#BDB4A6" stroke-width="1"/>
+  <!-- side box bellows + charcoal crate -->
+  <polygon points="312,560 368,548 368,588 312,580" fill="#B9875A" stroke="#2E2622" stroke-width="2"/>
+  <rect x="306" y="556" width="10" height="28" fill="#3A3D44"/>
+  <rect x="318" y="588" width="8" height="32" fill="#6E4630"/><rect x="352" y="588" width="8" height="32" fill="#6E4630"/>
+  <rect x="296" y="598" width="40" height="22" fill="#8A5A3A" stroke="#2E2622" stroke-width="1.5"/>
+  <g fill="#2E2622"><circle cx="306" cy="597" r="4"/><circle cx="316" cy="595" r="4"/><circle cx="326" cy="597" r="4"/></g>
+  <text x="400" y="680" font-size="18" font-weight="700" fill="#2E2622" text-anchor="middle">Forge: plaster hearth</text>
+  <text x="400" y="702" font-size="13" fill="#5B514A" text-anchor="middle">stone plinth, recessed glowing chamber,</text>
+  <text x="400" y="719" font-size="13" fill="#5B514A" text-anchor="middle">two trays, side bellows, hood + chimney</text>
+  <text x="400" y="740" font-size="12" fill="#C8452F" text-anchor="middle">keep: Base size/CFrame (hidden), HeatPrompt</text>
+
+  <!-- ===== ANVIL (centre ~720) ===== -->
+  <!-- keyaki block with iron band -->
+  <rect x="680" y="572" width="80" height="48" fill="#8A5A3A"/>
+  <rect x="680" y="584" width="80" height="6" fill="#3A3D44"/>
+  <line x1="700" y1="596" x2="700" y2="618" stroke="#6E4630" stroke-width="2"/><line x1="738" y1="594" x2="738" y2="618" stroke="#6E4630" stroke-width="2"/>
+  <!-- hornless iron block -->
+  <rect x="688" y="547" width="64" height="25" fill="#3A3D44"/>
+  <!-- Face (kept exactly) -->
+  <rect x="678" y="530" width="84" height="17" fill="#2F3238"/>
+  <rect x="678" y="530" width="84" height="3" fill="#6A6F78"/>
+  <rect x="678" y="530" width="84" height="17" fill="none" stroke="#C8452F" stroke-width="2.5"/>
+  <!-- hot blade lying on it -->
+  <path d="M664,528 L760,526 L786,528 L760,530 L664,530 Z" fill="#FF9B4A"/>
+  <!-- water bucket + hammer rack -->
+  <rect x="784" y="592" width="30" height="28" fill="#B9875A" stroke="#2E2622" stroke-width="2"/>
+  <rect x="784" y="600" width="30" height="3" fill="#3A3D44"/><rect x="784" y="612" width="30" height="3" fill="#3A3D44"/>
+  <rect x="638" y="560" width="8" height="60" fill="#2E2622"/>
+  <rect x="628" y="566" width="28" height="8" fill="#3A3D44"/>
+  <text x="720" y="680" font-size="18" font-weight="700" fill="#2E2622" text-anchor="middle">Anvil: kanatoko</text>
+  <text x="720" y="702" font-size="13" fill="#5B514A" text-anchor="middle">hornless iron block on a banded</text>
+  <text x="720" y="719" font-size="13" fill="#5B514A" text-anchor="middle">wood block; matte face so the blade pops</text>
+  <text x="720" y="740" font-size="12" fill="#C8452F" text-anchor="middle">keep: Face (top y 3.2), BladeMount, Clang</text>
+
+  <!-- ===== HILT BENCH (centre ~990) ===== -->
+  <!-- pegboard with tsuka and tsuba -->
+  <rect x="948" y="438" width="84" height="96" fill="#B9875A" stroke="#2E2622" stroke-width="2"/>
+  <rect x="958" y="450" width="9" height="38" rx="4" fill="#2D3F66"/>
+  <rect x="974" y="450" width="9" height="38" rx="4" fill="#C8452F"/>
+  <rect x="990" y="450" width="9" height="38" rx="4" fill="#2E2622"/>
+  <rect x="1006" y="450" width="9" height="38" rx="4" fill="#E8B54A"/>
+  <circle cx="966" cy="510" r="9" fill="#3A3D44"/><circle cx="990" cy="510" r="9" fill="#B07A3A"/><circle cx="1014" cy="510" r="9" fill="#3A3D44"/>
+  <!-- desk top = Top (kept) -->
+  <rect x="938" y="534" width="104" height="9" fill="#C69A6A"/>
+  <rect x="938" y="534" width="104" height="9" fill="none" stroke="#C8452F" stroke-width="2.5"/>
+  <!-- paper lamp, blade on the desk, silk spools -->
+  <rect x="944" y="506" width="15" height="28" fill="#FFF3D1" stroke="#2E2622" stroke-width="1.5"/>
+  <line x1="968" y1="531" x2="1034" y2="531" stroke="#C9CED6" stroke-width="3"/>
+  <!-- drawers (tansu) -->
+  <rect x="946" y="543" width="88" height="60" fill="#8A5A3A"/>
+  <line x1="946" y1="563" x2="1034" y2="563" stroke="#2E2622" stroke-width="2"/><line x1="946" y1="583" x2="1034" y2="583" stroke="#2E2622" stroke-width="2"/>
+  <circle cx="990" cy="553" r="2.5" fill="#E8B54A"/><circle cx="990" cy="573" r="2.5" fill="#E8B54A"/><circle cx="990" cy="593" r="2.5" fill="#E8B54A"/>
+  <!-- tatami platform -->
+  <rect x="924" y="603" width="132" height="17" fill="#C9C08A"/>
+  <rect x="924" y="603" width="132" height="4" fill="#2D3F66"/>
+  <text x="990" y="680" font-size="18" font-weight="700" fill="#2E2622" text-anchor="middle">Hilt Bench: fittings desk</text>
+  <text x="990" y="702" font-size="13" fill="#5B514A" text-anchor="middle">drawer desk on a tatami edge, wall of</text>
+  <text x="990" y="719" font-size="13" fill="#5B514A" text-anchor="middle">colour-wrapped grips and tsuba, lamp</text>
+  <text x="990" y="740" font-size="12" fill="#C8452F" text-anchor="middle">keep: Top + HiltPrompt</text>
+
+  <!-- ===== DISPLAY (centre ~1300) ===== -->
+  <rect x="1186" y="608" width="236" height="12" fill="#2E2622"/>
+  <!-- pedestal holders: sword upright, grip up, blade down into the stand -->
+  <g>
+    <rect x="1206" y="566" width="44" height="42" fill="#8A5A3A" stroke="#2E2622" stroke-width="2"/>
+    <rect x="1202" y="560" width="52" height="8" fill="#1E1A18"/><rect x="1202" y="566" width="52" height="3" fill="#C8452F"/>
+    <rect x="1216" y="580" width="24" height="12" fill="#FFF3D1" stroke="#B9A98A" stroke-width="1"/><text x="1228" y="590" font-size="9" fill="#2E2622" text-anchor="middle">120</text>
+    <path d="M1225,560 L1225,502 L1228,494 L1231,502 L1231,560 Z" fill="#D8DDE4" stroke="#8C939C" stroke-width="1"/>
+    <ellipse cx="1228" cy="490" rx="9" ry="3" fill="#B07A3A"/>
+    <rect x="1224" y="462" width="8" height="27" rx="3" fill="#2D3F66"/>
+  </g>
+  <g>
+    <rect x="1280" y="566" width="44" height="42" fill="#8A5A3A" stroke="#2E2622" stroke-width="2"/>
+    <rect x="1276" y="560" width="52" height="8" fill="#1E1A18"/><rect x="1276" y="566" width="52" height="3" fill="#C8452F"/>
+    <rect x="1290" y="580" width="24" height="12" fill="#FFF3D1" stroke="#B9A98A" stroke-width="1"/><text x="1302" y="590" font-size="9" fill="#2E2622" text-anchor="middle">85</text>
+    <path d="M1299,560 L1299,516 L1302,508 L1305,516 L1305,560 Z" fill="#9BC6E8" stroke="#6A8FAE" stroke-width="1"/>
+    <ellipse cx="1302" cy="505" rx="8" ry="3" fill="#3A3D44"/>
+    <rect x="1298" y="484" width="8" height="20" rx="3" fill="#C8452F"/>
+  </g>
+  <g>
+    <rect x="1354" y="566" width="44" height="42" fill="none" stroke="#2E2622" stroke-width="2" stroke-dasharray="5 4"/>
+    <rect x="1350" y="560" width="52" height="8" fill="none" stroke="#2E2622" stroke-width="2" stroke-dasharray="5 4"/>
+    <rect x="1371" y="510" width="10" height="30" fill="#4CB050"/><rect x="1361" y="520" width="30" height="10" fill="#4CB050"/>
+  </g>
+  <g fill="none" stroke="#C8452F" stroke-width="2.5"><circle cx="1228" cy="490" r="6"/><circle cx="1302" cy="505" r="6"/></g>
+  <text x="1300" y="680" font-size="18" font-weight="700" fill="#2E2622" text-anchor="middle">Sword holders: pedestals</text>
+  <text x="1300" y="702" font-size="13" fill="#5B514A" text-anchor="middle">one lacquer-capped stand per holder at</text>
+  <text x="1300" y="719" font-size="13" fill="#5B514A" text-anchor="middle">the open front, sword upright, paper tag</text>
+  <text x="1300" y="740" font-size="12" fill="#C8452F" text-anchor="middle">keep: Slots/Slot1-3 + HolderPrompt</text>
+
+  <!-- ===== scale figure ===== -->
+  <circle cx="1530" cy="490" r="15" fill="#9A9089"/>
+  <rect x="1512" y="506" width="36" height="56" rx="4" fill="#9A9089"/>
+  <rect x="1514" y="562" width="14" height="58" fill="#9A9089"/><rect x="1532" y="562" width="14" height="58" fill="#9A9089"/>
+  <text x="1530" y="680" font-size="13" fill="#5B514A" text-anchor="middle">5.2-stud player</text>
+
+  <!-- scale bar -->
+  <line x1="40" y1="790" x2="180" y2="790" stroke="#2E2622" stroke-width="3"/>
+  <line x1="40" y1="782" x2="40" y2="798" stroke="#2E2622" stroke-width="3"/><line x1="180" y1="782" x2="180" y2="798" stroke="#2E2622" stroke-width="3"/>
+  <text x="110" y="816" font-size="13" fill="#2E2622" text-anchor="middle">5 studs</text>
+
+  <!-- palettes -->
+  <text x="300" y="784" font-size="15" font-weight="700" fill="#2E2622">A · working kajiba</text>
+  <g font-size="11" fill="#5B514A">
+    <rect x="300" y="794" width="46" height="30" fill="#E9E2D0" stroke="#BDB4A6"/><text x="300" y="840">plaster</text>
+    <rect x="354" y="794" width="46" height="30" fill="#2E2622"/><text x="354" y="840">charred cedar</text>
+    <rect x="408" y="794" width="46" height="30" fill="#B9875A"/><text x="408" y="852">hinoki</text>
+    <rect x="462" y="794" width="46" height="30" fill="#5C6670"/><text x="462" y="840">roof tile</text>
+    <rect x="516" y="794" width="46" height="30" fill="#A86E4A"/><text x="516" y="852">hearth clay</text>
+    <rect x="570" y="794" width="46" height="30" fill="#3A3D44"/><text x="570" y="840">iron</text>
+    <rect x="624" y="794" width="46" height="30" fill="#C8452F"/><text x="624" y="852">vermilion</text>
+    <rect x="678" y="794" width="46" height="30" fill="#2D3F66"/><text x="678" y="840">indigo</text>
+  </g>
+  <text x="800" y="784" font-size="15" font-weight="700" fill="#2E2622">B · festival smithy (same shapes, chunkier, brighter)</text>
+  <g font-size="11" fill="#5B514A">
+    <rect x="800" y="794" width="46" height="30" fill="#F6EBD3" stroke="#BDB4A6"/><text x="800" y="840">cream</text>
+    <rect x="854" y="794" width="46" height="30" fill="#C47A45"/><text x="854" y="840">warm cedar</text>
+    <rect x="908" y="794" width="46" height="30" fill="#E0532F"/><text x="908" y="852">lacquer red</text>
+    <rect x="962" y="794" width="46" height="30" fill="#3F7C8C"/><text x="962" y="840">teal tile</text>
+    <rect x="1016" y="794" width="46" height="30" fill="#E8B54A"/><text x="1016" y="852">gold</text>
+    <rect x="1070" y="794" width="46" height="30" fill="#4A4F5A"/><text x="1070" y="840">soft iron</text>
+    <rect x="1124" y="794" width="46" height="30" fill="#F2A7B5"/><text x="1124" y="852">blossom</text>
+    <rect x="1178" y="794" width="46" height="30" fill="#6FA35A"/><text x="1178" y="840">moss</text>
+  </g>
+  <text x="1260" y="808" font-size="13" fill="#5B514A">B: 20-30% thicker posts and trim,</text>
+  <text x="1260" y="826" font-size="13" fill="#5B514A">rounder lanterns, red lacquer on</text>
+  <text x="1260" y="844" font-size="13" fill="#5B514A">every holder, blossom tree at the gate.</text>
+  </g>
+</svg>

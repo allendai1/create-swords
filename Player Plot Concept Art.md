@@ -7,6 +7,8 @@ tags: [concept-art, create-swords, environment]
 
 # Player Plot Concept Art
 
+**Latest Japanese-setting exploration:** [[Japanese Village Concept Art]]. Images below preserve the earlier visual direction.
+
 Concept images for **Sell Swords!**, based on [[Create Swords! GDD]], [[Decisions Log]], [[Sessions/2026-10-17]], and the saved visual references. These are visual explorations rather than implemented game changes.
 
 The current Studio scene was not accessible in this chat. The existing forge, anvil, Hilt Bench, shared three-slot rack, and NPC behavior were reviewed through the vault's build notes.

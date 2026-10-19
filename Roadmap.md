@@ -80,7 +80,7 @@ Goal: hammering a blank to match a silhouette feels good, and the score is right
 - [ ] Haggling (patience, counter-offers), reputation
 - [ ] Coin upgrades: more sword holders, more forge slots, faster heating, ingot storage
 - [ ] 6-plot village, plot assignment on join (max 6 players); spacious plots with room for upgrades ([[Player Plot Concept Art]] v2)
-- [x] Shop building model: log cabin, enterable, 36.5 × 28.5 stud floor (`Models/SwordShop.fbx`, Blockbench). Historical asset; superseded by the Japanese workshop, do not import as the target design
+- [x] Shop building model: log cabin, enterable, 36.5 × 28.5 stud floor (`Models/Archive/SwordShop.fbx`, Blockbench). Historical asset; superseded by the Japanese workshop, do not import as the target design
 
 ## Phase 3 — Commissions & gems
 
