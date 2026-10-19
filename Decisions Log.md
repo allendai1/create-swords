@@ -156,6 +156,8 @@ These approved decisions supersede conflicting earlier rows. Implementation is p
 
 | 2026-10-19 | **Larger plot with storefront and crafting area** | Each player needs a spacious property with distinct retail and crafting spaces. L-shaped connected wings are a visual proposal; exact layout and dimensions remain open. | [[Sessions/2026-10-19]] |
 
+| 2026-10-19 | **Visible early/mid/late plot growth** | Sparse shop/basic stations early; more swords and stations mid game; expanded shop, workers, and advanced upgrades late game. Concept capacities remain illustrative. | [[Sessions/2026-10-19]] |
+
 ## Current open design work
 
 - Review [[Core Loop Review]]: first-session flow, picker clarity, heating pace, sales interruptions, and grinding incentive.

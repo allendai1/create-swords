@@ -206,6 +206,8 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 
 ### 10.3 Progression arc
 
+**Visual progression direction (2026-10-19):** early game starts sparse with basic stations; mid game adds displayed swords and stations; late game expands the shop with station workers and advanced upgrades. See [[Japanese Village Concept Art]] for the same-plot comparison. Illustrated capacities and precise unlocks are proposals, not fixed balance rules.
+
 | Stage | Player has | Goal |
 |---|---|---|
 | Early (pacing to test) | Roller, forge, anvil, bench, display; local teaching commissions | First tantō sale, fittings milestone, progress toward wakizashi and katana |

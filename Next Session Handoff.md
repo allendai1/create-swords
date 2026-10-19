@@ -93,3 +93,11 @@ Allen requested four environment/station images. See [[Japanese Village Concept 
 ## Latest plot correction
 
 Allen wants larger player properties with a storefront and separate crafting area. See the spacious v2 image in [[Japanese Village Concept Art]]. L-shaped wings are proposed, not approved; the six-player map needs enough space for larger plots.
+
+## Labeled plot follow-up
+
+Allen liked the spacious connected layout and requested an overhead labeled plan. See `References/Japanese Village/player-plot-top-down-v1.png` and [[Japanese Village Concept Art]]. Exact dimensions remain open.
+
+## Early/mid/late concept added
+
+See `References/Japanese Village/plot-progression-v1.png` in [[Japanese Village Concept Art]]. Allen requested sparse/basic early game, fuller mid game, and expanded staffed late game with advanced upgrades. Station counts remain illustrative.

@@ -17,6 +17,28 @@ Allen requested larger individual plots with a storefront and a dedicated crafti
 
 The generated roller resembles ore bins rather than one material per stand, and the anvil is tapered. Retain the approved shared lever/one output per stand and use the standalone rectangular anvil reference for modeling. Exact prompt: [[References/Japanese Village/player-plot-prompt-v2]].
 
+## Labeled top-down layout
+
+![[References/Japanese Village/player-plot-top-down-v1.png]]
+
+Allen liked the spacious connected layout and requested this labeled overhead view. Labels identify the storefront, sales counter, sword displays, covered crafting area, forge, anvil, hilt bench, material shelf, two ore stands and shared lever, courtyard, expansion lawn, entrance, and road.
+
+Concept arrangement only, not a measured construction plan. The illustration retains some angled projection, and the material shelf looks like a sword rack; model it as ingot storage. Station capacity and decorative details are illustrative. Exact prompt: [[References/Japanese Village/player-plot-top-down-prompt-v1]].
+
+## Early / mid / late progression
+
+![[References/Japanese Village/plot-progression-v1.png]]
+
+Allen requested a sparse early shop with basic stations, a mid-game shop with more swords and stations, and a late-game expanded shop with workers and advanced upgrades. The comparison retains the same plot boundary and road orientation while buildings and equipment grow into reserve space.
+
+- **Early:** simple storefront, one display, basic forge/anvil/hilt bench, one ore stand, large empty lawn, no workers.
+- **Mid:** more displays and inventory, improved forge, finishing space, two ore stands with one shared lever, remaining expansion lawn.
+- **Late:** expanded retail/crafting space, cashier and apprentice smiths, advanced forge and benches, etching/gem-work examples, additional stands under one shared lever.
+
+Exact counts, upgrade costs, timing, station availability, and worker assignments remain illustrative. The generated late-game furnace shows more openings than the four requested in the prompt; do not infer capacity from that drawing. Some display racks show multiple blades even in the early panel. This sheet conveys growth and zoning rather than exact item counts or a measured floor plan.
+
+Exact prompt: [[References/Japanese Village/plot-progression-prompt-v1]].
+
 ## Forge
 
 ![[References/Japanese Village/forge-v1.png]]
@@ -49,3 +71,9 @@ An inviting evening smithy, active forging, colorful blades on display, a visiti
 - No live Studio changes. The browser prototype remains paused.
 
 Related: [[Create Swords! GDD]] · [[Player Plot Concept Art]] · [[Blade Shaping Study]] · [[Home]]
+
+## Transparent progression cutout
+
+![[References/Japanese Village/plot-progression-transparent-v1.png]]
+
+Background-removed variant requested by Allen: scenery, grass, and ground paving removed; buildings, stations, workers, fences, and labels retained. Created with the built-in image editing tool, followed by an edge-cleanup pass. Saved as a separate RGBA PNG; original progression image preserved.
