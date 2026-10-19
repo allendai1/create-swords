@@ -24,7 +24,8 @@ node Prototypes/tanto-forge/tests/blade-core.test.js
 | `dist/data/tanto.json` | Tantō stage shapes, 90% edge allowance, 12-strike recipe | Yes, as data |
 | `dist/js/blade-core.js` | Shape sampling, strike/grind state, quality, mesh positions, save/load | Yes, rewrite in Luau |
 | `dist/js/main.js` | Three.js scene, hammer, input, sparks, sound, HUD | No, exploratory |
-| `tests/blade-core.test.js` | 19 checks on the core logic | Port alongside the core |
+| `dist/js/blade-map.js` | Top-down blade diagram with the grinding heatmap | The idea ports; the drawing code doesn't |
+| `tests/blade-core.test.js` | 20 checks on the core logic | Port alongside the core |
 
 ## How the blade works
 
@@ -32,6 +33,7 @@ node Prototypes/tanto-forge/tests/blade-core.test.js
 - Length is stored per segment, so a strike that lengthens one section pushes everything downstream. Curvature is per-segment bend.
 - Each strike adds a local, cosine-falloff share of its stage. Shares are normalised so every station reaches exactly 100% of a stage on that stage's last strike (no catch-up snap).
 - The 90% blade is the refined blade plus a 0.14 cm edge allowance and a duller edge. Grinding moves sections from 90% toward 100% only, clamps there, and can't overcut.
+- After forging, a diagram shows the blade from above with the edge bevel shaded from dull (unground) to bright (ground), ember brackets under every stretch still to grind, and a marker where the stone is. `unfinishedRuns()` in the core finds those stretches.
 - The saved state is just `strikeIndex` plus per-station `refinement`. Strike progress is replayed from the recipe, which is how a server would validate it.
 
 ## Not approved (exploratory)

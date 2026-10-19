@@ -19,6 +19,7 @@ Start here. This vault is the record for the game: design, decisions, plans and 
 | [[Player Plot Concept Art]] | Plot overview and matching forge, anvil, bench, and sword display concepts |
 | [[UI Concept - Furnace]] | Warm item-picker style and the furnace's one-click loading flow |
 | [[Blade Implementation Research]] | Studio/Blender options and recommended runtime deformation pipeline |
+| [[Blade Profile Authoring]] | How the tantō shape was chosen and how to add new sword shapes |
 | [[Blade Shaping Study]] | First visual draft of blade silhouettes and forging stages; review limitations noted |
 | [[Sword Silhouettes]] | Ten common sword profiles for blueprint shape reference |
 | [[Decisions Log]] | Every decision made, with date and where it came from |

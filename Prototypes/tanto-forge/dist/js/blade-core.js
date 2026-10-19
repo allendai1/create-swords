@@ -214,6 +214,19 @@ export function applyGrind(blade, state, u, amount, radius = 0.07) {
   return next;
 }
 
+// Stretches of the edge that still need grinding, as station ranges [start, end] (inclusive).
+export function unfinishedRuns(blade, state) {
+  if (!isForged(blade, state)) return [];
+  const runs = [];
+  let start = -1;
+  state.refinement.forEach((r, i) => {
+    if (r < 1 && start < 0) start = i;
+    if (r === 1 && start >= 0) { runs.push([start, i - 1]); start = -1; }
+  });
+  if (start >= 0) runs.push([start, blade.stations - 1]);
+  return runs;
+}
+
 export function quality(blade, state) {
   const strikes = blade.recipe.length;
   if (state.strikeIndex < strikes) return (FORGED_QUALITY * state.strikeIndex) / strikes;

@@ -15,6 +15,11 @@
     --ember: #f08a3c;       /* hot metal accent */
     --steel: #c9d2da;       /* refined steel, grinding */
     --line: rgba(239, 230, 218, 0.14);
+    --map-unground: #545961;  /* grinding heatmap: dull steel … */
+    --map-ground: #e4eaef;    /* … to bright steel */
+    --map-flat: #3a3631;
+    --map-tang: #2c2723;
+    --map-outline: rgba(239, 230, 218, 0.45);
     --font-display: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif;
     --font-body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
     color-scheme: dark;
@@ -63,6 +68,25 @@
   .tally .label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ash); }
   .tally li.current .label { color: var(--paper); }
 
+  .blade-map {
+    margin: 0 0 14px; width: min(560px, 100%); box-sizing: border-box;
+    background: rgba(21, 17, 14, 0.78); border: 1px solid var(--line); border-radius: 8px;
+    padding: 10px 12px 8px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .map-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .map-title { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ash); }
+  .map-title strong { font: 800 16px var(--font-display); letter-spacing: 0; color: var(--paper); font-variant-numeric: tabular-nums; margin-left: 4px; }
+  .map-legend { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ash); }
+  .map-legend .ramp { width: 56px; height: 8px; border-radius: 2px; background: linear-gradient(90deg, var(--map-unground), var(--map-ground)); }
+  .map-legend .todo { width: 14px; height: 6px; border: 2px solid var(--ember); border-top: 0; box-sizing: border-box; margin-left: 8px; }
+  .map-frame { position: relative; }
+  #map-canvas { display: block; width: 100%; height: 64px; cursor: help; }
+  .map-tip {
+    position: absolute; bottom: 100%; transform: translate(-50%, -4px); white-space: nowrap; pointer-events: none;
+    background: var(--soot); border: 1px solid var(--line); border-radius: 4px; padding: 2px 8px; font-size: 12px;
+  }
+  .map-left { margin: 0; font-size: 13px; color: var(--ember); }
+  .map-left.done { color: var(--steel); }
   .hint { margin: 12px 0 10px; text-align: center; max-width: 60ch; color: var(--paper); min-height: 1.5em; }
   .hint.nudge { color: var(--ember); }
   .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
@@ -121,6 +145,17 @@
 </header>
 
 <footer class="hud hud-bottom">
+  <figure class="blade-map" id="blade-map" hidden>
+    <figcaption class="map-head">
+      <span class="map-title">Edge ground<strong id="map-pct">0%</strong></span>
+      <span class="map-legend" aria-hidden="true"><span>Unground</span><span class="ramp"></span><span>Ground</span><span class="todo"></span><span>Still to grind</span></span>
+    </figcaption>
+    <div class="map-frame">
+      <canvas id="map-canvas" role="img" aria-label="Blade diagram"></canvas>
+      <span class="map-tip" id="map-tip" hidden></span>
+    </div>
+    <p class="map-left" id="map-left" aria-live="polite"></p>
+  </figure>
   <ol class="tally" id="tally" aria-label="Forging progress"></ol>
   <p class="hint" id="hint">Click the circle or press Space to strike.</p>
   <div class="actions">

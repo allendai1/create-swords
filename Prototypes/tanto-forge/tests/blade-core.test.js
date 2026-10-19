@@ -152,6 +152,18 @@ test('a few edge-to-edge passes finish the blade, ends included', () => {
   assert.ok(passes >= 3 && passes <= 5, `took ${passes} passes`);
 });
 
+test('unfinished runs point at exactly the sections left to grind', () => {
+  let s = core.createState(blade);
+  assert.deepStrictEqual(core.unfinishedRuns(blade, s), [], 'nothing to grind before forging');
+  s = forgedState();
+  assert.deepStrictEqual(core.unfinishedRuns(blade, s), [[0, N - 1]]);
+  s.refinement.fill(1);
+  s.refinement[0] = 0.5; s.refinement[30] = 0.2; s.refinement[31] = 0.9; s.refinement[N - 1] = 0;
+  assert.deepStrictEqual(core.unfinishedRuns(blade, s), [[0, 0], [30, 31], [N - 1, N - 1]]);
+  s.refinement.fill(1);
+  assert.deepStrictEqual(core.unfinishedRuns(blade, s), []);
+});
+
 test('display quality never rounds up to unearned 100%', () => {
   let s = forgedState();
   for (let u = 0; u <= 1.0001; u += 0.01) s = core.applyGrind(blade, s, u, 0.5);

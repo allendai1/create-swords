@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
 import * as core from './blade-core.js';
+import { createBladeMap, describeRuns, spotName } from './blade-map.js';
 
 // ---------- exploratory pacing (not approved) ----------
 const TIMING = { windup: 0.13, drop: 0.06, deform: 0.09, recover: 0.22, move: 0.34, cool: 0.9 };
@@ -58,26 +59,57 @@ const cameraHome = new THREE.Vector3();
 const maxStageLength = Math.max(blankData.length, ...Object.values(tantoData.stages).map((s) => s.length));
 const REACH_X = TANG_LENGTH + maxStageLength + 3; // blade can extend this far either side of the hammer
 const REACH_Z = 12;
+// While grinding the blade stays put, so the camera can come in closer.
+const GRIND_REACH_X = TANG_LENGTH + tantoData.stages.refined.length / 2 + 2;
+const GRIND_REACH_Z = 7;
+let grindFraming = false;
+const view = { dist: 100, offsetY: 0, portrait: false };
+const hudTop = document.querySelector('.hud-top');
+const hudBottom = document.querySelector('.hud-bottom');
 
-function fitCamera() {
+// Fit the blade's reach into the space between the top and bottom HUD, not the whole window.
+function framing() {
   const w = innerWidth, h = innerHeight;
-  renderer.setSize(w, h, false);
-  camera.aspect = w / h;
-  const portrait = camera.aspect < 0.85;
-  const vHalf = THREE.MathUtils.degToRad(camera.fov / 2);
-  const hHalf = Math.atan(Math.tan(vHalf) * camera.aspect);
+  const top = hudTop.getBoundingClientRect().bottom - 12;
+  const bottom = h - hudBottom.getBoundingClientRect().top - 20;
+  const free = Math.max(h * 0.35, h - top - bottom);
+  const portrait = w / h < 0.85;
+  const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+  const tanFreeV = (tanV * free) / h;
+  const tanH = tanV * (w / h);
   // In portrait the blade runs up the screen instead of across it.
-  const [alongHalf, acrossHalf] = portrait ? [vHalf, hHalf] : [hHalf, vHalf];
-  const dist = Math.max(REACH_X / Math.tan(alongHalf), REACH_Z / Math.tan(acrossHalf));
+  const [tanAlong, tanAcross] = portrait ? [tanFreeV, tanH] : [tanH, tanFreeV];
+  const [reach, reachZ] = grindFraming ? [GRIND_REACH_X, GRIND_REACH_Z] : [REACH_X, REACH_Z];
+  return { dist: Math.max(reach / tanAlong, reachZ / tanAcross), offsetY: (bottom - top) / 2, portrait };
+}
+
+function applyView() {
+  const w = innerWidth, h = innerHeight;
   const elevation = THREE.MathUtils.degToRad(64);
-  cameraHome.set(0, Math.sin(elevation) * dist, Math.cos(elevation) * dist).add(lookAt);
-  camera.up.set(portrait ? -1 : 0, portrait ? 0 : 1, 0);
+  cameraHome.set(0, Math.sin(elevation) * view.dist, Math.cos(elevation) * view.dist).add(lookAt);
+  camera.up.set(view.portrait ? -1 : 0, view.portrait ? 0 : 1, 0);
   camera.position.copy(cameraHome);
   camera.lookAt(lookAt);
+  camera.setViewOffset(w, h, 0, view.offsetY, w, h);
+  scene.fog.near = view.dist + 40; // keep fog behind the anvil however far the camera sits
+  scene.fog.far = view.dist + 160;
   camera.updateProjectionMatrix();
 }
-addEventListener('resize', fitCamera);
-fitCamera();
+
+function fitCamera(duration = 0) {
+  renderer.setSize(innerWidth, innerHeight, false);
+  camera.aspect = innerWidth / innerHeight;
+  const to = framing();
+  if (!duration || to.portrait !== view.portrait) { Object.assign(view, to); applyView(); return Promise.resolve(); }
+  const from = { ...view };
+  return tween(duration, (t) => {
+    const e = easeInOut(t);
+    view.dist = lerp(from.dist, to.dist, e);
+    view.offsetY = lerp(from.offsetY, to.offsetY, e);
+    applyView();
+  });
+}
+addEventListener('resize', () => { fitCamera(); drawMap(); });
 
 // ---------- workshop props ----------
 const iron = new THREE.MeshStandardMaterial({ color: 0x2c2b2d, metalness: 0.7, roughness: 0.5 });
@@ -412,6 +444,8 @@ async function finishForging() {
   outline.visible = true;
   mode = 'grind';
   updateHud();
+  grindFraming = true;
+  await fitCamera(0.6);
 }
 
 // ---------- grinding ----------
@@ -435,8 +469,9 @@ function pick(event) {
 
 function grindAt(event) {
   const hit = pick(event);
-  if (!hit) { stone.visible = false; lastGrindPoint = null; return; }
+  if (!hit) { stone.visible = false; lastGrindPoint = null; setMapMarker(null); return; }
   stone.visible = true;
+  setMapMarker(hit.u);
   stone.position.copy(hit.point).add(new THREE.Vector3(0, 0.6, 0));
   stone.rotation.y = pivot.rotation.y + 0.3;
   if (!grinding) { lastGrindPoint = null; return; }
@@ -467,7 +502,9 @@ function finishGrinding() {
   stone.visible = false;
   outline.visible = false;
   setGrindSound(0);
+  mapMarkerU = null;
   updateHud();
+  fitCamera(0.3);
 }
 
 // ---------- input ----------
@@ -502,7 +539,7 @@ canvas.addEventListener('pointermove', (event) => {
 const stopGrinding = () => { grinding = false; lastGrindPoint = null; if (mode === 'grind') updateHud(); };
 canvas.addEventListener('pointerup', stopGrinding);
 canvas.addEventListener('pointercancel', stopGrinding);
-canvas.addEventListener('pointerleave', () => { if (!grinding) stone.visible = false; });
+canvas.addEventListener('pointerleave', () => { if (!grinding) { stone.visible = false; setMapMarker(null); } });
 
 addEventListener('keydown', (event) => {
   if (event.target.closest && event.target.closest('textarea, button')) return;
@@ -545,6 +582,39 @@ grindLi.dataset.stage = 'grind';
 grindLi.innerHTML = '<div class="marks"><span class="mark grind"><span id="grind-fill"></span></span></div><span class="label">Grind · optional</span>';
 tally.append(grindLi);
 
+// ---------- grinding map ----------
+const bladeMap = createBladeMap($('map-canvas'), { stations: N, tangLength: TANG_LENGTH, tangHalfWidth: 0.9, tangOffset: 0.35 });
+let mapMarkerU = null;
+function setMapMarker(u) {
+  if (u === mapMarkerU) return;
+  mapMarkerU = u;
+  drawMap();
+}
+function drawMap() {
+  if ($('blade-map').hidden) return;
+  const runs = core.unfinishedRuns(blade, state);
+  bladeMap.draw(params, state.refinement, runs, mapMarkerU);
+  const ground = Math.floor(((core.quality(blade, state) - core.FORGED_QUALITY) / (core.MAX_QUALITY - core.FORGED_QUALITY)) * 100 + 1e-9);
+  $('map-pct').textContent = `${runs.length ? Math.min(ground, 99) : 100}%`;
+  const left = $('map-left');
+  const where = describeRuns(runs, N);
+  left.textContent = runs.length ? `Still to grind: ${where}` : 'Whole edge ground';
+  left.classList.toggle('done', !runs.length);
+  $('map-canvas').setAttribute('aria-label', `Blade diagram. ${left.textContent}.`);
+}
+const mapCanvas = $('map-canvas');
+mapCanvas.addEventListener('pointermove', (event) => {
+  const i = bladeMap.stationAt(event.clientX);
+  const tip = $('map-tip');
+  if (i < 0) { tip.hidden = true; return; }
+  const r = state.refinement[i];
+  const where = spotName(i / (N - 1));
+  tip.textContent = `${where[0].toUpperCase()}${where.slice(1)} · ${r >= 1 ? 'ground' : `${Math.floor(r * 100)}% ground`}`;
+  tip.style.left = `${event.clientX - mapCanvas.getBoundingClientRect().left}px`;
+  tip.hidden = false;
+});
+mapCanvas.addEventListener('pointerleave', () => { $('map-tip').hidden = true; });
+
 let hintTimer = 0;
 function setHint(text, nudge = false) {
   const el = $('hint');
@@ -564,6 +634,9 @@ function updateHud() {
   tally.querySelectorAll('li').forEach((li) => li.classList.toggle('current', li.dataset.stage === currentStage));
   const refined = forged ? (core.quality(blade, state) - core.FORGED_QUALITY) / (core.MAX_QUALITY - core.FORGED_QUALITY) : 0;
   $('grind-fill').style.width = `${(refined * 100).toFixed(1)}%`;
+  $('blade-map').hidden = !forged;
+  tally.hidden = forged; // the map takes over once forging is done
+  drawMap();
   const stageLine = $('stage-line');
   stageLine.classList.toggle('cool', forged);
   const touch = matchMedia('(pointer: coarse)').matches;
@@ -578,7 +651,7 @@ function updateHud() {
   } else {
     stageLine.textContent = 'Forged · optional grinding';
     $('quality-note').textContent = q > 90 ? 'Grinding' : 'Forged, ready for the hilt';
-    setHint(`${touch ? 'Drag' : 'Hold and drag'} along the edge to grind toward 100%. The stone stops at the dashed target edge.`);
+    setHint(`${touch ? 'Drag' : 'Hold and drag'} along the edge. Grind until the whole edge on the map is bright.`);
   }
 }
 
@@ -615,7 +688,10 @@ function loadState(next) {
     outline.visible = false;
     showRing();
   }
+  grindFraming = forged;
+  mapMarkerU = null;
   updateHud();
+  fitCamera();
 }
 
 $('btn-reset').addEventListener('click', () => loadState(core.createState(blade)));

@@ -1,6 +1,6 @@
 ---
 title: Next Session Handoff
-status: browser prototype built — awaiting Allen's review
+status: browser prototype built; grinding map added after Allen's first review
 date: 2026-10-19
 tags: [handoff, prototype, create-swords]
 ---
@@ -16,6 +16,7 @@ The browser tantō forging study that was paused earlier on 2026-10-19 has been 
 - [[Sessions/2026-10-19]]: session history.
 - [[Blade Implementation Research]]: the profile-driven mesh approach the prototype follows.
 - `Prototypes/tanto-forge/README.md`: how to run it, file roles, and how the blade model works.
+- [[Blade Profile Authoring]]: where the tantō numbers came from and what new sword shapes would take.
 
 ## Try it
 
@@ -29,7 +30,8 @@ Open http://localhost:8765. Click the circle or press Space to strike. After 12 
 
 - **Reusable core** (`dist/js/blade-core.js`, `dist/data/blank.json`, `dist/data/tanto.json`): universal blank plus four tantō stage shapes sampled at 64 stations, with a fixed 782-vertex mesh for every state. Per-segment length, so lengthening pushes the downstream blade. Strike shares are normalised so each stage completes exactly on its last strike. The 90% shape is the refined shape plus a 0.14 cm edge allowance; grinding only moves toward 100% and clamps. The save format is `strikeIndex` plus per-station refinement, and strikes are replayed from the recipe.
 - **Browser view** (`dist/js/main.js`, Three.js r160 vendored locally): fixed hammer with wind-up, drop, contact and recovery; quick eased deformation with the struck point held under the hammer; automatic slide/turn/flip between strikes (lifts to clear the anvil when flipping); sparks, synthesized clang, small camera shake (off with reduced motion); hot glow that cools to dull steel at 90%; whetstone grinding that brightens each section and shows a dashed target edge; one buffered tap while the hammer is busy. In portrait the camera turns so the blade runs up the screen.
-- **Tests:** `node Prototypes/tanto-forge/tests/blade-core.test.js`, 19 passing. They cover stage coverage, exact stage endpoints, 90% after all strikes, refusing extra strikes, grinding before forging, grinding never lowering quality or passing the target edge, exactly 100% when fully ground, finite outward-facing geometry for every strike and in-between frame, end caps, save/load round trip, rejection of tampered saves, and about four grinding passes to finish.
+- **Grinding map (added after Allen liked the prototype):** once forging finishes, a top-down blade diagram appears. The edge is shaded from dull (unground) to bright steel (ground), ember brackets mark every stretch left to grind, a line follows the stone, and text names the spots ("Still to grind: the base and the point"). Hovering the diagram shows each spot's progress. The camera also moves closer for grinding and fits the space between the top and bottom HUD.
+- **Tests:** `node Prototypes/tanto-forge/tests/blade-core.test.js`, 20 passing. They cover stage coverage, exact stage endpoints, 90% after all strikes, refusing extra strikes, grinding before forging, grinding never lowering quality or passing the target edge, exactly 100% when fully ground, finite outward-facing geometry for every strike and in-between frame, end caps, save/load round trip, rejection of tampered saves, and about four grinding passes to finish.
 
 ## Verified, and what wasn't
 
