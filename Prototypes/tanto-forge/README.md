@@ -27,6 +27,7 @@ node Prototypes/tanto-forge/tests/blade-core.test.js
 | `dist/js/main.js` | Three.js scene, hammer, input, sparks, sound, HUD | No, exploratory |
 | `dist/js/blade-map.js` | Top-down blade diagram with the grinding heatmap | The idea ports; the drawing code doesn't |
 | `dist/editor.html`, `dist/js/editor.js` | Profile editor: drag outline points, catalogue measurements, reference image, 3D preview, checks, comparison, JSON export | No, authoring tool |
+| `roblox/`, `tools/export-luau.js` | Luau port of the core, generated data, Studio probe, Luau tests (see `roblox/README.md`) | This is the port |
 | `tests/blade-core.test.js` | The core suite run for every blueprint (68 checks, including each blade measuring to its catalogue nagasa and sori), plus file-format round-trips | Port alongside the core |
 
 ## How the blade works

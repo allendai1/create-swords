@@ -64,4 +64,15 @@ Checked in the browser pane at desktop and phone sizes: editing, undo, add/delet
 
 1. Tune pacing, camera and proportions from Allen's feedback, then add the approved values to [[Decisions Log]].
 2. Approve or adjust the wakizashi and katana drafts in the editor, then record the chosen proportions in [[Decisions Log]].
-3. Port `blade-core.js` and the data to Luau (ModuleScript + EditableMesh) as the Studio tantō probe described in [[Blade Implementation Research]].
+3. ~~Port the core to Luau and run a Studio probe.~~ Done 2026-10-19; see "Roblox port" below.
+4. Replace the anvil's old shaping modes with BladeCore: hook the probe's hammer, poses and grinding into `AnvilController`, move strike/grind validation to the server (`importState` already validates saves), and port the grinding map to UI frames.
+5. Held and displayed swords: one static mesh per blueprint instead of an EditableMesh each (the current `SwordRenderer` makes one per sword, which risks the client memory budget).
+6. Test on a published client and a phone; then multiplayer (others watching a forge).
+
+## Roblox port (2026-10-19)
+
+The core now runs in the game's Studio place. Allen had the place open with Mesh / Image APIs enabled.
+
+- **Added to the place:** `ReplicatedStorage.Shared.BladeCore`, `BladeData` and `BladeProbe`; `ServerStorage.Tests.BladeCoreSpec` and `BladeGolden`; `StarterPlayerScripts.BladeProbeLoader`. Nothing existing was changed. The probe only runs when `workspace` has the `BladeProbe` attribute, and that attribute was cleared afterwards. **The place hasn't been saved; save it in Studio to keep these.**
+- **Results:** 31/31 Luau tests pass in Studio and the CLI. The tantō and katana forged to 90% with real key presses, and the tantō ground to 100% with mouse drags. Mesh updates took about 0.6 ms per frame. Details and screenshots: [[Blade Implementation Research]]. How to run: `Prototypes/tanto-forge/roblox/README.md`.
+- **Data flow:** edit JSON (or use the editor) → `node Prototypes/tanto-forge/tools/export-luau.js` → copy `BladeData` and `BladeGolden` into Studio.

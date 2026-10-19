@@ -38,6 +38,9 @@ The server owns all state (ingots, blades, swords, coins, forge slots, rack). Cl
 | `Shared/Hilts` | 6 hilts (+0–40%, unlock by swords completed), seat-the-hilt bonus |
 | `Shared/ValueFormula` | base × material × quality multiplier × (1 + hilt + seat bonus) |
 | `Shared/Customers` | Farmer / Adventurer / Knight (likes 90%+ blades): likes, offer and raise maths |
+| `Shared/BladeCore` | Port of the browser study's blade core (2026-10-19): stage shapes at 64 stations, strikes, safe grinding, quality, fixed 782-vertex mesh layout, save validation, catalogue measurement. Source of truth: `Prototypes/tanto-forge/roblox/` in the vault. Not yet used by the real anvil. |
+| `Shared/BladeData` | Generated from the study's JSON (`tools/export-luau.js`); tantō, wakizashi, katana and the universal blank |
+| `Shared/BladeProbe` | Test-only EditableMesh forging/grinding probe; runs only when `workspace` has the `BladeProbe` attribute (via `StarterPlayerScripts.BladeProbeLoader`) |
 | `Shared/BladeMesh` | Client-side EditableMesh blade: ridge band and bevels (band across the blade's own width from `blueprint.ridge`, smoothed), sharpness, accent lines (ridge lines or a single shinogi, fuller, a katana's yokote; tinted from the blade colour), pointed tips |
 | `Remotes/` | FinishBlade, AttachHilt, GetSmithState, SmithState, ForgePut, ForgeTake, DisplaySword, Offer, RespondOffer, ShopNotice |
 
@@ -75,7 +78,7 @@ The server owns all state (ingots, blades, swords, coins, forge slots, rack). Cl
 
 ## Tests
 
-`ServerStorage/Tests/AnvilSelfCheck`. Run `require(game.ServerStorage.Tests.AnvilSelfCheck)()` in the command bar. It covers blade maths, scoring, the bot smith per blueprint, server Finish checks, hilts, value, customers and material odds.
+`ServerStorage/Tests/BladeCoreSpec` (with `BladeGolden`) tests the BladeCore port; see `Prototypes/tanto-forge/roblox/README.md`. `ServerStorage/Tests/AnvilSelfCheck`. Run `require(game.ServerStorage.Tests.AnvilSelfCheck)()` in the command bar. It covers blade maths, scoring, the bot smith per blueprint, server Finish checks, hilts, value, customers and material odds.
 
 `ServerStorage/AnvilController_Backup` is the disabled pre-refactor controller. Safe to delete.
 

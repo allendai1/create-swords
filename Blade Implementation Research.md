@@ -85,6 +85,22 @@ Build a focused tantō proof of concept before authoring every sword:
 6. Test repeated taps, leaving/re-entering, two observing players, and duplicate finish requests.
 7. Test allocation failure and a populated six-shop scene on a published client, including a lower-memory device.
 
-This probe would answer visual feasibility, responsiveness, and resource limits. It has not been executed. No product code, models, or gameplay changed during this research.
+This probe would answer visual feasibility, responsiveness, and resource limits.
+
+## Studio probe results (2026-10-19)
+
+Steps 2–4 and part of 5 are now done in the game's Studio place, using the browser study's core ported to Luau (`Prototypes/tanto-forge/roblox/`, details in its README).
+
+- **Logic port:** `BladeCore` (strict Luau) gives the same numbers as the JavaScript core: 31 tests, including vertex positions, quality per strike, grinding and catalogue measurements checked against values the JavaScript computes. They pass in the Luau CLI and in Studio (156 ms).
+- **Forging:** the tantō and katana each went through all 12 strikes with real Space presses, on one FixedSize-style EditableMesh (782 vertices) on the anvil's BladeMount. Lengthening, taper, curve, flips, turns and the point all appear as in the browser. Exactly 90% at the end.
+- **Speed:** each deformation frame (blend, rebuild 782 positions, `SetPosition` on all of them) averaged **0.54–0.68 ms**, worst **0.95–2.7 ms**, in Studio on Allen's Mac. Well inside a 16 ms frame; not yet measured on a phone.
+- **Grinding:** real mouse drags reached exactly 100% in three passes, after switching to `EditableMesh:RaycastLocal` (the MeshPart's collision box spans the fixed bounds and gave wrong hits).
+- **Normals:** automatic normals stayed correct as vertices moved, as in the existing `Shared/BladeMesh`.
+- **Not yet tested:** a published client and lower-memory devices (step 7), several players watching one forge (step 6), held and displayed swords (step 5's second half), and leaving mid-forge. Allen reports the place's Mesh / Image API settings are enabled.
+- **Art notes:** the Neon hot glow is too saturated, the dull pre-grind steel looks almost black in Roblox's Metal material, and the fixed forging camera makes the katana small. All are tuning, not blockers.
+
+![[References/Blade Shaping/roblox-probe-tanto-hot-strike8.jpg]]
+![[References/Blade Shaping/roblox-probe-tanto-ground-100.jpg]]
+![[References/Blade Shaping/roblox-probe-katana-forged-90.jpg]]
 
 Related: [[Create Swords! GDD]] · [[Blade Shaping Study]] · [[Code Map]]
