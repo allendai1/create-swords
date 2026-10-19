@@ -73,6 +73,6 @@ Checked in the browser pane at desktop and phone sizes: editing, undo, add/delet
 
 The core now runs in the game's Studio place. Allen had the place open with Mesh / Image APIs enabled.
 
-- **Added to the place:** `ReplicatedStorage.Shared.BladeCore`, `BladeData` and `BladeProbe`; `ServerStorage.Tests.BladeCoreSpec` and `BladeGolden`; `StarterPlayerScripts.BladeProbeLoader`. Nothing existing was changed. The probe only runs when `workspace` has the `BladeProbe` attribute, and that attribute was cleared afterwards. **The place hasn't been saved; save it in Studio to keep these.**
+- **Added to the place:** `ReplicatedStorage.Shared.BladeCore`, `BladeData` and `BladeProbe`; `ServerStorage.Tests.BladeCoreSpec` and `BladeGolden`; `StarterPlayerScripts.BladeProbeLoader`. Nothing existing was changed. The probe only runs when `workspace` has the `BladeProbe` attribute, and that attribute was cleared afterwards. Allen saved the place with these added (2026-10-19).
 - **Results:** 31/31 Luau tests pass in Studio and the CLI. The tantō and katana forged to 90% with real key presses, and the tantō ground to 100% with mouse drags. Mesh updates took about 0.6 ms per frame. Details and screenshots: [[Blade Implementation Research]]. How to run: `Prototypes/tanto-forge/roblox/README.md`.
 - **Data flow:** edit JSON (or use the editor) → `node Prototypes/tanto-forge/tools/export-luau.js` → copy `BladeData` and `BladeGolden` into Studio.
