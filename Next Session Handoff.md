@@ -1,6 +1,6 @@
 ---
 title: Next Session Handoff
-status: browser prototype built; grinding map added after Allen's first review
+status: browser study, grinding map and blade profile editor built; awaiting Allen's review
 date: 2026-10-19
 tags: [handoff, prototype, create-swords]
 ---
@@ -42,6 +42,12 @@ Open http://localhost:8765. Click the circle or press Space to strike. After 12 
 
 The earlier session registered a private OpenAI Site (project `appgprj_6ad655f29424819195e6e42693b729ae`; `Prototypes/tanto-forge/.openai/hosting.json`). That tool isn't available in Claude Code, so nothing was pushed or deployed there and the file was left alone. If a shareable link is wanted, the `dist/` folder can be published as a private Claude Artifact instead (ask first), or the Sites workflow can resume in a session that has it.
 
+## Blade profile editor and starter blade drafts
+
+Built at Allen's request after the grinding map. `editor.html` reshapes any blueprint by dragging outline points, editing curves on graphs, typing catalogue measurements, or tracing a reference photo. It shows the same checks as the tests, scrubs a 3D preview through every strike, compares all blueprints at one scale, and exports JSON in the files' own format (tantō round-trips unchanged). *Try in forge study* forges the draft right away (`index.html#draft`, stored in this browser only). Wakizashi (48 cm) and katana (72 cm) drafts now exist; the forge study has a blueprint picker. Grinding reach is now measured in cm, so longer blades take longer passes. 65 tests pass across the three blueprints. Details: [[Blade Profile Authoring]].
+
+Checked in the browser pane at desktop and phone sizes: editing, undo, add/delete points, a failing check, catalogue rebuild, derive, draft hand-off, and a full katana forge and grind.
+
 ## Questions for Allen
 
 1. Does the strike rhythm feel right (about 0.2 s swing, 0.09 s impact, 0.34 s move), or should it be snappier or weightier?
@@ -50,9 +56,13 @@ The earlier session registered a private OpenAI Site (project `appgprj_6ad655f29
 4. Is the 90% blade clean enough, and is the edge excess visible enough, before grinding?
 5. Does grinding feel optional but worthwhile at about four passes?
 6. Keep the hot glow cooling to steel, or drop it? It's presentation only, with no timer.
+7. Wakizashi 48 cm and katana 72 cm: right lengths, or should the gap be bigger for readability?
+8. Are the curves right? Sori is 1.1 cm (wakizashi) and 1.7 cm (katana), with the tantō almost straight but curving slightly outward rather than the inward curve many tantō have.
+9. Are the kissaki (2.9 and 3.6 cm) the right size, or should they be bolder so the point reads from the forging camera?
+10. Should longer blades keep the same fixed forging camera (the katana blank starts very small), or frame each blueprint by its own length?
 
 ## Next steps once reviewed
 
 1. Tune pacing, camera and proportions from Allen's feedback, then add the approved values to [[Decisions Log]].
-2. Author wakizashi and katana profiles against the same blank and confirm the three silhouettes are clearly different at one scale.
+2. Approve or adjust the wakizashi and katana drafts in the editor, then record the chosen proportions in [[Decisions Log]].
 3. Port `blade-core.js` and the data to Luau (ModuleScript + EditableMesh) as the Studio tantō probe described in [[Blade Implementation Research]].

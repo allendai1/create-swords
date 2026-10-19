@@ -1,6 +1,6 @@
-# Tantō forging study
+# Sword forging study
 
-Browser prototype of the approved tantō forging flow (see [Create Swords! GDD](../../Create%20Swords!%20GDD.md) §5 and [Blade Implementation Research](../../Blade%20Implementation%20Research.md)). It is for judging feel before the Roblox port. It does not prove Roblox performance or EditableMesh access in a published game.
+Browser prototype of the approved forging flow for the starter blades (tantō, wakizashi, katana) (see [Create Swords! GDD](../../Create%20Swords!%20GDD.md) §5 and [Blade Implementation Research](../../Blade%20Implementation%20Research.md)). It is for judging feel before the Roblox port. It does not prove Roblox performance or EditableMesh access in a published game.
 
 ## Run it
 
@@ -8,7 +8,7 @@ Browser prototype of the approved tantō forging flow (see [Create Swords! GDD](
 python3 -m http.server 8765 --directory Prototypes/tanto-forge/dist
 ```
 
-Then open <http://localhost:8765>. Opening `index.html` straight from disk will not work, because the page fetches its data files. No install or build step: `dist/` is the site. Three.js r160 is vendored in `dist/vendor/` (MIT, licence included).
+Then open <http://localhost:8765> for the forge study (pick a blueprint at the bottom, or open `#katana` / `#wakizashi`) and <http://localhost:8765/editor.html> for the profile editor. Opening `index.html` straight from disk will not work, because the page fetches its data files. No install or build step: `dist/` is the site. Three.js r160 is vendored in `dist/vendor/` (MIT, licence included).
 
 Tests (plain Node, any version from 14):
 
@@ -21,11 +21,13 @@ node Prototypes/tanto-forge/tests/blade-core.test.js
 | Path | Role | Ports to Roblox? |
 |---|---|---|
 | `dist/data/blank.json` | The universal starting blank (shared by every blueprint) | Yes, as data |
-| `dist/data/tanto.json` | Tantō stage shapes, 90% edge allowance, 12-strike recipe | Yes, as data |
-| `dist/js/blade-core.js` | Shape sampling, strike/grind state, quality, mesh positions, save/load | Yes, rewrite in Luau |
+| `dist/data/tanto.json`, `wakizashi.json`, `katana.json` | Stage shapes, 90% edge allowance, 12-strike recipe, tang, catalogue spec | Yes, as data |
+| `dist/data/profiles.json` | Which blueprints the pages and tests load, in order | Yes |
+| `dist/js/blade-core.js` | Shape sampling, strike/grind state, quality, mesh positions, save/load, profile checks, file format | Yes, rewrite in Luau |
 | `dist/js/main.js` | Three.js scene, hammer, input, sparks, sound, HUD | No, exploratory |
 | `dist/js/blade-map.js` | Top-down blade diagram with the grinding heatmap | The idea ports; the drawing code doesn't |
-| `tests/blade-core.test.js` | 20 checks on the core logic | Port alongside the core |
+| `dist/editor.html`, `dist/js/editor.js` | Profile editor: drag outline points, catalogue measurements, reference image, 3D preview, checks, comparison, JSON export | No, authoring tool |
+| `tests/blade-core.test.js` | The core suite run for every blueprint (65 checks), plus file-format round-trips | Port alongside the core |
 
 ## How the blade works
 
@@ -38,6 +40,6 @@ node Prototypes/tanto-forge/tests/blade-core.test.js
 
 ## Not approved (exploratory)
 
-12 strikes and their order/positions/turns/flips; swing, impact and move timings; exact tantō proportions, blank size, tang and heat glow; 7.5% per strike; grinding speed (about four passes).
+All three blade profiles; 12 strikes and their order/positions/turns/flips; swing, impact and move timings; exact tantō proportions, blank size, tang and heat glow; 7.5% per strike; grinding speed (about four passes).
 
 `.openai/hosting.json` is left from the earlier session's private Site registration and is unused here.

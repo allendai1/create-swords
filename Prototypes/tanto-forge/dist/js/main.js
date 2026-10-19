@@ -1,4 +1,4 @@
-// Browser rendering and input for the tantō study. Exploratory: the shape data and strike recipe
+// Browser rendering and input for the forging study. Exploratory: the shape data and strike recipe
 // (blade-core.js + data/*.json) are the parts meant to carry over to Roblox; this file is not.
 import * as THREE from 'three';
 import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
@@ -8,7 +8,6 @@ import { createBladeMap, describeRuns, spotName } from './blade-map.js';
 // ---------- exploratory pacing (not approved) ----------
 const TIMING = { windup: 0.13, drop: 0.06, deform: 0.09, recover: 0.22, move: 0.34, cool: 0.9 };
 const ANVIL_TOP = 0;
-const TANG_LENGTH = 6;
 const REDUCED_MOTION = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const $ = (id) => document.getElementById(id);
@@ -17,14 +16,42 @@ const easeOut = (t) => 1 - (1 - t) ** 3;
 const easeIn = (t) => t * t * t;
 const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
-const [blankData, tantoData] = await Promise.all(
-  ['data/blank.json', 'data/tanto.json'].map((u) => fetch(u).then((r) => {
-    if (!r.ok) throw new Error(`Could not load ${u}`);
-    return r.json();
-  })),
-);
-const blade = core.createBlade(blankData, tantoData);
+const getJson = (u) => fetch(u).then((r) => {
+  if (!r.ok) throw new Error(`Could not load ${u}`);
+  return r.json();
+});
+// The blueprint comes from the page's #anchor (e.g. #katana); the tantō is the default.
+// #draft forges the profile the editor last sent here (kept in this browser only).
+const { profiles } = await getJson('data/profiles.json');
+let draft = null;
+if (location.hash === '#draft') {
+  try { draft = JSON.parse(localStorage.getItem('forge-study-draft')); } catch { draft = null; }
+}
+const entry = profiles.find((p) => p.id === location.hash.slice(1)) || profiles[0];
+const fetched = await Promise.all(['data/blank.json', ...profiles.map((p) => `data/${p.file}`)].map(getJson));
+const blankData = fetched[0];
+let profileData = fetched[1 + profiles.indexOf(entry)];
+let blade;
+try {
+  if (draft) { blade = core.createBlade(blankData, draft); profileData = draft; }
+} catch {
+  draft = null;
+}
+if (!draft) blade = core.createBlade(blankData, profileData);
+const otherProfiles = fetched.slice(1).filter((p) => p !== profileData);
 const N = blade.stations;
+const TANG_LENGTH = blade.tang.length;
+
+// Blueprint picker: switching reloads the page on the new #anchor.
+const picker = $('blueprint');
+[...(draft ? [] : [profileData]), ...otherProfiles]
+  .sort((a, b) => profiles.findIndex((p) => p.id === a.id) - profiles.findIndex((p) => p.id === b.id))
+  .forEach((p) => picker.add(new Option(p.name, p.id, false, !draft && p.id === blade.id)));
+if (draft) picker.add(new Option(`Draft: ${draft.name}`, 'draft', false, true), 0);
+picker.addEventListener('change', () => { location.hash = picker.value; });
+addEventListener('hashchange', () => location.reload());
+$('blade-name').textContent = draft ? `${blade.name} (draft)` : blade.name;
+$('blade-kanji').textContent = profileData.kanji || '';
 
 // ---------- renderer, scene, camera ----------
 const canvas = $('stage-canvas');
@@ -56,11 +83,11 @@ scene.add(forgeGlow);
 const camera = new THREE.PerspectiveCamera(28, 1, 1, 600);
 const lookAt = new THREE.Vector3(0, ANVIL_TOP, 0);
 const cameraHome = new THREE.Vector3();
-const maxStageLength = Math.max(blankData.length, ...Object.values(tantoData.stages).map((s) => s.length));
+const maxStageLength = Math.max(blankData.length, ...Object.values(profileData.stages).map((s) => s.length));
 const REACH_X = TANG_LENGTH + maxStageLength + 3; // blade can extend this far either side of the hammer
 const REACH_Z = 12;
 // While grinding the blade stays put, so the camera can come in closer.
-const GRIND_REACH_X = TANG_LENGTH + tantoData.stages.refined.length / 2 + 2;
+const GRIND_REACH_X = TANG_LENGTH + blade.length / 2 + 2;
 const GRIND_REACH_Z = 7;
 let grindFraming = false;
 const view = { dist: 100, offsetY: 0, portrait: false };
@@ -123,7 +150,8 @@ function addMesh(geometry, material, position, parent = scene) {
 addMesh(new THREE.BoxGeometry(24, 2, 7.5), iron, new THREE.Vector3(0, ANVIL_TOP - 1, 0));
 addMesh(new THREE.BoxGeometry(12, 7, 5.5), iron, new THREE.Vector3(0, ANVIL_TOP - 5.5, 0));
 addMesh(new THREE.BoxGeometry(20, 3, 10), iron, new THREE.Vector3(0, ANVIL_TOP - 10.5, 0));
-const horn = addMesh(new THREE.ConeGeometry(3.6, 9, 24), iron, new THREE.Vector3(-16.5, ANVIL_TOP - 1.4, 0));
+// The horn's top sits level with the face so long blades can lie across it.
+const horn = addMesh(new THREE.ConeGeometry(3.6, 9, 24), iron, new THREE.Vector3(-16.5, ANVIL_TOP - 3.65, 0));
 horn.rotation.z = Math.PI / 2;
 horn.scale.set(1, 1, 0.7);
 const wood = new THREE.MeshStandardMaterial({ color: 0x3b2a1e, roughness: 0.9 });
@@ -154,7 +182,7 @@ bladeMesh.castShadow = bladeMesh.receiveShadow = true;
 bladeRoot.add(bladeMesh);
 
 const tangMat = new THREE.MeshStandardMaterial({ color: 0x3a3430, metalness: 0.5, roughness: 0.8 });
-addMesh(new THREE.BoxGeometry(TANG_LENGTH, 0.5, 1.8), tangMat, new THREE.Vector3(-TANG_LENGTH / 2, 0, -0.35), bladeRoot);
+addMesh(new THREE.BoxGeometry(TANG_LENGTH, 0.5, blade.tang.width), tangMat, new THREE.Vector3(-TANG_LENGTH / 2, 0, -0.35), bladeRoot);
 
 const vertexStation = Array.from({ length: core.vertexCount(N) }, (_, v) => core.stationOfVertex(v, N));
 const vertexBevel = Array.from({ length: core.vertexCount(N) }, (_, v) => core.BEVEL_RING.has(core.ringOfVertex(v, N)));
@@ -583,7 +611,7 @@ grindLi.innerHTML = '<div class="marks"><span class="mark grind"><span id="grind
 tally.append(grindLi);
 
 // ---------- grinding map ----------
-const bladeMap = createBladeMap($('map-canvas'), { stations: N, tangLength: TANG_LENGTH, tangHalfWidth: 0.9, tangOffset: 0.35 });
+const bladeMap = createBladeMap($('map-canvas'), { stations: N, tangLength: TANG_LENGTH, tangHalfWidth: blade.tang.width / 2, tangOffset: 0.35 });
 let mapMarkerU = null;
 function setMapMarker(u) {
   if (u === mapMarkerU) return;

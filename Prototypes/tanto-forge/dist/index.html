@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Tantō Forge Study</title>
+<title>Sword Forge Study</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -96,6 +96,17 @@
   }
   button:hover { border-color: var(--ash); }
   button:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+  .pick { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ash); }
+  select {
+    font: 500 13px var(--font-body); color: var(--paper); background: var(--charcoal);
+    border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px;
+  }
+  select:focus-visible, .button-link:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+  .button-link {
+    font: 500 13px var(--font-body); color: var(--paper); text-decoration: none; background: var(--charcoal);
+    border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px;
+  }
+  .button-link:hover { border-color: var(--ash); }
   button.primary { border-color: var(--ember); color: var(--ember); }
 
   .sheet-backdrop {
@@ -135,7 +146,7 @@
 <header class="hud hud-top">
   <div>
     <p class="eyebrow">Create Swords! · forging study</p>
-    <h1>Tantō<span class="kanji" lang="ja">短刀</span></h1>
+    <h1><span id="blade-name">Tantō</span><span class="kanji" lang="ja" id="blade-kanji">短刀</span></h1>
     <p class="stage-line" id="stage-line">Stage 1 of 3 · Lengthen the blank</p>
   </div>
   <div class="quality" aria-live="polite">
@@ -159,10 +170,12 @@
   <ol class="tally" id="tally" aria-label="Forging progress"></ol>
   <p class="hint" id="hint">Click the circle or press Space to strike.</p>
   <div class="actions">
+    <label class="pick">Blueprint <select id="blueprint"></select></label>
     <button id="btn-reset" type="button">Start over</button>
     <button id="btn-data" type="button">Blade data</button>
     <button id="btn-about" type="button">About this study</button>
     <button id="btn-sound" type="button" aria-pressed="true">Sound on</button>
+    <a class="button-link" href="editor.html">Profile editor</a>
   </div>
 </footer>
 
@@ -187,12 +200,13 @@
 <div class="sheet-backdrop" id="about-sheet" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="about-title">
     <h2 id="about-title">About this study</h2>
-    <p>A browser sketch of the approved tantō forging flow, built to judge feel before porting to Roblox. It does not prove Roblox performance or EditableMesh access in a published game.</p>
+    <p>A browser sketch of the approved forging flow, built to judge feel before porting to Roblox. It does not prove Roblox performance or EditableMesh access in a published game.</p>
     <h3>Approved design it follows</h3>
     <ul>
       <li>Untimed circles: every strike counts, no misses, all strikes reach 90%.</li>
       <li>Three stages: lengthen, taper and curve, form the point.</li>
-      <li>One universal blank, stretched to the tantō.</li>
+      <li>One universal blank, stretched to each blueprint.</li>
+      <li>The same number of strikes for every starter blueprint, for now.</li>
       <li>Quick, smooth deformation under the hammer, blending into neighbouring metal.</li>
       <li>The blade slides, turns and flips by itself under a fixed hammer. No tongs.</li>
       <li>Slightly angled overhead camera with the whole blade in view.</li>
@@ -203,7 +217,7 @@
     <ul>
       <li>12 strikes and their order, positions, turns and flips.</li>
       <li>Swing, deformation and repositioning timings (about 0.2 s swing, 0.09 s impact, 0.34 s move).</li>
-      <li>Exact tantō proportions, the blank's size, the tang, and the heat glow.</li>
+      <li>Exact blade proportions (the wakizashi and katana are first drafts), the blank's size, tangs, and the heat glow.</li>
       <li>Quality per strike (7.5%) and grinding speed.</li>
     </ul>
     <div class="row"><button id="btn-close-about" type="button">Close</button></div>

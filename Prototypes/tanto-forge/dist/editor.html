@@ -1,0 +1,234 @@
+<meta charset="utf-8">
+<title>Blade Profile Editor</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+  /* Layout: a smith's drafting bench — controls in a narrow rail, the blade drawing large beside them. */
+  :root {
+    --soot: #15110e;
+    --charcoal: #221c18;
+    --bench: #1b1612;
+    --ash: #a89c90;
+    --paper: #efe6da;
+    --ember: #f08a3c;
+    --steel: #c9d2da;
+    --good: #8fc79a;
+    --bad: #f07a5c;
+    --line: rgba(239, 230, 218, 0.14);
+    --grid: rgba(239, 230, 218, 0.07);
+    --font-display: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif;
+    --font-body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+    color-scheme: dark;
+  }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; background: var(--soot); color: var(--paper); font: 14px/1.5 var(--font-body);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 16px 32px;
+  }
+  header { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .eyebrow { margin: 0; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash); }
+  h1 { margin: 2px 0 0; font: 800 26px/1.15 var(--font-display); text-wrap: balance; }
+  h2 { margin: 0; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ash); font-weight: 500; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .layout { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 16px; align-items: start; }
+  @media (max-width: 900px) { .layout { grid-template-columns: minmax(0, 1fr); } .stage { order: -1; } }
+  .rail, .stage { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  section { background: var(--bench); border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--ash); }
+  .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  input, select, textarea {
+    font: 13px var(--font-body); color: var(--paper); background: var(--soot);
+    border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; min-width: 0;
+  }
+  input[type="number"] { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  input[type="range"] { padding: 0; accent-color: var(--ember); }
+  input[type="file"] { font-size: 12px; }
+  button, .button-link {
+    font: 500 13px var(--font-body); color: var(--paper); background: var(--charcoal); text-decoration: none;
+    border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer;
+  }
+  button:hover, .button-link:hover { border-color: var(--ash); }
+  button:disabled { opacity: 0.45; cursor: default; }
+  button.primary { border-color: var(--ember); color: var(--ember); }
+  :is(button, input, select, textarea, .button-link):focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+  .tabs { display: flex; gap: 0; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .tabs button { border: 0; border-radius: 0; flex: 1; background: transparent; color: var(--ash); }
+  .tabs button[aria-pressed="true"] { background: var(--charcoal); color: var(--paper); box-shadow: inset 0 -2px 0 var(--ember); }
+  .note { margin: 0; font-size: 12px; color: var(--ash); }
+  .canvas-wrap { position: relative; border-radius: 6px; overflow: hidden; background: var(--soot); border: 1px solid var(--line); }
+  #outline { display: block; width: 100%; height: 300px; touch-action: none; cursor: crosshair; }
+  #preview { display: block; width: 100%; height: 260px; touch-action: none; cursor: grab; }
+  #compare { display: block; width: 100%; height: 240px; }
+  .readout { position: absolute; left: 8px; bottom: 6px; font: 12px var(--font-mono); color: var(--ash); pointer-events: none; }
+  .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  .checks li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 6px; font-size: 13px; }
+  .checks .mark { font-weight: 700; }
+  .checks .ok .mark { color: var(--good); }
+  .checks .fail .mark { color: var(--bad); }
+  .checks .detail { color: var(--ash); font-size: 12px; overflow-wrap: anywhere; }
+  .summary { font-size: 13px; }
+  .summary.ok { color: var(--good); }
+  .summary.fail { color: var(--bad); }
+  textarea { width: 100%; box-sizing: border-box; min-height: 200px; resize: vertical; font: 12px/1.45 var(--font-mono); }
+  .status { font-size: 13px; color: var(--ember); min-height: 1.2em; }
+  .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+  @media (max-width: 1100px) { .two { grid-template-columns: minmax(0, 1fr); } }
+  .scrub { display: flex; gap: 10px; align-items: center; }
+  .scrub input { flex: 1; }
+  .scrub output { font-size: 12px; color: var(--ash); min-width: 9em; text-align: right; font-variant-numeric: tabular-nums; }
+  kbd { font: 11px var(--font-mono); border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; }
+</style>
+
+<header>
+  <div>
+    <p class="eyebrow">Create Swords! · forging study</p>
+    <h1>Blade Profile Editor</h1>
+  </div>
+  <div class="row">
+    <label>Blueprint <select id="profile-select"></select></label>
+    <button id="btn-undo" type="button" disabled>Undo</button>
+    <button id="btn-revert" type="button">Revert to file</button>
+    <button id="btn-try" type="button" class="primary">Try in forge study</button>
+    <a class="button-link" href="index.html">Forge study</a>
+  </div>
+</header>
+
+<div class="layout">
+  <div class="rail">
+    <section aria-labelledby="h-stage">
+      <h2 id="h-stage">Stage</h2>
+      <div class="tabs" role="group" aria-label="Stage being edited">
+        <button type="button" data-stage="lengthened" aria-pressed="false">Lengthened</button>
+        <button type="button" data-stage="preform" aria-pressed="false">Preform</button>
+        <button type="button" data-stage="refined" aria-pressed="true">Refined</button>
+      </div>
+      <p class="note">Refined is the finished 100% blade. The 90% blade adds the edge allowance to it. The universal blank is shared by every blueprint and isn't edited here.</p>
+      <label>Curve
+        <select id="curve-select">
+          <option value="outline">Outline (spine and edge)</option>
+          <option value="thickness">Thickness</option>
+          <option value="ridge">Ridge position</option>
+          <option value="edgeThickness">Edge thickness</option>
+          <option value="spineThickness">Spine thickness</option>
+        </select>
+      </label>
+      <div class="fields">
+        <label>Length (cm)<input id="f-length" type="number" step="0.5" min="1"></label>
+        <label>Sori (cm)<input id="f-sori" type="number" step="0.05" min="-5" max="10"></label>
+        <label>Curve centre (0–1)<input id="f-center" type="number" step="0.05" min="0" max="1"></label>
+        <label>Curve spread<input id="f-spread" type="number" step="0.05" min="0.05" max="2"></label>
+      </div>
+      <p class="note">Sori is the curve's height above a straight line from base to point, as sword catalogues list it.</p>
+    </section>
+
+    <section aria-labelledby="h-point">
+      <h2 id="h-point">Selected point</h2>
+      <div class="fields">
+        <label>Along blade (u)<input id="f-u" type="number" step="0.005" min="0" max="1" disabled></label>
+        <label id="f-value-label">Value<input id="f-value" type="number" step="0.01" disabled></label>
+      </div>
+      <div class="row">
+        <button id="btn-delete" type="button" disabled>Delete point</button>
+      </div>
+      <p class="note">Drag points to reshape. Double-click to add a point. Select a point and press <kbd>Delete</kbd> to remove it. Scroll to zoom the outline and drag empty space to pan.</p>
+    </section>
+
+    <section aria-labelledby="h-spec">
+      <h2 id="h-spec">Catalogue measurements</h2>
+      <p class="note">Type the numbers a sword catalogue lists (cm) to rebuild the refined outline, then derive the in-between forging stages from it.</p>
+      <div class="fields">
+        <label>Blade length<input id="s-nagasa" type="number" step="0.5" min="5"></label>
+        <label>Sori<input id="s-sori" type="number" step="0.05" min="-5"></label>
+        <label>Width at base<input id="s-motohaba" type="number" step="0.05" min="0.5"></label>
+        <label>Width at point<input id="s-sakihaba" type="number" step="0.05" min="0.3"></label>
+        <label>Thickness at base<input id="s-kasane" type="number" step="0.02" min="0.1"></label>
+        <label>Point section length<input id="s-kissaki" type="number" step="0.1" min="0.5"></label>
+      </div>
+      <div class="row">
+        <button id="btn-apply-spec" type="button">Rebuild refined outline</button>
+        <button id="btn-derive" type="button">Derive in-between stages</button>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-tang">
+      <h2 id="h-tang">Tang</h2>
+      <div class="fields">
+        <label>Length (cm)<input id="t-length" type="number" step="0.5" min="1"></label>
+        <label>Width (cm)<input id="t-width" type="number" step="0.1" min="0.5"></label>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-ref">
+      <h2 id="h-ref">Reference image</h2>
+      <p class="note">Load a side photo or drawing to trace over. Base on the left, edge at the bottom; flip it if needed.</p>
+      <input id="ref-file" type="file" accept="image/*" aria-label="Reference image file">
+      <div class="fields">
+        <label>Image width (cm)<input id="ref-width" type="number" step="0.5" min="1" value="40"></label>
+        <label>Rotation (°)<input id="ref-rot" type="number" step="0.5" value="0"></label>
+        <label>Left edge at (cm)<input id="ref-x" type="number" step="0.25" value="-6"></label>
+        <label>Centre height (cm)<input id="ref-y" type="number" step="0.1" value="0"></label>
+        <label>Opacity<input id="ref-opacity" type="range" min="0" max="1" step="0.05" value="0.5"></label>
+        <label>Flip<span class="row"><input id="ref-flip" type="checkbox"> mirror left/right</span></label>
+      </div>
+      <div class="row"><button id="btn-ref-clear" type="button" disabled>Remove image</button></div>
+    </section>
+  </div>
+
+  <div class="stage">
+    <section aria-labelledby="h-outline">
+      <div class="row" style="justify-content: space-between;">
+        <h2 id="h-outline">Drawing</h2>
+        <button id="btn-fit" type="button">Fit view</button>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="outline" aria-label="Blade outline with draggable control points"></canvas>
+        <span class="readout" id="outline-readout"></span>
+      </div>
+    </section>
+
+    <div class="two">
+      <section aria-labelledby="h-preview">
+        <h2 id="h-preview">3D preview</h2>
+        <div class="canvas-wrap"><canvas id="preview" aria-label="3D blade preview, drag to turn"></canvas></div>
+        <div class="scrub">
+          <input id="scrub" type="range" min="0" max="13" step="1" value="13" aria-label="Forging step to preview">
+          <output id="scrub-label" for="scrub">Fully ground</output>
+        </div>
+      </section>
+
+      <section aria-labelledby="h-checks">
+        <h2 id="h-checks">Checks</h2>
+        <p class="summary" id="check-summary" role="status"></p>
+        <ul class="checks" id="checks"></ul>
+        <p class="note">The same checks run in the test suite for every blueprint file.</p>
+      </section>
+    </div>
+
+    <section aria-labelledby="h-compare">
+      <h2 id="h-compare">All blueprints at one scale</h2>
+      <div class="canvas-wrap"><canvas id="compare" aria-label="Refined silhouettes of every blueprint at the same scale"></canvas></div>
+    </section>
+
+    <section aria-labelledby="h-export">
+      <h2 id="h-export">Profile JSON</h2>
+      <p class="note">Copy this into <code>dist/data/<span id="export-file">tanto.json</span></code>, or paste a profile here and load it.</p>
+      <textarea id="export" spellcheck="false" aria-label="Profile JSON"></textarea>
+      <div class="row">
+        <button id="btn-copy" type="button">Copy</button>
+        <button id="btn-load" type="button">Load pasted JSON</button>
+        <span class="status" id="export-status" role="status"></span>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script type="importmap">
+  { "imports": { "three": "./vendor/three.module.js" } }
+</script>
+<script type="module" src="./js/editor.js"></script>

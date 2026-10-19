@@ -1,0 +1,8 @@
+{
+  "note": "Blueprints the study and editor offer, in order. The universal blank is blank.json.",
+  "profiles": [
+    { "id": "tanto", "file": "tanto.json" },
+    { "id": "wakizashi", "file": "wakizashi.json" },
+    { "id": "katana", "file": "katana.json" }
+  ]
+}

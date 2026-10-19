@@ -10,6 +10,8 @@ export const FORGED_QUALITY = 90;
 export const MAX_QUALITY = 100;
 // Refinement per centimetre of stone travel along the edge. Exploratory pacing: about four passes.
 export const GRIND_PER_CM = 0.25;
+// Half-width of the grinding stone's reach along the blade, in cm, so longer blades take longer passes.
+export const STONE_RADIUS_CM = 1.8;
 
 // ---------- curves ----------
 
@@ -144,6 +146,8 @@ export function createBlade(blank, profile) {
   return {
     id: profile.id, name: profile.name, version: profile.version, stations: N,
     shapes, recipe, contrib, minCoverage, lastStrikeOfStage, grindWeight, grindWeightTotal,
+    length: refined.segLen.reduce((a, b) => a + b, 0),
+    tang: { length: 6, width: 1.8, ...(profile.tang || {}) },
     profile, blank,
   };
 }
@@ -197,14 +201,16 @@ export function applyStrike(blade, state) {
 
 // Safe grinding at position u (0 base … 1 point). Only works after forging; refinement only
 // rises and clamps at 1, so the blade can never be cut past the refined shape.
-export function applyGrind(blade, state, u, amount, radius = 0.07) {
+export function applyGrind(blade, state, u, amount, radiusCm = STONE_RADIUS_CM) {
   if (!isForged(blade, state) || !(amount > 0) || !Number.isFinite(u)) return state;
+  const radius = radiusCm / blade.length;
   const next = cloneState(state);
   const N = blade.stations;
   for (let i = 0; i < N; i++) {
     const ui = i / (N - 1);
-    // Near either end the stone overhangs it, so the last sections are as easy to finish as the rest.
-    const overhang = (u < radius && ui < u) || (u > 1 - radius && ui > u);
+    // Within one stone width of either end the stone overhangs it, so the end sections are as
+    // easy to finish as the rest.
+    const overhang = (u < 2 * radius && ui < u) || (u > 1 - 2 * radius && ui > u);
     const w = overhang ? 1 : falloff(ui - u, radius);
     if (w <= 0) continue;
     let r = next.refinement[i] + amount * w;
@@ -432,4 +438,116 @@ export function exportProfile(blade) {
     params: PARAMS, shapes,
     recipe: blade.recipe.map(({ stageIndex, ...s }) => s),
   };
+}
+
+// ---------- validation (shared by the tests and the profile editor) ----------
+
+export function signedVolume(pos, index) {
+  let v = 0;
+  for (let t = 0; t < index.length; t += 3) {
+    const a = index[t] * 3, b = index[t + 1] * 3, c = index[t + 2] * 3;
+    v += pos[a] * (pos[b + 1] * pos[c + 2] - pos[b + 2] * pos[c + 1])
+      - pos[a + 1] * (pos[b] * pos[c + 2] - pos[b + 2] * pos[c])
+      + pos[a + 2] * (pos[b] * pos[c + 1] - pos[b + 1] * pos[c]);
+  }
+  return v / 6;
+}
+
+// Every state a player can see: the blank, after each strike, and fully ground.
+export function forgingStates(blade) {
+  const states = [createState(blade)];
+  let s = states[0];
+  while (!isForged(blade, s)) { s = applyStrike(blade, s); states.push(s); }
+  const refined = { ...s, refinement: new Float64Array(blade.stations).fill(1) };
+  states.push(refined);
+  return states;
+}
+
+// Runs the profile checks and returns [{ name, ok, detail }]. Never throws.
+export function validateProfile(blank, profile) {
+  const results = [];
+  const check = (name, fn) => {
+    try {
+      const detail = fn();
+      results.push({ name, ok: true, detail: detail || '' });
+    } catch (e) {
+      results.push({ name, ok: false, detail: e.message });
+    }
+  };
+  let blade = null;
+  check('Builds, and every stage is covered by its strikes', () => {
+    blade = createBlade(blank, profile);
+    return `lowest coverage ${Math.min(...blade.minCoverage).toFixed(2)}`;
+  });
+  if (!blade) return results;
+  const N = blade.stations;
+  const states = forgingStates(blade);
+  const labels = states.map((_, k) => (k === 0 ? 'blank' : k === states.length - 1 ? 'refined' : `strike ${k}`));
+  check('Spine stays above the edge', () => {
+    states.forEach((st, k) => {
+      const p = stationParams(blade, st);
+      for (let i = 0; i < N; i++) if (!(p.spine[i] > p.edge[i])) throw new Error(`${labels[k]}, station ${i}`);
+    });
+  });
+  check('Thickness, ridge and segment lengths are valid', () => {
+    states.forEach((st, k) => {
+      const p = stationParams(blade, st);
+      for (let i = 0; i < N; i++) {
+        if (!(p.thick[i] > 0 && p.edgeT[i] > 0 && p.spineT[i] > 0)) throw new Error(`${labels[k]}: thickness at station ${i}`);
+        if (!(p.ridge[i] >= 0 && p.ridge[i] <= 1)) throw new Error(`${labels[k]}: ridge outside the blade at station ${i}`);
+        if (i < N - 1 && !(p.segLen[i] > 0)) throw new Error(`${labels[k]}: segment ${i} collapsed`);
+      }
+    });
+  });
+  check('Mesh is finite and faces outward', () => {
+    const index = buildIndex(N);
+    states.forEach((st, k) => {
+      const pos = buildPositions(stationParams(blade, st));
+      if (!pos.every(Number.isFinite)) throw new Error(`${labels[k]}: non-finite vertex`);
+      if (!(signedVolume(pos, index) > 0)) throw new Error(`${labels[k]}: inside-out or empty`);
+    });
+  });
+  check('Each stage ends without a catch-up snap', () => {
+    states.forEach((st, k) => { if (st.lastResidual > 1e-9) throw new Error(`strike ${k}: ${st.lastResidual}`); });
+  });
+  check('Strikes land on the blade', () => {
+    states.slice(0, -2).forEach((st, k) => {
+      const t = strikeTarget(blade, stationParams(blade, st), k);
+      if (!(t.point.every(Number.isFinite) && t.thickness > 0 && t.halfWidth > 0)) throw new Error(`strike ${k + 1}`);
+    });
+  });
+  check('Grinding finishes in a few edge-to-edge passes', () => {
+    let s = states[states.length - 2];
+    let passes = 0;
+    const step = 0.5 / blade.length;
+    while (!isRefined(blade, s) && passes < 20) {
+      for (let u = 0.02; u <= 0.98; u += step) s = applyGrind(blade, s, u, 0.5 * GRIND_PER_CM);
+      passes++;
+    }
+    if (!isRefined(blade, s)) throw new Error('not finished after 20 passes');
+    if (passes > 6) throw new Error(`${passes} passes`);
+    return `${passes} passes of ${blade.length.toFixed(0)} cm`;
+  });
+  return results;
+}
+
+// ---------- profile files ----------
+
+// Formats profile JSON the way the data files are written: short objects and point lists on one
+// line, everything else indented. formatJson(JSON.parse(file)) reproduces each file exactly.
+export function formatJson(value, indent = '') {
+  const flat = JSON.stringify(value);
+  const simple = (v) => v === null || typeof v !== 'object';
+  const inlineArray = Array.isArray(value) && value.every((v) => simple(v) || (Array.isArray(v) && v.every(simple)));
+  const inlineObject = !Array.isArray(value) && value && typeof value === 'object'
+    && Object.values(value).every(simple) && flat.length <= 100;
+  if (simple(value)) return flat;
+  if (inlineArray) return `[${value.map((v) => (Array.isArray(v) ? `[${v.map((x) => JSON.stringify(x)).join(', ')}]` : JSON.stringify(v))).join(', ')}]`;
+  if (inlineObject) return `{ ${Object.entries(value).map(([k, v]) => `${JSON.stringify(k)}: ${JSON.stringify(v)}`).join(', ')} }`;
+  const inner = indent + '  ';
+  if (Array.isArray(value)) {
+    return value.length ? `[\n${value.map((v) => inner + formatJson(v, inner)).join(',\n')}\n${indent}]` : '[]';
+  }
+  const entries = Object.entries(value);
+  return entries.length ? `{\n${entries.map(([k, v]) => `${inner}${JSON.stringify(k)}: ${formatJson(v, inner)}`).join(',\n')}\n${indent}}` : '{}';
 }

@@ -1,6 +1,8 @@
 {
   "id": "tanto",
   "name": "Tantō",
+  "kanji": "短刀",
+  "tang": { "length": 6, "width": 1.8 },
   "version": 1,
   "note": "Exploratory study data. Silhouette direction is approved (grounded, slightly exaggerated); these exact numbers, the 12-strike count and the strike order are not. Units are centimetres. Curves are [u, value] points along the blade (0 = base, 1 = point), read with monotone cubic interpolation. spine/edge are offsets from the centreline (spine positive); ridge is the fraction of the way from spine to edge.",
   "stations": 64,
