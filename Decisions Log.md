@@ -142,6 +142,8 @@ These approved decisions supersede conflicting earlier rows. Implementation is p
 
 | 2026-10-19 | **Angled overhead forging camera** | Slightly angled overhead view preserves silhouette readability, blade thickness, hammer movement, and anvil depth. Keep the full blade visible as it lengthens and repositions. | [[Sessions/2026-10-19]] |
 
+| 2026-10-19 | **Starter blades use real lengths and curvature** | Tantō 25.8 cm with a slight inward curve (sori −0.1 cm), wakizashi 50 cm (sori 1.2 cm), katana 70 cm (sori 1.8 cm), measured the catalogue way. Representative values from research; sori varies by period. Widths, thickness, kissaki and tangs remain exploratory. Sources in [[Blade Profile Authoring]]. | [[Sessions/2026-10-19]] |
+
 ## Current open design work
 
 - Review [[Core Loop Review]]: first-session flow, picker clarity, heating pace, sales interruptions, and grinding incentive.

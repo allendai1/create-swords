@@ -31,9 +31,16 @@ function structuredCloneish(v) { return JSON.parse(JSON.stringify(v)); }
 const stage = () => profile.stages[stageKey];
 const round = (v, d = 3) => Math.round(v * 10 ** d) / 10 ** d;
 
-// sori (cm) ↔ bend (rad): an arc of length L bent by θ rises about L·θ/8 above its chord.
-const soriCm = (s) => (s.length * s.curve.sori) / 8;
-const bendFor = (cm, length) => (8 * cm) / length;
+// The finished blade is described the way catalogues measure it (nagasa and sori); the forging
+// stages, which have no real point, use length along the blade and total bend.
+const isRefined = () => stageKey === 'refined';
+const measured = () => core.measureShape(profile.stages.refined, profile.stations);
+function setSpec(target) {
+  const fit = core.fitShapeToSpec(profile.stages.refined, profile.stations, { ...measured(), ...target });
+  profile.stages.refined.length = round(fit.length, 2);
+  profile.stages.refined.curve.sori = round(fit.bend, 4);
+}
+const toDeg = (rad) => (rad * 180) / Math.PI;
 
 // ---------- profile picker ----------
 const select = $('profile-select');
@@ -94,8 +101,10 @@ const numberInput = (id, read, write) => {
   return { el, read };
 };
 const stageFields = [
-  numberInput('f-length', () => stage().length, (v) => { const cm = soriCm(stage()); stage().length = Math.max(1, v); stage().curve.sori = round(bendFor(cm, stage().length), 4); }),
-  numberInput('f-sori', () => round(soriCm(stage()), 2), (v) => { stage().curve.sori = round(bendFor(v, stage().length), 4); }),
+  numberInput('f-length', () => (isRefined() ? round(measured().nagasa, 2) : stage().length),
+    (v) => { if (isRefined()) setSpec({ nagasa: Math.max(1, v) }); else stage().length = Math.max(1, v); }),
+  numberInput('f-sori', () => (isRefined() ? round(measured().sori, 2) : round(toDeg(stage().curve.sori), 2)),
+    (v) => { if (isRefined()) setSpec({ sori: v }); else stage().curve.sori = round((v * Math.PI) / 180, 4); }),
   numberInput('f-center', () => stage().curve.center, (v) => { stage().curve.center = Math.min(1, Math.max(0, v)); }),
   numberInput('f-spread', () => stage().curve.spread, (v) => { stage().curve.spread = Math.max(0.05, v); }),
   numberInput('t-length', () => (profile.tang || {}).length ?? 6, (v) => { profile.tang = { ...(profile.tang || { width: 1.8 }), length: Math.max(1, v) }; }),
@@ -143,6 +152,8 @@ function clampU(pts, i, u) {
 
 function syncFields() {
   stageFields.forEach((f) => { f.el.value = f.read(); });
+  $('l-length').firstChild.textContent = isRefined() ? 'Nagasa, base to point (cm)' : 'Length along blade (cm)';
+  $('l-sori').firstChild.textContent = isRefined() ? 'Sori (cm)' : 'Total bend (°)';
   const pts = selectedPoints();
   pointU.disabled = pointV.disabled = $('btn-delete').disabled = !pts;
   if (pts) {
@@ -163,7 +174,7 @@ function fillSpecFromProfile() {
   const spec = profile.spec || {};
   const width = (u) => sampleAt(r.spine, u) - sampleAt(r.edge, u);
   $('s-nagasa').value = spec.nagasa ?? r.length;
-  $('s-sori').value = spec.sori ?? round(soriCm(r), 2);
+  $('s-sori').value = spec.sori ?? round(measured().sori, 2);
   $('s-motohaba').value = spec.motohaba ?? round(width(0), 2);
   $('s-sakihaba').value = spec.sakihaba ?? round(width(0.9), 2);
   $('s-kasane').value = spec.kasane ?? sampleAt(r.thickness, 0);
@@ -189,10 +200,10 @@ $('btn-apply-spec').addEventListener('click', () => {
   const at = (f) => round(uk + f * (1 - uk), 3);
   const r = profile.stages.refined;
   r.length = L;
-  r.curve = { ...r.curve, sori: round(bendFor(S, L), 4) };
   r.spine = [[0, round(W0 / 2)], [uk, round(W1 / 2)], [at(0.5), round(W1 / 2 * 0.93)], [1, round(W1 / 2 * 0.7)]];
   r.edge = [[0, -round(W0 / 2)], [round(uk / 2, 3), -round((W0 + W1) / 4)], [uk, -round(W1 / 2)], [at(0.35), -round(W1 / 2 * 0.82)], [at(0.75), -round(W1 / 2 * 0.3)], [1, round(W1 / 2 * 0.62)]];
   r.thickness = [[0, T], [round(uk * 0.95, 3), round(T * 0.77)], [uk, round(T * 0.65)], [1, 0.12]];
+  setSpec({ nagasa: L, sori: S }); // measured the catalogue way, after the outline is in place
   profile.spec = { note: profile.spec?.note || 'Catalogue-style targets this draft was built from (cm).', ...spec };
   changed();
   setStatus('Refined outline rebuilt from the measurements.');
@@ -688,7 +699,8 @@ function drawCompare() {
     ctx.fillStyle = row.current ? C('--paper') : C('--ash');
     ctx.fillText(row.name, 0, cy - 2);
     ctx.fillStyle = C('--ash');
-    ctx.fillText(`${round(row.shape.length, 1)} cm`, 0, cy + 13);
+    const label = row.tang ? (() => { const m = core.measureShape(row.shape, profile.stations); return `${round(m.nagasa, 1)} cm, sori ${round(m.sori, 1)} cm`; })() : `${round(row.shape.length, 1)} cm`;
+    ctx.fillText(label, 0, cy + 13);
   });
 }
 
@@ -745,7 +757,12 @@ $('btn-try').addEventListener('click', () => {
 let checkTimer = 0, frameQueued = false;
 // fast: only redraw (while dragging); full refresh re-runs checks and the export.
 function changed(edited = true, fast = false) {
-  if (edited) setStatus('');
+  if (edited) {
+    setStatus('');
+    // The file's catalogue spec always describes the blade as drawn.
+    const m = measured();
+    profile.spec = { ...(profile.spec || {}), nagasa: round(m.nagasa, 2), sori: round(m.sori, 2) };
+  }
   syncFields();
   if (!frameQueued) {
     frameQueued = true;

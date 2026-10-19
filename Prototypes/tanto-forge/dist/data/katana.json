@@ -7,17 +7,17 @@
   "stations": 64,
   "tang": { "length": 14, "width": 2.2 },
   "spec": {
-    "note": "Catalogue-style targets this draft was built from (cm).",
-    "nagasa": 72,
+    "note": "Researched 2026-10-19: katana are over 60.6 cm (2 shaku), commonly about 70 cm (2 shaku 3 sun); sori ranges from under 1 cm (Kanbun era) to about 2.4 cm. Widths, thickness and kissaki are exploratory.",
+    "nagasa": 70,
+    "sori": 1.8,
     "motohaba": 3.2,
     "sakihaba": 2.3,
     "kasane": 0.78,
-    "sori": 1.7,
     "kissaki": 3.6
   },
   "stages": {
     "lengthened": {
-      "length": 56,
+      "length": 54.7,
       "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
       "spine": [[0, 1.55], [0.92, 1.48], [1, 1.25]],
       "edge": [[0, -1.55], [0.92, -1.48], [1, -1.25]],
@@ -27,8 +27,8 @@
       "spineThickness": [[0, 0.92]]
     },
     "preform": {
-      "length": 72,
-      "curve": { "sori": 0.12, "center": 0.55, "spread": 0.35 },
+      "length": 70.36,
+      "curve": { "sori": 0.1119, "center": 0.55, "spread": 0.35 },
       "spine": [[0, 1.65], [1, 1.35]],
       "edge": [[0, -1.65], [0.85, -1.35], [1, -0.95]],
       "ridge": [[0, 0.4]],
@@ -37,8 +37,8 @@
       "spineThickness": [[0, 0.85]]
     },
     "refined": {
-      "length": 72,
-      "curve": { "sori": 0.19, "center": 0.55, "spread": 0.35 },
+      "length": 70.36,
+      "curve": { "sori": 0.1865, "center": 0.55, "spread": 0.35 },
       "spine": [[0, 1.6], [0.9, 1.25], [0.95, 1.17], [1, 0.85]],
       "edge": [[0, -1.6], [0.5, -1.32], [0.93, -1.13], [0.96, -0.95], [0.985, -0.35], [1, 0.75]],
       "ridge": [[0, 0.32], [0.94, 0.32], [1, 0.5]],

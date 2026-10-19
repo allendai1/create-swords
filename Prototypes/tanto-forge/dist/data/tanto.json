@@ -3,12 +3,21 @@
   "name": "Tantō",
   "kanji": "短刀",
   "tang": { "length": 6, "width": 1.8 },
+  "spec": {
+    "note": "Researched 2026-10-19: standard Kamakura tantō length (jōsun) about 25–26 cm; hira-zukuri with a little inward curve (uchizori). Inward curve amount is an estimate.",
+    "nagasa": 25.8,
+    "sori": -0.1,
+    "motohaba": 2.6,
+    "sakihaba": 1.96,
+    "kasane": 0.7,
+    "kissaki": 4.7
+  },
   "version": 1,
   "note": "Exploratory study data. Silhouette direction is approved (grounded, slightly exaggerated); these exact numbers, the 12-strike count and the strike order are not. Units are centimetres. Curves are [u, value] points along the blade (0 = base, 1 = point), read with monotone cubic interpolation. spine/edge are offsets from the centreline (spine positive); ridge is the fraction of the way from spine to edge.",
   "stations": 64,
   "stages": {
     "lengthened": {
-      "length": 21,
+      "length": 20.9,
       "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
       "spine": [[0, 1.45], [0.92, 1.4], [1, 1.2]],
       "edge": [[0, -1.45], [0.92, -1.4], [1, -1.2]],
@@ -18,8 +27,8 @@
       "spineThickness": [[0, 0.92]]
     },
     "preform": {
-      "length": 26,
-      "curve": { "sori": 0.025, "center": 0.6, "spread": 0.35 },
+      "length": 25.79,
+      "curve": { "sori": -0.007, "center": 0.6, "spread": 0.35 },
       "spine": [[0, 1.35], [1, 1.25]],
       "edge": [[0, -1.4], [0.85, -1.1], [1, -0.8]],
       "ridge": [[0, 0.3]],
@@ -28,10 +37,10 @@
       "spineThickness": [[0, 0.85]]
     },
     "refined": {
-      "length": 26,
-      "curve": { "sori": 0.03, "center": 0.6, "spread": 0.35 },
-      "spine": [[0, 1.3], [0.88, 1.22], [0.95, 1.12], [1, 0.95]],
-      "edge": [[0, -1.3], [0.7, -1.05], [0.82, -0.98], [0.9, -0.75], [0.96, -0.35], [1, 0.9]],
+      "length": 25.79,
+      "curve": { "sori": -0.0117, "center": 0.6, "spread": 0.35 },
+      "spine": [[0, 1.3], [0.9, 1.21], [1, 1.17]],
+      "edge": [[0, -1.3], [0.7, -1.05], [0.88, -0.98], [0.93, -0.77], [0.965, -0.3], [0.985, 0.3], [1, 1.12]],
       "ridge": [[0, 0.22]],
       "thickness": [[0, 0.7], [0.8, 0.55], [0.95, 0.35], [1, 0.12]],
       "edgeThickness": [[0, 0.03]],

@@ -56,10 +56,9 @@ Checked in the browser pane at desktop and phone sizes: editing, undo, add/delet
 4. Is the 90% blade clean enough, and is the edge excess visible enough, before grinding?
 5. Does grinding feel optional but worthwhile at about four passes?
 6. Keep the hot glow cooling to steel, or drop it? It's presentation only, with no timer.
-7. Wakizashi 48 cm and katana 72 cm: right lengths, or should the gap be bigger for readability?
-8. Are the curves right? Sori is 1.1 cm (wakizashi) and 1.7 cm (katana), with the tantō almost straight but curving slightly outward rather than the inward curve many tantō have.
-9. Are the kissaki (2.9 and 3.6 cm) the right size, or should they be bolder so the point reads from the forging camera?
-10. Should longer blades keep the same fixed forging camera (the katana blank starts very small), or frame each blueprint by its own length?
+7. Lengths and curves now follow real swords (tantō 25.8 cm with a slight inward curve, wakizashi 50 cm / 1.2 cm sori, katana 70 cm / 1.8 cm sori; see [[Blade Profile Authoring]]). Keep them realistic, or exaggerate the differences for readability?
+8. Are the kissaki (2.9 and 3.6 cm) the right size, or should they be bolder so the point reads from the forging camera?
+9. Forging camera: the camera stays still and is pulled back far enough that the longest the blade gets, plus the tang, fits on either side of the hammer. For the katana that means about 90 cm, so the 12 cm blank fills only a small part of the screen at the start. Options: keep that (nothing moves but the blade), frame each blueprint to its own maximum length (the katana stays small, the tantō gets bigger), or let the camera ease outward as the blade lengthens (the blank starts large, at the cost of some camera motion).
 
 ## Next steps once reviewed
 

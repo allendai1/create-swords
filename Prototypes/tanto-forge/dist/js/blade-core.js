@@ -440,6 +440,49 @@ export function exportProfile(blade) {
   };
 }
 
+// ---------- catalogue measurements ----------
+
+// Measures a shape the way sword catalogues do. nagasa: straight line from the back of the blade
+// at its base (mune-machi) to the point. sori: the largest gap between the back of the blade and
+// that line, positive when the back dips below it (the usual outward curve), negative for an
+// inward curve (uchizori).
+export function measureShape(shape, stations) {
+  const p = sampleShape(shape, stations);
+  const { px, py, angle } = centerline(p);
+  const N = stations;
+  const back = (i) => [px[i] - Math.sin(angle[i]) * p.spine[i], py[i] + Math.cos(angle[i]) * p.spine[i]];
+  const [x0, y0] = back(0);
+  const tipOffset = (p.spine[N - 1] + p.edge[N - 1]) / 2;
+  const x1 = px[N - 1] - Math.sin(angle[N - 1]) * tipOffset, y1 = py[N - 1] + Math.cos(angle[N - 1]) * tipOffset;
+  const nagasa = Math.hypot(x1 - x0, y1 - y0);
+  // Unit normal to the chord, pointing to the spine side.
+  const nx = -(y1 - y0) / nagasa, ny = (x1 - x0) / nagasa;
+  let sori = 0;
+  for (let i = 1; i < N - 1; i++) {
+    const [x, y] = back(i);
+    const below = -((x - x0) * nx + (y - y0) * ny); // distance on the edge side of the chord
+    if (Math.abs(below) > Math.abs(sori)) sori = below;
+  }
+  return { nagasa, sori };
+}
+
+// Finds the length (cm along the blade) and total bend (radians) that give a shape the requested
+// catalogue nagasa and sori, keeping where the curve sits (center, spread) unchanged.
+export function fitShapeToSpec(shape, stations, { nagasa, sori }) {
+  const trial = JSON.parse(JSON.stringify(shape));
+  for (let pass = 0; pass < 4; pass++) {
+    // Bend: measured sori rises steadily with bend, so bisect.
+    let lo = -1, hi = 1;
+    for (let k = 0; k < 60; k++) {
+      trial.curve.sori = (lo + hi) / 2;
+      if (measureShape(trial, stations).sori < sori) lo = trial.curve.sori; else hi = trial.curve.sori;
+    }
+    trial.curve.sori = (lo + hi) / 2;
+    trial.length *= nagasa / measureShape(trial, stations).nagasa;
+  }
+  return { length: trial.length, bend: trial.curve.sori };
+}
+
 // ---------- validation (shared by the tests and the profile editor) ----------
 
 export function signedVolume(pos, index) {
@@ -516,6 +559,15 @@ export function validateProfile(blank, profile) {
       if (!(t.point.every(Number.isFinite) && t.thickness > 0 && t.halfWidth > 0)) throw new Error(`strike ${k + 1}`);
     });
   });
+  if (profile.spec && Number.isFinite(profile.spec.nagasa) && Number.isFinite(profile.spec.sori)) {
+    check('Finished blade matches its catalogue nagasa and sori', () => {
+      const m = measureShape(profile.stages.refined, N);
+      if (Math.abs(m.nagasa - profile.spec.nagasa) > 0.05 || Math.abs(m.sori - profile.spec.sori) > 0.02) {
+        throw new Error(`measures ${m.nagasa.toFixed(1)} cm, sori ${m.sori.toFixed(2)} cm; spec ${profile.spec.nagasa} cm, ${profile.spec.sori} cm`);
+      }
+      return `${m.nagasa.toFixed(1)} cm, sori ${m.sori.toFixed(2)} cm`;
+    });
+  }
   check('Grinding finishes in a few edge-to-edge passes', () => {
     let s = states[states.length - 2];
     let passes = 0;

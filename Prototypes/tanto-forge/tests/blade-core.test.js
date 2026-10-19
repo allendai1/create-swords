@@ -262,6 +262,12 @@ function suite() {
     assert.strictEqual(p.recipe.length, profile.recipe.length);
   });
 
+  test('the finished blade measures to its catalogue spec (nagasa and sori)', () => {
+    const m = core.measureShape(profile.stages.refined, profile.stations);
+    assert.ok(Math.abs(m.nagasa - profile.spec.nagasa) < 0.05, `nagasa ${m.nagasa} vs ${profile.spec.nagasa}`);
+    assert.ok(Math.abs(m.sori - profile.spec.sori) < 0.02, `sori ${m.sori} vs ${profile.spec.sori}`);
+  });
+
   test('shared profile validation passes', () => {
     const failed = core.validateProfile(blank, profile).filter((r) => !r.ok);
     assert.deepStrictEqual(failed, []);

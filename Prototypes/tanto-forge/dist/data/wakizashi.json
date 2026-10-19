@@ -7,17 +7,17 @@
   "stations": 64,
   "tang": { "length": 10, "width": 2 },
   "spec": {
-    "note": "Catalogue-style targets this draft was built from (cm).",
-    "nagasa": 48,
+    "note": "Researched 2026-10-19: wakizashi are 30.3–60.6 cm (1–2 shaku), about 50 cm on average; Edo examples show sori from 0.2 to 1.7 cm. Widths, thickness and kissaki are exploratory.",
+    "nagasa": 50,
+    "sori": 1.2,
     "motohaba": 2.9,
     "sakihaba": 2.15,
     "kasane": 0.72,
-    "sori": 1.1,
     "kissaki": 2.9
   },
   "stages": {
     "lengthened": {
-      "length": 38,
+      "length": 39.8,
       "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
       "spine": [[0, 1.5], [0.92, 1.42], [1, 1.2]],
       "edge": [[0, -1.5], [0.92, -1.42], [1, -1.2]],
@@ -27,8 +27,8 @@
       "spineThickness": [[0, 0.92]]
     },
     "preform": {
-      "length": 48,
-      "curve": { "sori": 0.1, "center": 0.55, "spread": 0.35 },
+      "length": 50.3,
+      "curve": { "sori": 0.1107, "center": 0.55, "spread": 0.35 },
       "spine": [[0, 1.5], [1, 1.25]],
       "edge": [[0, -1.5], [0.85, -1.25], [1, -0.9]],
       "ridge": [[0, 0.4]],
@@ -37,8 +37,8 @@
       "spineThickness": [[0, 0.85]]
     },
     "refined": {
-      "length": 48,
-      "curve": { "sori": 0.18, "center": 0.55, "spread": 0.35 },
+      "length": 50.3,
+      "curve": { "sori": 0.1845, "center": 0.55, "spread": 0.35 },
       "spine": [[0, 1.45], [0.9, 1.18], [0.95, 1.1], [1, 0.8]],
       "edge": [[0, -1.45], [0.5, -1.22], [0.92, -1.05], [0.955, -0.86], [0.985, -0.28], [1, 0.7]],
       "ridge": [[0, 0.32], [0.93, 0.32], [1, 0.5]],
