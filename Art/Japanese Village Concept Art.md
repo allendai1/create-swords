@@ -9,6 +9,8 @@ updated: "2026-10-19"
 
 # Japanese Village Concept Art
 
+**Additional architecture exploration (2026-10-20):** [[Art/Anime Village Architecture]] contains a new anime-inspired mountain-town panorama and a matching building/component sheet. Both remain visual proposals; existing gameplay and plot requirements still apply.
+
 Four matching visual explorations for the Japanese mountain-village direction. Created with the built-in image generation tool. These are proposals, not approved models or changes to gameplay. Exact prompts: [[References/Japanese Village/generation-prompts-v1]].
 
 ## Larger player property — latest direction
@@ -19,6 +21,12 @@ Allen requested larger individual plots with a storefront and a dedicated crafti
 
 The generated roller resembles ore bins rather than one material per stand, and the anvil is tapered. Retain the approved shared lever/one output per stand and use the standalone rectangular anvil reference for modeling. Exact prompt: [[References/Japanese Village/player-plot-prompt-v2]].
 
+**Built 2026-10-19** in Studio as one plot (storefront wing, crafting wing, courtyard, expansion lawn, fence, road); the anvil and ore stands stay under the crafting roof. See [[Development/Code Map]] and [[Sessions/2026-10-19]].
+
+![[References/Player Plot/built-overview.jpg]]
+
+**Next review pass:** [[Art/Player Plot Review]] records Allen's feedback that the plot feels small and the stations feel tight, with proposed changes to workshop depth, station clearance, frontage openings, and display layout. Dimensions remain exploratory pending a blockout and walkthrough.
+
 ## Labeled top-down layout
 
 ![[References/Japanese Village/player-plot-top-down-v1.png]]
@@ -28,6 +36,8 @@ Allen liked the spacious connected layout and requested this labeled overhead vi
 Concept arrangement only, not a measured construction plan. The illustration retains some angled projection, and the material shelf looks like a sword rack; model it as ingot storage. Station capacity and decorative details are illustrative. Exact prompt: [[References/Japanese Village/player-plot-top-down-prompt-v1]].
 
 ## Early / mid / late progression
+
+For the subsequent employee-workstation, blade-rack, courier/cart, weather and indoor roof-visibility direction, see [[Design/Workshop Growth]]. Those notes extend the progression brief; they do not approve new geometry or the illustrative capacities in this sheet.
 
 ![[References/Japanese Village/plot-progression-v1.png]]
 

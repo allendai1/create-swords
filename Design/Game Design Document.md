@@ -26,7 +26,7 @@ A cozy crafting tycoon inspired by the atmosphere and craftsmanship of Demon Sla
 ## 2. Pillars
 
 1. **Making a sword feels satisfying.** Every hammer hit visibly shapes the blade, with sparks, sound, and movement.
-2. **Simple actions, optional extra care.** Untimed guided forging reaches 90%; safe freehand grinding can improve it to 100%. Quality remains a visible percentage and affects price.
+2. **Simple actions, optional extra care.** Hitting every forging circle gives 100% quality; optional final polishing on the assembled sword adds +10% value (Allen 2026-10-20). Quality remains a visible percentage and affects price. Employee output has separate capability limits (see §10.4).
 3. **Every customer is a little story.** Flexible everyday tastes, personal relationships, and specific special commissions give swords a purpose.
 4. **A workshop worth growing.** Sales fund functional upgrades; crafting milestones unlock fittings; commissions introduce sword traditions.
 5. **A cozy home for extraordinary visitors.** Japanese village identity, varied customers, no combat or testing-area scope for now.
@@ -40,27 +40,31 @@ A cozy crafting tycoon inspired by the atmosphere and craftsmanship of Demon Sla
 ## 4. Core loop
 
 ```text
-Roll ingot → Heat → Hit every forging circle → Optional grind → Fit hilt
-    ↑                                                            ↓
-Upgrades ← Coins + reputation ← Display and haggle ← Complete sword
+Roll ingot → Heat → Hit every forging circle (100%) → Fit hilt → (Polish, +10% value) → (Etch, unlocked station)
+    ↑                                                                     ↓
+Upgrades ← Coins + reputation ← Display and haggle / fulfill an accepted order
 
-Commissions and relationships provide goals alongside ordinary shop sales.
+Direct commissions, optional courier deliveries, and relationships provide goals alongside ordinary shop sales.
 ```
 
 | Step | Action | Current direction |
 |---|---|---|
-| Roll | Ore Roller | Activate the shared lever: all empty stands cycle ore appearances together and reveal one result each in under five seconds. Occupied stands retain their ores and cannot roll until collected. Keep the full fantasy material roster. |
-| Heat | Forge | Load an ingot and collect it after heating. Base heating time is **10 seconds** (approved 2026-10-19), replacing the 15-second prototype duration. No quench or cooling countdown while shaping. |
-| Forge | Anvil | Choose a hot ingot and unlocked blueprint. Hit every circle, without timing windows or misses. Each hit improves the blade; completing all circles reaches 90% quality. |
-| Refine, optionally | Grinding | Freehand removal of excess metal stops at the target outline. Quality can only improve, up to 100%. |
-| Assemble | Hilt Bench | Choose fittings appropriate to the sword's tradition and attach them with three untimed taps. No timing bonus or penalty. |
+| Roll | Ore Roller | Activate the shared lever: all empty stands cycle ore appearances together and reveal one result each in under five seconds. A stand you own can be **re-rolled as many times as you like** (Allen 2026-10-20); a re-roll replaces the ore on it. Keep the full fantasy material roster. |
+| Heat | Forge | Load an ingot and collect it after heating. One furnace heats **one ingot at a time** (Allen 2026-10-20; the forge model shows one tray), and its label shows only the time left, then "Ready!"; heating more at once means buying another furnace in the tycoon. Base heating time is **10 seconds** (approved 2026-10-19), replacing the 15-second prototype duration. No quench or cooling countdown while shaping. |
+| Forge | Anvil | Choose a hot ingot and unlocked blueprint. Hit every circle, without timing windows or misses. Each hit improves the blade; completing all circles gives **100% quality** (Allen 2026-10-20; was 90%). The anvil view closes when the blade is done. |
+| Assemble | Hilt Bench | Choose fittings appropriate to the sword's tradition and attach them with three untimed knocks: click the ring on the hilt's end (or Space) and each knock slides the hilt further onto the tang on the bench (2026-10-20). No timing bonus or penalty. |
+| Polish, optionally | Polishing Station | On the finished sword: freehand polishing along the edge removes the last excess metal and brightens the finish. A fully polished sword is worth **+10%** and is named "(Polished)"; quality is already 100% from forging (Allen 2026-10-20). The anvil only forges. |
+| Etch, optionally (last step) | Etching Table | Apply a finish pattern. The last step, after polishing, because the Etching Table will be an unlocked station (Allen 2026-10-20). Current approved interim flow is free and instant; a trace minigame is deferred. |
 | Display | Sword holders | Put the complete sword on display. Stock influences regular visitors. |
 | Sell | Customer | Accept or haggle; pushing for more can cause the customer to leave. Sales earn coins and build reputation and familiarity. |
+| Deliver, optionally | Delivery board and courier/cart | Fulfill a separate remote order, pack swords, dispatch, and collect the reward when the courier returns. Direct commissions retain their immediate picker hand-in. |
 | Grow | Workshop and commissions | Upgrade the workshop, unlock fittings through crafting, and learn new sword traditions through commissions. |
 
 **Picker behavior (confirmed 2026-10-19):** every item-selection interaction opens its picker every time, even with only one valid item. Do not auto-select the current workpiece or bypass a picker. Commission delivery is a parallel route to ordinary display sales: open the commission, select the finished sword through a picker, and receive the agreed reward. No display listing or haggling is required for commission delivery.
 
 ## 5. Forging and optional grinding
+
+**Current station split:** the anvil forges; the Polishing Station performs the former freehand grinding as an optional step after hilt assembly; etching comes after it, last (2026-10-20). The section title is retained for existing links. The 90% forging rule below describes the player's completed sequence; employee forging and player completion of employee work are defined in §10.4.
 
 **Approved 2026-10-19; replaces the timed Points and freehand hammering prototypes as the intended main mode.**
 
@@ -72,8 +76,8 @@ Commissions and relationships provide goals alongside ordinary shop sales.
 - **Impact deformation (approved 2026-10-19):** quickly and smoothly deform the struck area at hammer contact, blending the change into neighboring metal. Flatten or stretch the local section as appropriate to the shaping stage. Avoid discrete shape snaps, wobbling, or a slow melting effect. Exact deformation timing and falloff remain to be tuned.
 - Each completed circle shapes its section and increases quality. All circles completed gives **90%**. **Initial implementation uses the same circle/hit count across sword blueprints. Higher-tier swords should eventually require modestly more effort**, rather than making all larger swords automatically take longer. Exact tier thresholds, added effort, circle count, and transition pacing remain to be tuned; the previous 12 is only a prototype baseline. No timing challenge or failure penalty is introduced by this direction.
 - **90% blade appearance (approved 2026-10-19):** clean and recognizable, with the intended silhouette, subtle excess metal along the edge, and a dull finish. It should already look like a desirable finished sword after fitting the hilt, not a visibly jagged or misshapen failure. Optional grinding refines the small edge allowance and improves the finish toward the 100% appearance.
-- The player can finish forging at 90% and fit the hilt, or optionally grind first.
-- Grinding is freehand but constrained to remove only excess metal toward the target. It cannot overcut or reduce quality. Full refinement reaches **100%**.
+- Forging ends at **100%** (changed 2026-10-20 from 90%) and the blade is finished right away; it goes to the Hilt Bench. (Changed 2026-10-20: grinding moved from the anvil to the Polishing Station, an optional step on the finished sword.)
+- Polishing (at the Polishing Station, on the assembled sword) is freehand but constrained to remove only excess metal toward the target. It cannot overcut or reduce quality. A full polish adds **+10% value** (finish bonus, like the hilt and etch bonuses). The station is free and available from the start; selling unpolished stays a choice.
 - Quality is shown as a percentage, not a grade name. It is now a guided completion/refinement measure; the old silhouette mismatch formula is not the new scoring specification.
 - Accent lines and bevels remain automatic visual details on finished swords, suited to the blueprint.
 - Server validation must enforce valid circle progress and bounded grinding improvements. The recorded BladeCore/ForgeCheck integration covers this flow; see [[Development/Code Map]] and [[Current Status]] for implementation and remaining validation.
@@ -112,10 +116,10 @@ Tantō and wakizashi replace the dagger/shortsword starting progression. The old
 
 | Finish | Station | Minigame | Bonus |
 |---|---|---|---|
-| **Polish** | Polishing Wheel | Coverage % rub, like pottery glaze | +10% (shiny look) |
+| **Polish** | Polishing Station (built 2026-10-20) | Freehand edge polishing (the old anvil grinding), on the finished sword | +10% value when fully polished (2026-10-20) |
 | **Color / Enamel** | Etching Table | Paint coverage, pick colours (rainbow = multi-colour) | +10–20%, matches NPC wants |
-| **Etching / Rune** | Etching Table | Trace a pattern | +15% |
-| **Hilt** | Hilt Bench | Choose matching fittings; three untimed assembly taps. Completes the sword (see §6.5) | +0% to +40% price by hilt; some NPCs care |
+| **Etching / Rune** | Etching Table | Free and instant in the approved interim flow; trace minigame deferred | +15% |
+| **Hilt** | Hilt Bench | Choose matching fittings; three untimed knocks seat the hilt on the tang. Completes the sword (see §6.5) | +0% to +40% price by hilt; some NPCs care |
 | **Gem Socket** (late) | Hilt Bench | Insert a gem | Large bonus; consumes a gem item |
 
 ### 6.4 Sword value formula
@@ -128,7 +132,7 @@ Value = Blueprint base
       × NPC preference bonus (see §7)
 ```
 
-The tooltip on a finished sword shows each factor so players learn what to chase. This is the existing economy baseline, not a newly tuned curve: ×1.5 at 90% versus ×2.0 at 100% gives full grinding about 33% more value. Review that incentive in [[Design/Core Loop Review|Core Loop Review]]. Optional finish bonuses remain earlier proposals, not additions to the required loop.
+The tooltip on a finished sword shows each factor so players learn what to chase. Since 2026-10-20 every player-forged blade is 100% (×2.0) and a full polish is a +10% finish bonus. Review that incentive in [[Design/Core Loop Review|Core Loop Review]]. Employee quality below 90% needs explicit value/refinement rules before implementation, particularly if starting quality is below the table's 80% baseline; do not invent extrapolation. Optional finishes remain optional; other proposed bonuses still need tuning.
 
 ### 6.5 Hilt Bench and fittings
 
@@ -145,6 +149,7 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 - Early customers are primarily original local villagers, guards, and wandering swordsmen, with an **early special outsider** hinting at the wider cast.
 - Later customers can include knights, pirates, and any fictional or historical sword wielders. The cast combines original regulars and recognizable special visitors; exact named roster is not selected.
 - **Displayed stock influences regular customer arrivals. Reputation unlocks surprise special visitors.**
+- **Weather traffic (confirmed 2026-10-19):** sunshine can grant extra customer traffic; other weather stays at the normal baseline. Bad weather does not reduce arrivals below baseline. Weather bonuses must respect the first-sale tutorial arrival gate. Bonus values, schedules, and combination with reputation/customer upgrades remain untuned; see [[Design/Workshop Growth]].
 - Regular customers have flexible tastes (such as elegance, color, or craftsmanship); special commissions specify concrete combinations.
 - Repeat sales build familiarity. Relationship milestones unlock personal commission chains, stories, and rewards.
 - Individual special visitors bring distinctive commissions and rewards. No village-wide event system for now.
@@ -176,6 +181,14 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 - **Commission delivery:** open the commission and select the finished sword through a picker, then receive the agreed reward. This also applies to the first Iron Wakizashi commission; it does not require putting the sword on sale or negotiating.
 - Exact letter interface, active-request capacity, and ordinary commission timing are not settled. The proposed first-session flow in [[Design/Core Loop Review|Core Loop Review]] is not yet approved.
 
+### 9.1 Remote delivery orders
+
+**Confirmed 2026-10-19:** add a separate optional delivery board/station using a village courier or cart. Accept an order showing recipient and requested swords → craft and pack the crate → dispatch → delivery and return trip → collect the payout at the station. An order can be pinned on screen. Upgrade directions include delivery speed and carrying capacity.
+
+This is a parallel order route. In-person/letter commissions retain the direct picker hand-in above, including the first Iron Wakizashi commission. Delivery travel does not require the player to stop crafting. Exact order rules, capacity, rewards, trip time, unlock stage, expiry/cancellation and offline behavior remain open.
+
+The pottery reference's van, 3:30 round trip, 3000-gold upgrade, and 6→9 capacity are comparison notes, not selected assets or balance numbers. Full context: [[Design/Workshop Growth#Optional remote delivery orders]].
+
 ## 10. Economy & progression
 
 **Tutorial progression (approved 2026-10-19):** first tantō shop sale → Iron Wakizashi commission (90% minimum, delivered through a picker) → first workshop upgrade. This introduces spending earnings to grow the business. The first upgrade is **a second material stand for the Ore Roller**. One shared lever activates all empty stands together, giving more material results per activation. Occupied stands are skipped until their ores are collected. This increases roll opportunities, not per-result rarity odds. Upgrade price and exact reveal duration (under five seconds) remain undecided.
@@ -192,10 +205,11 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 **Coin upgrades (smithy & shop):**
 - Additional **material stands for the Ore Roller** (the second stand is the first tutorial upgrade; one shared lever rolls all empty stands, separate from luck upgrades)
 - Extra **display racks** and **ingot shelf** space
+- Additional **anvils, bare-blade rack capacity and finished-sword rack capacity** for employee production; prices and station-assignment rules need design
 - Faster **heating** timers
 - Better **roll odds** (Lucky Roller I–V)
 - New **blueprints** and **finish stations**
-- **Shop expansions** (one evolving open-front workshop; displays and functional facilities improve business, purely cosmetic decoration gives no stats)
+- **Shop expansions** (players start with a small Starter Shop, 24 × 14 with 2 sword holders; today's 31 × 38, 3-holder shop is the Upgraded Store (both widened 2026-10-20) (Allen 2026-10-20); one evolving open-front workshop; displays and functional facilities improve business, purely cosmetic decoration gives no stats)
 
 **Gem upgrades (customers):**
 - **More Customers**: shorter time between walk-ins
@@ -205,7 +219,9 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 
 **Automation (late game):**
 - **Cashier**: auto-accept offers (see §8)
-- **Apprentice Smith**: auto-forges a chosen blueprint at a set accuracy (e.g. 85%) from shelf ingots, slower than the player. Keeps the shop stocked while the player chases near-perfect blades and commissions.
+- **Five employee professions**: furnace operator, smith, finisher, stocker and cashier, with hiring/upgrade UI and levels. The finisher combines hilt assembly and optional polishing; the stocker transfers ready swords from the finished rack to empty holders. **Racks built 2026-10-20:** an Ingot Rack (12 ingots) and a Finished Sword Rack (6 swords) on the courtyard; players carry items and store or take them with E, ready for employees later. Smiths leave bare blades on their own rack and train from below 90% toward 90%. See §10.4. The old fixed 85% apprentice and separate hilter/polisher proposals are superseded; exact values remain untuned.
+
+**Delivery progression (unlock stage and currency open):** improve courier/cart trip speed and carrying capacity; prices and values remain undecided.
 
 ### 10.3 Progression arc
 
@@ -213,9 +229,25 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 
 | Stage | Player has | Goal |
 |---|---|---|
-| Early (pacing to test) | Roller, forge, anvil, bench, display; local teaching commissions | First tantō sale, fittings milestone, progress toward wakizashi and katana |
+| Early (pacing to test) | Roller, forge, anvil, hilt bench, optional Polishing Station, display; local teaching commissions | First tantō sale, fittings milestone, progress toward wakizashi and katana |
 | Mid (pacing to test) | New traditions, letters, better workshop facilities | Customer relationships, additional blueprints and capacity |
 | Late (pacing to test) | Cashier, Apprentice, Claymore/Flamberge | Legendary metals, 98%+ blades, Material Index completion |
+
+### 10.4 Employees and production handoffs
+
+**Confirmed from Allen's notes and answers, 2026-10-19:** five professions, with multiple workers per profession possible subject to station/capacity limits. Hire and compare workers through an employee management/upgrade window; employees level through completed work. Buy additional anvils and provide separate bare-blade and finished-sword racks.
+
+- **Furnace operator:** loads, heats and collects ingots for the next stage.
+- **Smith:** uses an available anvil and deposits the un-hilted blade on the blade rack. Starter quality is below 90%; training improves forging capability toward a maximum of 90%.
+- **Finisher:** combines fitting the selected hilt with optional polishing. Speed and polishing ceiling improve through training. Players can choose fittings and whether to polish. For player etching, pause after assembly and resume final polishing after etching. No separate hilter or polisher profession.
+- **Stocker:** visibly carries ready-for-sale swords from the finished-sword rack to empty shop holders. It preserves swords reserved for commissions, deliveries or further finishing, and waits when the shop is full or no eligible swords are ready. Stocking speed is the initial progression direction; display-priority modes remain later options.
+- **Cashier:** retains the offer threshold described in §8.
+
+**Player completion is allowed:** the player can take an employee's sub-90% un-hilted blade back to the anvil and complete forging to 90%. After assembly and optional etching, the player can polish beyond an employee's polishing ceiling up to 100% at the Polishing Station. Preserve station order; polishing does not replace unfinished forging.
+
+The production route is furnace operator → smith → bare-blade rack → finisher (hilt, optional polish after any player etch) → ready-for-sale finished-sword rack → stocker → shop holders → cashier. Reserved commission/delivery swords bypass retail stocking. Players can also place their own ready swords on the finished rack for retail automation.
+
+Exact starting quality, polishing ceilings, progression curves, prices, unlock timing, material permissions, intermediate storage, queues and station priority remain open. The current 90–100% implementation needs an explicit extension for sub-90% employee work. This roster does not add an ore attendant, automated etcher or employee courier, and does not decide the separate offline-earnings idea. See [[Design/Workshop Growth#Employees and workstations]].
 
 ## 11. World & multiplayer
 
@@ -224,6 +256,7 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 - **6 players per server**, each with a workshop plot in a Japanese mountain swordsmith village.
 - **Open-front Japanese workshop:** visible forging and sword displays face the village path. Players can see neighbors working as they pass.
 - Progression expands **one evolving workshop** with more elaborate roofing, timber, signage, and displays. A compound of separate buildings or freeform building placement is not the selected direction.
+- **Indoor roof visibility (requested 2026-10-19):** make the roof transparent or cut it away while the player is beneath it, restoring the exterior view outside. A smooth local-only fade/hide is the recommended implementation; exact opacity and detection are tuning decisions. See the exterior/interior pottery reference pair in [[Design/Workshop Growth#Roof visibility while indoors]].
 - Warm, cozy, stylized art: timber, tiled roofs, lanterns, stone paths, streams, and mountain scenery. Demon Slayer's Swordsmith Village is an atmosphere reference.
 - NPCs travel through the village and visit shops. Admiring other players' shops remains the light social layer; no player trading in v1.
 - Cosmetic decoration is freely expressive; functional displays and facilities provide business benefits.
@@ -237,7 +270,7 @@ Implementation details and script paths are maintained in [[Development/Code Map
 - Server-owned state and `ForgeCheck` validate forging completion and refinement. The client renders responsive blade motion from BladeCore/BladeData through BladeView.
 - Held/displayed blades currently use one EditableMesh per visible sword, a documented resource concern awaiting optimization and published-device testing.
 - Saves are still documented as session-only; persistence remains roadmap work.
-- The six-player village is the intended structure; the recorded build has one workshop.
+- The six-player village is the intended structure; the recorded build has one plot (storefront wing + crafting wing + courtyard + expansion lawn), still with shared stations.
 
 ## 13. Decisions log
 
@@ -249,7 +282,7 @@ See [[Sessions/2026-10-19]] for this revision's scope and [[Design/Core Loop Rev
 
 See [[Development/Roadmap|Roadmap]] for implementation status. Prior completed prototypes remain historical achievements, not evidence that the revised design is built.
 
-The anvil forging/grinding flow and Japanese workshop have implementation records. Remaining work includes design/build gaps, first-session progression, saving, village/plot growth, relationships, and later automation. [[Development/Roadmap]] owns the actionable task list; this document owns intended game behavior.
+Anvil forging, final polishing on its own station, and the Japanese workshop have implementation records. Remaining work includes design/build gaps, first-session progression, saving, village/plot growth, relationships, employees, courier orders, weather traffic bonuses, and indoor roof visibility. The new growth features are not recorded as implemented. [[Development/Roadmap]] owns the actionable task list; this document owns intended game behavior.
 
 [[Design/Core Loop Review]] distinguishes confirmed tutorial choices from unapproved pacing and interaction recommendations.
 

@@ -10,6 +10,8 @@ updated: "2026-10-19"
 
 Reviewed 2026-10-19 against the approved [[Design/Game Design Document|Game Design Document]]. **Onboarding, pacing, and balance changes below remain proposals unless explicitly marked confirmed.** Allen confirmed that item pickers must open every time, even with one valid item; the automatic-selection proposal was rejected. Base heating is 10 seconds. The first-sale tutorial has no customers while the first sword is being made; putting it on sale triggers the first customer arrival.
 
+**Station-order reconciliation:** the anvil now ends forging at 90% automatically. Hilt assembly follows; etching is optional, then freehand polishing at its own station is the optional final step on the completed sword. The proposed walkthrough below is aligned to that later confirmed direction. [[Design/Workshop Growth]] adds employee training/recovery, separate optional courier orders, bonus-only weather and indoor roof visibility; these do not replace the starting tutorial or direct commissions.
+
 ## Assessment
 
 The loop is understandable: get metal, make a sword, sell it, improve the workshop. Untimed circles and safe grinding make individual actions accessible. The total interaction chain still risks feeling cumbersome because players repeatedly choose and transfer the same workpiece.
@@ -26,8 +28,8 @@ Times are provisional playtest targets, not promises. Aim for the first complete
 | Begin crafting without customers | Tutorial guidance directs the first tantō craft; no customers visit yet | **Confirmed:** first customer arrives only after the sword is put on sale. **Confirmed:** start with the tantō blueprint and simple on-screen instructions. Local commissions introduce wakizashi and katana afterward. |
 | Roll and heat | Activate the lever, watch the ore roulette stop, collect the result, then load and collect it at the forge | Introduce material surprise. Use the confirmed **10-second base heat**; brief tutorial guidance can explain the next step without introducing a customer. |
 | Forge | Choose the starting tantō blueprint and hit its circles | Each hit visibly changes the sword. Show progress clearly, keep targets readable on touch, and avoid tiny precision demands. |
-| Decide on refinement | See “90% — ready” with “Finish blade” and “Grind to improve” | Neither force grinding nor hide it. Explain that it can improve quality to 100% without damage. |
 | Assemble | Use the starter matching fittings and tap three times | Celebrate the complete sword with a clear name, quality, and value. |
+| Decide on final refinement | After assembly and any chosen etch, optionally take the completed sword to the Polishing Station | **Confirmed station order:** the anvil auto-finishes at 90%; final polishing can improve to 100% safely. Explain the choice without forcing polishing or teaching every optional finish during the first craft. |
 | First sale | Put the sword on sale on the nearby holder; this triggers the tutorial customer to walk in, inspect, and offer | **Confirmed arrival trigger:** listing the first sword, not joining or starting crafting. **Confirmed:** the first customer gives a guaranteed fair offer; haggling begins on the second ordinary shop sale. Commission delivery uses a picker and pays the agreed reward; ordinary customer scheduling remains separate design work. |
 | First reward | Accept the offer and see coins and progress toward the next unlock | **Confirmed:** introduce haggling on the second ordinary shop sale; the first sale uses a guaranteed fair offer. Fund one modest useful upgrade within the first few sales. |
 | Immediately after the first sale | Introduce a local wakizashi teaching commission and provide its blueprint when the commission begins | **Confirmed:** this is the next goal, rather than a required upgrade purchase or another tantō sale. The player repeats the crafting loop with a new shape and purpose. Katana follows through a later local commission. **Confirmed:** the first commission requests an **Iron Wakizashi at 90% quality or higher**; Iron is in the starter roller’s Common pool. Grinding is optional. |
@@ -43,13 +45,13 @@ Katana is a visible early aspiration, not necessarily awarded in the first few m
 |---|---|---|
 | Repeated pickers | Forge ingot, anvil ingot, shape, blade, fitting, and display selection can feel like paperwork | **Confirmed: keep the picker every time, including when only one item is valid.** Improve clarity and responsiveness within that flow; do not bypass selection. |
 | Heating wait and collection | The confirmed base wait is **10 seconds**, reduced from the 15-second prototype | Keep the 10-second heat legible; use the tutorial wait purposefully. Later allow loading the next ingot while working on a sword. |
-| Walking between stations | Travel can exceed meaningful interaction time | Arrange roller, forge, anvil/refinement, bench, and display in a compact path within the workshop. |
+| Walking between stations | Travel can exceed meaningful interaction time | Keep roller → forge → anvil → hilt bench → optional etching/final polishing → display routes readable and short. Employee anvils and racks must not block that route. |
 | Sales interrupt crafting | Existing offer cards expire after 20 seconds | Queue offers or pause their response window while the player is in crafting interaction. Haggling can still lose a customer by choice; unrelated UI should not cause the loss. |
 | Random materials block requests | A fixed rare-material request can become repeated rolling instead of crafting | **Confirmed:** the first commission requires an Iron Wakizashi, using Iron from the starter roller’s Common pool. Do not substitute an any-material request. Test how long players wait for that roll; no guaranteed drop or altered odds has been approved. Preserve ordinary sales while working toward requests. |
 | Grinding feels mandatory | Existing multipliers give 100% swords ~33% more value than 90% swords | Compare coins per minute with and without grinding. Tune bonus and duration so both routine stock-making and refinement are worthwhile. Do not change the approved 90/100 quality endpoints. |
 | Repetition | Identical circles and three taps on every sword can become mechanical | Vary blade transformations and customer purpose; keep sequences short. Add depth through materials, fittings, customer matching, and workshop choices before adding input difficulty. |
 | Unclear next step | A sale can leave the player wondering what to do | Show one primary next objective and nearby progress, such as the next teaching commission or fitting milestone. |
-| Apprentice replaces all player crafting | Automation could remove the game's main activity | Test its speed/quality against player crafting. Preserve a reason to personally refine valuable swords and complete special requests; exact limits are undecided. |
+| Employees replace all player crafting | Automation could remove the game's main activity | **Confirmed five-role direction:** starter smiths train from below 90% toward 90% and deposit bare blades; finishers combine hilt assembly and optional polish; stockers carry ready swords from the finished rack to holders; furnace operators and cashiers cover heating/sales. Players can finish employee forging to 90% and final polishing to 100%. Test speed/quality and recovery effort; values remain open. |
 
 ## Simple enough?
 
@@ -76,6 +78,9 @@ Use a small initial group (for example 3–5 new players) to find obvious proble
 - Does grinding dominate earnings per minute, and do players describe it as satisfying or obligatory?
 - Can they explain their next goal after a sale?
 - Are offers or tutorial messages interrupting crafting?
+- Do courier orders remain optional and distinct from direct commissions? Does weather preserve the first-sale customer trigger?
+- Can players understand employee blade-rack handoffs and the difference between completing forging and final polishing?
+- Does the indoor roof cutaway keep the route and station cameras readable?
 - After roughly five swords, what do they enjoy and what are they trying to skip?
 
 ## Recommended next design decision

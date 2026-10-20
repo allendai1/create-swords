@@ -10,6 +10,8 @@ aliases: ["Smithy Redesign Proposal"]
 
 # Smithy Redesign
 
+**Blender follow-up:** [[Art/Blender Station Review]] records Allen's feedback and recommended revisions to the later Blender lineup: roofless repeatable ore stands, a more recognizable anvil, a simpler forge, and clearer sword holders. It is separate from the Studio rebuild history below.
+
 The stations in `Workspace.Smithy` were rebuilt from the medieval-cabin blockouts. This note records the completed rebuild and preserves the original critique and proposal for the approved Japanese mountain-village setting ([[Design/Game Design Document|Game Design Document]] §11). It builds on [[Art/Japanese Village Concept Art|Japanese Village Concept Art]] (forge, hornless anvil, village map, evening scene). **Chosen 2026-10-19: a mix.** Direction A's materials and colours, with Direction B's chunkier proportions and extra lanterns. See [[Design/Decisions Log|Decisions Log]].
 
 ## Built (2026-10-19)
@@ -48,9 +50,21 @@ No script errors or warnings in the log, apart from Roblox's own UI warnings.
 - The grinding stage wasn't played through.
 - The forge timer is still 15 s in ForgeService (the GDD says 10 s); that wasn't part of this task.
 - The forge chimney only just clears the ridge.
-- The plot is one workshop on open grass: no mountains, trees or neighbouring plots yet.
+- ~~The plot is one workshop on open grass~~: the full plot (storefront wing, courtyard, lawn, fence, road) was built later on 2026-10-19, and the workshop itself was replaced by a deeper crafting pavilion with the stations spread out ([[Art/Player Plot Review]]). The station models above are unchanged; only their positions moved. No mountains or neighbouring plots yet.
+
+## Low-poly cartoony pass (Blender, 2026-10-19)
+
+Allen asked for the stations redone in Blender in a low-poly style with bright cartoony colours. All five are in `Models/Stations/Stations.blend`, rebuilt by `Models/Stations/build_stations.py` (helpers, palette `PAL`, one function per station, and a Z-fighting check). Same shapes and heights as the Studio build, so the kept parts above still line up; 1 Blender unit = 1 stud, each station's front faces −Y in Blender. One FBX per station sits next to the .blend.
+
+![[Models/Stations/preview-lineup.png]]
+
+**v2 (same day):** rebuilt from [[Art/Blender Station Review]] and its concept sheet: separate repeatable `OreStand` and one `OreLever` instead of the shrine, an open `SwordHolder` instead of the red pedestal, a plain forge and a block anvil. Preview: `Models/Stations/preview-v2.png`.
+
+Not yet in Studio. To try one: use Studio's Import 3D on the FBX, check the scale gives the anvil block 3.0 studs wide, then put the meshes in that station's `Dress` model and hide the old Dress. Each object imports as its own MeshPart (about 8–53 per station).
 
 ## Before the rebuild — historical blockout
+
+For the subsequent plot-spacing critique and proposed next build pass, see [[Art/Player Plot Review]]. The station rebuild below remains the historical build record.
 
 ![[References/Smithy Redesign/current-overview.jpg]]
 

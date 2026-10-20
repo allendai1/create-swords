@@ -16,6 +16,7 @@ Start with [[Current Status]] for what is built, current gaps, and next work. Us
 | [[Design/Game Design Document]] | Intended game behavior and approved direction |
 | [[Design/Decisions Log]] | Why choices changed; older entries can be superseded |
 | [[Design/Core Loop Review]] | First-session journey, friction, and clearly marked proposals |
+| [[Design/Workshop Growth]] | Employees/training, delivery orders, weather bonuses, and roof visibility |
 
 ## Development
 
@@ -34,7 +35,12 @@ Start with [[Current Status]] for what is built, current gaps, and next work. Us
 | Note | Purpose |
 |---|---|
 | [[Art/Japanese Village Concept Art]] | Current environment concepts, large plots, labels, and stage progression |
+| [[Art/Anime Village Architecture]] | New anime-inspired town panorama, architecture studies, and building components |
 | [[Art/Smithy Redesign]] | Implemented workshop/station rebuild and preserved proposal history |
+| [[Art/Player Plot Review]] | Screenshot critique and proposed spacing/layout pass |
+| [[Art/Blender Station Review]] | Feedback for revising the Blender station lineup |
+| [[Art/Katana Hilt]] | Detailed katana hilt modeled in Blender from the Studio reference katanas |
+| [[Art/Flame Etch]] | Prototype flame etch on the blade and flame tsuba (Etching Table idea) |
 | [[Art/Blade Shaping Study]] | Forging-stage visual exploration and limitations |
 | [[Art/Sword Silhouettes]] | Sword-shape reference |
 | [[Art/UI Design]] | Interface style, Figma references, and implemented screens |
@@ -43,6 +49,7 @@ Start with [[Current Status]] for what is built, current gaps, and next work. Us
 ## History and files
 
 - [[Sessions/2026-10-19]] · [[Sessions/2026-10-18]] · [[Sessions/2026-10-17]] — dated activity records.
+- [[Random thoughts]] — inbox for new ideas; organized additions link to their design notes.
 - [[Archive/Create Swords!]] — original brainstorm.
 - [[Archive/Player Plot Concept Art]] — earlier plot concepts, superseded by the Japanese village direction.
 - [[Archive/Project History/Handoff before vault organization — 2026-10-19]] — detailed older handoff, including historical review questions.

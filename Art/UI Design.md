@@ -8,6 +8,10 @@ updated: "2026-10-19"
 
 # UI Design
 
+**Planned growth UI:** [[Design/Workshop Growth]] adds an employee management/upgrade window (hire, role, level, speed and applicable quality limits), a separate delivery board with pinned-order/crate/dispatch/return-payout states, and clear feedback for weather traffic bonuses. These screens are requirements to design, not UI recorded as implemented. Preserve the established picker behavior for player item selection and direct commission delivery.
+
+Employee UI uses five professions: furnace operator, smith, finisher, stocker and cashier. Finisher controls include selected fittings, optional polishing and pause for player etching; finished-rack controls distinguish ready-for-sale stock from commission/delivery/further-finishing reservations. Stocker feedback should explain waiting for eligible stock or an empty holder. A separate hilter/polisher screen is not needed.
+
 The game's screens are designed in Figma first, then rebuilt in Studio.
 
 **Figma file:** [Sell Swords! UI](https://www.figma.com/design/rSuEIR8tY5vMayspRojWJ4) (Allen Dai's team, Drafts)
