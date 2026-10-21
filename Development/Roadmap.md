@@ -35,7 +35,9 @@ Remaining work against [[Design/Game Design Document]]. Built behavior and verif
 ## Shop, village, and progression
 
 - [ ] Build six-player plot assignment and the shared mountain village. **Village street built 2026-10-21** (`Workspace.Village`, six empty `PlotSlot` lots; see [[Art/Japanese Street]]); plot assignment, moving the plot into a lot and per-player stations remain.
-- [ ] Review the town street with Allen (lot size, house mix, placement), then move the plot, `SpawnLocation` and `Village.CustomerSpawn` onto it.
+- [x] Move the plot, `SpawnLocation` and `Village.CustomerSpawn` onto the street (2026-10-21): lot N2 widened to 280; see [[Development/Code Map#Village street (2026-10-21)]].
+- [ ] Playtest the plot in lot N2: spawn, pads, customer routes to every display (`AISLE_ROWS` now follow `EntryPoint`), ore lever.
+- [ ] Settle the plot footprint, then size all six lots to it (only N2 is widened).
 - [x] Build a spacious property with distinct storefront/crafting areas, broad routes, and expansion reserve (one plot, 126 × 78 studs after the [[Art/Player Plot Review|Player Plot Review]] pass, 2026-10-19; see [[Development/Code Map]]). Dimensions still to be checked with six plots side by side.
 - [x] Second plot layout geometry pass from [[Art/Player Plot Review]]: deeper pavilion, wider openings, forward anvil, and revised displays built; historical traversal playtest recorded. Remaining checks are listed below and in the review.
 - [ ] Finish plot comfort checks: rotate the camera at every station, check touch framing, all holder/customer paths, the newly imported stations, and the footprint of six plots side by side.

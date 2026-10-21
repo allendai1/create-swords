@@ -33,7 +33,7 @@ Built by `Models/Village/build_street.luau` (run in Studio through MCP; same see
 
 - **Street:** 790 studs long, 32 between façades. A 16-wide stone-paved road (Pavement material), water channels with stone curbs and slab bridges at every door, and 6-wide walkways under the eaves.
 - **26 townhouses** in five styles mixed at random: Takayama (lattice band, rafters), kura (black or white plaster, onigawara, roof signboard), Tsumago (projecting balcony), gable-front, and single-storey. Every house has a noren door. Most have a lantern, a vertical shop sign, pots, a bench or goods on an open platform. Neighbouring roofs always differ in height and pitch.
-- **Six plot lots**, three per side, 140 × 110, open to the street with white plaster walls (tile cap, stone base) between them and the houses, and standing lamps at the corners. `Village.Lots.PlotSlotN1..N3 / S1..S3` are invisible markers at each lot's centre, facing the street, for when the plot is cloned into them.
+- **Six plot lots**, three per side, 140 × 110, open to the street with white plaster walls (tile cap, stone base) between them and the houses, and standing lamps at the corners. `Village.Lots.PlotSlotN1..N3 / S1..S3` are invisible markers at each lot's centre, facing the street, for when the plot is cloned into them. Lot N2 (north, middle) holds the current plot and is 280 wide (see below).
 - **West end:** a roofed village gate with the sign 刀鍛冶の里 ("swordsmith village"), walls out to the cliffs, pines and bamboo.
 - **East end:** a stone plaza, vermilion torii, stone lanterns, sakura and maple, and a small shrine with a copper-green roof and a shimenawa rope. It is the street's vanishing point.
 - **Mountains:** the Blender `CliffRing` from `ServerStorage.Village3D`, stretched in X so its inner face meets the street ends. The cliff mesh does not collide; four invisible `Bound` walls on the inner face line keep players in.
@@ -50,8 +50,12 @@ Built by `Models/Village/build_street.luau` (run in Studio through MCP; same see
 
 ## Open
 
-- The six lots are empty until the plot exists per player. With the plot pieces mid-redesign, nothing was moved into a lot. The 140 × 110 lot size comes from the earlier cliff-ring layout (`Models/Village/build_village.py`) and can change.
-- `CustomerSpawn` had gone missing from the place, which leaves `ShopService` waiting forever at startup. It is back as `Village.CustomerSpawn` at its old position (−32.5, 3, 40) beside the current shop, not on the street. `SpawnLocation` is also still at the old plot. Both move when the plot moves into a lot.
+- **Plot moved into lot N2 (2026-10-21):** Allen asked to move the current plot pieces, `SpawnLocation` and `CustomerSpawn` into the middle north lot. The pieces span 238 × 114, wider than a 140 lot, so on Allen's pick the lot was widened to 280 by parking the townhouses either side of it, and everything moved by one offset so the in-progress layout is unchanged. `CustomerSpawn` stands on the road in front of the lot. See [[Development/Code Map#Village street (2026-10-21)]].
+
+![[References/Japanese Village/street-v1-plot-n2.jpg]]
+
+- The other five lots are empty until the plot exists per player. The 140 × 110 lot size comes from the earlier cliff-ring layout (`Models/Village/build_village.py`) and does not fit the current plot; settle the plot footprint, then size all six lots to it.
+- `CustomerSpawn` had gone missing from the place, which left `ShopService` waiting forever at startup; it is back as `Village.CustomerSpawn`.
 - With most lots empty, the street has gaps. Unclaimed lots could get a closed shopfront or a "for sale" look.
 
 Related: [[Art/Japanese Village Concept Art]] · [[Art/Anime Village Architecture]] · [[Development/Code Map]] · [[Design/Game Design Document]] · [[Sessions/2026-10-21]] · [[Home]]
