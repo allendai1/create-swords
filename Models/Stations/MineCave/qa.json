@@ -1,0 +1,185 @@
+{
+  "triangles": {
+    "Rocks": 12894,
+    "Wood": 5474,
+    "void": 12
+  },
+  "zfight_pairs": [],
+  "rock_verts_in_opening": [],
+  "rock_verts_in_awning": [],
+  "bounds": {
+    "Rocks": [
+      [
+        -6.22,
+        -4.07,
+        -1.98
+      ],
+      [
+        6.51,
+        10.84,
+        6.86
+      ]
+    ],
+    "Wood": [
+      [
+        -3.28,
+        -3.2,
+        -0.1
+      ],
+      [
+        3.19,
+        2.21,
+        4.01
+      ]
+    ],
+    "void": [
+      [
+        -1.76,
+        3.27,
+        -0.02
+      ],
+      [
+        1.76,
+        3.37,
+        3.18
+      ]
+    ]
+  },
+  "qa": {
+    "ok": true,
+    "pass": true,
+    "errors": [],
+    "warnings": [
+      "hidden back-to-back faces: Rocks (2 pairs) - delete to save tris",
+      "hidden back-to-back faces: Wood (1 pairs) - delete to save tris",
+      "asset lowest point z=-1.9813 (not resting on ground plane z=0)"
+    ],
+    "ground_z": -1.9813,
+    "zfighting": [],
+    "floating": [],
+    "back_to_back": [
+      {
+        "where": "Rocks",
+        "tri_pairs": 2
+      },
+      {
+        "where": "Wood",
+        "tri_pairs": 1
+      }
+    ],
+    "enclosed": [],
+    "objects": {
+      "Rocks": {
+        "verts": 6493,
+        "faces": 12894,
+        "tris": 12894,
+        "ngons": 0,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "wire_edges": 0,
+        "loose_verts": 0,
+        "degenerate_faces": 0,
+        "zero_length_edges": 0,
+        "inconsistent_normals_edges": 0,
+        "duplicate_verts": 0,
+        "islands": 25,
+        "inside_out_islands": 0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "materials": 1,
+        "uv_maps": 1,
+        "uv_oob_pct": 0.0,
+        "uv_zero_area_faces": 0,
+        "uv_overlap_pct": 0.0,
+        "uv_coverage_pct": 50.4
+      },
+      "Wood": {
+        "verts": 2767,
+        "faces": 5474,
+        "tris": 5474,
+        "ngons": 0,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "wire_edges": 0,
+        "loose_verts": 0,
+        "degenerate_faces": 0,
+        "zero_length_edges": 0,
+        "inconsistent_normals_edges": 0,
+        "duplicate_verts": 0,
+        "islands": 23,
+        "inside_out_islands": 0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "materials": 1,
+        "uv_maps": 1,
+        "uv_oob_pct": 0.0,
+        "uv_zero_area_faces": 0,
+        "uv_overlap_pct": 0.0,
+        "uv_coverage_pct": 64.0
+      },
+      "void": {
+        "verts": 8,
+        "faces": 12,
+        "tris": 12,
+        "ngons": 0,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "wire_edges": 0,
+        "loose_verts": 0,
+        "degenerate_faces": 0,
+        "zero_length_edges": 0,
+        "inconsistent_normals_edges": 0,
+        "duplicate_verts": 0,
+        "islands": 1,
+        "inside_out_islands": 0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "materials": 1,
+        "uv_maps": 1,
+        "uv_oob_pct": 0.0,
+        "uv_zero_area_faces": 0,
+        "uv_overlap_pct": 0.0,
+        "uv_coverage_pct": 53.8
+      }
+    }
+  },
+  "renders": [
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\MineCave\\review\\mine_cave_ref_angle.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\MineCave\\review\\mine_cave_clay.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\MineCave\\review\\mine_cave_front.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\MineCave\\review\\mine_cave_side.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\MineCave\\review\\mine_cave_clay_front.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\MineCave\\review\\mine_cave_clay_side.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\MineCave\\review\\mine_cave_mouth.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\MineCave\\review\\mine_cave_right_close.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\MineCave\\review\\mine_cave_night.png"
+  ],
+  "export": {
+    "ok": true,
+    "preset": "roblox",
+    "format": "fbx",
+    "files": [
+      {
+        "file": "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\MineCave\\Mine_Cave.fbx",
+        "ok": true,
+        "kb": 2453.3,
+        "objects": [
+          "MineCave",
+          "Rocks",
+          "Wood",
+          "void"
+        ]
+      }
+    ],
+    "warnings": []
+  }
+}

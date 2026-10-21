@@ -34,7 +34,8 @@ Remaining work against [[Design/Game Design Document]]. Built behavior and verif
 
 ## Shop, village, and progression
 
-- [ ] Build six-player plot assignment and the shared mountain village.
+- [ ] Build six-player plot assignment and the shared mountain village. **Village street built 2026-10-21** (`Workspace.Village`, six empty `PlotSlot` lots; see [[Art/Japanese Street]]); plot assignment, moving the plot into a lot and per-player stations remain.
+- [ ] Review the town street with Allen (lot size, house mix, placement), then move the plot, `SpawnLocation` and `Village.CustomerSpawn` onto it.
 - [x] Build a spacious property with distinct storefront/crafting areas, broad routes, and expansion reserve (one plot, 126 × 78 studs after the [[Art/Player Plot Review|Player Plot Review]] pass, 2026-10-19; see [[Development/Code Map]]). Dimensions still to be checked with six plots side by side.
 - [x] Second plot layout geometry pass from [[Art/Player Plot Review]]: deeper pavilion, wider openings, forward anvil, and revised displays built; historical traversal playtest recorded. Remaining checks are listed below and in the review.
 - [ ] Finish plot comfort checks: rotate the camera at every station, check touch framing, all holder/customer paths, the newly imported stations, and the footprint of six plots side by side.
@@ -56,6 +57,10 @@ Remaining work against [[Design/Game Design Document]]. Built behavior and verif
 - [x] Forge heats one ingot at a time (2026-10-20, `ForgeService.SLOT_OFFSETS` has one entry); a second furnace will be a tycoon purchase (not built).
 - [x] 100% from forging, +10% polish finish, anvil view closes, panel silhouette straightened, no polish flash (2026-10-20). Playtest pending.
 - [x] Hilt seated by three untimed knocks with the hilt sliding onto the blade (2026-10-20). Playtest pending.
+- [x] Courtyard zones (2026-10-20): stations spread into an ore yard, forge hall, smithing area, finishing corner and sword rack by the shop door, with room left for more stands and furnaces; upgrades branch by zone. Playtest pending. See [[Design/Tycoon Upgrades]].
+- [x] Tycoon floor pads (2026-10-20): plot claim, 12 chained buy pads with a Buy button, 3-sword display table and wall rack, + markers for display slots, locked stations, second furnace and the Starter → Upgraded Store swap. Playtest pending. Saving bought upgrades comes with DataStore saving. See [[Design/Tycoon Upgrades]].
+- [x] Wall sword holders (2026-10-20, replaced the same day by tycoon pads): buy one for 100 coins on any of nine marked spots on the shop walls; `ShopService` handles any number of holders. Saving bought holders comes with DataStore saving. See [[Art/Building Redesign]].
+- [x] Stylized feudal shop (2026-10-20): two-storey Upgraded Store in the game (kanji sign on the entrance canopy); one-storey Starter Shop staged in `Buildings3D.StarterShop`. Playtest pending. See [[Art/Building Redesign]].
 - [x] One-piece anvil mesh, unlimited ore re-rolls, wider shops (Upgraded 31 × 38, Starter 24 × 14 staged), roof fades when inside (2026-10-20). Playtest pending.
 - [x] Ingot Rack (12) and Finished Sword Rack (6), carry then deposit (2026-10-20). Playtest pending; employees using them comes with the employee system.
 - [x] Quick thoughts batch (2026-10-20): one-tray forge, timer-only forge label, anvil Cancel button, Polishing Station before Etching Table, simpler 1.5x ore stand with floating ore. Playtest pending.

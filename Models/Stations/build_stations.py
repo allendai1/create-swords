@@ -25,8 +25,12 @@ PAL = {
     "skin":     (0.98, 0.80, 0.62),
     "shirt":    (0.42, 0.48, 0.60),
     "pants":    (0.27, 0.29, 0.35),
+    "stone":    (0.50, 0.49, 0.48),
+    "stone_dk": (0.40, 0.39, 0.39),
+    "fire":     (1.00, 0.36, 0.04),
+    "frame":    (0.30, 0.29, 0.29),
 }
-GLOW = {"ember": 4.0, "hot": 4.0, "ingot": 2.5}
+GLOW = {"ember": 4.0, "hot": 4.0, "ingot": 2.5, "fire": 1.2}
 
 # One switch for the whole set. "mid-high": rounded 3-segment bevels with smooth shading (flats stay
 # crisp), round cylinders, finer rocks. "low": the original flat-shaded chamfered look.
@@ -160,6 +164,35 @@ def rock(name, r, loc, color, scale=(1, 1, 1), seed=0, rot=(0, 0, 0)):
 
 def at(x, y, z):
     return Vector((x, y, z))
+
+def ring(name, w, h, t, depth, loc, color, rot=(0, 0, 0), chamfer=0.0, top_only=False, bevel=0.0):
+    """Picture-frame ring: outer w x h, border t, extruded depth along local +Z from z=0 and centred on loc.
+    chamfer cuts the corners (top two only with top_only)."""
+    def outline(hw, hh, c):
+        pts = []
+        for (sx, sy) in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
+            cc = c if (sy > 0 or not top_only) else 0
+            x, y = sx * hw, sy * hh
+            if not cc:
+                pts.append((x, y))
+            else:  # counter-clockwise: BL/TR arrive on a vertical edge, BR/TL on a horizontal one
+                a, b = (x, y - sy * cc), (x - sx * cc, y)
+                pts += [a, b] if sx * sy > 0 else [b, a]
+        return pts
+    o_pts = outline(w / 2, h / 2, chamfer)
+    i_pts = outline(w / 2 - t, h / 2 - t, chamfer * 0.6)
+    bm = bmesh.new()
+    lay = [[bm.verts.new((x, y, z)) for (x, y) in pts] for z in (0, depth) for pts in (o_pts, i_pts)]
+    ob, ib, of, inf = lay
+    n = len(o_pts)
+    for i in range(n):
+        j = (i + 1) % n
+        bm.faces.new((of[i], of[j], inf[j], inf[i]))   # front
+        bm.faces.new((ib[i], ib[j], ob[j], ob[i]))     # back
+        bm.faces.new((ob[i], ob[j], of[j], of[i]))     # outer side
+        bm.faces.new((inf[i], inf[j], ib[j], ib[i]))   # inner side
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    return _finish(name, bm, color, loc, rot, bevel)
 
 
 # ---------------------------------------------------------------- stations
@@ -452,6 +485,69 @@ def polish_station(x=0, y=0):
     cyl("Bucket", 0.34, 0.52, at(-2.7, -0.2, 0), "wood", sides=16, r2=0.38)
     cyl("BucketBand", 0.39, 0.07, at(-2.7, -0.2, 0.42), "iron_dk", sides=16)
     cyl("BucketWater", 0.33, 0.02, at(-2.7, -0.2, 0.52), "teal", sides=16)  # brim-full
+
+
+FACE = {"front": (90, 0, 0), "back": (90, 0, 180), "right": (90, 0, 90), "left": (90, 0, -90)}
+
+
+def furnace(x=0, y=0):
+    """Furnace from References/Concept Art/furnace.png (2026-10-20): stone block in an iron corner frame,
+    barred fire mouth, a slot above it, a side vent and a grate on top. Always the flat single-chamfer
+    look of the concept, whatever DETAIL is set to."""
+    global DETAIL
+    old, DETAIL = DETAIL, "low"
+    try:
+        _furnace(x, y)
+    finally:
+        DETAIL = old
+
+
+def _furnace(x, y):
+    station("Furnace", x, y)
+    W, D, H, BASE, LID, P = 4.4, 3.8, 3.8, 0.5, 0.7, 0.6
+    fy = -(D - 0.4) / 2          # body front face, -1.7; side face at +-2.0
+    sxf = (W - 0.4) / 2
+    box("Plinth", W - 0.1, D - 0.1, BASE - 0.02, at(0, 0, 0.02), "frame", bevel=0.06)
+    box("Body", W - 0.4, D - 0.4, H - LID - BASE + 0.05, at(0, 0, BASE - 0.05), "stone", bevel=0.05)
+    box("Lid", W - 0.15, D - 0.15, LID, at(0, 0, H - LID), "stone", bevel=0.1)
+    # iron corner frame: posts, then chamfered collars (bottom, middle, top cap). No rivets (Allen 2026-10-20)
+    for cx in (-1, 1):
+        for cy in (-1, 1):
+            px, py = cx * (W - P) / 2, cy * (D - P) / 2
+            box("Post", P, P, H - 0.14, at(px, py, 0.04), "frame", bevel=0.06)
+            for z0, h, s in ((0, 0.75, 0.85), (1.55, 0.6, 0.8), (H - 0.6, 0.65, 0.85)):
+                box("Collar", s, s, h, at(px, py, z0), "frame", bevel=0.13)
+
+    # fire mouth: stone frame with cut top corners, a flat glow behind four iron bars (no modelled flames)
+    mz0, mh, mt = BASE, 1.75, 0.25
+    ring("MouthFrame", 3.0, mh, mt, 0.3, at(0, fy, mz0 + mh / 2), "stone_dk", rot=FACE["front"],
+         chamfer=0.35, top_only=True, bevel=0.04)
+    iw, iz0, iz1 = 3.0 - 2 * mt, mz0 + mt, mz0 + mh - mt
+    box("Glow", iw, 0.02, iz1 - iz0, at(0, fy - 0.03, iz0), "fire")
+    for bx in (-0.9, -0.3, 0.3, 0.9):
+        box("Bar", 0.16, 0.16, iz1 - iz0 + 0.1, at(bx, fy - 0.21, iz0 - 0.05), "frame", bevel=0.03)
+
+    # slot above the mouth, with a bracket at each end
+    sz, sh = mz0 + mh + 0.1 + 0.3, 0.6
+    box("SlotBack", 1.9, 0.02, sh - 0.2, at(0, fy - 0.03, sz - sh / 2 + 0.1), "iron_dk")
+    ring("SlotFrame", 2.2, sh, 0.15, 0.15, at(0, fy, sz), "stone_dk", rot=FACE["front"], bevel=0.03)
+    for bx in (-1.15, 1.15):
+        box("SlotBracket", 0.3, 0.24, sh + 0.15, at(bx, fy - 0.1, sz - sh / 2 - 0.05), "stone_dk", bevel=0.06)
+
+    # side vent (right side): iron frame, dark back, two bars make three slots
+    vz = 2.1
+    box("VentBack", 0.02, 0.8, 0.7, at(sxf + 0.03, 0, vz - 0.35), "iron_dk")
+    ring("VentFrame", 1.1, 1.0, 0.15, 0.15, at(sxf, 0, vz), "frame", rot=FACE["right"], bevel=0.03)
+    for vy in (-0.15, 0.15):
+        box("VentBar", 0.12, 0.1, 0.74, at(sxf + 0.06, vy, vz - 0.37), "frame")
+
+    # top: stone surround, dark iron bed, grate with three slots
+    ring("TopSurround", 2.8, 2.2, 0.3, 0.12, at(0, 0, H), "stone_dk", chamfer=0.3, bevel=0.03)
+    box("GrateBed", 2.2, 1.6, 0.06, at(0, 0, H - 0.02), "frame")
+    box("GrateHoles", 1.52, 0.72, 0.04, at(0, 0, H + 0.04), "iron_dk")
+    ring("Grate", 1.8, 1.0, 0.14, 0.14, at(0, 0, H + 0.04), "frame", bevel=0.03)
+    for gx in (-0.27, 0.27):
+        box("GrateBar", 0.12, 0.74, 0.12, at(gx, 0, H + 0.06), "frame")
 
 
 def sword(prefix, x, y, blade):

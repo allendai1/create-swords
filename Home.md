@@ -36,6 +36,7 @@ Start with [[Current Status]] for what is built, current gaps, and next work. Us
 |---|---|
 | [[Art/Japanese Village Concept Art]] | Current environment concepts, large plots, labels, and stage progression |
 | [[Art/Anime Village Architecture]] | New anime-inspired town panorama, architecture studies, and building components |
+| [[Art/Japanese Street]] | The town street map built from Allen's street photos (2026-10-21) |
 | [[Art/Smithy Redesign]] | Implemented workshop/station rebuild and preserved proposal history |
 | [[Art/Player Plot Review]] | Screenshot critique and proposed spacing/layout pass |
 | [[Art/Blender Station Review]] | Feedback for revising the Blender station lineup |
@@ -48,7 +49,7 @@ Start with [[Current Status]] for what is built, current gaps, and next work. Us
 
 ## History and files
 
-- [[Sessions/2026-10-19]] · [[Sessions/2026-10-18]] · [[Sessions/2026-10-17]] — dated activity records.
+- [[Sessions/2026-10-21]] · [[Sessions/2026-10-19]] · [[Sessions/2026-10-18]] · [[Sessions/2026-10-17]] — dated activity records.
 - [[Random thoughts]] — inbox for new ideas; organized additions link to their design notes.
 - [[Archive/Create Swords!]] — original brainstorm.
 - [[Archive/Player Plot Concept Art]] — earlier plot concepts, superseded by the Japanese village direction.

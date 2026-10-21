@@ -1,0 +1,135 @@
+{
+  "triangles": {
+    "Furnace_Shell": 1908,
+    "Furnace_Door": 1776
+  },
+  "qa": {
+    "ok": true,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "ground_z": 0.0,
+    "zfighting": [],
+    "floating": [],
+    "back_to_back": [],
+    "enclosed": [],
+    "objects": {
+      "Furnace_Shell": {
+        "verts": 970,
+        "faces": 999,
+        "tris": 1908,
+        "ngons": 0,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "wire_edges": 0,
+        "loose_verts": 0,
+        "degenerate_faces": 0,
+        "zero_length_edges": 0,
+        "inconsistent_normals_edges": 0,
+        "duplicate_verts": 0,
+        "islands": 8,
+        "inside_out_islands": 0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "materials": 1,
+        "uv_maps": 1,
+        "uv_oob_pct": 0.0,
+        "uv_zero_area_faces": 0,
+        "uv_overlap_pct": 0.0,
+        "uv_coverage_pct": 50.3
+      },
+      "Furnace_Door": {
+        "verts": 928,
+        "faces": 1043,
+        "tris": 1776,
+        "ngons": 0,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "wire_edges": 0,
+        "loose_verts": 0,
+        "degenerate_faces": 0,
+        "zero_length_edges": 0,
+        "inconsistent_normals_edges": 0,
+        "duplicate_verts": 0,
+        "islands": 21,
+        "inside_out_islands": 0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "materials": 3,
+        "uv_maps": 1,
+        "uv_oob_pct": 0.0,
+        "uv_zero_area_faces": 0,
+        "uv_overlap_pct": 0.0,
+        "uv_coverage_pct": 50.5
+      }
+    }
+  },
+  "renders": [
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\FurnaceV2\\review\\furnace_v2_front_three_quarter.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\FurnaceV2\\review\\furnace_v2_door_close.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\FurnaceV2\\review\\furnace_v2_back_three_quarter.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\FurnaceV2\\review\\furnace_v2_top.png"
+  ],
+  "export": {
+    "ok": true,
+    "preset": "roblox",
+    "format": "fbx",
+    "files": [
+      {
+        "file": "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\FurnaceV2\\FurnaceV2.fbx",
+        "ok": true,
+        "kb": 2321.0,
+        "objects": [
+          "FurnaceV2",
+          "Furnace_Shell",
+          "Furnace_Door"
+        ]
+      }
+    ],
+    "warnings": []
+  },
+  "door_parts": {
+    "centres": {
+      "FurnaceDoor_glow": [
+        0.0,
+        -1.685,
+        1.85
+      ],
+      "FurnaceDoor_iron": [
+        0.0,
+        -1.5875,
+        1.79
+      ],
+      "FurnaceDoor_strap": [
+        -0.0675,
+        -1.66,
+        1.785
+      ]
+    },
+    "export": {
+      "ok": true,
+      "preset": "roblox",
+      "format": "fbx",
+      "files": [
+        {
+          "file": "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\FurnaceV2\\FurnaceDoor.fbx",
+          "ok": true,
+          "kb": 82.3,
+          "objects": [
+            "FurnaceDoor",
+            "FurnaceDoor_glow",
+            "FurnaceDoor_iron",
+            "FurnaceDoor_strap"
+          ]
+        }
+      ],
+      "warnings": []
+    }
+  }
+}

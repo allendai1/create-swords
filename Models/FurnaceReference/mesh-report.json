@@ -1,0 +1,74 @@
+{
+  "reference": "References/Concept Art/furnace.png",
+  "meshes": [
+    {
+      "name": "Furnace_Stone",
+      "vertices": 456,
+      "triangles": 840,
+      "uv_layers": 1,
+      "non_manifold_edges": 0,
+      "degenerate_faces": 0,
+      "non_finite_vertices": 0
+    },
+    {
+      "name": "Furnace_Interior",
+      "vertices": 168,
+      "triangles": 308,
+      "uv_layers": 1,
+      "non_manifold_edges": 0,
+      "degenerate_faces": 0,
+      "non_finite_vertices": 0
+    },
+    {
+      "name": "Furnace_Iron",
+      "vertices": 768,
+      "triangles": 1408,
+      "uv_layers": 1,
+      "non_manifold_edges": 0,
+      "degenerate_faces": 0,
+      "non_finite_vertices": 0
+    },
+    {
+      "name": "Furnace_Rivets",
+      "vertices": 432,
+      "triangles": 756,
+      "uv_layers": 1,
+      "non_manifold_edges": 0,
+      "degenerate_faces": 0,
+      "non_finite_vertices": 0
+    },
+    {
+      "name": "Furnace_Grilles",
+      "vertices": 264,
+      "triangles": 484,
+      "uv_layers": 1,
+      "non_manifold_edges": 0,
+      "degenerate_faces": 0,
+      "non_finite_vertices": 0
+    },
+    {
+      "name": "Furnace_Embers",
+      "vertices": 576,
+      "triangles": 1020,
+      "uv_layers": 1,
+      "non_manifold_edges": 0,
+      "degenerate_faces": 0,
+      "non_finite_vertices": 0
+    }
+  ],
+  "bounds": {
+    "x": [
+      -3.4724462032318115,
+      3.4724462032318115
+    ],
+    "y": [
+      -2.742446184158325,
+      2.742446184158325
+    ],
+    "z": [
+      0.009999752044677734,
+      6.639999866485596
+    ]
+  },
+  "total_triangles": 4816
+}
