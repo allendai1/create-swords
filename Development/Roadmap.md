@@ -34,10 +34,19 @@ Remaining work against [[Design/Game Design Document]]. Built behavior and verif
 
 ## Shop, village, and progression
 
-- [ ] Build six-player plot assignment and the shared mountain village. **Village street built 2026-10-21** (`Workspace.Village`, six empty `PlotSlot` lots; see [[Art/Japanese Street]]); plot assignment, moving the plot into a lot and per-player stations remain.
+- [x] Build six-player plot assignment and the shared village (2026-10-21): the street with six lots, a plot copied onto a lot per player, per-plot stations, shop and upgrades. See [[Design/Six Plots]].
+- [ ] Multi-player playtest of the six plots (Test → Clients and Servers), and set the server size to 6 in Game Settings.
+- [ ] Save each player's upgrades and re-apply them when they claim a lot (DataStore pass).
 - [x] Move the plot, `SpawnLocation` and `Village.CustomerSpawn` onto the street (2026-10-21): lot N2 widened to 280; see [[Development/Code Map#Village street (2026-10-21)]].
 - [ ] Playtest the plot in lot N2: spawn, pads, customer routes to every display (`AISLE_ROWS` now follow `EntryPoint`), ore lever.
-- [ ] Settle the plot footprint, then size all six lots to it (only N2 is widened).
+- [x] Settle the plot footprint, then size all six lots to it: 48.5 × 96, closed shopfronts on unclaimed lots (2026-10-21).
+- [x] Shops as street townhouses and a workshop hall around the stations; mountains parked (2026-10-21). See [[Art/Japanese Street#Shops and workshop (2026-10-21)]].
+- [x] Regroup `Shop`, `Pads` and `Yard` into `workspace.Plot`, so the shop and tycoon scripts start again (2026-10-21).
+- [x] Shop + back-room workshop in one building, from Allen's layout; placeholder ore alcove (2026-10-21).
+- [ ] Playtest: shop and workshop roof fades, the workshop door, every station from its new spot, pads, ore slots rolling in place, customer routes.
+- [ ] Choose the ore source (tatara furnace, ore peddler, sluice, crucibles or shrine draw), then replace the placeholder alcove.
+- [x] `Smithy.Forge` starts unlocked; `Forge2` stays the Furnace 2 upgrade (2026-10-21).
+- [ ] Mountains or other scenery around the street (parked 2026-10-21, Allen: "we will work on it later").
 - [x] Build a spacious property with distinct storefront/crafting areas, broad routes, and expansion reserve (one plot, 126 × 78 studs after the [[Art/Player Plot Review|Player Plot Review]] pass, 2026-10-19; see [[Development/Code Map]]). Dimensions still to be checked with six plots side by side.
 - [x] Second plot layout geometry pass from [[Art/Player Plot Review]]: deeper pavilion, wider openings, forward anvil, and revised displays built; historical traversal playtest recorded. Remaining checks are listed below and in the review.
 - [ ] Finish plot comfort checks: rotate the camera at every station, check touch framing, all holder/customer paths, the newly imported stations, and the footprint of six plots side by side.

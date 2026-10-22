@@ -19,7 +19,7 @@ References: `References/Create Pottery! game image reference/`: `upgrade buy but
 - **Buy button:** standing on a pad brings up a big green **Buy** button over the pad (click, tap or E). Touching the pad alone never buys.
 - **Chained:** buying a pad builds its upgrade and reveals the next pad or pads.
 - **Display slots:** every empty spot for a sword shows a round **+** marker. The nearest one grows a "For sale" label and an E key. E, click or tap opens the sword picker for that spot.
-- **Ownership:** the one plot is claimed by a player (the first to join). Only the owner sees the Buy button and can buy with their coins. When the 6 player plots come, each plot is a copy with the same pads.
+- **Ownership:** each player has their own plot (since 2026-10-21, [[Design/Six Plots]]), a copy with the same pads; upgrades are bought per plot. Only the owner sees the Buy button and can buy with their coins.
 - **Saving:** none yet. Upgrades are session-only, like coins and swords; they reset when the owner leaves. Saving comes with the DataStore pass.
 
 ## Answers (Allen, 2026-10-20)
@@ -102,5 +102,7 @@ This replaces the single chain in "Start and chain" above (same prices).
 **Shop sizes (2026-10-20, Allen: "expand it by maybe 3x"):** Starter Shop 31 × 32 (one storey), Upgraded Store 31 × 46 (two storeys). See [[Art/Building Redesign]].
 
 Supersedes the 100-coin wall-spot prompts of earlier on 2026-10-20 (see [[Art/Building Redesign]]).
+
+**Shop + back-room workshop (2026-10-21):** every pad moved with its upgrade into the one building (positions in [[Development/Code Map#Shop and back-room workshop (2026-10-21)]]). The Ore Cart pads are "Ore Slot 2…6" now, all on one spot in front of the supply alcove; the chain shows one at a time. The Upgraded Store pad is on the shop floor, since the store no longer grows backward.
 
 Related: [[Design/Game Design Document]] · [[Design/Workshop Growth]] · [[Development/Roadmap]] · [[Design/Decisions Log]]

@@ -16,6 +16,7 @@ Start with [[Current Status]] for what is built, current gaps, and next work. Us
 | [[Design/Game Design Document]] | Intended game behavior and approved direction |
 | [[Design/Decisions Log]] | Why choices changed; older entries can be superseded |
 | [[Design/Core Loop Review]] | First-session journey, friction, and clearly marked proposals |
+| [[Design/Six Plots]] | Six player plots on the street: lots, claiming, visitors, leaving |
 | [[Design/Workshop Growth]] | Employees/training, delivery orders, weather bonuses, and roof visibility |
 
 ## Development

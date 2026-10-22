@@ -1,6 +1,6 @@
 ---
 title: Building Redesign
-status: in the game (2026-10-20) — shop shell, stone courtyard, bamboo and stone lanterns swapped in
+status: superseded 2026-10-21 — the feudal shop shells were replaced by street townhouses (see Art/Japanese Street)
 type: art
 date: 2026-10-20
 updated: 2026-10-20
@@ -214,6 +214,10 @@ Allen: "Im thinking of having the table, but with a sword rack ontop of it. See 
 - Grip centre of sword i: (`TABLE_ROOT` − 0.58, `TABLE_STAND_Y` + `WALL_SLOT[1]`, `TABLE_TIERS[i]`). Price tags hang beside each pommel, like the wall racks'.
 - 564 triangles. QA: no errors. The coplanar check is clean (the base lifted off the feet's bottoms, uprights 0.04 into the feet, caps 0.04 over the uprights, and the stand's hook caps 0.02 into their lips).
 - Asset 100555972253981, as the `Buildings3D.SwordTable` template. `DisplayTable1` and `DisplayTable2` were swapped, keeping their spots, upgrades and aisle routing. Backups: `Legacy.SwordTable_beforeStand`, `DisplayTable1/2_beforeStand`.
+
+## Replaced by street townhouses (2026-10-21)
+
+Allen asked for the shops to match the street's houses. Both feudal shells went to `ServerStorage.Legacy` (`StarterShell_beforeMachiya`, `UpgradedShell_beforeMachiya`), and part-built machiya took their place on the street front. The stations now stand inside a workshop hall instead of on an open courtyard. See [[Art/Japanese Street#Shops and workshop (2026-10-21)]]. The Blender sources (`FeudalStore`, `FeudalStarter`, the wall racks and the sword table) remain; the racks and tables are still in use.
 
 ## Not done yet
 

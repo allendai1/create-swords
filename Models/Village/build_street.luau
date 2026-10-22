@@ -6,16 +6,27 @@
 --
 -- Local frame: ORIGIN is the street centre, the street runs along X, façades at z = ±16.
 --   road 16 wide (|z| < 8), gutters with water (8..10), walkways (10..17.5).
---   each side, west to east: houses 70 | lot 140 | houses 70 | lot 140 | houses 70 | lot 140 | houses 70 (x -350..350)
---   west gate zone x -395..-350, shrine plaza x 350..395. Lots are 110 deep (|z| 16..126).
---   Lots.PlotSlot<N|S><1..3>: invisible 140 x 110 markers, centre of the lot, LookVector toward the street.
---   Mountains: the Blender CliffRing (ServerStorage.Village3D) stretched in X so its inner face is x ±395, z ±130.
+--   each side, west to east: houses | lot | houses | lot | houses | lot | houses (x -350..350). Since 2026-10-21 a lot
+--   is the width of the shop + back-room workshop (48.5: its corner posts reach ±24.2), so the row is continuous
+--   (Allen: "the street reads as one continuous row"); lots are 96 deep (|z| 16..112). The middle north lot is
+--   centred on ORIGIN, which is the shop's frontage centre (build_shops.luau).
+--   west gate zone x -395..-350, shrine plaza x 350..395.
+--   Lots.PlotSlot<N|S><1..3>: invisible lot-sized markers, centre of the lot, LookVector toward the street. A lot
+--   without a player plot (not in TAKEN) gets a closed shopfront, Lots.Closed<N|S><n>: a townhouse with every bay
+--   shuttered, no door, noren or signs. Plaster walls divide the lots from the house backyards behind the row.
+--   Mountains (MOUNTAINS, off): the Blender CliffRing (ServerStorage.Village3D) stretched in X so its inner face is
+--   x ±395, z ±130. The invisible Bound walls on that line are always built.
 -- House parts never share a plane with a neighbour: widths are w - 0.04 and neighbouring heights and pitches differ.
 
-local ORIGIN = CFrame.new(4, 0, -560)
+local ORIGIN = CFrame.new(17.5, 0, -560)
 local SEED = 21
-local HALF, LOT_W, LOT_D, SEG_W = 16, 140, 110, 70
+local HALF, LOT_W, LOT_D = 16, 48.5, 96 -- the shop's corner posts reach x ±24.2; neighbours start 0.07 beyond
+local SEG_W = (700 - 3 * LOT_W) / 4
 local ROW = { "H", "L", "H", "L", "H", "L", "H" }
+-- Lots with no closed front in Edit: N2 holds the plot template (Workspace.Plot). At runtime PlotService takes the
+-- template away and gives N2 a copy of N1's closed front; every lot's front comes down while a player has it.
+local TAKEN = { N2 = true }
+local MOUNTAINS = false -- the cliff ring; parked 2026-10-21 (ServerStorage.Legacy.Mountains_parked)
 
 local SS = game:GetService("ServerStorage")
 local M = Enum.Material
@@ -198,7 +209,7 @@ local function house(parent, name, hcf, w, sp)
 		else
 			P("Shutter", Vector3.new(cw, 6.6, 0.3), L(cx, 3.6, F0 - 0.2), sp.shutterCol or C.cedar, M.Wood)
 			for k = 1, 2 do
-				P("Batten", Vector3.new(0.18, 6.6, 0.14), L(x0 + k * cw / 3, 3.6, F0 - 0.41), C.timber, M.Wood)
+				P("Batten", Vector3.new(0.18, 6.5, 0.14), L(x0 + k * cw / 3, 3.6, F0 - 0.41), C.timber, M.Wood) -- ends inside the shutter's
 			end
 		end
 	end
@@ -282,7 +293,7 @@ local function house(parent, name, hcf, w, sp)
 		P("UTop", Vector3.new(WD - 0.1, 0.8, 0.35), L(0, H - 0.44, F1 - 0.15), postCol, M.Wood)
 		local nbat = math.max(2, math.floor(W / 1.8))
 		for k = 1, nbat - 1 do
-			P("Batten", Vector3.new(0.14, U - 1.2, 0.12), L(-hd + k * WD / nbat, G + 0.4 + (U - 1.2) / 2, F1 - 0.25), C.timber, M.Wood)
+			P("Batten", Vector3.new(0.14, U - 1.3, 0.12), L(-hd + k * WD / nbat, G + 0.4 + (U - 1.2) / 2, F1 - 0.25), C.timber, M.Wood)
 		end
 		local rz = F1 - 1.45
 		P("RailTop", Vector3.new(WD - 0.1, 0.25, 0.3), L(0, G + 3.1, rz), C.timber, M.Wood)
@@ -441,12 +452,6 @@ local function wall(parent, wx, s, d0, d1)
 	part(parent, "WallCap", Vector3.new(2.2, 0.5, len + 0.6), Wd(wx, 6.85, s * dm), C.tile, M.ClayRoofTiles)
 	part(parent, "WallRidge", Vector3.new(0.7, 0.45, len + 0.7), Wd(wx, 7.25, s * dm), C.tileDk, M.ClayRoofTiles)
 end
-local function andon(parent, cf)
-	part(parent, "LampBase", Vector3.new(1.1, 0.6, 1.1), cf * CFrame.new(0, 0.3, 0), C.stone, M.Slate, { solid = true })
-	part(parent, "LampPost", Vector3.new(0.45, 4.6, 0.45), cf * CFrame.new(0, 2.9, 0), C.timberDk, M.Wood, { solid = true })
-	glow(part(parent, "Lamp", Vector3.new(1.2, 1.5, 1.2), cf * CFrame.new(0, 5.65, 0), C.paper), 16)
-	part(parent, "LampCap", Vector3.new(1.6, 0.3, 1.6), cf * CFrame.new(0, 6.55, 0), C.timberDk, M.Wood)
-end
 
 -- ---------------------------------------------------------------- build
 local old = workspace:FindFirstChild("Village")
@@ -464,7 +469,17 @@ local function folder(name)
 	f.Parent = village
 	return f
 end
-local Street, Rows, Lots, Props, Trees, Landmarks = folder("Street"), folder("Rows"), folder("Lots"), folder("Props"), folder("Trees"), folder("Landmarks")
+local Street, Rows, Lots, Trees, Landmarks = folder("Street"), folder("Rows"), folder("Lots"), folder("Trees"), folder("Landmarks")
+
+-- the lots' spans along the street, so backyard trees stay off them
+local LOTS_X = {}
+do
+	local lx = -350
+	for _, kind in ROW do
+		if kind == "L" then table.insert(LOTS_X, { lx, lx + LOT_W }) end
+		lx += kind == "L" and LOT_W or SEG_W
+	end
+end
 
 local function placeModel(src, cf, scale, parent, groundY)
 	local mdl = src:Clone()
@@ -478,7 +493,15 @@ end
 local TREES = { SS.Village3D.Pine1, SS.Village3D.Pine2, SS.Village3D.Pine1, SS.Village3D.Sakura1, SS.Village3D.Sakura2, SS.Village3D.Maple1, SS.Buildings3D.Bamboo1, SS.Buildings3D.Bamboo2, SS.Buildings3D.Bamboo3 }
 local function grove(x0, x1, s, d0, d1, n, scale0, scale1)
 	for _ = 1, n do
-		placeModel(pick(TREES), Wd(r(x0, x1), 0, s * r(d0, d1)) * CFrame.Angles(0, r(0, 2 * math.pi), 0), r(scale0, scale1), Trees)
+		local mdl = placeModel(pick(TREES), Wd(r(x0, x1), 0, s * r(d0, d1)) * CFrame.Angles(0, r(0, 2 * math.pi), 0), r(scale0, scale1), Trees)
+		local cf, size = mdl:GetBoundingBox()
+		local cx, reach = ORIGIN:PointToObjectSpace(cf.Position).X, math.max(size.X, size.Z) / 2 + 1
+		for _, span in LOTS_X do
+			if cx + reach > span[1] and cx - reach < span[2] then
+				mdl:Destroy() -- its crown would hang over a lot
+				break
+			end
+		end
 	end
 end
 
@@ -518,10 +541,16 @@ for _, kind in ROW do
 			local slot = part(Lots, ("PlotSlot%s%d"):format(side, nLot), Vector3.new(LOT_W, 1, LOT_D), ORIGIN * CFrame.new(x + LOT_W / 2, 0.5, s * (HALF + LOT_D / 2)) * facing(s), C.plaster)
 			slot.Transparency = 1
 			slot:SetAttribute("Side", side)
-			wall(Lots, x + 0.9, s, HALF + 1.5, HALF + LOT_D)
-			wall(Lots, x + LOT_W - 0.9, s, HALF + 1.5, HALF + LOT_D)
-			andon(Props, Wd(x + 3, 0.3, s * 13.2))
-			andon(Props, Wd(x + LOT_W - 3, 0.3, s * 13.2))
+			-- walls between the lot and the neighbours' backyards, starting behind the house row (houses are ≤ 30 deep)
+			wall(Lots, x - 1.4, s, HALF + 32, HALF + LOT_D) -- the 2.2-wide caps stop 0.3 outside the lot
+			wall(Lots, x + LOT_W + 1.4, s, HALF + 32, HALF + LOT_D)
+			if not TAKEN[side .. nLot] then
+				-- closed shopfront until a player claims the lot: every bay shuttered, no door, noren, lantern or signs
+				local sp = spec(0)
+				sp.doorBay, sp.bays, sp.lantern, sp.sign, sp.bigSign, sp.bench = 0, { "shutter" }, false, nil, nil, false
+				local m = house(Lots, ("Closed%s%d"):format(side, nLot), ORIGIN * CFrame.new(x + LOT_W / 2, 0, s * HALF) * facing(s), LOT_W, sp)
+				m:SetAttribute("Lot", slot.Name)
+			end
 		end
 		x += LOT_W
 		task.wait()
@@ -581,8 +610,9 @@ do
 	part(Landmarks, "OfferingBox", Vector3.new(3.4, 1.6, 1.4), hcf * CFrame.new(0, 0.8, -1.4), C.cedar, M.WoodPlanks, { solid = true })
 end
 
--- mountains: stretch the cliff ring so its inner face sits at x ±395, z ±130 around the street
-do
+-- mountains: stretch the cliff ring so its inner face sits at x ±395, z ±130 around the street.
+-- Off since 2026-10-21 (Allen: "remove the mountains, we will work on it later"); the Bound walls stay.
+if MOUNTAINS then
 	local ring = SS.Village3D.CliffRing:Clone()
 	local c0 = ring:GetBoundingBox().Position
 	local SX = 790 / 460
@@ -598,34 +628,11 @@ do
 	ring:TranslateBy(Vector3.new(ORIGIN.X - c1.X, 0, ORIGIN.Z - c1.Z))
 	ring.Name = "Mountains"
 	ring.Parent = village
-	-- invisible walls on the inner face line (the cliff mesh itself does not collide)
-	for _, b in { { 0, 130, 790, 2 }, { 0, -130, 790, 2 }, { 395, 0, 2, 260 }, { -395, 0, 2, 260 } } do
-		local wb = part(village, "Bound", Vector3.new(b[3], 80, b[4]), Wd(b[1], 40, b[2]), C.plaster, nil, { solid = true })
-		wb.Transparency = 1
-	end
 end
-
--- Lot N2 widened for the current plot (2026-10-21, Allen): the north houses, backyard trees, lot walls and lamps
--- between lots N1 and N3 go to ServerStorage.Legacy.Village_besideN2 and PlotSlotN2 becomes 280 wide (x -140..140).
-do
-	local park = Instance.new("Folder")
-	park.Name = "Village_besideN2"
-	local function inside(pos)
-		local l = ORIGIN:PointToObjectSpace(pos)
-		return l.Z < -10 and l.X > -139.9 and l.X < 139.9
-	end
-	for _, f in { Rows, Trees } do
-		for _, m in f:GetChildren() do
-			if inside(m:GetPivot().Position) then m.Parent = park end
-		end
-	end
-	for _, f in { Lots, Props } do
-		for _, p in f:GetChildren() do
-			if p:IsA("BasePart") and not p.Name:match("^PlotSlot") and inside(p.Position) then p.Parent = park end
-		end
-	end
-	Lots.PlotSlotN2.Size = Vector3.new(280, 1, LOT_D)
-	park.Parent = SS:FindFirstChild("Legacy") or SS
+-- invisible walls on the inner face line (the cliff mesh itself does not collide)
+for _, b in { { 0, 130, 790, 2 }, { 0, -130, 790, 2 }, { 395, 0, 2, 260 }, { -395, 0, 2, 260 } } do
+	local wb = part(village, "Bound", Vector3.new(b[3], 80, b[4]), Wd(b[1], 40, b[2]), C.plaster, nil, { solid = true })
+	wb.Transparency = 1
 end
 
 -- ShopService waits for Village.CustomerSpawn: on the road in front of lot N2.
