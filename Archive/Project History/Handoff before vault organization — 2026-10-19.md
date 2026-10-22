@@ -89,16 +89,16 @@ The core now runs in the game's Studio place. Allen had the place open with Mesh
 
 ## Additional concept art saved after pause
 
-Allen requested four environment/station images. See [[Art/Japanese Village Concept Art|Japanese Village Concept Art]] for forge, anvil, village map, and overall feel; PNGs and exact prompts are in `References/Japanese Village/`. These are visual proposals with review limitations noted. Prototype remains paused.
+Allen requested four environment/station images. See [[Archive/Art/Japanese Village Concept Art|Japanese Village Concept Art]] for forge, anvil, village map, and overall feel; PNGs and exact prompts are in `References/Japanese Village/`. These are visual proposals with review limitations noted. Prototype remains paused.
 
 ## Latest plot correction
 
-Allen wants larger player properties with a storefront and separate crafting area. See the spacious v2 image in [[Art/Japanese Village Concept Art|Japanese Village Concept Art]]. L-shaped wings are proposed, not approved; the six-player map needs enough space for larger plots.
+Allen wants larger player properties with a storefront and separate crafting area. See the spacious v2 image in [[Archive/Art/Japanese Village Concept Art|Japanese Village Concept Art]]. L-shaped wings are proposed, not approved; the six-player map needs enough space for larger plots.
 
 ## Labeled plot follow-up
 
-Allen liked the spacious connected layout and requested an overhead labeled plan. See `References/Japanese Village/player-plot-top-down-v1.png` and [[Art/Japanese Village Concept Art|Japanese Village Concept Art]]. Exact dimensions remain open.
+Allen liked the spacious connected layout and requested an overhead labeled plan. See `References/Japanese Village/player-plot-top-down-v1.png` and [[Archive/Art/Japanese Village Concept Art|Japanese Village Concept Art]]. Exact dimensions remain open.
 
 ## Early/mid/late concept added
 
-See `References/Japanese Village/plot-progression-v1.png` in [[Art/Japanese Village Concept Art|Japanese Village Concept Art]]. Allen requested sparse/basic early game, fuller mid game, and expanded staffed late game with advanced upgrades. Station counts remain illustrative.
+See `References/Japanese Village/plot-progression-v1.png` in [[Archive/Art/Japanese Village Concept Art|Japanese Village Concept Art]]. Allen requested sparse/basic early game, fuller mid game, and expanded staffed late game with advanced upgrades. Station counts remain illustrative.

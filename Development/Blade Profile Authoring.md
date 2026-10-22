@@ -89,4 +89,4 @@ Open `editor.html` next to the forge study (link in the study's bottom bar).
 
 Edits stay in the page until copied out. Nothing is saved to the files automatically.
 
-Related: [[Current Status|Current Status]] · [[Art/Blade Shaping Study|Blade Shaping Study]] · [[Art/Sword Silhouettes|Sword Silhouettes]]
+Related: [[Current Status|Current Status]] · [[Archive/Art/Blade Shaping Study|Blade Shaping Study]] · [[Art/Sword Silhouettes|Sword Silhouettes]]

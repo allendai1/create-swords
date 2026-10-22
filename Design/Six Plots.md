@@ -3,7 +3,7 @@ title: Six Plots
 status: built 2026-10-21 — multi-player playtest pending
 type: design
 date: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 tags: [design, multiplayer, plots, tycoon, create-swords]
 ---
 
@@ -18,23 +18,29 @@ Allen (2026-10-21): "is there also 6 total player plots that players can use now
   1. A copy of the template is pivoted onto that lot's `PlotSlot`; the south lots get a turned-around copy facing the street.
   2. It is named `Plot_<lot>`, with attributes `Lot`, `OwnerId` and `OwnerName`.
   3. It is locked to "only the free items" before it appears.
-  4. The lot's closed shopfront goes away.
+  4. The lot's empty plot goes away (since 2026-10-22; a closed shopfront before).
   5. The player's `RespawnLocation` is their plot's `PlayerSpawn`, and their `Plot` attribute names the plot.
 - **Visitors** can walk into anyone's shop and workshop but can't use anything: other plots' E prompts stay off on your screen, the `+` display markers and Buy buttons only show on your plot, and the server checks ownership for every action.
-- **Leaving.** The plot is deleted with everything on it (bought upgrades, displayed swords, ingots in the furnace, ore on the trays), and the closed shopfront goes back up. Coins and carried swords are player data, so the plot doesn't touch them; there is no saving yet (session-only, like before).
-- **Server size.** Six lots, one per player. A seventh player gets no plot. Set the server size to 6 in Game Settings → Places (a script can't).
+- **Leaving.** The plot is deleted with everything on it (bought upgrades, displayed swords, ingots in the furnace, ore on the trays), and the lot's empty plot comes back. Coins and carried swords are player data, so the plot doesn't touch them. **Since 2026-10-22 all of it is saved first** ([[Development/Saving]]): on the player's next visit, whichever lot they get is set up with their upgrades (Upgraded Store push included) before it appears, displayed swords go back on the same holders, racks are refilled, and furnace and ore-box contents come back as ingots. A plot is handed out only once its owner's progress has loaded.
+- **Unclaimed lots (2026-10-22).** Allen: "Why don't you just have all 6 player plots on the map. no need to replace them with another empty building when its already empty".
+  - Every unclaimed lot shows the plot itself, empty: PlotService makes these copies of the template at startup (`Village.Lots.Empty<lot>`).
+  - Nothing on them can be used or picked up. Locked upgrades, pads, spawns and prompts are removed, and every tag except `HidesRoof`, so a visitor can still see inside.
+  - Claiming a lot swaps its empty plot for the player's own copy; leaving swaps it back.
+  - They replace the closed shopfronts.
+- **Server size.** Six lots, one per player. A seventh player gets no plot. The server size is 6 (Game Settings → Places; set through the Open Cloud Places API on 2026-10-22, since a game script can't).
 
 ```
-            gate                        street                         shrine
-   north:   houses  [N1 2nd]  houses   [N2 1st]   houses  [N3 3rd]  houses
-   south:   houses  [S1 5th]  houses   [S2 4th]   houses  [S3 6th]  houses
+            gate          lane          lane          shrine
+   north:   house  [N1 2nd]  ↑  [N2 1st]     [N3 3rd]  house
+                    -------------- street --------------
+   south:   house  [S1 5th]     [S2 4th]  ↓  [S3 6th]  house
 ```
 
-Lot centres are about 187 studs apart along the street (world x −169.6, 17.5, 204.6); N2 and S2 face each other across it.
+Since 2026-10-22 the map is the simplified town ([[Art/Town Street Redesign References#Simplified map built (2026-10-22)]]). Lot centres are 96.5 studs apart (world x 543.5, 640, 736.5). Paved lanes 48 wide (a full frontage) separate the lots, and the arrows mark the two lanes that run on through the back wall. N2 and S2 face each other across the street, 8 further back than the other lots. On the earlier town street the lots were about 187 apart (world x −169.6, 17.5, 204.6).
 
 ## What changed in code
 
-See [[Development/Code Map#Six player plots (2026-10-21)]] for the full list.
+See [[Archive/Project History/Code Map before cleanup — 2026-10-22#Six player plots (2026-10-21)]] for the full list.
 
 - New: `ServerScriptService.PlotService` (template, claim, release, `plotOf`, `plotFrom`, `ownerOf`, `onPrepare` / `onPlot` / `onRelease` hooks), `StarterPlayerScripts.MyPlot` (the local player's plot) and `StarterPlayerScripts.PromptFilter`.
 - Per plot: TycoonService, ShopService, ForgeService, RackService, EtchService, PolishService and LeverAnimator on the server; the station controllers, ShopController and TycoonController on the client. The hilt-seating view now turns with the plot, so a south plot's camera is on its street side.
@@ -50,6 +56,6 @@ See [[Development/Code Map#Six player plots (2026-10-21)]] for the full list.
   - **Test → Clients and Servers** with 2–3 players: each gets their own lot in order, and spawns in their workshop.
   - On your own plot, every station, pad and display works; on someone else's, nothing does.
   - Customers come to each shop.
-  - When a player leaves, their plot goes and the closed front comes back.
+  - When a player leaves, their plot goes and the empty plot comes back.
 
-Related: [[Design/Tycoon Upgrades]] · [[Art/Japanese Street]] · [[Development/Code Map]] · [[Sessions/2026-10-21]] · [[Home]]
+Related: [[Design/Tycoon Upgrades]] · [[Archive/Art/Japanese Street]] · [[Development/Code Map]] · [[Sessions/2026-10-21]] · [[Home]]

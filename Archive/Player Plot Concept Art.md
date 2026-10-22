@@ -9,7 +9,7 @@ updated: "2026-10-19"
 
 # Player Plot Concept Art
 
-**Latest Japanese-setting exploration:** [[Art/Japanese Village Concept Art|Japanese Village Concept Art]]. Images below preserve the earlier visual direction.
+**Latest Japanese-setting exploration:** [[Archive/Art/Japanese Village Concept Art|Japanese Village Concept Art]]. Images below preserve the earlier visual direction.
 
 Concept images for **Sell Swords!**, based on [[Design/Game Design Document|Game Design Document]], [[Design/Decisions Log|Decisions Log]], [[Sessions/2026-10-17]], and the saved visual references. These are visual explorations rather than implemented game changes.
 
@@ -53,4 +53,3 @@ For a Roblox build, simplify the illustrated grain, stone variation, foliage, an
 Created with the built-in image generation tool. The station sheet used the plot concept as a visual reference. Full prompts: [[References/Concept Art/generation-prompts-v1]].
 
 Related: [[Home]] · [[Design/Game Design Document|Game Design Document]] · [[Development/Roadmap|Roadmap]]
-

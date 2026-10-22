@@ -104,4 +104,4 @@ Steps 2–4 and part of 5 are now done in the game's Studio place, using the bro
 ![[References/Blade Shaping/roblox-probe-tanto-ground-100.jpg]]
 ![[References/Blade Shaping/roblox-probe-katana-forged-90.jpg]]
 
-Related: [[Design/Game Design Document|Game Design Document]] · [[Art/Blade Shaping Study|Blade Shaping Study]] · [[Development/Code Map|Code Map]]
+Related: [[Design/Game Design Document|Game Design Document]] · [[Archive/Art/Blade Shaping Study|Blade Shaping Study]] · [[Development/Code Map|Code Map]]

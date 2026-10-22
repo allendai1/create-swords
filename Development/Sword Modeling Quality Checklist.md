@@ -299,6 +299,6 @@ identify a reason to propose a change.
 Give the review first. Do not modify the model unless I have authorized edits.
 ```
 
-Related: [[Home]] · [[Design/Game Design Document|Game Design Document]] · [[Art/Sword Silhouettes|Sword Silhouettes]] · [[Art/Blade Shaping Study|Blade Shaping Study]] · [[Development/Blade Profile Authoring|Blade Profile Authoring]] · [[Development/Blade Implementation Research|Blade Implementation Research]]
+Related: [[Home]] · [[Design/Game Design Document|Game Design Document]] · [[Art/Sword Silhouettes|Sword Silhouettes]] · [[Archive/Art/Blade Shaping Study|Blade Shaping Study]] · [[Development/Blade Profile Authoring|Blade Profile Authoring]] · [[Development/Blade Implementation Research|Blade Implementation Research]]
 
 Source: Adapted and expanded from the “Sword Model Checklist” conversation, with the vault's current art direction used as context.

@@ -47,4 +47,3 @@ Full generation prompt: [[References/Concept Art/furnace-ui-prompt-v1]].
 Adopted on 2026-10-18 for all pickers (see [[Art/UI Design|UI Design]]), with two changes: the station keeps the name **Forge**, and when both slots are busy E shows a quick "Forge is full" message instead of the slots' states.
 
 Related: [[Home]] · [[Design/Game Design Document|Game Design Document]] · [[Archive/Player Plot Concept Art|Player Plot Concept Art]]
-

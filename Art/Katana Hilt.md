@@ -115,7 +115,7 @@ Allen asked for more hilts: "the pattern of the handle doesn't need to be comple
 - `build_hilt.py`'s habaki now matches the smaller game collar (0.17 × 0.052 × 0.12).
 - Backups: `ServerStorage.Legacy.SmithyCore_beforeGuardSet`, `Hilts_beforeGuardSet`, `ItemPicker_beforeHiltArt`.
 
-Related: [[Art/Blender Station Review]] · [[Art/Flame Etch]] · [[Development/Code Map]] · [[Sessions/2026-10-19]]
+Related: [[Archive/Art/Blender Station Review]] · [[Art/Flame Etch]] · [[Development/Code Map]] · [[Sessions/2026-10-19]]
 
 ## Habaki encloses the blade root (2026-10-20)
 

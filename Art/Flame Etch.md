@@ -1,13 +1,15 @@
 ---
 title: Flame Etch
-status: pattern v4 in the game via the Etching Table (2026-10-20) — free, instant; no prices or minigame yet
+status: Flame v4 built; animated playback documented separately; Play checks pending
 type: art
 date: 2026-10-19
-updated: 2026-10-19
+updated: 2026-10-22
 tags: [art, etching, blade, hilt, prototype, create-swords]
 ---
 
 # Flame Etch
+
+**New direction, 2026-10-21:** [[Art/Animated Blade Etching]] records Allen's request to watch patterns being etched onto procedural blades, with a technical handoff and candidate pattern sheet. The animation and new patterns are not recorded as built. Keep this note's existing Flame appearance as the compatibility reference. **Built 2026-10-21:** Flame is unchanged on swords; at the Etching Table it now wipes in along the blade behind a stylus (a private copy of this same skin, band hidden then revealed; checked equal to the normal skin face by face).
 
 First etching pattern for the Etching Table idea ([[Design/Game Design Document]] §6 finishes: "Etching / Rune — trace a pattern"). An **original** flame motif — not a copy of the Demon Slayer "Rengoku" sword Allen pasted as a reference — on our procedural blades, plus a matching flame tsuba. Prototype only: a sword gets it when its record has an `etch` field; nothing in the game hands one out yet.
 
@@ -44,7 +46,7 @@ Allen approved the even-peak preview. It's in `Shared/BladeEtch` as the same ver
 
 ### Preview and measurements
 
-![[Models/Hilts/review/flame-etch-v4-vs-reference.png]]
+![[Prototypes/etch/flame_etch_v4_preview.png]]
 
 Allen replaced the v3 direction with a screenshot to match (`References/Etching Table/flame-band-reference.webp`). He asked to match the red band's placement and width and to trace its shallow, rounded, uneven boundary with occasional small points. Most of the blade stays dark metallic, with thin bright edges and visible bevel shading. He wanted the reference and the revision side by side at the same orientation.
 
@@ -56,7 +58,7 @@ Allen replaced the v3 direction with a screenshot to match (`References/Etching 
 
 ## Pattern v3 proposal (superseded by v4)
 
-![[Models/Hilts/review/flame-etch-v3-flat-preview.png]]
+![[Prototypes/etch/flame_etch_v3_preview.png]]
 
 Allen asked for connected, curved flame tongues that grow from a narrow edge band and vary in size and spacing. He also asked for a clear dark body and a metallic bevel, with a flat preview shown first. Source: `Prototypes/etch/flame_etch_preview.py`, drawn on the true tantō, wakizashi and katana outlines.
 

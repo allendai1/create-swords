@@ -207,7 +207,7 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 
 ### 10.3 Progression arc
 
-**Visual progression direction (2026-10-19):** early game starts sparse with basic stations; mid game adds displayed swords and stations; late game expands the shop with station workers and advanced upgrades. See [[Art/Japanese Village Concept Art|Japanese Village Concept Art]] for the same-plot comparison. Illustrated capacities and precise unlocks are proposals, not fixed balance rules.
+**Visual progression direction (2026-10-19):** early game starts sparse with basic stations; mid game adds displayed swords and stations; late game expands the shop with station workers and advanced upgrades. See [[Archive/Art/Japanese Village Concept Art|Japanese Village Concept Art]] for the same-plot comparison. Illustrated capacities and precise unlocks are proposals, not fixed balance rules.
 
 | Stage | Player has | Goal |
 |---|---|---|
@@ -217,7 +217,7 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 
 ## 11. World & multiplayer
 
-**Plot scale clarification (2026-10-19):** each player needs a larger property with a distinct storefront for customers and a dedicated place for crafting, plus room to expand. Avoid compressing both into a small shop stall. A connected L-shaped retail/crafting layout is explored in [[Art/Japanese Village Concept Art|Japanese Village Concept Art]]; its exact floor plan and dimensions are not yet approved.
+**Plot scale clarification (2026-10-19):** each player needs a larger property with a distinct storefront for customers and a dedicated place for crafting, plus room to expand. Avoid compressing both into a small shop stall. A connected L-shaped retail/crafting layout is explored in [[Archive/Art/Japanese Village Concept Art|Japanese Village Concept Art]]; its exact floor plan and dimensions are not yet approved.
 
 - **6 players per server**, each with a workshop plot in a Japanese mountain swordsmith village.
 - **Open-front Japanese workshop:** visible forging and sword displays face the village path. Players can see neighbors working as they pass.
@@ -225,7 +225,7 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 - Warm, cozy, stylized art: timber, tiled roofs, lanterns, stone paths, streams, and mountain scenery. Demon Slayer's Swordsmith Village is an atmosphere reference.
 - NPCs travel through the village and visit shops. Admiring other players' shops remains the light social layer; no player trading in v1.
 - Cosmetic decoration is freely expressive; functional displays and facilities provide business benefits.
-- The previously built medieval cabin (`Models/Archive/SwordShop.fbx`) is a historical asset, not the target shop design. The Japanese open-front workshop is now built in Studio from parts ([[Art/Smithy Redesign|Smithy Redesign]]).
+- The previously built medieval cabin (`Models/Archive/SwordShop.fbx`) is a historical asset, not the target shop design. The Japanese open-front workshop is now built in Studio from parts ([[Archive/Art/Smithy Redesign|Smithy Redesign]]).
 
 ## 12. Technical notes (Roblox)
 

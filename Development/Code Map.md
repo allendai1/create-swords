@@ -1,281 +1,153 @@
 ---
 title: Code Map
-status: current (2026-10-19, player plot v2)
+status: current recorded architecture — runtime verification pending
+type: development
+updated: 2026-10-22
 tags: [code, architecture, create-swords]
-type: "development"
-updated: "2026-10-21"
 ---
 
 # Code Map
 
-Where everything lives in the Studio place (`goku19876's Place: 10172026_1`) and how the pieces connect. The code exists only in the place file (no Rojo/Git; see [[Design/Decisions Log|Decisions Log]]), so **save the place** after every session. The design behind it is in [[Design/Game Design Document|Game Design Document]]; day-by-day history is in [[Sessions/2026-10-17]].
+Current architecture consolidated from the build records through 2026-10-22. Gameplay code lives in the Studio place (`goku19876's Place: 10172026_1`), with no Rojo export in this vault. Confirm live sources before editing and save the place after Studio work. This document was reconciled offline, not verified against a running place.
 
-## How a sword is made (data flow)
+The former chronological code map, including asset IDs, exact geometry, backup names and dated implementation details, is preserved in [[Archive/Project History/Code Map before cleanup — 2026-10-22]]. Current tasks belong in [[Development/Roadmap]] and design in [[Design/Game Design Document]].
 
-```
-Ore Roller lever (hold E) ──(ForgeService)──► every empty stand spins → result waits on the stand ─E "Collect ore"─► cold ingot (Tool)
-   Forge picker ─ForgePut─► slot (timer label) ─E "Take out" / ForgeTake─► hot ingot (Tool)
-Anvil (AnvilController) ── choose hot ingot → blueprint ─BeginForge(ingotId, blueprintId)─► SmithService (start time)
-   12 untimed strikes (BladeCore) → 90%, auto-finish at the anvil
-   Finish ─FinishBlade("Forge", blueprintId, savedState, ingotId)─► SmithService
-      ForgeCheck validates the forged state and minimum time; anvil output cannot exceed 90%; ingot used up → carried blade
-Hilt Bench (HiltBenchController) ── pick blade + hilt, seat it (3 taps)
-   ─AttachHilt(bladeId, hiltId, goodTaps)─► SmithService → completed sword (Tool)
-Etching Table (EtchingTableController) ── pick sword + pattern ─EtchSword(swordId, etchId)─► EtchService → sword.etch, rebuilt Tool (+ bonus)
-Optional final Polishing Station ── pick completed sword ─BeginPolish / PolishSword─► PolishService → improved sword, up to 100%
-Sword holder "+ Display a sword" ─DisplaySword(slot, swordId)─► ShopService → rack Model + price tag
-Customers (ShopService) walk in → Offer → RespondOffer → coins (leaderstats)
-SwordRenderer draws every sword's blade on each client with BladeCore + BladeView, from BlueprintId and BladeRefinement.
+## Gameplay and state
+
+```text
+Owned ore-box lever → ForgeService → collect cold ingot
+ForgePut / ForgeTake → heat one ingot per furnace → hot ingot
+BeginForge / FinishBlade → SmithService + ForgeCheck → forged blade
+AttachHilt → three untimed knocks → assembled sword
+Optional BeginPolish / PolishSword → polish finish bonus
+Optional EtchSword → accepted etch + client playback
+DisplaySword → customer Offer / RespondOffer → coins + sale count
 ```
 
-The server owns all state (ingots, blades, swords, coins, forge slots, rack). Clients only show it and send choices. All of it is session-only until DataStore saving is added.
+Recorded player-facing rule: completing forging gives **100% quality**; full polish adds **+10% value** and etching adds **+15%**. Old 90%-cap descriptions in the archived map predate that rule. Blade refinement remains an internal geometry/finish concept; do not infer current displayed quality or server limits from old port/probe descriptions. Inspect live SmithService/ForgeCheck when changing either.
 
-## ReplicatedStorage
+Server state is authoritative: inventory, coins, completed/sold counters, racks, displays, furnace contents and bought upgrades. Since 2026-10-22 it is saved per player under a session lock ([[Development/Saving]], [[#First session and saving (2026-10-22)]]). Item pickers open even when only one valid item exists.
 
-| Path | What it is |
-|---|---|
-| `Shared/BladeProfile` | (Prototype modes; still required by AnvilScore.) The blade as 40 slices of left/right half-widths (1.0 = blank). Hammer hits with falloff and grind strokes (`kind = "grind"`, segments trimmed with `cut`), undo/redo/reset per hit or stroke, `replay(hits)` with validation |
-| `Shared/AnvilScore` | Accuracy %, smoothness %, Finish at 80%. Quality = the percentage (`forPercent`: name "92%", multiplier ×1.0 at 80% → ×2.0 at 100%); no grade names |
-| `Shared/Blueprints` | Tantō, wakizashi, katana built from `BladeData` (2026-10-19): price and stars (placeholders), length in studs, picker silhouettes, `Blueprints.blade(id)` for BladeCore. `STUDS_PER_CM = 0.05` for anvil, held and displayed swords. `Blueprints[id]` and iteration still work for older callers |
-| `Shared/BladeView` | Client EditableMesh blade from BladeCore: `setParams`, `setFinish(refinement, hot)` (dull → bright steel per section), `raycast` against the mesh itself (grinding). Used by the anvil and SwordRenderer |
-| `Shared/ForgeCheck` | Server validation by BladeCore replay. Current station split: SmithService refuses anvil output above 90%; `evaluatePolish` validates saved refinement and minimum time at the dedicated Polishing Station (details below). Older combined forging/grinding timing descriptions are historical |
-| `Shared/Materials` | 13 materials, 5 rarities: roll odds, value multiplier, colour |
-| `Shared/Hilts` | 6 hilts (+0–40%, unlock by swords completed), seat-the-hilt bonus. Since 2026-10-20 each recipe may name a `tsuba` (Leather = Kaku, Iron = Mokko, Bronze = Kiku, Gold = Kumo, Gem = Kuruma; Wooden keeps the round template guard), and `Hilts.dress(hilt, etch?)` returns the hilt's template parts with their colours (used by `SmithyCore` for swords and `ItemPicker` for card art). `Hilts.TEMPLATE` = `ReplicatedStorage.SwordParts.KatanaHilt` |
-| `Shared/ValueFormula` | base × material × quality multiplier × (1 + hilt + seat bonus) |
-| `Shared/Customers` | Farmer / Adventurer (likes wakizashi) / Knight (likes 95%+ blades, i.e. ground ones): likes, offer and raise maths |
-| `Shared/BladeCore` | Port of the browser study's blade core (2026-10-19): stage shapes at 64 stations, strikes, safe grinding, quality, fixed 782-vertex mesh layout, save validation, catalogue measurement. Source of truth: `Prototypes/tanto-forge/roblox/` in the vault. Used by the anvil, server check and SwordRenderer. |
-| `Shared/BladeData` | Generated from the study's JSON (`tools/export-luau.js`); tantō, wakizashi, katana and the universal blank |
-| `Shared/BladeProbe` | Test-only EditableMesh forging/grinding probe; runs only when `workspace` has the `BladeProbe` attribute (via `StarterPlayerScripts.BladeProbeLoader`) |
-| `Shared/BladeMesh` | Client-side EditableMesh blade: ridge band and bevels (band across the blade's own width from `blueprint.ridge`, smoothed), sharpness, accent lines (ridge lines or a single shinogi, fuller, a katana's yokote; tinted from the blade colour), pointed tips |
-| `Remotes/` | BeginForge, FinishBlade, AttachHilt, GetSmithState, SmithState, ForgePut, ForgeTake, DisplaySword, Offer, RespondOffer, ShopNotice |
-| `WallHolder` (2026-10-20) | The wall sword holder (asset 82281277381485, 212 tris): `Holder_*` MeshParts plus invisible `Origin` (PrimaryPart, on the plaster face at floor level; +X along the wall, +Z out) and `Mount` (where the sword's Handle goes: grip centre at (−0.58, 4.4, 0.56), blade along +X, edge up). Cloned by ShopService and ShopController's preview |
+## Workspace and plot ownership
+
+- `Workspace.Village`: the chosen simplified walled map, six lots, gate, shrine and broad flagstone street. `Village.Lots.PlotSlotN2` is the template's Edit pivot; other slots identify the five remaining lots.
+- `Workspace.Plot` in Edit: reusable template with `Shop`, `Workshop`, `Smithy`, `Pads`, `Yard`, `PlayerSpawn`, `CustomerSpawn` and the delivery bay. At runtime PlotService moves the template to `ServerStorage.PlotTemplate`.
+- Claim order: **N2, N1, N3, S2, S1, S3**. A joining player gets `Plot_<lot>` with `Lot`, `OwnerId` and `OwnerName`; the player receives a `Plot` attribute and their own respawn location. South lots turn the whole plot toward the street.
+- Unclaimed lots hold inert empty plot copies. Claiming replaces one; leaving destroys the owned copy and restores the empty one. Visitors can walk through but cannot use another player's stations or buy upgrades.
+- `Plot.Shop`: Starter/Upgraded shells, displays, entry point and decor-only commission boards. `Plot.Smithy`: ore roller, furnaces, anvil, hilt/polish/etch stations and racks.
+- Upgraded Store pushes the workshop, stations, workshop pads, spawn and characters inside it back **12 studs** in plot space. Use plot-local coordinates for moves, cameras and customer routing.
+- `Shop.DeliveryWall` uses `UntilUpgrade = Delivery`; `Shop.DeliveryDoor` uses `Upgrade = Delivery`. No `Delivery` catalogue entry/pad exists yet. The bay's `CartSpot` is reserved for future courier gameplay.
+
+Details: [[Design/Six Plots]], [[Design/Tycoon Upgrades]], [[Art/Workshop Layout]], [[Art/Ore Loot Box]].
 
 ## ServerScriptService
 
-| Path | What it is |
+| Script/module | Responsibility |
 |---|---|
-| `SmithyCore` (module) | Per-player state (ingots, blades, swords, completed count), coins in leaderstats; builds ingot Tools and sword Tools/Models; re-gives items on respawn. **Hilt (2026-10-19):** `buildSword` keeps an invisible `Handle` (1.082 × 0.15 cylinder, from the template's `GripLength`) and `dressHilt` clones the 8 MeshParts of `ReplicatedStorage.SwordParts.KatanaHilt` (moved from ServerStorage 2026-10-20 so clients can draw it) onto it (stored relative to the Handle frame: X toward the blade, Z the edge side), welded and coloured per recipe: `Ito` = grip, `Fittings`/`Rim` = guard, `Kashira` = pommel or guard; `Same`, `Tsuba`, `Band`, `Habaki` keep fixed colours. `Habaki` was resized 2026-10-20 to 0.17 × 0.12 × 0.052 (local X width, Y along the blade, Z thickness), centre X 0.673. `BladeOffset` = 0.613 (template attribute). `Hilts` guard widths and pommel sizes are no longer used for the look. **Etch (prototype, 2026-10-19):** optional `Sword.etch = { pattern, body, flame, guard? }` → attributes `Etch`, `EtchBody`, `EtchFlame`; if `SwordParts.<guard or pattern>Guard` exists (e.g. `FlameGuard`, asset 85043523139786) it replaces `Tsuba` and `Rim`, coloured by part-name suffix Core = body, Rim = flame, Inner = flame lightened. The pre-hilt module is kept as `ServerStorage.Legacy.SmithyCore_beforeKatanaHilt`. Mesh source: Open Cloud asset 74688698547736 from `Models/Hilts/KatanaHiltGame.fbx`. `publicState` swords include materialId / blueprintId / hiltId for the picker art |
-| `DevTools` (Studio only, 2026-10-20) | `Remotes.DevAddCoins` adds 1,000 coins; `Remotes.DevGiveSwords` gives one finished tantō, wakizashi and katana (100% forged, unpolished, random material, Wooden hilt) built like SmithService's. Does nothing on a live server (`RunService:IsStudio()`). The client `DevPanel` (StarterPlayerScripts, also Studio only) shows "+1,000 coins" and "+3 swords" buttons at the bottom left |
-| `SmithService` | BeginForge (notes ingot, blueprint, start time), FinishBlade (mode "Forge" only, via ForgeCheck; since 2026-10-20 it refuses any blade above 90%, as polishing is the Polishing Station's job; blade stores `refinement`), AttachHilt (unlock check + seat bonus), GetSmithState. **Studio only:** `ServerStorage.DevGiveHotIngot` BindableFunction hands a player a hot ingot for playtests |
-| `ForgeService` | Ore Roller (2026-10-20): the `RollPrompt` lever ("Pull lever", hold 1.5 s) spins every empty `OreRoller.Stand<n>` (any model with an `Ore` part): ore + `OreChunk*` flicker through `Materials.list`, slowing, for 2.6 s, then stop on `Materials.roll` with a pop, rarity-coloured `Sparkle*`, an `OreLabel` billboard (name + rarity) and the stand's `Pedestal.CollectPrompt` (E). Only the roller can collect (max 6 carried ingots); occupied or spinning stands are skipped; empty stands hide their ore. Pre-change script kept as `ServerStorage.Legacy.ForgeService_beforeOreStands`; forge: 2 shared slots, 15 s, ForgePut / ForgeTake. `ForgeTimers` BillboardGui on `Forge.Base` stacks one "Iron · Heating" label (bar + seconds) per busy slot. Slot parts `ForgeSlot1/2` carry `Slot`, `OwnerId`, `Ready` attributes for the client |
-| `ShopService` | Any number of sword holders (DisplaySword, take back with F), price tags; customer NPCs (walk in, inspect, offer, haggle, timeout), coins on sale. Slots 1–3 are the floor holders (`DisplayRack.InspectPoint1..3`). **Wall holders (2026-10-20):** each `Plot.Storefront.WallSpots.Spot<n>` has a `PromptAt.BuyPrompt` ("Buy sword holder", `HOLDER_PRICE` = 100 coins, hold 0.5); buying spends coins (`SmithyCore.spendCoins`), clones `ReplicatedStorage.WallHolder` onto the spot (`DisplayRack.Holders.WallHolder<n>`), adds `DisplayRack.Slots.Slot<n>` at the template's `Mount` with a cloned `HolderPrompt`, and marks the spot `Bought`. Each slot has a `route`: floor holders walk straight to their InspectPoint; wall holders go along the centre aisle (EntryPoint's x) to the nearest clear row in `AISLE_ROWS` (z 11, −1.5, −12), across, then to 3.5 studs in front of the rack, and walk it back out. Bought holders are shared and session-only. Customers appear at `Village.CustomerSpawn` and walk through `DisplayRack.EntryPoint`. Backup `Legacy.ShopService_beforeWallHolders` |
+| `SmithyCore` | Per-player ingots/blades/swords, coin transactions, completed/sold counters, public state, item Tools/Models and respawn restoration. Sword values include fitting/polish/etch bonuses. |
+| `PlotService` | Template, lot allocation, empty copies and owner/plot lookup. API: `plotOf(player)`, `plotFrom(inst)`, `ownerOf(inst)`; preparation, claim and release hooks. |
+| `TycoonService` | Per-plot `Bought_<id>` flags, prerequisite pads, ownership/reach/spend checks, `TycoonItem` locking and workshop push. |
+| `ForgeService` | Each plot's ore box and purchased slots; collect-before-reroll; one ingot per unlocked furnace. Heating is 3 s until first completion, then 10 s. |
+| `SmithService` | Begin/finish forge requests, blueprint/ingot validation through `ForgeCheck`, and hilt assembly. |
+| `ShopService` | Owner-specific displays, per-plot customer routes/spawners, offers/haggling and sale payouts. At most two customers per plot. |
+| `PolishService` | BeginPolish/PolishSword, station reach/unlock checks, refinement replay/timing validation, state update and rebuilt sword. |
+| `EtchService` | Valid sword/pattern, own unlocked station/reach and one-etch-per-sword checks; accepted finish updates authoritative state. |
+| `RackService` | Own-plot ingot/sword storage and retrieval; recorded capacities are 12 ingots, 6 swords, 6 carried. |
+| `LeverAnimator` | Lever hold/release motion for plot rollers. |
+| `DevTools` | Studio-only coin and example-sword grants; guarded by `RunService:IsStudio()`. |
 
-## StarterPlayerScripts (client)
+First-sale exceptions: a listing spawns a customer immediately until `sold > 0`; later arrivals use 12–22 s intervals. At `sold == 0` the offer is exact value and declining ends it. At `sold == 1` a hint shows and the first decline guarantees a raise. Later sales use normal negotiation. Future direct commissions must not increment the ordinary-shop sale counter.
 
-| Path | What it is |
+## ReplicatedStorage
+
+| Module/asset | Responsibility |
 |---|---|
-| `AnvilController` (rewritten 2026-10-19; automatic 90% finish since the recorded 2026-10-20 change) | E → hot-ingot picker → blueprint picker → BeginForge. Strike circle (Space / click / tap, one buffered tap), hammer behind the anvil, blade slides/turns/flips, eased local deformation, sparks, clang and shake. After 12 strikes the blade cools and auto-finishes at 90%; no grinding interaction at the anvil. Panel shows quality and strike/stage; overhead camera frames the blueprint. Old modes are in `ServerStorage.Legacy.AnvilController_PrototypeModes`; pre-polishing controller is preserved separately |
-| `HiltBenchController` | E → picker "Choose a blade." → picker "Choose a hilt." → seat-the-hilt taps (Space / tap) → AttachHilt → toast |
-| `EtchingTableController` (2026-10-20) | E at `Smithy.EtchingTable.Top.EtchPrompt` → picker "Choose a sword." (inventory swords; etched ones say so) → picker "Choose a pattern." (`Shared/Etches`) → `EtchSword` → toast. Free and instant for now |
-| `EtchService` (server, 2026-10-20) | `Remotes.EtchSword(swordId, etchId)`: within 12 studs of the table, sets `sword.etch` from `Shared/Etches`, swaps the sword's Tool (backpack or hand) for a rebuilt one, pushes state |
-| `Shared/Etches` (2026-10-20) | Etch patterns: `Flame` (+15% value, body/flame colours). `SmithyCore.swordValue` adds the bonus; `publicState` swords carry `etch` |
-| `ForgeController` | E: "Take out" when your ingot is ready (the prompt text switches), "Forge is full" toast when both slots are busy, else the picker of your cold ingots stacked by material; picking closes it, puts one in and toasts "Ingot loaded" |
-| `ShopController` | "+ Display a sword" picker (sword cards with price), offer card, notices. Binds every `Slot<n>` in `DisplayRack.Slots` as it appears (bought wall holders included); while a wall spot's buy prompt shows, a see-through `WallHolder` previews where it would go (spots bound on ChildAdded too, for streaming). Backup `Legacy.ShopController_beforeWallHolders` |
-| `ItemPicker` (module) | The shared picker (vault: [[Art/UI Design|UI Design]]; Gotham font), built in code into its own `PickerGui`: station title + action line, grid of cards (3D item in a ViewportFrame or a blade silhouette; hilt cards show the real dressed hilt and guard from `Hilts.dress`, tipped so the guard face shows, with `SwordParts` preloaded; blade and sword cards with a `blueprintId` draw that blueprint's real finished blade (`BladeView`, 1.5× wider for readability, on a shared square-root scale so a tantō reads short), swords with their real hilt, and the Etching Table's pattern card shows the etch on the chosen sword; these EditableMeshes are freed whenever the window is rebuilt or closed, name, chip, ×qty; hover / gamepad focus = amber edge), close ring (B closes), blur + dim behind, empty state. Compact one-row layout when the screen is under 500 px tall. Also `toast(text, "warn"?)`. Used by the forge, anvil, holders and Hilt Bench |
-| `SwordRenderer` | Draws held and displayed blades with BladeCore + BladeView (one EditableMesh per visible sword for now). Swords with an `Etch` attribute also get a `BladeEtch` skin (prototype, 2026-10-19), welded with the blade |
-| `Shared/BladeEtch` (prototype, 2026-10-19) | Client etch skin: a two-colour EditableMesh just above both blade faces, built from the same BladeCore station params (sampled ~4× finer) so it follows any blueprint's forged/ground shape. `PATTERNS.Flame(sw)` gives how far the band colour reaches from the edge at `sw` local blade widths from the base. Since v4 (2026-10-20) it is the reference-matched red band: even humps of 0.14 width around 28%, spaced 0.75–1.05 widths. Columns run from a 3.2% edge line to a 3.2% spine line, so bare steel shows as bright edges; per-vertex colours shade the bevel (12 cached steps). Pre-v4 module kept as `ServerStorage.Legacy.BladeEtch_beforeBand`. `build(params, pattern, body, flame)` returns the MeshPart and its EditableMesh. See [[Art/Flame Etch]] |
+| `Shared/BladeCore`, `BladeData`, `Blueprints` | Blade geometry/progress, universal blank and tantō/wakizashi/katana data. Local port/data tools remain under `Prototypes/tanto-forge/`. |
+| `Shared/BladeView`, `BladeMesh` | Active deforming blade presentation; anvil/polishing need live geometry. |
+| `Shared/ForgeCheck` | Server replay and completion/refinement/timing validation. |
+| `Shared/Materials`, `Hilts`, `ValueFormula`, `Customers` | Material odds/appearance/value, fittings/milestones, price rules and NPC offer/raise behavior. |
+| `Shared/Upgrades` | Upgrade IDs, prices and prerequisites; pad IDs and `TycoonItem.Upgrade` attributes must match. |
+| `Shared/Etches`, `EtchPatterns`, `EtchCanvas` | Finish catalogue, stroke paths and progressive/final image work. Flame and Eclipse have build records; further patterns require confirmation. |
+| `Shared/SwordMeshCache` | Shared, baked-first finished-sword geometry with live fallback and etch/polish appearance. |
+| `SwordMeshes`, `SwordParts.KatanaHilt` | Uploaded finished meshes and dressed hilt/guard templates used by world and viewport art. |
+| `Remotes` | Forge/hilt/polish/etch, state, rack, display/offer and upgrade request/event boundary. Client choices require server ownership, reach and state checks. |
 
-## StarterGui
+Legacy `BladeProfile`, `AnvilScore` and probe modules may remain dependencies or test references. Inspect callers before removal; they are not the current design specification.
 
-`AnvilHud` (anvil panel, hint, result banner; Tools, Hammers and ModeButton hidden), `AnvilPoints` (unused; strike ring built at runtime in `StrikeRingGui`), `HiltBenchHud` (Seat panel) and `ShopHud` (offer card, notices). `GrindMap` belonged to the earlier anvil flow; current polishing has its own controller and progress strip (see Polishing Station below). The picker and toasts are built by `ItemPicker` (`PickerGui`).
+## Client controllers and interface
 
-## Workspace
+- `MyPlot`: `current()`, `get()`, `owns(inst)`, `plotOf(inst)`; controllers resolve their own plot instead of `workspace.Smithy`.
+- `PromptFilter` and the shop/tycoon controllers limit prompts, buy buttons and display markers to the player's plot. Server ownership checks remain authoritative.
+- `AnvilController`, `ForgeController`, `HiltBenchController`, `PolishController`, `EtchingTableController`, `RackController`, `ShopController`: station pickers, interaction, framing and feedback. The hilt view follows bench orientation.
+- `ItemPicker`: reusable item cards with real blade/hilt/etch art, toasts and small-screen layout. Free temporary resources on rebuild/close.
+- `EtchPlayback`: private progressive canvas over a shared overlay, stylus/sparks and station camera; restore controls, camera and hidden table props on finish/interruption. Server acceptance determines the finish, even if the show is interrupted.
+- `OreBoxShow` / `OreBoxAnimator`: all clients see the 3.6 s lid/ingot show; ForgeService exposes the real results at the end.
+- `SwordRenderer`: held/displayed blade art and release on removal. `SwordMeshCache` uses baked finished meshes; no blanket one-live-mesh-per-finished-sword assumption remains.
+- `RoofHider`: locally fades unlocked roofs on the plot the player enters; inert empty plots retain roof behavior.
+- `Hotbar`: nine item slots plus bag button (`~`), rarity colours, ingot stacking, backpack overflow, drag/drop and click/tap equip. Gamepad R1/L1 cycle through the bar and then the bag (2026-10-22). [[Art/UI Design]] records the chosen styling.
 
-`Smithy/` holds `OreRoller`, `Forge` (Base + HeatPrompt "Use forge"), `Anvil` (BladeMount, ForgePrompt, Clang sound), `HiltBench` and the other stations. The shop is not in `Smithy`: since 2026-10-20 it is `Plot.Shop` (`Storefront`, `Displays`, `EntryPoint`; see below). The blade on the anvil (`Blade`), the Trace guide and the `Customers` folder are created at runtime.
+Etched polishing now brightens the body at polish levels; preparation spreads over frames and the last etch remains warm for 5 s after leaving. This is a recorded hitch fix awaiting Play verification.
 
-Rebuilt 2026-10-19 in the Japanese style ([[Art/Smithy Redesign|Smithy Redesign]]). Each station keeps the parts scripts read, and its look lives in a `Dress` model (plus `Stand1` on the roller):
+## Local builders and authoring
 
-| Station | Parts scripts read (don't move or rename) | Free to restyle |
-|---|---|---|
-| `Forge` / `Forge2` door (2026-10-20) | `Door` (`Door_iron`, `Door_strap`, `DoorWindow` + `WindowLight`) flush on the furnace face; `HeatPrompt.RequiresLineOfSight = false` so E works through it | ForgeService `setWindow`: in `refreshBoard`, the window is Neon (255, 120, 35) with its light on while any slot of that forge is busy, otherwise SmoothPlastic (41, 26, 20) and the light off. A `Lit` attribute stops repeat writes |
-| `Forge` | `Base` (invisible box, exact old size and CFrame; ForgeService places `ForgeSlot1/2` and `ForgeTimers` from it) + `HeatPrompt` | Since 2026-10-20: `Model3D` (the Blender mid-high forge, turned to face +Z; its trays sit under `ForgeSlot1/2`); `Fire` is now invisible and keeps only its PointLight, inside the new chamber. `Chimney` and `Dress` removed |
-| `OreRoller` (mine entrance since 2026-10-20, later; soft-rock cave the same day) | `MineCave` (asset 84547516108281, same footprint and mouth as the old `MineEntrance`): `Rocks` and `Wood` MeshParts with hand-painted SurfaceAppearance colour maps and precise collision; the black `void` panel 0.6 inside the mouth collides; the `paper` lantern is Neon with `LanternLight`, under the roof's right end. No script references the mine model by name. `Track` (`Rails`, `Sleepers`, `Stop`). `CartPath`: invisible `Point1..9` along the track centreline from inside the mine out (straight, a radius-4 quarter turn to +X, straight). Its attributes are `Stop1..6` (distances along the track: 5.6 / 9.1 / 12.6 / 22.5 / 26 / 29.5) and `Hidden` (−1.6, inside the tunnel). `Stand1..6` are carts parked at their stops; each pivot sits on the track under the cart, facing along it. `Stand2..6` are TycoonItems `OreStand2..6`. `Lever` and `Machine` are left of the mouth (hinge (39.4, 1.2, −53.8)). | ForgeService: `poseAt(s)` walks the CartPath. A pull moves every unlocked cart that is empty or holds the puller's own ore into the mine (nearest first), then sends them out (furthest first, eased into the stop). Every pull takes 4 s whatever the cart count (Allen): `IN_TIME` 1.5 + `OUT_TIME` 2.5. Each trip takes 60% of its phase and the other 40% (`STAGGER`) spaces the carts out; with one cart that 40% is a pause in the dark. The ore flickers while a cart rolls and is revealed when it stops. The lever ignores pulls while carts roll. Backups: `Legacy.ForgeService_beforeCarts`, `Legacy.OreRoller_beforeEntrance`, `Legacy.OreRoller_MineEntrance_beforeCave` |
-| `OreRoller` (mine since 2026-10-20) | `MineShaft` (curb, headframe, wheel, roof, bucket, winch, dirt yard; MeshParts named by colour, precise collision on stone/timber/spool), `Track` (`Rails`, `Sleepers`, `Stops`), `Lever` (`Base`, `Bracket`, `Arm` + `Knob` welded to the anchored `ArmPivot` at the hinge (50.6, 1.2, −61.6), RestDegrees −25 / PulledDegrees 35), `Machine` + `RollPrompt` at the knob, and the carts `Stand1..3` (`Body`, `Rim`, `Chassis`, `Wheels`, `Ore`) at x 37 / 42 / 47, z −57.5. `Stand2/3` are TycoonItems (`OreStand2/3`, shown as "Ore Cart 2/3"); their pads sit in front of the yard. ForgeService and LeverAnimator are unchanged apart from text; the CollectPrompt goes on each cart's `Ore`. The pre-mine roller is `Legacy.OreRoller_beforeMine` | The rows below describe the pre-mine roller |
-| `OreRoller` | `Machine` (invisible prompt part at the knob, x −8.5 since 2026-10-20) + `RollPrompt`; `Lever` (2026-10-20, Allen's reroll-lever reference: sage base, two half-disc wooden cheeks, `Arm` + `Knob` welded to the anchored invisible `ArmPivot` at the hinge, rest −25°, pulled +35°; `LeverAnimator` swings it while E is held). `Stand1` was scaled 1.35× and its `Ore` enlarged (about 2.3 × 1.2 × 2.3) so the result reads from across the room; `Stand<n>` models with `Ore` (+ optional `OreChunk*`, `Sparkle*`, `Pedestal`). ForgeService finds them by name, so a new stand is just another model | Since 2026-10-20: `Lever` (the Blender lever model on `Machine`, which is now invisible); `Stand1` holds the textured Blender stand: `Ore` (the roll recolours it), `Pedestal` (the stone base, carries `CollectPrompt`), wood/iron parts and the old `Sparkle*`. The shrine `Dress` and the old chunks are gone |
-| `Anvil` | `BladeMount`, `Face` + `ForgePrompt`, `Clang` | Since 2026-10-20: `Model3D` (Blender hornless block on a low timber base). The whole station dropped 0.7, so `Face` (now invisible) tops out at 2.5 = 2.3 above the floor, flush with the new striking face. `Stump`, `Waist`, `Base` and `Dress` removed |
-| `HiltBench` | `Top` + `HiltPrompt` (invisible since 2026-10-20, just under the new worktop) | `Model3D`: the Blender bench (5.0 × 2.4, worktop 2.9 above the floor) |
-| `EtchingTable` (2026-10-20) | `Top` + `EtchPrompt` (EtchService measures reach from `Top`) | `Dress` (27 parts at x 11, z −30: worktop at 2.9 like the Hilt Bench, iron tray with slate bath and a half-etched blank, brush pot, three jars, andon lamp) |
-| `DisplayRack` (gone 2026-10-20: its `Displays` and `EntryPoint` moved to `Plot.Shop`; this row is history) | `Slots/Slot1..3` + `HolderPrompt`: latest recorded slots are turned X down and raised to y 4.75, with the guard on the pad 3.95 above the floor and broad blade face toward each `InspectPoint`. Plan coordinates retained from the storefront layout: Slot1 x −39.5 / z 4, Slot2 x −25.5 / z 4, Slot3 x −39.5 / z −7. Invisible `EntryPoint` and `InspectPoint1..3` guide ShopService from road → entry → chosen holder and back. Keep these routes clear; the earlier y 2.92 / blade-up placement is superseded | `Holders/Holder1..3`: Blender universal holders facing their InspectPoints. Old `Dress` pedestals removed |
+- `Models/Village/build_simple.luau` builds the live map; `build_shops.luau` builds shop/workshop shells, then `build_workshop.luau` builds the room furniture, loot box and delivery pieces.
+- `build_street.luau` and `build_town.luau` are retained historical builders for the parked maps, not the live-map entry point.
+- Studio copies live in `ServerStorage.Builders`; compare copies after edits. Builder source modules are executed with `loadstring(...Source)()`, rather than required as ordinary modules.
+- `ServerStorage.Builders.bake_sword_meshes` is an ordinary require-able module, run from a fresh clone with the local `Development/sword_mesh_bake.py` helper. See [[Development/Sword Mesh Pipeline]] for upload/bake instructions.
+- Blender/Blockbench sources and exports remain under `Models/`. `Prototypes/` contains runnable sources; keep internal paths stable.
+- `ServerStorage.Legacy` retains old maps, scripts and assets. Offline cleanup did not remove anything inside the Studio place.
 
-Plan positions from the [[Art/Player Plot Review|Player Plot Review]] pass: Forge x 2 / z −29.3 against the back wall, Anvil x 2 / z −16 on open floor about 9 studs in front, OreRoller x −9 / z −28.57, HiltBench x 20 / z −30. Vertical placement changed during Blender import (especially the lowered anvil); use current station contracts above rather than old pivot heights. Whole-station moves require checking prompts, mounts, camera and customer routes.
+## Tests and evidence
 
-`Plot/` (2026-10-19, no scripts) is the player property, built to the L-shaped concept ([[Art/Japanese Village Concept Art|Japanese Village Concept Art]]) and widened after the review. Plot bounds x −50…76, z −48…30 (126 × 78 studs):
-
-- `Pavilion`: the crafting wing, 50 × 28 studs at x −19…31, z −32…−4 (replaced the shallow 41 × 17 `Workshop`, archived as `ServerStorage.Archive.Workshop_v1`). Four front posts with 14–18 stud openings, open east side toward the lawn, `Floor` (earth floor plus a `WorkApron` running out into the courtyard), `Frame`, `Walls` (back and west), `Roof` (gable, ridge along X at z −18, 3-stud eaves), `Lanterns`. No beams cross the anvil bay below y 11.
-
-- `Storefront`: the shop wing at x −45…−20, z −22…16, with `Frame`, `Walls`, `Roof` (gable, ridge along Z), `Front` (noren, crest), `Lanterns` and `Interior` (counter, drawer chest, sword wall racks, pots). The doorway (x −38.5…−26.5) faces the road. The 刀鍛冶 `Signboard`/`SignFrame` (under `Storefront.Front`) sit on its front gable. Holders stand in two columns either side of a clear aisle to the counter.
-- `Yard`: `PlotPad` grass, `Courtyard` (three pieces around the work apron) and `FrontYard` paving, `GatePath`, `LawnCurb`. The lawn east of x 37.8, and the strip behind the pavilion, are the expansion space.
-- `Fence` (entrance gap x −36…−29 at z 30; front and back runs own the corners, side runs stop short), `StoneLanterns` (gate, corners, either side of the work apron; PointLights), `Greenery` (bamboo groves at corners and boundaries, rocks, shrubs, pots), `IngotShelf` (decor on the pavilion's west wall by the ore shrine).
-
-**No Z-fighting (build rule):** ground layers start at y 0 and never share a top height where they overlap: Baseplate 0, `PlotPad` 0.1, floors/paving/road 0.2, road edges 0.3, curbs 0.4. Where two parts meet, one face sits at least 0.04 proud of the other. On 2026-10-19 a coplanar-face check over `Plot`, `Smithy` and `Village` (axis-aligned block parts) found 157 overlaps and nudged 180 faces outward by 0.04 (2 by hand in the forge chamber); none were left. Rerun that check after building.
-
-`Village/` (before 2026-10-21) held the shared `Road` (z 34…46) and `CustomerSpawn` (−32.5, 3, 40); the folder had gone by 2026-10-21 and `Workspace.Village` is now the town street (see **Village street** below). `SpawnLocation` is in the courtyard at (0, 0.2, 16), hidden. `ServerStorage.Archive` holds the old prototype blocks (`store`, `creation area`, two slabs), the first ground pieces (`Workshop_PlotPad`, `Workshop_FrontYard`, `Workshop_ApproachPath`) and `Workshop_v1`. The Baseplate is grass. Still one plot: every station is the single shared `Smithy`; per-player plots need the controllers and services to look up the player's own plot instead of `workspace.Smithy`.
-
-## Models (outside Studio)
-
-`Models/Archive/SwordShop.bbmodel` (Blockbench source) and `Models/Archive/SwordShop.fbx` (import file, 1 unit = 1 stud): the historical medieval cabin, 17 named meshes on one palette texture. Never imported; superseded by `Workspace.Plot`.
-
-## ServerStorage.Legacy
-
-`SharedV1` is a frozen copy of the shared modules from before the 2026-10-19 rewrite (old Blueprints, ShapingModes, FinishCheck…) and `AnvilController_PrototypeModes` (disabled) is the old anvil with its Silhouette/Trace/Clicks/Points modes. Kept for reference and for `AnvilSelfCheck`.
-
-## Tests
-
-- `ServerStorage/Tests/BladeCoreSpec` (with `BladeGolden`) tests the BladeCore port; see `Prototypes/tanto-forge/roblox/README.md`.
-- `ServerStorage/Tests/ForgeCheckSpec`: the new blueprints and the server's Finish check (35 checks). Run `print(require(game.ServerStorage.Tests.ForgeCheckSpec)())` in the command bar.
-- `ServerStorage/Tests/AnvilSelfCheck` now checks the frozen `Legacy.SharedV1` copy (old blade maths, prototype modes, customers, materials, value). Run `require(game.ServerStorage.Tests.AnvilSelfCheck)()`.
-
-`ServerStorage/AnvilController_Backup` is the disabled pre-refactor controller. Safe to delete.
-
-Related: [[Home]] · [[Development/Roadmap|Roadmap]] · [[Design/Game Design Document|Game Design Document]]
-
-## Polishing Station (2026-10-20)
-
-| Piece | What it does |
+| Entry point | Recorded scope |
 |---|---|
-| `Workspace.Smithy.PolishStation` | `Model3D` (Blender bench with felt pads, whetstones, water-cooled stone wheel, bucket; asset 86416596849647) at x 27, z −30 right of the Hilt Bench; `Top` (invisible) + `PolishPrompt`; `BladeMount` (invisible, 25.3, 3.22, −29.85): the blade lies along +X from here, edge toward the player |
-| `PolishController` (client) | E → picker "Choose a sword to polish." (finished swords with their %; fully polished ones locked) → BeginPolish → the sword's blade on the bench, top-down camera, hold and drag along the edge (same `BladeCore.applyGrind` as the anvil had), progress strip, Save → PolishSword / Leave (Q) |
-| `PolishService` (server) | `Remotes.BeginPolish(swordId)` (within 12 studs, notes the start time) and `PolishSword(swordId, saved)`: `ForgeCheck.evaluatePolish` replays it (all strikes, refinement never lower than stored, at least `MIN_SECONDS_FULL_GRIND` × the newly polished share), then updates the sword's refinement, grade, percent, multiplier and rebuilds its Tool |
-| `ForgeCheck.evaluatePolish` | Pure check, covered by `ServerStorage.Tests.ForgeCheckSpec` (90% → 100%, instant polish refused, can't undo polish, no-change save allowed) |
-| `SmithyCore.publicState` | swords now also carry `percent` and `refinement` |
-| `LeverAnimator` (server) | RollPrompt hold → `ArmPivot` tweens forward over the hold; let go early → springs back; completed → stays down 0.45 s then springs back |
+| `ServerStorage.Tests.BladeCoreSpec` + `BladeGolden` | Luau port; local instructions in [[Prototypes/tanto-forge/roblox/README.md]]. |
+| `ServerStorage.Tests.ForgeCheckSpec` | Server finish/polish validation; historical 35-check record. Recheck current limits against live code. |
+| `ServerStorage.Tests.EtchingSpec` | Recorded 33/33: canvas/path behavior, cache isolation, spreading, cleanup and failures. |
+| `ServerStorage.Tests.SwordMeshSpec` | Recorded 110/110: baked hashes, geometry, UVs, colours, normals and cache lookup. |
+| `ServerStorage.Tests.AnvilSelfCheck` | Frozen `Legacy.SharedV1` prototype behavior, not current gameplay acceptance. |
 
-Backups in `ServerStorage.Legacy`: `ForgeCheck_beforePolishStation`, `SmithService_beforePolishStation`, `ForgeCheckSpec_beforePolishStation`, `AnvilController_beforePolishStation`.
+For tests requiring a fresh module, use the recorded clone pattern, e.g. `print(require(game.ServerStorage.Tests.SwordMeshSpec:Clone())())`. These results are historical; cleanup reran no Studio tests. Runtime, multiplayer and device checks remain in [[Development/Roadmap#1. Validate the current combined build]].
 
-## Growth systems — design only
+## Etching patterns (2026-10-22)
 
-[[Design/Workshop Growth]] records employees, courier orders, weather traffic bonuses and indoor roof visibility. No scripts/services for these new systems were inspected or recorded as implemented during this documentation pass.
+There are seven patterns: Flame (the band) and six stroked ones: Eclipse, Tide, Stormroot, Woven Wind (`WovenWind`), Fracture and Falling Stars (`FallingStars`). This supersedes "further patterns require confirmation" and the `EtchingSpec` 33/33 record above. Details and pictures: [[Art/Animated Blade Etching#Five more patterns (2026-10-22)]].
 
-- Approved employee professions: furnace operator, smith, finisher, stocker and cashier. Finisher combines hilt assembly/optional polishing; stocker carries ready stock to empty retail holders. Bare-blade and finished-sword racks are separate planned handoffs; finished stock needs sale readiness and reservation rules before automated listing. No paths or services for these planned systems are claimed as existing here.
-
-- Employee forging introduces sub-90% blades, rack ownership and player resumption at the anvil; the existing guided-player pipeline currently assumes completed forging at 90%. Data, replay/value rules and recovery need an explicit extension before implementation.
-- Worker polishing ceilings must coexist with the player's ability to finish up to 100% at the Polishing Station. Preserve the separate forging/polishing stages.
-- Delivery orders are a separate board/courier flow; they must not replace tutorial/direct-commission picker hand-in.
-- Weather changes traffic above baseline only and must preserve the first-sale arrival gate.
-- Roof fade/cutaway is a requested presentation feature; a local visual change is recommended, not server-wide removal of roof parts.
-
-## Plot after the building redesign (2026-10-20)
-
-`Plot.Storefront.Shell` (Blender low-poly shop, precise collision) replaced `Frame`, `Walls` and `Roof`. `Plot.Pavilion` is now `Plot.Courtyard`: `Paving` (stone flags, x −14..42, z −34..2.5) plus `StoneLanterns`. All crafting stations moved +8 in x onto it; `DisplayRack` stays in the shop. `Plot.StoneLanterns` and `Courtyard.StoneLanterns` use the Blender lantern (light on `StoneLantern_paper`). `Plot.Greenery.Bamboo1..12` are the three Blender variants. Source models live in `ServerStorage.Buildings3D`. See [[Art/Building Redesign]].
-
-## Sword meshes, ingot ore and station order (2026-10-20)
-
-- `Shared/SwordMeshCache` (client): finished swords share EditableMeshes. Key = blueprint + the blade's average polish rounded to 0, 0.5 or 1 (+ etch pattern). Etch meshes are colour-neutral (white band); the clone's `Color` is the band colour. `blade(bp, refinement)` / `etch(bp, refinement, pattern, body)` return a Clone plus a key; `release(key)` frees the mesh with its last clone. `SwordRenderer` and `ItemPicker` card art use it; the anvil and Polishing Station keep their own live `BladeView`.
-- **Budget facts measured in Studio:** destroying an EditableMesh makes MeshParts built from it vanish, so meshes must stay alive. The client budget counts meshes (empty or 5k-vertex ones both stopped at the same count), so sharing, not vertex trimming, is what helps. The worst case is now 9 blade + 9 etch meshes.
-- `OreRoller.Stand1.Ore` is now an ingot MeshPart (asset 74129223491846, 2.3 × 0.75 × 1.2). ForgeService recolours and pops it as before. The old rock is in `ServerStorage.Legacy.OreRock_beforeIngot`.
-- **Station order** (Allen: left to right, no signs) along the back of the courtyard (z ≈ −29), left to right as seen from the courtyard, starting beside the shop: 1 Ore Roller (stand x −9.5, lever −5.6), 2 Forge 2, 3 Anvil 10, 4 Hilt Bench 18.5, 5 Etching Table 26, 6 Polishing Station 34.5. `Plot.IngotShelf` stands behind the forge and anvil (x 6). The step signs were removed. Backup of the earlier layout: `ServerStorage.Legacy.Smithy_beforeStepOrder`.
-- **Fence parked (2026-10-20):** at Allen's request ("remove the fences for now until we settle on our plot design"), `Plot.Fence` (119 parts) moved whole to `ServerStorage.Legacy.Fence_parked`. To bring it back, rename it `Fence` and parent it to `Workspace.Plot`.
-- **Forge capacity (2026-10-20):** `ForgeService.SLOT_OFFSETS` has one slot (the left tray, x −0.45), so the forge heats one ingot at a time; the ForgeTimers board sizes itself from the slot count. Backup: `ServerStorage.Legacy.ForgeService_beforeOneSlot`. Not playtested yet.
-
-## Changes 2026-10-20 (later batch)
-
-- **Quality:** `ForgeCheck` grades every finished blade `forPercent(MAX_QUALITY)` (100%, ×2.0); results carry `polished` and `share`. `SmithyCore.POLISH_BONUS = 0.10` joins the finish bonuses in `swordValue` when `blade.polished`; `bladeName` adds " (Polished)". `SmithService.FinishBlade` refuses a result with `share > 0`. `PolishService` sets `refinement` and `polished`.
-- **AnvilController:** the silhouette is drawn straightened (distance along the blade, offset across) against `blade.shapes[4]`; `mapGui` stays off; after the showcase it calls `leave()` so the view closes. Backup `Legacy.AnvilController_beforePanelFix`.
-- **HiltBenchController.seatHilt(blade, hilt):** `HiltSeatGui` ring on the kashira; 3 knocks (click or Space) slide the hilt (GAP 1.4) onto the blade on `HiltBench.Model3D.Top`; returns `Hilts.SEAT_TAPS`.
-- **Anvil:** `Smithy.Anvil.Model3D.AnvilBody` is one mesh (`anvil_one_piece()` in `build_stations.py`, asset 114071521909816); `Face`, `BladeMount`, `Clang` kept.
-- **ForgeService:** a stand rolls when it isn't spinning and is empty or owned by the player, so re-rolls are unlimited; `spin()` clears `materialId` first.
-- **Tycoon upgrades (2026-10-20, [[Design/Tycoon Upgrades]]):**
-  - **Display tables (2026-10-20):** a table with a katana stand on top. Slots are rack-style (blade +X, edge up, flat face out) at tiers 2.95 / 3.65 / 4.35 above the floor, grip at (−1.77, z 0.21) in the table's frame; `TagOffset` (−1.6, 0, 0.6). Template `Buildings3D.SwordTable` (asset 100555972253981).
-  - **Shop group (2026-10-20):** everything for the shop is in `Plot.Shop`: `Storefront` (`Starter`, `Upgraded`), `Displays` (`WallRack1..4`, `DisplayTable1/2`) and `EntryPoint`. ShopService finds it as `Plot:WaitForChild("Shop")`, reads `EntryPoint` from it and parents displayed swords to it. The slots themselves are still found by the `DisplaySlot` tag, and the items by `TycoonItem`. `Smithy.DisplayRack` is gone.
-  - **Displays (2026-10-20, later):** `Plot.Shop.Displays.WallRack1` is the starting rack (west wall, z 12, not a TycoonItem); `WallRack2` (east wall, z 12), `DisplayTable1` (−37, −6), `WallRack3` / `WallRack4` (west / east walls, z −16.2, Upgraded Store) and `DisplayTable2` (−24.5, −7) come from pads. The floor holders (`Holders`, `Slots`, `InspectPoint1..3`) are retired to `Legacy.FloorHolders_beforeWallRacks`; `EntryPoint` is now `Plot.Shop.EntryPoint`.
-  - **Shop sizes (2026-10-20):** `Storefront.Starter` 31 × 32 (x −49..−18, z −16..16, shell asset 124926846811438), `Storefront.Upgraded` 31 × 46 (z −30..16, 89878911135006). Store counter and drawer chest are at z −23 / −28.9; WallRack1 is at z 2.2 (west wall), WallRack2 at z −16.2 (east wall); the UpgradedStore pad is at (−33.5, −23).
-  - **Furnace colours (2026-10-20):** `Forge` / `Forge2` stone parts rgb(66, 76, 98), plinth (48, 55, 72), soot overlays untextured (42, 47, 62); old texture in `OldTextureID`.
-  - `Shared/Upgrades`: the upgrades (`list` of `{ id, name, price, after }`, `byId`). Chains branch by courtyard zone; entries with no `after` are buyable from the start (2026-10-20).
-  - **Courtyard zones (2026-10-20):** ore yard back right (lever (35, −31.5), Stand1–3, Ingot Rack (35, −10.5)), forge hall back middle (Forge (8.5, −29), Forge2 (15, −29)), smithing in the middle (Anvil (11, −12), HiltBench (20, −12)), finishing back left (PolishStation (−7.5, −29), EtchingTable (0, −29)), SwordRack (−6, −8) by the shop's side door. Pads moved with their stations. Reserved spots: [[Design/Tycoon Upgrades]].
-  - `TycoonService` (server) owns the plot: `Plot.OwnerId` / `OwnerName` (the first player in; when they leave, everything resets and passes on) and `Plot.Bought_<id>`. It shows a `PadVisual` (grey base, green `Top`, name + price billboard) on each available `Plot.Pads.<id>` marker. `Remotes.BuyUpgrade(id)` requires the owner, standing within 3 studs of the pad, and `SmithyCore.spendCoins`.
-  - Locking: every `TycoonItem` (tag) with `Upgrade` = id unlocks when bought; `UntilUpgrade` items (the Starter Shop) lock instead. A locked item has `Locked = true`; the server switches off collision, query, touch, prompts, lights, GUIs and particles, and restores exactly those on unlock. Locked `DisplaySlot` descendants get `Locked` too.
-  - `TycoonController` (client) hides locked items with `LocalTransparencyModifier` and shows the owner a `BuyButton` billboard while standing on a pad's top. Only the button buys.
-  - Items: `Smithy.OreRoller.Stand2/3`, `Smithy.Forge2`, `PolishStation`, `IngotRack`, `SwordRack`, `EtchingTable`, `Plot.Shop.Displays.DisplayTable1/2` and `WallRack2/3/4` (the floor holders are retired), `Plot.Shop.Storefront.Upgraded` (Shell, Floor, Front, Interior, Lanterns, InsideZone); `Plot.Shop.Storefront.Starter` (Starter shell, 24 × 14 floor, InsideZone, kanji sign on its board, 4 chochin) is `UntilUpgrade`. Both shops are tagged `HidesRoof`; `RoofHider` skips locked ones.
-  - **Display slots:** parts tagged `DisplaySlot` (a sword's Handle goes on the part's CFrame) with a `HolderPrompt` (Custom style), an `Inspect` ObjectValue, optional `ViaAisle` and `TagOffset` (in the display's frame). `ShopService` registers unlocked ones as `SlotIndex` n and drops them on lock (a displayed sword goes back to its owner). Only the plot owner can display. `ShopController` draws a round + `SlotMarker` per empty slot (owner only); the focused one shows "For sale" and E. Clicking a marker or pressing E opens the picker.
-  - `ForgeService` handles every `Forge` / `Forge<n>` (own tray and timer; `ForgePut(ingotId, forgeName)`; slot numbers run across furnaces) and skips locked furnaces and stands. `ForgeController` sets up each furnace as it streams in. Rack, Etch and Polish remotes refuse while their station is locked.
-  - Templates: `ServerStorage.Buildings3D.WallSwordRack` / `SwordTable` (Origin, `InspectPoint`, `Slot1..3`). Since 2026-10-20 every wall rack's look is a `Rack` model built from Allen's imported `sword_rack` (original kept at `ServerStorage.sword_rack`), scaled ×0.658 so its hook rows are 1 stud apart, Wood material in three browns. In display space the hooks sit at x −0.88 / 2.41 under each slot (slots at x −0.58, y 4/5/6, z 0.385 in the cradle). `EntryPoint` moved to x −30. Backups `Legacy.*_beforeTycoon` (ShopService, ForgeService, RackService, EtchService, PolishService, ShopController, ForgeController, RoofHider).
-- **Wall holder spots (2026-10-20, superseded by the tycoon pads the same day; spots and `WallHolder` moved to `Legacy.WallSpots_beforeTycoon` / `Buildings3D.WallHolder`):** `Plot.Storefront.WallSpots.Spot1..9` (invisible parts at a holder's origin): west wall z 11.25 / 1.75 / −7.75 / −17.25, east wall z 11.25 / −7.75 / −17.25 (not the side-door bay), back wall x −43.8 / −23.2 (not behind the tansu). The old decorative `Interior.SwordRack1/2` were moved to `Legacy.InteriorSwordRack1/2_beforeWallHolders`. `SmithyCore.spendCoins(player, amount)` takes coins only if the player can afford it (backup `Legacy.SmithyCore_beforeWallHolders`).
-- **Shops:** `Plot.Storefront.Shell` is the feudal Upgraded Store (asset 111190210571986, 31 × 38, two storeys; `attr SourceAsset`): six wall/ground MeshParts with precise collision, and a `Roof` model holding the roofs, upper storey, canopy and beams (no collision). `Plot.Storefront` keeps the `InsideZone` part and the `HidesRoof` tag. The 刀鍛冶 `Front.Signboard` (4 × 1.2) sits on the canopy board at z 19.8, y 13.3. The feudal Starter Shop (131094404219127, 24 × 14) is staged in `ServerStorage.Buildings3D.StarterShop`, not placed; `Buildings3D.UpgradedShop` is the Upgraded Store's source. Backups: `Legacy.Storefront_beforeFeudal`, `UpgradedShop_beforeFeudal`, `StarterShop_beforeFeudal`, `SignFrame_beforeFeudal` (and the older `Storefront_beforeWider`). See [[Art/Building Redesign]].
-- **RoofHider** (StarterPlayerScripts): for each `HidesRoof` model, fades `Shell.Roof` parts (LocalTransparencyModifier) while your HumanoidRootPart is inside `InsideZone`.
-- **Racks:** `Smithy.IngotRack` (was `Plot.IngotShelf`; `Slots/Slot1..12`, `Shelf1.RackPrompt`) and `Smithy.SwordRack` (`Slots/Slot1..6`, `Plinth.RackPrompt`). `RackService` handles `Remotes.RackAction(which, "list"|"store"|"take", id)`: caps 12 ingots / 6 swords on the racks and 6 carried, reach 12 studs; stored items leave the player's inventory through `SmithyCore.takeIngot/takeSword`. `RackController` opens the item picker with "Store" (carried) and "Take" (rack) cards. Racks are session-only like the rest of the inventory.
-- **Hilt seat clicks (fix 2026-10-20):** `HiltSeatGui.Ring` is a plain `Frame`; knocks come from `UserInputService.InputBegan` (MouseButton1 or Touch within 70 px of the ring, like the anvil's `nearRing`) or Space/ButtonA.
-- **Quick thoughts batch (2026-10-20):**
-  - **Forge:** `Model3D` has one tray (Tray2 parts removed, Tray1 centred), `SLOT_OFFSETS = { CFrame.new(0, 1.12, 1.55) }`. The `ForgeTimers` panels hold only a `Time` label: "12s", then a green "Ready!". Backups `Legacy.Forge_beforeOneTray` and `ForgeService_beforeTimerOnly`.
-  - **Anvil:** `AnvilHud.Bottom.Leave` text is "Cancel"; Q still cancels.
-  - **Station order:** Hilt Bench, Polishing Station (x ≈ 26.8), Etching Table (x ≈ 34.5) last.
-  - **Ore stand:** `OreRoller.Stand1` is three cylinders (`Base`, `Pedestal`, `Cap`, 4.1 studs wide, top at y 2.32) plus `Ore`; textured stand and sparkles removed (backup `Legacy.OreStand1_beforeSimple`). `ForgeService.spin` floats the ore `FLOAT_HEIGHT` 1.3 above its rest CFrame, bobbing and turning on Heartbeat, then tweens it down with a bounce.
-- **Later fixes (2026-10-20):**
-  - `Shell.Roof` now also holds `Storefront_Roof_timber` (eave and tie beams), so `RoofHider` fades the beams too.
-  - `RackController`: picking a card closes the picker; only a failure shows a toast.
-  - `ForgeService.spin`: no "Rolling…" label and no result toast; the stand's label appears with the result.
-  - `ItemPicker` no longer draws `spec.subtitle` or `spec.emptyHint` (callers still pass them; ignored). The anvil's idle hint is "Click the anvil" with hot ingots, nothing otherwise. Backups `Legacy.ItemPicker_beforeLessText`, `RackController_beforeClose`.  - No habaki (Allen 2026-10-20): `SwordParts.KatanaHilt` has no `Habaki` part and `BladeOffset` is 0.58, so the blade root sits inside the guard. See [[Art/Katana Hilt]].
-  - `ForgeTimers` billboard `StudsOffset` is (0, 6.6, 0): centre at y 7.9, above the chimney (top y 6.32), so the furnace no longer hides it.
-
-## Village street (2026-10-21)
-
-`Workspace.Village` (Model, pivot at the street centre (17.5, 0, −560), which is also the shop's frontage centre) is the Japanese town street from [[Art/Japanese Street]], built by `Models/Village/build_street.luau` (run in Studio through MCP; seed 21; a rebuild moves the previous `Village` to `ServerStorage.Legacy`). No scripts. Rebuilt 2026-10-21 as one continuous row (see **Continuous row** below).
-- `Street`: `Road` (Pavement, x −395…350, |z| < 8 in the village frame), `Curb` ×4, `Water` ×2 (gutters, |z| 8…10), `Walkway` ×2 (|z| 10…17.5), `Plaza` (east end). Ground tops: road 0.2, walkway 0.3, plaza 0.25, curbs 0.5, door bridges 0.64.
-- `Rows`: `HouseN…/HouseS…` (54 Models since the continuous-row rebuild, pivot at the façade line facing the street; styles Takayama, kura, Tsumago, gable-front, single-storey). Only `Ground`, `Upper`, `Post`, door `Bridge`, `Platform` and `Bench` collide.
-- `Lots`: `PlotSlotN1..N3`, `PlotSlotS1..S3` (invisible 48.5 × 96 parts at each lot's centre, y 0.5, LookVector toward the street, attribute `Side`; nothing reads them yet), the plaster walls between each lot and the neighbours' backyards (from 32 behind the façade), and `Closed<N|S><n>`: a closed shopfront on every lot without a player plot (attribute `Lot` = its slot).
-- `Trees` (clones from `ServerStorage.Village3D` / `Buildings3D`), `Landmarks` (west gate 刀鍛冶の里, torii, `Shrine`, stone lanterns).
-- `Mountains`: parked 2026-10-21 as `ServerStorage.Legacy.Mountains_parked` (`build_street.luau`: `MOUNTAINS = false`). Four invisible `Bound` walls stay on the old inner face line (x ±395, z ±130 in the village frame).
-- `CustomerSpawn` (18.5, 3, −563, world, on the road in front of lot N2): `ShopService` waits for `workspace.Village.CustomerSpawn`; the old folder was gone, so it was restored here, first at (−32.5, 3, 40) and then moved with the plot.
-- Coplanar check 2026-10-21 (first build): 36 pairs left of 2,607 block/wedge parts, all hidden (roof ends inside a neighbour's roof, display platforms on the walkway, one lantern cord).
-- **Plot in lot N2 (2026-10-21, Allen; superseded by the continuous row below):** `Smithy`, `Shop` (`Starter`, `Upgraded`, `Displays`, `EntryPoint`), `Pads`, `Yard`, `SpawnLocation`, `Weapon Rack` and the six loose stone `Part`s by the mine moved by one offset, (+51, 0, −608), so the layout is unchanged; they now span x −115…123, z −689…−574 (world), with the old `GatePath` front tucked under the walkway. `PlotSlotN2` is 280 × 110 (village x −140…140): the north townhouses, backyard trees, lot walls and lamps between lots N1 and N3 (33 instances) were parked in `ServerStorage.Legacy.Village_besideN2`; `build_street.luau` repeats this so a rebuild matches. The stray `Bamboo1..12` and the top-level `Courtyard` part and model (z 58…166) were not moved. `SpawnLocation` is now (51, 0.2, −592). Moving welded parts by CFrame dragged the unanchored `OreRoller.Lever` arm three times; it was corrected and every piece checked inside the lot.
-- **`ShopService.AISLE_ROWS`** were world z values (11, −1.5, −12); they are now `ENTRY_POINT.Z + 35 / + 22.5 / + 12` (the same rows, measured from `EntryPoint`) so customer aisle routes follow the shop. Backup `Legacy.ShopService_beforeStreetMove`. Not playtested.
-- **Continuous row (2026-10-21, Allen: "resize all six lots to the new footprint, and give unclaimed lots a closed shopfront so the street reads as one continuous row"):** `LOT_W` 48.5 (the shop + workshop is 48 between wall faces and its corner posts reach ±24.2; neighbours start 0.07 beyond), `LOT_D` 96, house segments `(700 − 3 × 48.5) / 4` ≈ 138.6 each, `ORIGIN` x 4 → 17.5 so lot N2 is centred on the building. `TAKEN = { N2 = true }` lists lots with a player plot; the other five get `Lots.Closed*` (a `house()` with `doorBay = 0` and every bay a shutter, no lantern, sign or bench). The N2 widening, its `Village_besideN2` parking and the lot-corner lamps are gone from the builder. Backyard trees whose crowns would reach a lot are dropped (`LOTS_X`). Battens are 0.1 shorter than their shutters (they had shared top and bottom faces).
-  - Plot fit: nothing in the new street touches `Plot` or `Smithy` except the intended walkway over the shop's floor edge and front wainscot.
-  - Coplanar check around the plot (888 street parts): no overlaps with the plot. 448 battens shortened; four chance overlaps fixed by hand with 0.02 nudges (ridges of `HouseS26` and `HouseN29`, a cord in `HouseS26`, the roof of `ClosedS2`). A rebuild with the same seed brings those four back.
-  - `ServerStorage.Legacy.Village_before_20261021233750` is the first street; `Village_besideN2` is obsolete.
-
-## Shop and back-room workshop (2026-10-21)
-
-One townhouse on the street in lot N2, from Allen's layout `References/Concept Art/shop design` (a PNG without an extension): the shop room on the street, a centre door, and the workshop behind with the stations clockwise round its walls. Built by `Models/Village/build_shops.luau` (run in Studio through MCP after `build_street.luau`). It rebuilds `Plot.Shop.Starter.Shell`, `Plot.Shop.Upgraded.Shell`, `Plot.Workshop`, `Plot.Shop.CommissionBoard` and `Plot.Yard.ShopFront` (models carry `BuiltBy = build_shops`), and sets both shops' `Floor` and `InsideZone`. Stations, displays and pads were placed by hand (positions below). See [[Art/Japanese Street#Shop and back-room workshop (2026-10-21)]].
-
-Building frame: centre x 17.5, 48 wide (outer x −6.5…41.5, inner faces x −6.0 / 41.0). Front wall line z −577.5, partition z −605.75…−606.25 (door x 14.1…20.9, 8 high), back wall inner face z −656.25.
-
-| Piece | Where / what |
+| Module | 2026-10-22 |
 |---|---|
-| `Plot.Shop.Starter` / `Upgraded` | The shop room only (z −577.5…−605.75). Façade with the 12.5-wide entrance, side walls (posts at 15 and 25 behind the front), roof. The Starter is one storey with its 刀鍛冶 signboard on the roof; the Upgraded Store has the black kura upper storey, pent roof and signboard. Tags `TycoonItem` and `HidesRoof` and the `UntilUpgrade` / `Upgrade` attributes are unchanged |
-| `Floor` / `InsideZone` (each shop) | Floor top 0.2 over the shop room. Zone 46.8 × 12 × 28.1, so the shop roof fades only in the shop room |
-| `Plot.Workshop` | Shared, always shown. `Shell`: partition with the door (`Threshold`, indigo noren on the shop side), workshop walls (eave 13, high lattice windows outside), the supply alcove. `Shell.Roof`: roof with the smoke vent over the furnaces. `Floor` (stone, top 0.2), `InsideZone` 46.8 × 14 × 49.8. Tag `HidesRoof` |
-| Supply alcove (placeholder ore source) | `AlcoveStage` (top 0.9) at x −6…3.6, z −647.65…−653.2, with an `AlcoveScreen`, `AlcovePost` and `AlcoveHeader`, and a dark `Hatch` with a `Chute` on the back wall. Ore slots `Smithy.OreRoller.Stand1..6` stand on it as cedar `Pedestal` trays with the ingot `Ore` on top: front row z −649.3, back row −651.9, x 1.95 / −1.15 / −4.25 (Stand1–3 front, 4–6 back). `OreRoller.Lever` + `Machine` (the RollPrompt) at x ≈ 5.9, z ≈ −651.5, east of the alcove |
-| Stations (`workspace.Smithy`) | Back wall, west to east: alcove, `Forge` (11.5, −652.95), `Forge2` (19.5, −652.95), `Anvil` pivot (28.1, −650.5), `HiltBench` (35.5, −654.05). East wall, facing west: `PolishStation` (39.7, −634), `EtchingTable` (39.8, −620). West wall, facing east: `IngotRack` (−5.0, −626). Partition, east of the door, facing the workshop: `SwordRack` (27, −607.3). The Hilt Bench keeps facing +z: `HiltBenchController` puts its camera on the bench's world +z side |
-| `Plot.Shop.Displays` | Wall racks with their `Origin` on the side walls: `WallRack1` (−6.0, −586), `WallRack3` (−6.0, −596), `WallRack2` (41.0, −586), `WallRack4` (41.0, −596). `DisplayTable1` (29.5, −583), `DisplayTable2` (29.5, −594) |
-| `Plot.Shop.Interior` | Moved out of the Upgraded Store, so both shops have it: the counter front-left (body at 5.5, −583) and the tansu on the partition east of the door (27, −604.8) |
-| `Plot.Shop.CommissionBoard` | Board with paper slips and a 依頼 header on the partition, west of the door. Decor only; no commission system yet |
-| `Upgraded.Lanterns` | Wall lamps: two on the partition (x 3.5, 24), two on the west wall (z −581.5, −596) |
-| `EntryPoint` | (21, 3, −581.5), just inside the entrance. `ShopService.AISLE_ROWS` = `ENTRY_POINT.Z + 1.5 / − 8 / − 18.5`: in front of Display Table 1, between the tables, behind Display Table 2. Every slot's route (EntryPoint → row → inspect point) and the walk in from `Village.CustomerSpawn` are clear by raycast at knee and chest height |
-| `Plot.Pads` | Shop: `WallRack2` (38, −586.75), `WallRack3` (−3, −596.75), `WallRack4` (38, −596.75), `DisplayTable1/2` on the tables, `UpgradedStore` (9.5, −593). Workshop: `Furnace2` (19.5, −647.5), `OreStand2..6` all at (−1.15, −645.5) in front of the alcove (the chain shows one at a time), `IngotRack` (−2.5, −626), `PolishStation` (37, −634), `EtchingTable` (37, −620), `SwordRack` (27, −610.5) |
-| `SpawnLocation` | (17.5, 0.2, −630), the workshop's open floor |
-| `Plot.Yard.ShopFront` | Stone `Bridge` over the water channel at the entrance, and two pots |
+| `Shared/Etches` | Five more `list` entries, free, +15%, with Eclipse's body and fallback mark colour; the mark colour comes from the material. The pattern picker (`EtchingTableController`), `EtchService`, `SmithyCore` and card art read the list; nothing else lists patterns. |
+| `Shared/EtchPatterns` | `STROKED` has a generator per pattern, `(length cm, widthAt) → strokes`. Fracture's shards are strokes with a `fill` polygon; it puts an upright fault on each strip seam (`EtchCanvas.strips`). |
+| `Shared/EtchCanvas` | A `fill` stroke reveals its convex shape's columns as the guide passes, with sharp anti-aliased corners. `strips(length, widthAt)`. Blank images are cached by layout and body colour (weak keys) and copied. Fully covered pixels are skipped (same output). |
+| `ServerStorage.Tests.EtchingSpec` | 36/36. It runs the canvas checks for every stroked pattern × blade, including "nothing on the bare strips or in the tip" and Fracture off the seams, plus 14 show runs across all seven patterns. |
 
-- **`ForgeService`:** with no `OreRoller.CartPath` points (`still`), the stands stay put. A pull hides the ores, then each flickers through the materials and settles, with the cart timing (1.5 s + 2.5 s). The `Stop1..6` attributes are kept. Backup `Legacy.ForgeService_beforeAlcove`.
-- **`Shared/Upgrades`:** `OreStand2..6` are named "Ore Slot 2…6" (ids unchanged). Backup `Legacy.Upgrades_beforeAlcove`.
-- **Parked in `ServerStorage.Legacy.Plot_beforeBackRoom`:** the separate workshop hall, the courtyard paving and `LawnCurb`, the mine (`Track`, `MineCave`, `MineFace`), the `CartPath` points, the cart bodies (chassis, wheels, body, rim) and the six loose mine-frame parts. Earlier: `StarterShell_beforeMachiya` and `UpgradedShell_beforeMachiya` (feudal meshes), `ShopDressing_beforeMachiya`, `Mountains_parked`.
-- In Edit both shops show at once and overlap; at runtime `TycoonController` hides one. To look at one, parent the other to ServerStorage for a moment.
-- **Coplanar check (2026-10-21):** same-direction faces whose overlap is visible (not underground, not inside a third part). 537 new parts against 636 nearby; the 4 hits (alcove stage / wall post, hatch / wainscot, chute rails / hatch frame) were fixed and the alcove rechecked clean. Stations were checked against the walls: only intended contacts (trays 0.02 into the stage, racks 0.05 into the wainscot).
-- **First furnace unlocked (2026-10-21, Allen):** `Smithy.Forge` had `Upgrade = Furnace2` and the `TycoonItem` tag like `Forge2`, so both furnaces stayed locked until Furnace 2 was bought. Both are removed from `Forge`, so players start with one furnace; `Forge2` is still the Furnace 2 upgrade.
-- **`workspace.Plot` regrouped (2026-10-21, Allen):** `Shop`, `Pads` and `Yard` had ended up loose in Workspace, so `ShopService`, `TycoonService`, `TycoonController` and `ShopController` waited forever on `WaitForChild("Plot")`. They are back under a `Plot` Model (pivot (51, 0, −631)), which also carries the `OwnerId`, `OwnerName` and `Bought_*` attributes at runtime. `Smithy`, `SpawnLocation` and `Weapon Rack` stay at the top level; no script looks for them under `Plot`. Every start-up path in those four scripts resolves in Edit.
+- **Known seam:** a faint line one texel wide where a canvas's strips meet (1/3 and 2/3 of a katana, 1/2 of a wakizashi), because the texture wraps at the baked overlay's UV edge. Fix: inset the UVs half a texel and re-bake (`Development/Sword Mesh Pipeline`).
+- **Pattern picker:** it builds a finished image per stroked pattern on the chosen sword, all at once: about 0.4 s on a katana in Studio.
+- **Backups:** `ServerStorage.Legacy.<Name>_beforeEtchPatterns` for EtchPatterns, EtchCanvas, Etches and EtchingSpec.
 
-## Six player plots (2026-10-21)
+## First session and saving (2026-10-22)
 
-Design and checklist: [[Design/Six Plots]]. Backups of every changed script: `ServerStorage.Legacy.Scripts_beforeSixPlots`.
+Roadmap 1–3 work; supersedes "Persistence is not implemented", "Counters reset each session" and the session-only lines above. Saving rules: [[Development/Saving]].
 
-| Piece | What it does |
+| Script | 2026-10-22 |
 |---|---|
-| `Workspace.Plot` (Edit) | The template: `Shop`, `Workshop`, `Smithy` (moved in from `workspace.Smithy`), `Pads`, `Yard`, `PlayerSpawn` (the old `SpawnLocation`) and `CustomerSpawn` (new marker on the road, (18.5, 3, −563)). `WorldPivot` = `Village.Lots.PlotSlotN2.CFrame` |
-| `ServerScriptService.PlotService` (module) | On first require: template → `ServerStorage.PlotTemplate`; gives N2 a copy of `ClosedN1` as `ClosedN2`. `PlayerAdded`: first free lot in `ORDER` (N2, N1, N3, S2, S1, S3), clone → `PivotTo(PlotSlot)`, name `Plot_<lot>`, attributes `Lot` / `OwnerId` / `OwnerName`, `onPrepare` hooks run on the unparented copy, closed front → `ServerStorage.ClosedFronts`, parent, `RespawnLocation` = `PlayerSpawn` (a character already in the world is moved there), player attribute `Plot`, then `onPlot` hooks. `PlayerRemoving`: `onRelease` hooks, destroy, closed front back. API: `plotOf(player)`, `plotFrom(inst)`, `ownerOf(inst)` |
-| `StarterPlayerScripts.MyPlot` (module) | `current()`, `get()` (yields until your plot exists), `owns(inst)`, `plotOf(inst)` (any plot: the ancestor with a `Lot` attribute) |
-| `StarterPlayerScripts.PromptFilter` | Keeps every ProximityPrompt on other players' plots switched off on this screen (re-applied when the server turns one on) |
-| `TycoonService` | `Bought_<id>` on each plot; `refresh(plot)` locks/unlocks that plot's `TycoonItem`s and shows its pads; `onPrepare(refresh)` so a new plot appears already locked; `BuyUpgrade` uses your plot's pad |
-| `ShopService` | Slots know their plot; routes are built in the plot's own frame (`AISLE_ROWS` = plot-space z offsets −1.5 / 8 / 18.5 from `EntryPoint`), so south shops route correctly. Only the plot's owner displays. Each claimed plot runs its own customer spawner (2 at a time) from its `CustomerSpawn`. Slots removed with a plot unregister |
-| `ForgeService` | Rewritten around plots: furnaces keyed by model with their plot; slot numbers global and never reused; one `Roller` (track or still mode, stands, rolling flag) per plot set up in `onPlot`; only the owner pulls; `onRelease` drops the plot's furnace slots. `ForgePut` finds the named furnace on the caller's plot |
-| `RackService` | Racks on the caller's plot; each rack shows its owner's contents (fixes "whoever used them last") |
-| `EtchService`, `PolishService` | Reach and bought checks use the caller's own station |
-| `LeverAnimator` | One lever per plot, swings for its owner only |
-| `AnvilController`, `ForgeController`, `HiltBenchController`, `RackController`, `EtchingTableController`, `PolishController` | Use `MyPlot.get().Smithy` instead of `workspace.Smithy`. The hilt-seating sword and camera turn with the plot (south plots face the other way) |
-| `ShopController` | `+` markers only on slots of your plot |
-| `TycoonController` | Locked items hidden on every plot; Buy button only on your plot's pads |
-| `Village.CustomerSpawn` | No longer read (each plot has its own) |
-| Upgraded Store | Side windows removed: in the continuous row they faced the neighbours' walls |
+| `ServerScriptService.Profiles` (new) | DataStore key `u<UserId>` in `Profiles_v1` (Studio: `Profiles_Studio_v1`). Session lock via `UpdateAsync`, save tokens, `VERSION` 1 and `migrations`. `Profiles.new(options)` runs the same rules over any store (tests). |
+| `ServerScriptService.SmithyCore` | SmithData adds `blueprints`, `discovered`, `upgrades`, `commissions`, `rack`, `displayed`, `funnel`. Loads on join, autosaves every 60 s, saves on leave and `BindToClose`. `snapshot` = `encode` + `onSave` hooks; `onLeave` hooks run after the snapshot (use them, not `PlayerRemoving`, for anything the save reads). `waitLoaded`, `funnel(player, step)` (AnalyticsService onboarding funnel, steps in `FUNNEL`), Studio-only `resetProgress`. Display sword models stream atomically. |
+| `PlotService` | Claims a lot only after `waitLoaded`; releases through `SmithyCore.onLeave`. |
+| `TycoonService` | Purchases go in `d.upgrades`; `onPrepare` re-buys them on the new copy (Upgraded Store push included) before it appears. |
+| `RackService` | Rack contents are `d.rack`, shown on claim. `listOf` also sends refinement and etch. |
+| `ForgeService` | `onSave`: furnace ingots (hot) and uncollected/mid-roll ore (cold). Collecting marks `d.discovered`. Player clean-up in `onLeave`. |
+| `ShopService` | Displayed swords in `d.displayed` by holder path, put back on claim. One offer card at a time per owner (`askOwner` waits). Teaching commissions: visitor NPC (`CommissionId`, `Plot` attributes, `CommissionPrompt`), `Remotes.Commission` (`accept`, `deliver`). |
+| `SmithService` | `BeginForge` refuses blueprints not in `d.blueprints`; `AttachHilt` checks `Hilts.fits`. |
+| `DevTools` / `DevPanel` | Studio buttons **Skip tutorial** (`DevSkipTutorial`) and **Reset progress** (`DevResetProgress`). |
+| `Shared/Commissions` (new) | `IronWakizashi`, `Katana`; `title`, `mismatch`, `due`. |
+| `Shared/Blueprints`, `Shared/Hilts` | `tradition` field; `Hilts.fits(hilt, tradition)`. |
+| `StarterPlayerScripts.Guide` (new) | Goal line (`GuideGui`) and arrow (`GuideArrow`). |
+| `StarterPlayerScripts.CommissionController` (new) | Visitor and request-board pickers, hand-in. Board prompt: `RequestsPrompt` on `Shop.<Starter/Upgraded>.Shell.CommissionBoard.Board` (template and `build_shops`). |
+| `AnvilController` | Learned blueprints only; closing the blade picker no longer locks the anvil; gamepad R2 strikes, B leaves; the blade follows the anvil after the push; a failed save waits for Finish. |
+| `Hotbar` | Gamepad R1/L1 cycle through the bar and bag; hidden over `PolishHud` and `HiltSeatGui`; the bag stays below the top bar. |
+| `ShopController`, `TycoonController` | Gamepad: Y accepts and L2 declines an offer; Y buys on a pad (it wins over the card). |
+| Station controllers, `ItemPicker`, `SwordRenderer` | Picker open-flags set after `open`; etched/polished swords drawn as such on every picker card; baked meshes preloaded; a sword whose Handle arrives late renders later. |
+| `ServerStorage.Tests.SaveSpec` (new) | 38/38: lock rules over an in-memory store, encode → JSON → decode, commission rules. |
+| Template | `Workshop.InsideZone` reaches 1 stud further toward the street, closing the 0.7-stud roof gap at the shop door (before and after the push). |
 
-- **Fit test (Edit):** template copies on N1, N3, S1, S2, S3 made with PlotService's math; nothing solid touches a neighbour (roof eaves overlap like the townhouses'); copies removed.
-- **Not tested:** anything multi-player. `PlotService` can't be required in Edit (it would move the template).
-- **Server size** is still 60; set it to 6 in Game Settings.
-
+Backups: `ServerStorage.Legacy.<Name>_beforeSaving` for every changed script.

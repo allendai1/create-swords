@@ -1,68 +1,60 @@
 ---
 title: Current Status
 aliases: [Next Session Handoff]
-status: active
+status: current build record — recent Play checks pending
 type: status
-updated: 2026-10-19
+updated: 2026-10-22
 tags: [status, create-swords]
 ---
 
 # Current Status
 
-Current project snapshot, consolidated from the latest saved build notes on 2026-10-19. This is a documentation reconciliation, not a new Studio inspection or fresh test run. See [[Design/Game Design Document]] for intended behavior and [[Development/Code Map]] for implementation details.
+Consolidated from build records through **2026-10-22**. This cleanup did not inspect Studio or rerun the game. “Built” means implementation is recorded; it does not mean the latest combined build has passed Play, multiplayer, or device testing.
 
 ## Built and recorded
 
-- **Browser forge study and profile editor:** tantō, wakizashi, and katana; 12 untimed strikes to 90%, safe grinding to 100%, grinding map, blueprint selection, save/load, and profile editing. Source and run instructions: [[Prototypes/tanto-forge/README.md]].
-- **Roblox BladeCore port and anvil integration:** the new blade data drives forging, optional grinding, server Finish checks, and held/displayed blade rendering. Old prototype modes are preserved in `ServerStorage.Legacy`.
-- **Japanese smithy rebuild:** workshop, forge, hornless anvil, ore-shrine visuals, hilt bench, and three display pedestals rebuilt. Latest smithy note records that Allen saved the place. See [[Art/Smithy Redesign]].
-- **Plot redesign (2026-10-20, playtested):** a low-poly Blender shop is the only building; the crafting stations work outdoors on a stone-flag courtyard 8 studs east of it, with new bamboo and standing stone lanterns. See [[Art/Building Redesign]].
-- **Later 2026-10-20 batch (not playtested yet):** forging gives 100% and a full polish adds +10% value; hilt seated by three knocks; one-piece anvil; unlimited ore re-rolls; wider Upgraded Store with a roof that fades inside (Starter Shop staged only); Ingot Rack and Finished Sword Rack. See [[Development/Code Map]].
-- **Polishing Station (recorded 2026-10-20):** final polishing on a completed sword supports 90% → 100%; the recorded playtest saved a Steel Katana at 97%. The anvil auto-finished a tantō at 90%. The reroll lever hold animation and enlarged ore display were also tested. The session records Allen saving after this work, covering the earlier imports, guards, etch and picker changes. These are recorded results, not checks rerun here.
-- **Blender stations in the game (recorded 2026-10-20):** mid-high forge, lowered anvil, ore stand/lever, hilt bench and three blade-down universal holders replaced the part-built ones. Initial import notes reported Play blocked; the subsequent polishing session tested forging and rolling, but a full post-import heat → hilt → all holders → customer sale loop and final picker framing remain unverified. See [[Art/Blender Station Review]] and [[Sessions/2026-10-19]].
-- **Recorded validation:** the port note reports 31 Luau checks; the editor notes report a broader 65-test browser suite. Anvil integration and the later smithy rebuild have recorded Studio playtests; the latter completed roll → heat → katana forge → hilt → display → customer sale. These are historical results, not checks rerun during vault organization.
-- **Player plot (one, v2):** the L-shaped property, 126 × 78 studs: storefront wing with tall holders along an aisle, a deep 50 × 28 crafting pavilion with the anvil on open floor in front of the forge, courtyard with work apron, expansion lawn, fence, gate and village road. Reworked from [[Art/Player Plot Review]]; playtested roll → heat → katana → hilt → display → customer walks in and buys. See [[Development/Code Map]] (`Workspace.Plot`) and `References/Player Plot/`.
-- **Town street (2026-10-21, awaiting review):** `Workspace.Village`, a 790-stud Japanese street with 26 townhouses, six empty plot lots, a gate and a shrine (mountains parked later that day). The current plot pieces, `SpawnLocation` and `CustomerSpawn` moved into lot N2 the same day (lot widened to 280; playtest pending). Later the shop and its workshop became one street townhouse from Allen's layout (shop in front, workshop behind, placeholder ore alcove), and the street was rebuilt as one continuous row with lots the building's width and closed shopfronts on unclaimed lots. Six player plots followed: each joining player gets a copy of the plot on a lot ([[Design/Six Plots]]; multi-player playtest pending). `Shop`, `Pads` and `Yard` were regrouped into `workspace.Plot` so the shop and tycoon services start again (playtest pending). See [[Art/Japanese Street]].
-- **Concept art:** large connected storefront/crafting plot, labeled overhead layout, early/mid/late progression, and transparent cutout are saved in [[Art/Japanese Village Concept Art]]. These are visual directions; the full six-player village and large plot progression are not recorded as built.
-
-## Design versus implementation gaps
-
-| Area | Agreed design | Latest documented build |
+| Area | Latest recorded implementation | Evidence |
 |---|---|---|
-| Heating | 10 seconds | ForgeService still uses 15 seconds |
-| Ore Roller | Shared lever rolls empty stands; results wait for collection | Built 2026-10-20: the lever spins every empty stand (2.6 s reveal), results wait until collected, occupied stands skip. One stand; buying more stands is still to do |
-| Etching | Optional +15% finish; approved interim flow is free and instant, trace minigame deferred | Flame v4 and table are built; prices, trace minigame and persistence remain future work ([[Art/Flame Etch]]) |
-| Polishing | Optional step on the assembled sword before etching; a full polish adds +10% value; forging alone gives 100% | Dedicated station built; recorded partial-polish save at 97%. Full 100% walkthrough and final sound/stone feedback remain validation/polish work |
-| First session | Starter tantō → first listing triggers fair-price customer → Iron Wakizashi commission → second ore stand | Tutorial/commission progression not recorded as implemented |
-| Hilt assembly | Three untimed taps, tradition-matched fittings | Built 2026-10-20: three untimed knocks slide the hilt onto the blade; full seat bonus always. Playtest pending |
-| Player properties | Six players with spacious retail/crafting plots and expansion | One spacious plot built (126 × 78: storefront, crafting pavilion, courtyard, lawn); six plots, plot assignment and the village surroundings remain future work |
-| Saving | Persistent inventory, currency, unlocks, and upgrades | Latest Code Map says session-only |
-| Employees | Five professions: furnace operator, smith, finisher (hilt + optional polish), stocker and cashier. Separate bare-blade/finished-sword racks; stock only ready-for-sale swords. Starter smiths train toward 90%; player can finish both stages | Roster and handoffs confirmed in [[Design/Workshop Growth]]; no employee production, stocking or sub-90% recovery implementation recorded. Separate hilter/polisher question is resolved |
-| Remote orders | Separate delivery board with courier/cart, packing, return payout, and speed/capacity upgrade directions | Design confirmed; no delivery system recorded. Direct commission hand-in stays separate |
-| Weather | Sunshine can boost traffic; other weather stays at normal baseline | Design confirmed; no weather-to-traffic implementation recorded |
-| Roof visibility | Fade/hide roof indoors and restore it outside | Requested direction and reference screenshots recorded; not recorded as implemented |
+| Core crafting | Ore → heat → guided forging → three untimed hilt knocks → display → customer sale. Player forging gives 100% quality; optional full polishing adds +10% value. | [[Sessions/2026-10-19]], [[Development/Code Map]] |
+| First sales | Heating is 3 s until the first sword is completed, then 10 s. A listing brings a customer immediately until the first sale. The first offer equals sword value; the second ordinary sale teaches haggling. Counters are saved since 2026-10-22. | [[Sessions/2026-10-22#The first sword goes quicker; a delivery bay on every plot]], [[Sessions/2026-10-22#Fair first offer, haggling on the second sale]] |
+| Ore loot box | 3.6 s lid/ingot reveal; up to six bought slots on one box. Collect all waiting ore before rolling again. Ore Slot 2–6 purchases already exist. | [[Art/Ore Loot Box]], [[Design/Tycoon Upgrades]] |
+| Village and plots | Simplified six-lot village; each player gets an owned plot, with per-plot stations, shop, pads and customers. Unclaimed lots show unusable empty plots. | [[Design/Six Plots]], [[Art/Town Street Redesign References]] |
+| Workshop | Chest back-left, furnace hearth, central anvil, right-wall hilt/polish/etch bench. Station cameras and mounts were adjusted. | [[Art/Workshop Layout]] |
+| Upgrades and storage | Floor-pad purchases, second furnace, ore slots, finishing stations, ingot/sword racks and displays. Upgraded Store deepens the shop and pushes the workshop back 12 studs. | [[Design/Tycoon Upgrades]] |
+| Roofs and inventory | Local roof fading, custom rarity-coloured hotbar, backpack overflow and drag/drop inventory. | [[Development/Code Map]], [[Art/UI Design#Backpack (2026-10-21)]] |
+| Etching and polishing | Flame and Eclipse playback; etched swords show polish sheen. The recorded hitch fix spreads image preparation over frames. | [[Art/Animated Blade Etching]], [[Sessions/2026-10-22#Etching → polishing: lag and no visible polish]] |
+| Finished sword meshes | Baked-first mesh pipeline with 27 recorded shapes and live fallback. Active forging/polishing still uses deforming geometry. | [[Development/Sword Mesh Pipeline]] |
+| Delivery space | Bay on every plot and a shop door hidden behind the future `Delivery` unlock. The board, upgrade entry, courier and payouts are not built. | [[Sessions/2026-10-22#The first sword goes quicker; a delivery bay on every plot]] |
+| Authoring tools | Browser forge study/profile editor, BladeCore Luau port, local model sources and village/workshop builders. | [[Prototypes/tanto-forge/README.md]], [[Prototypes/tanto-forge/roblox/README.md]] |
+| First-session journey (2026-10-22) | Tantō-only start; a guide line and arrow for every step; the Guard Captain's Iron Wakizashi request (blueprint on accepting, picker hand-in at the request board, 120 coins, not a sale); then "Buy Ore Slot 2"; the Wandering Swordsman's Katana request after the third sale. Fittings match the blade's tradition. Onboarding funnel logged. | [[Sessions/2026-10-22#Roadmap 1–3: build audit, first-session journey and saving]], [[Development/Code Map#First session and saving (2026-10-22)]] |
+| Saving (2026-10-22) | Session-locked DataStore saves of coins, items and finishes, racks, displays, blueprints, upgrades, metals found, commissions and counters, with recovery rules; upgrades reapplied on the new lot. Studio uses its own store. | [[Development/Saving]] |
+| Build audit fixes (2026-10-22) | Anvil soft-lock after closing the blade picker, hotbar over the polishing/hilt HUDs, offers overwriting each other, gamepad input for the anvil, pads, offers and hotbar, picker art and flags, display-sword streaming, roof gap at the shop door. | [[Sessions/2026-10-22#Roadmap 1–3: build audit, first-session journey and saving]] |
 
-## Next work
+## Verification limits
 
-1. Finish post-import and Polishing Station checks: camera/strike feel, full final polish, picker framing, all blade lengths on holders, and customer traversal. Tune polish incentive; the current 12 hits and blueprint prices remain tuning values.
-2. Bring heat duration and hilt assembly into line with the design, implement additional stand purchases, then complete the tutorial/direct-commission loop. Ore roll/collection behavior is already recorded as built.
-3. Reduce per-sword EditableMesh resource pressure and test published clients, phones, and multiplayer observers.
-4. Build six-plot assignment (per-player stations instead of the shared `Workspace.Smithy`) and the village surroundings after the first-session loop is stable. One spacious plot already exists as the template.
-5. Finish plot comfort validation before six-plot replication. The deeper pavilion, wider bays and revised displays from [[Art/Player Plot Review]] are already built; full camera rotations, phone framing and six-plot fit remain open.
-6. Plan the confirmed growth work in [[Design/Workshop Growth]]: employee production/training and player completion, separate courier orders, bonus-only weather traffic, and indoor roof visibility. Prices, timers, capacity and employee quality curves remain untuned; these additions are not recorded as built.
+- A complete roll → heat → katana → hilt → display → sale loop was historically playtested before the latest map/workshop changes. It is not proof of the current combined build.
+- Recent map, workshop, loot-box, first-sale and polish-sheen changes have recorded Edit checks but no recorded full Play pass.
+- Recorded module results include `EtchingSpec` 33/33 and `SwordMeshSpec` 110/110. They were not rerun during cleanup.
+- Two-player ownership, south-lot cameras, plot release/reclaim, upgrade movement, many visible swords, image/mesh budgets and published/mobile clients still need runtime checks.
+- Latest session notes repeatedly request saving the place; this vault cannot confirm the current Studio save state. Gameplay scripts live in the place, not in a Rojo checkout.
+- 2026-10-22 (Edit only): `SaveSpec` 38/38, `ForgeCheckSpec`, `BladeCoreSpec` 31/31 and `SwordMeshSpec` 110/110 pass; the session lock was exercised against the real Studio DataStore with a throwaway key; changed modules load and changed scripts compile. The guide, commissions, saving across a rejoin and the new gamepad input have not been played. The server size was 50 and was set to 6 through Open Cloud (read back as 6).
 
-Active tasks: [[Development/Roadmap]]. Open design questions: [[Design/Decisions Log#Current open design work]].
+## Missing systems
 
-## Resume and reference
+- Material Index and discovery feedback (discoveries are saved, not shown); polishing on gamepad.
+- Customer reputation/familiarity, letters, personal commission chains, special arrivals and additional sword traditions.
+- Employee hiring/training/production, bare-blade rack and worker/player handoffs.
+- Functional courier delivery board, packing, dispatch/return and payouts; weather traffic bonuses.
+- Further progression balance, sound/feedback, UI/input polish, environment finishing and launch validation.
 
-Run the browser study from the **vault root**:
+Detailed remaining tasks: [[Development/Roadmap]]. Confirmed design: [[Design/Game Design Document]]. Open ideas: [[Random thoughts]].
 
-```bash
-python3 -m http.server 8765 --directory Prototypes/tanto-forge/dist
-```
+## Recommended next milestone
 
-Open `http://localhost:8765`; `editor.html` opens the profile editor. Use a Python executable available on the machine.
+A new player understands the first craft, sells a tantō, completes the Iron Wakizashi commission, buys the second ore slot, and returns with progress intact. All of it is built as of 2026-10-22; the milestone is now to play it through (opening, both requests, a rejoin) and run the first new-player sessions ([[Development/Roadmap]] 1–3).
 
-The registered private Site is `appgprj_6ad655f29424819195e6e42693b729ae`, recorded in `Prototypes/tanto-forge/.openai/hosting.json`. The saved notes do not record a deployment. Reuse that identity if publication is resumed; obtain fresh credentials rather than storing tokens in notes.
+## Resume and references
 
-Detailed earlier questions, test history, and port notes are preserved in [[Archive/Project History/Handoff before vault organization — 2026-10-19]]. Daily activity belongs in [[Sessions/2026-10-19]], rather than being appended to this status note.
+- Run the browser study from the vault root: `python -m http.server 8765 --directory Prototypes/tanto-forge/dist`; open `http://localhost:8765` or `editor.html` for the profile editor.
+- Private Site identity, if needed: `appgprj_6ad655f29424819195e6e42693b729ae`, recorded in `Prototypes/tanto-forge/.openai/hosting.json`. The notes do not establish a deployment; reuse the identity and obtain fresh credentials.
+- [[Sessions/2026-10-22]] contains the latest detailed build evidence. [[Archive/Project History/Vault cleanup — 2026-10-22]] records this reconciliation and retained history.

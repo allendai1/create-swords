@@ -1,37 +1,34 @@
 ---
 title: Random thoughts
-status: inbox — additions organized 2026-10-19
+status: active inbox — unresolved ideas only
 type: design
-updated: 2026-10-19
+updated: 2026-10-22
 tags: [inbox, ideas, create-swords]
 ---
 
 # Random thoughts
 
-Use this note for new ideas. Employee, delivery, weather, and roof-visibility notes are organized in [[Design/Workshop Growth]] and aligned with [[Design/Game Design Document]], [[Design/Decisions Log]], and [[Development/Roadmap]].
+Single inbox for new ideas. Confirmed behavior belongs in [[Design/Game Design Document]] and [[Design/Decisions Log]]; remaining implementation belongs in [[Development/Roadmap]]. These thoughts are not new approvals or completed systems.
 
-Original wording is preserved in [[Archive/Design/Random thoughts before growth alignment — 2026-10-19]]. Pottery-game prices, timers, and capacities are reference values, not approved balance for Sell Swords!.
+## Ideas still to resolve
 
-## New thoughts
+- Give the level more polish and atmosphere while preserving the chosen simplified map.
+- Employees should visibly create swords using the relevant crafting animation.
+- Players and employees should not use the same station simultaneously; settle assignment and priority rules.
+- Consider unlocking each employee when the corresponding second station is bought, such as a furnace operator after Furnace 2 or a smith after a second anvil.
+- Consider making the cashier available after the shop upgrade.
+- The + icons next to racks are on the left side when it should be in the middle. they should be spaced out better. they also collide with things around it, causing parts to be chopped off. they should only be visible when close, i shouldnt be able to see them once i walk away.
+- needs to be a small gap between inventory items/toolbar items
+- the accept/decline of a sale should be a popup from the NPC, not as a popup just on the bottom right of our screen
+- NPCs should be non-collidable with player
+- Random NPCs walking the street would be a nice detail touch.
+- Need to establish Daily Rewards
+- Price of the sword on display rack does not need to be shown. we just need to know how much the player gets for example $100 [+20%] on the gui, so it shows how extra they're getting compared to how much it's worth. so in this case, 100 is how much it's worth x 1.20.
 
-* earn while offline if you have all the required employees to operate business start to finish
+## Organized elsewhere
 
-## Employee clarification resolved
-
-Confirmed five professions: furnace operator, smith, finisher (hilting + optional polishing), stocker and cashier. Separate bare-blade and finished-sword racks feed production and retail. Details: [[Design/Workshop Growth]]. The offline-earnings thought above remains an idea to discuss separately.
-
-Quick thoughts
-* custom inventory ui - look at the custom inventory ui image in game image reference
-* ore roller display needs to look simpler, looks messy with the different color bricks. *(done 2026-10-20)*
-* Ore display also needs to be 50% larger. *(done 2026-10-20)*
-* Ore should be animated floating and bobbing while being rolled and then land once its done rolling *(done 2026-10-20)*
-* the level needs polish, looks too basic
-* an employee should actually look like they're creating the sword or have the same animation being shown as when a player is doing it
-* players cant use the same station as their employee
-* generally an employee is unlocked when a 2nd station is bought, so for example a second furnace means furnace employee can be bought. a second anvil means another employee.
-* cashier upgrade available once shop is upgraded.
-* forge model needs be updated to show only 1 tray since it only heats 1 *(done 2026-10-20)*
-* bigger shop should be an upgrade.
-* GUis need to be simpler, like in the furnace it should just display the time, no bar, no material text. once timer is done, just have it say Ready! *(forge done 2026-10-20)*
-* the anvil gui, instead of Leave[Q] just say Cancel *(done 2026-10-20)*
-* Actually, etching should be the last step since it will be an unlocked station *(stations swapped 2026-10-20)*
+- Employee roles/training, courier orders, weather and roof visibility: [[Design/Workshop Growth]].
+- Later capped offline workshop earnings and one-time employee costs/no wages: [[Design/Workshop Growth#Later capped offline earnings (confirmed 2026-10-22)]]. Direction selected; cap, rate and material rules still need design.
+- Current inventory/hotbar/backpack: [[Art/UI Design]]. The old custom-inventory idea is implemented.
+- Loot-box presentation, collecting before reroll, delivery-bay space, animated etching and the faster first sword are recorded as built in [[Current Status]]. Original quick notes: [[Archive/Design/Completed quick thoughts — 2026-10-22]].
+- Earlier original wording: [[Archive/Design/Random thoughts before growth alignment — 2026-10-19]].

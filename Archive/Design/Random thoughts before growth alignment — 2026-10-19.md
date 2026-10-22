@@ -23,4 +23,3 @@ Van capcity can also be upgraded to hold 6 pieces to 9 pieces
 Weather to control customer traffic, like sunny for bonus traffic
 
 Make it so when player is under the roof, the roof is transparent somehow, so players dont feel enclosed. reference photo in the create pottery! game image reference closed roof and open roof.png
-

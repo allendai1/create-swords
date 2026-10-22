@@ -82,5 +82,3 @@ Sword is now in your toolbar. You can have 8 swords in your toolbar. You also ha
 You then go to your shop that has sword holders. A store has a set amount of sword holders, and you can upgrade the amount that you have so that your store has a larger inventory to sell. For each sword holder, you can press a + button on it, and choose which sword to sell from your toolbar/backpack. Once you select your sword to sell, it then goes onto the sword holder display, and the sword is for sale. 
 
 NPCs can go up to it, browse the store, and ultimately offer money for it.
-
-

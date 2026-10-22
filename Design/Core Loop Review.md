@@ -1,88 +1,184 @@
 ---
 title: Core Loop Review
-status: proposal — awaiting discussion and playtest
+status: engagement review — refinements proposed; player evidence pending
+type: design
+updated: 2026-10-22
 tags: [design, onboarding, gameplay, create-swords]
-type: "design"
-updated: "2026-10-19"
 ---
 
 # Core Loop Review
 
-Reviewed 2026-10-19 against the approved [[Design/Game Design Document|Game Design Document]]. **Onboarding, pacing, and balance changes below remain proposals unless explicitly marked confirmed.** Allen confirmed that item pickers must open every time, even with one valid item; the automatic-selection proposal was rejected. Base heating is 10 seconds. The first-sale tutorial has no customers while the first sword is being made; putting it on sale triggers the first customer arrival.
+The player-facing loop is **get metal → make a sword → sell it → improve the shop**. This note owns the experience review and playtest questions; [[Design/Game Design Document]] owns confirmed rules, [[Current Status]] build status, and [[Development/Roadmap]] remaining tasks. The older review, including superseded 90% forging and station-order advice, is preserved in [[Archive/Design/Core Loop Review before cleanup — 2026-10-22]].
 
-**Station-order reconciliation:** the anvil now ends forging at 90% automatically. Hilt assembly follows; etching is optional, then freehand polishing at its own station is the optional final step on the completed sword. The proposed walkthrough below is aligned to that later confirmed direction. [[Design/Workshop Growth]] adds employee training/recovery, separate optional courier orders, bonus-only weather and indoor roof visibility; these do not replace the starting tutorial or direct commissions.
+**Engagement review, 2026-10-22:** requested by Allen after the vault cleanup. The refinements below are proposals, not approved changes to the GDD or implemented features. Assessment uses the current design, upgrade catalogue and saved build records; no live Studio inspection, new-player observations, funnel data or retention dashboard was available for this review. Risks are hypotheses, not measured causes of churn.
 
-## Assessment
+## Confirmed first-session sequence
 
-The loop is understandable: get metal, make a sword, sell it, improve the workshop. Untimed circles and safe grinding make individual actions accessible. The total interaction chain still risks feeling cumbersome because players repeatedly choose and transfer the same workpiece.
-
-Fun is plausible, not verified. With failure and timing pressure removed, satisfaction must come from visible transformation, responsive hammer feedback, attractive materials, customer reactions, and meaningful next goals. Circles alone may become repetitive. Avoid trying to solve this immediately by adding more mandatory minigames.
-
-## Recommended first session
-
-Times are provisional playtest targets, not promises. Aim for the first completed sale within roughly 3–5 minutes.
-
-| Moment | Player action | Purpose / recommended handling |
+| Moment | Intended experience | Recorded status |
 |---|---|---|
-| Join, first 20–30 seconds | Arrive beside an assigned open-front smithy; see the anvil, forge, and display | Avoid a long walk or plot-selection task before crafting. Show one objective: “Make your first tantō.” |
-| Begin crafting without customers | Tutorial guidance directs the first tantō craft; no customers visit yet | **Confirmed:** first customer arrives only after the sword is put on sale. **Confirmed:** start with the tantō blueprint and simple on-screen instructions. Local commissions introduce wakizashi and katana afterward. |
-| Roll and heat | Activate the lever, watch the ore roulette stop, collect the result, then load and collect it at the forge | Introduce material surprise. Use the confirmed **10-second base heat**; brief tutorial guidance can explain the next step without introducing a customer. |
-| Forge | Choose the starting tantō blueprint and hit its circles | Each hit visibly changes the sword. Show progress clearly, keep targets readable on touch, and avoid tiny precision demands. |
-| Assemble | Use the starter matching fittings and tap three times | Celebrate the complete sword with a clear name, quality, and value. |
-| Decide on final refinement | After assembly and any chosen etch, optionally take the completed sword to the Polishing Station | **Confirmed station order:** the anvil auto-finishes at 90%; final polishing can improve to 100% safely. Explain the choice without forcing polishing or teaching every optional finish during the first craft. |
-| First sale | Put the sword on sale on the nearby holder; this triggers the tutorial customer to walk in, inspect, and offer | **Confirmed arrival trigger:** listing the first sword, not joining or starting crafting. **Confirmed:** the first customer gives a guaranteed fair offer; haggling begins on the second ordinary shop sale. Commission delivery uses a picker and pays the agreed reward; ordinary customer scheduling remains separate design work. |
-| First reward | Accept the offer and see coins and progress toward the next unlock | **Confirmed:** introduce haggling on the second ordinary shop sale; the first sale uses a guaranteed fair offer. Fund one modest useful upgrade within the first few sales. |
-| Immediately after the first sale | Introduce a local wakizashi teaching commission and provide its blueprint when the commission begins | **Confirmed:** this is the next goal, rather than a required upgrade purchase or another tantō sale. The player repeats the crafting loop with a new shape and purpose. Katana follows through a later local commission. **Confirmed:** the first commission requests an **Iron Wakizashi at 90% quality or higher**; Iron is in the starter roller’s Common pool. Grinding is optional. |
-| Deliver the Iron Wakizashi | Open the commission, choose the completed sword in its picker, and receive the agreed reward | **Confirmed:** no display listing or haggling for commission delivery. Teach haggling at the next ordinary shop sale, not this delivery. |
-| After the Iron Wakizashi delivery | Direct the player toward their first workshop upgrade | **Confirmed:** buy a second material stand for the Ore Roller. One shared lever rolls all empty stands together, yielding one material per stand through an ore-appearance roulette lasting under five seconds. Occupied stands retain their ores and cannot roll until collected; no automatic restart. Price and exact reveal duration remain undecided; tune affordability around tutorial earnings. This does not itself change per-roll rarity odds. |
-| Early special visit | A memorable outsider leaves an untimed request after the first successful loop | Hint at future possibilities. Schedule this introductory appearance; later special visits can remain reputation-gated surprises. Do not interrupt the first forging interaction. |
+| Join | Spawn at the owned workshop; start with tantō and a clear first-craft objective. | Plot assignment built; guided starting progression pending. |
+| Roll and heat | Pull the loot-box lever, collect ore, heat it; collect before rolling again. | Built; latest combined Play pass pending. First heat is 3 s until the first sword is finished, then 10 s. |
+| Forge | Untimed guided strikes visibly shape the universal blank into the selected sword. All strikes give 100% player quality. | Built; rhythm, framing and repeated enjoyment need testing. |
+| Assemble | Choose tradition-appropriate fittings and seat them with three untimed knocks. | Knock flow built; fitting progression needs reconciliation/tuning. |
+| Optional finishing | Polish adds +10% value; etching adds +15%. Recommended route is hilt → polish → etch; the recorded build also permits polishing an etched sword. | Stations built; clarity, sheen and value per minute need testing. |
+| First sale | No visitor before listing; listing brings a customer with an exact-value fair offer. | Built, not freshly playtested. |
+| Next goal | First shop sale introduces an Iron Wakizashi commission (minimum 90%), supplying its blueprint. Hand in through a sword picker for the agreed reward. | Commission system pending. No guaranteed Iron roll or odds change approved. |
+| First upgrade | After commission delivery, direct the player to Ore Slot 2 and tune its cost against earnings. | Purchase exists; tutorial direction pending. |
+| Further learning | Second ordinary shop sale teaches haggling; a later local commission introduces katana. | Haggling hint/first raise built; katana teaching commission pending. |
 
-Katana is a visible early aspiration, not necessarily awarded in the first few minutes. Do not introduce all currencies, finishing stations, automation, and letter systems during the first sword.
+Explicit item pickers are confirmed even with one valid item. Improve their clarity and responsiveness; do not bypass them. Courier deliveries remain separate from direct commission hand-in.
 
-## Friction and proposed remedies
+## Experience risks to test
 
-| Friction | Why it matters | Recommendation to test |
-|---|---|---|
-| Repeated pickers | Forge ingot, anvil ingot, shape, blade, fitting, and display selection can feel like paperwork | **Confirmed: keep the picker every time, including when only one item is valid.** Improve clarity and responsiveness within that flow; do not bypass selection. |
-| Heating wait and collection | The confirmed base wait is **10 seconds**, reduced from the 15-second prototype | Keep the 10-second heat legible; use the tutorial wait purposefully. Later allow loading the next ingot while working on a sword. |
-| Walking between stations | Travel can exceed meaningful interaction time | Keep roller → forge → anvil → hilt bench → optional etching/final polishing → display routes readable and short. Employee anvils and racks must not block that route. |
-| Sales interrupt crafting | Existing offer cards expire after 20 seconds | Queue offers or pause their response window while the player is in crafting interaction. Haggling can still lose a customer by choice; unrelated UI should not cause the loss. |
-| Random materials block requests | A fixed rare-material request can become repeated rolling instead of crafting | **Confirmed:** the first commission requires an Iron Wakizashi, using Iron from the starter roller’s Common pool. Do not substitute an any-material request. Test how long players wait for that roll; no guaranteed drop or altered odds has been approved. Preserve ordinary sales while working toward requests. |
-| Grinding feels mandatory | Existing multipliers give 100% swords ~33% more value than 90% swords | Compare coins per minute with and without grinding. Tune bonus and duration so both routine stock-making and refinement are worthwhile. Do not change the approved 90/100 quality endpoints. |
-| Repetition | Identical circles and three taps on every sword can become mechanical | Vary blade transformations and customer purpose; keep sequences short. Add depth through materials, fittings, customer matching, and workshop choices before adding input difficulty. |
-| Unclear next step | A sale can leave the player wondering what to do | Show one primary next objective and nearby progress, such as the next teaching commission or fitting milestone. |
-| Employees replace all player crafting | Automation could remove the game's main activity | **Confirmed five-role direction:** starter smiths train from below 90% toward 90% and deposit bare blades; finishers combine hilt assembly and optional polish; stockers carry ready swords from the finished rack to holders; furnace operators and cashiers cover heating/sales. Players can finish employee forging to 90% and final polishing to 100%. Test speed/quality and recovery effort; values remain open. |
-
-## Simple enough?
-
-Yes at the action level. The player should describe the loop as **“Get metal → make a sword → sell it → improve my shop.”** Heating, grinding, and fitting are understandable parts of making a sword, but excessive menus can make the same loop feel complex. Keep the required path short; present refinement as a clear optional branch.
-
-## What makes it fun?
-
-- **Transformation:** a blank visibly becomes a sword under the player's hammer.
-- **Discovery:** material reveals and unfamiliar visitors create variety.
-- **Ownership:** choose fittings, refine the blade, and see it on display.
-- **Social payoff:** a customer reacts to the specific sword, and negotiation produces a result.
-- **Progress:** a sale moves a visible workshop, blueprint, fitting, or relationship goal forward.
-
-The main risk is repetitive clicking once the novelty fades. Test the fifth sword, not just the first. Strong effects do not by themselves guarantee that repeating the activity stays fun.
+- **Repetition:** untimed circles are accessible, but visible transformation, hammer feedback and meaningful goals must carry repeated crafting. Test the fifth sword as well as the first.
+- **Transfers and menus:** walking, collecting and repeated selections can outweigh shaping. Measure each separately before changing the interaction flow.
+- **Optional polish:** the +10% bonus should reward extra care without making players feel every sword requires polishing. Compare enjoyment and coins per minute.
+- **Offers during crafting:** check that offer cards, timeouts and tutorial messages do not make station interactions frustrating.
+- **Next-goal clarity:** after the first sale, a commission and then a useful upgrade should explain why to continue.
 
 ## First playtest questions
 
-Use a small initial group (for example 3–5 new players) to find obvious problems, not to claim statistical certainty. Include touch and desktop input.
+Use a small initial group, for example 3–5 new players across desktop and touch, to find obvious problems. Proposed first-sale target: roughly 3–5 minutes; this is a playtest target, not measured performance or a new approved timer.
 
-- Can they find the first objective and start without verbal coaching?
-- How long until their first hammer hit, complete sword, and sale? Record time spent walking, waiting, selecting, and crafting separately.
-- Can they complete a second sword without help, and do they choose to make another?
-- Do they understand that 90% is a valid stopping point and grinding is optional?
-- Does grinding dominate earnings per minute, and do players describe it as satisfying or obligatory?
-- Can they explain their next goal after a sale?
-- Are offers or tutorial messages interrupting crafting?
-- Do courier orders remain optional and distinct from direct commissions? Does weather preserve the first-sale customer trigger?
-- Can players understand employee blade-rack handoffs and the difference between completing forging and final polishing?
-- Does the indoor roof cutaway keep the route and station cameras readable?
-- After roughly five swords, what do they enjoy and what are they trying to skip?
+**Reference-video update:** [[Design/Pottery Tutorial Review]] observes shaping at about 0:10 and a first sale at about 1:12 in the supplied pottery recording. That challenges the earlier 3–5-minute planning target: test a compact first-sword route around 1–2 minutes while preserving satisfying crafting. The recording starts in-world and is one session, so its timing is neither join-to-sale evidence nor a typical-player benchmark. The older target below remains visible as the proposal being reconsidered, not a requirement.
 
-## Recommended next design decision
+- Can they begin without verbal coaching and identify the next station?
+- How long until the first hammer hit, complete sword and sale? Separate waiting, walking, selecting and crafting time.
+- Can they make a second sword without help? After several swords, what do they enjoy or try to skip?
+- Do they understand 100% forging and the separate optional polish bonus?
+- Can they explain their next goal and why an upgrade is useful?
+- Are mobile targets, full-blade cameras, roof cutaways and inventory controls readable?
+- Once implemented, are direct commissions, courier orders and ordinary shop sales clearly distinct?
+- Once implemented, can players understand employee handoffs and preserve swords reserved for further work?
 
-Review the first-session sequence above, with the confirmed starting tantō blueprint and on-screen guidance before any customer arrives. Keep explicit picker selection at every item-selection step. Once agreed, translate that flow into a focused implementation plan. No new mechanics are required to test the basic experience.
+No new mandatory minigame is required to answer these questions. Employee quality/recovery rules must be reconciled with current 100% player forging before the older 90%-cap design is implemented.
+
+## Assessment: where engagement currently comes from
+
+The crafting loop has three useful sources of interest: material surprise, visible transformation from blank to blade, and ownership of a growing shop. Untimed forging and safe polishing fit the cozy premise. Preserve those strengths.
+
+The weak connection is **sale → reason to make another sword**. Much of the intended purpose—teaching commissions, familiar customers, collection progress, reputation and special visitors—is still unbuilt. Repeating the production sequence currently offers more coins and different materials, but the next craft may ask little new of the player.
+
+| Timescale | Player question | Current support | Most important gap |
+|---|---|---|---|
+| A sword | What am I making, and why? | Material reveal, shaping, fitting, sale | A visible purpose or customer need before repeating production |
+| A session | What changes because I made these swords? | Purchased capacity, displays and shop expansion | Tutorial follow-through, purposeful unlocks and evidence that upgrades help |
+| A return visit | What am I looking forward to continuing? | Planned collections, relationships, commissions | Persistent progress and a clearly remembered next project |
+
+This follows Roblox's distinction between repeated actions and the progression system that changes future play. The game-specific diagnosis above is an inference from the vault. [Roblox: Core loops](https://create.roblox.com/docs/production/game-design/core-loops)
+
+## Proposed refinement 1: lead the next craft with a purpose
+
+After the first sale, use the already-planned teaching commission to make the next sword feel different. Later, let players choose a customer request or personal collection goal, or simply continue ordinary shop production. Show one pinned goal with its next action and reward.
+
+Proposed repeat loop:
+
+```text
+Choose a request, collection goal or shop-stock plan
+    → use available metal / roll for more
+    → choose blueprint and fittings for that purpose
+    → forge and assemble
+    → choose any useful or desired finishing
+    → sell or hand in
+    → see customer, collection and workshop progress
+    → choose the next project
+```
+
+The first craft still begins with the player's own tantō, with no waiting customer. Open the commission after its sale, as already agreed. After the teaching sequence, offer a small choice of achievable goals instead of prescribing every sword.
+
+Examples to explore: a local guard requesting a familiar blade, a collector interested in a particular finish, and a new blueprint that visibly changes the forging transformation. Give customers recognizable preferences and brief reactions tied to the delivered sword. Flexible preferences should affect worthwhile choices; a universal highest-bonus fitting on every sword would weaken them.
+
+**Hypothesis:** a specific next project increases the proportion of first-sale players who voluntarily start and complete another sword. Watch whether the objective is understood and whether players still feel free to make their own designs.
+
+## Proposed refinement 2: remove randomness from the teaching bottleneck
+
+The first commission requires Iron, but the current direction explicitly approves neither a guaranteed Iron roll nor supplied material. The documented 60% Common probability is not an Iron probability; it includes multiple materials. The first teaching commission can therefore require an unpredictable number of rolls before the player can use the new blueprint.
+
+This interacts with the built rules in [[Art/Ore Loot Box]]: all ore must be collected before rerolling, only six ingots can be carried, and the lever remains off with ore on the lid. The Ingot Rack is behind Ore Slot 2 in the purchase chain, while the tutorial points players toward Ore Slot 2 only after the commission. Buying it early may be possible, but it is a confusing escape from a lesson that is supposed to teach a new sword.
+
+**Recommended proposal:** the teaching customer supplies one Iron ingot with the wakizashi blueprint. Grant it once for that commission and preserve its state through reconnects; make the learning path recoverable if the player uses the supplied metal elsewhere. Keep the ordinary roller's odds and full material roster unchanged.
+
+Alternative if supplied material is undesirable: accept any-material wakizashi for the teaching step, then introduce specific-material requests later. That changes the agreed Iron requirement more substantially, so supplied Iron is the narrower recommendation.
+
+This would explicitly revise the earlier decision about tutorial material access. Later optional requests may involve material hunting, with alternative goals available while the player waits for a desired roll.
+
+## Proposed refinement 3: upgrades should improve a felt limitation
+
+More ore slots increase results per pull, not automatically swords sold per minute. Six results can amplify inventory work while the player still has one manually operated anvil. A second furnace also has limited benefit if heating already finishes while the player forges the previous ingot. These are throughput risks to measure, not proof that either upgrade is bad.
+
+- Teach batching after the basic craft: load the next ingot before working on the current sword, where the existing interaction supports it.
+- Present Ore Slot 2 as more material choice and less repeated rolling. Demonstrate its two-result reveal immediately after purchase.
+- Make storage reachable before larger ore batches regularly fill the player's hands. A clear collect-to-owned-storage action could preserve the collect-before-reroll rule with fewer transfers.
+- Provide an explicit way to clear unwanted common stock when hands and storage are full. A low-value exchange/sell-back or discard action needs economy and accidental-loss review; avoid creating a more profitable roll-and-resell loop than crafting.
+- Recommend additional displays when players actually have unsold stock, and extra furnaces when heat is delaying work. Track use after purchase, rather than treating the purchase itself as proof of value.
+
+Keep the currently agreed first upgrade after the teaching commission, but test that buying it changes the next few minutes in a way a new player can explain.
+
+## Proposed refinement 4: make optional care a real choice
+
+Polishing requires active work for a documented +10% finish bonus; etching supplies +15% with an automatic show. It is plausible that polishing will be skipped for efficiency while etching becomes a routine extra stop. Neither outcome has been measured.
+
+The value formula also makes finish bonuses additive. For the same sword/customer, a +40% hilt and +15% etch give a finish factor of 1.55. Adding 0.10 polish raises it to 1.65, only **about 6.45% more total value**, if the live code matches the documented formula. A fixed bonus label should not obscure the actual coin difference.
+
+Recommended changes to test:
+
+- Show the sword's actual before/after coin value and visible finish difference.
+- Give polishing a compact, satisfying action with safe partial progress; determine its duration from player enjoyment and measured opportunity cost.
+- Let selected optional customer requests reward care explicitly, while ordinary unpolished sales remain viable.
+- Give etch patterns expressive/customer relevance rather than treating every pattern as an interchangeable compulsory price buff.
+- Once the novelty has worn off, check the repeated etching show and station transitions for unnecessary waiting. Preserve the admired result even if repeat presentation is shortened.
+
+For a production-limited player, a useful first approximation is that added polish time should be compared with its **relative total-value increase**, not just the advertised additive bonus. Include walking/pickers, concurrent heating and customer demand in the real measurement before changing the bonus.
+
+## Proposed refinement 5: preserve the player's accomplishments and next project
+
+Persistence is a prerequisite for evaluating this game's return loop. Save tutorial milestones, commissions, inventory, discoveries, chosen goal and upgrades, and make resuming clear. A returning player should see what they were working toward and be able to continue it quickly.
+
+Use the planned Material Index as permanent recognition of discovery. Consider a small record of the player's first or favourite crafted designs so selling a beautiful sword leaves an accomplishment behind. Show a specific next blueprint, fitting or customer milestone, with progress, rather than only a larger coin target.
+
+An early special visitor can preview the wider sword traditions already in the design. Their request should remain available while the player prepares; return motivation comes from an interesting unfinished project and an improved shop. Keep the session enjoyable and self-contained even when the player does not return on a schedule.
+
+The six plots can support admiring other players' distinctive swords and workshops later. Validate the solo experience first; the loop must still work when neighbouring plots are empty.
+
+## Proposed refinement 6: remove interruptions and preserve active crafting
+
+Test how the recorded 20-second customer offer window behaves while the player is in a station camera. If sales expire during otherwise enjoyable crafting, let offers wait or begin their response window when the player can meaningfully respond, with a bounded queue. This is a proposed behavior change, not a verified bug.
+
+Keep pickers at every item-selection step, as agreed. Within them, clearly identify the relevant workpiece or commission-compatible items while requiring the player's choice. Keep the next station legible after closing a picker or finishing an animation.
+
+Employee progression should gradually hand off repetitive work while leaving desirable player choices and personal commissions. Prototype one useful role after manual production is validated. Implementing all five roles early could automate the very activity the game is trying to prove enjoyable.
+
+## Refined opening to test
+
+The times below are planning targets, not observed completion times or approved timers. Use new-player tests to adjust them.
+
+| Moment | Experience | Payoff |
+|---|---|---|
+| First minute | One visible objective; roll, collect and heat; reach the anvil promptly | See the signature shaping action, not a tour of every system |
+| Roughly first 3–5 minutes | Finish and sell the first tantō with the built fair offer | A finished creation, a customer reaction and a visible reward |
+| Immediately afterwards | Customer introduces wakizashi and, under this proposal, supplies its Iron | A new shape and a dependable next purpose |
+| First upgrade | Commission reward makes Ore Slot 2 affordable; player pulls it once | A visible change to the workshop and material choice |
+| Before ending the first session | Choose a next request or preview the katana milestone; save the goal | A specific project to resume |
+
+Avoid exposing polishing, etching, employees, courier orders and every currency during the first sword. Offer optional depth after the basic transformation and sale have paid off. This is consistent with Roblox's guidance to teach essentials, reach enjoyable play quickly and show future goals. [Roblox: Onboarding](https://create.roblox.com/docs/production/game-design/onboarding)
+
+## Priority and validation
+
+| Order | Work | Why now |
+|---|---|---|
+| 1 | Validate the current loop and save/rejoin reliability | Broken interactions and erased progress undermine every retention experiment |
+| 2 | Complete the guided opening and dependable teaching commission | Gives first-sale players a clear, achievable second craft |
+| 3 | Test Ore Slot 2, storage pressure and the benefit of early purchases | Ensures progression improves play rather than increasing handling |
+| 4 | Add a small set of purposeful requests and persistent discovery/milestone feedback | Tests variety and return motivation using existing swords and stations |
+| 5 | Tune finishing choices and interruptions | Improves the repeated loop after its purpose is established |
+| 6 | Expand workers, deliveries and longer progression based on observed needs | Avoids building large systems before knowing which repetition players want help with |
+
+Instrument the sequence **join → first roll → first hammer hit → assembled sword → first sale → teaching commission accepted → teaching commission delivered → first upgrade**. Also record voluntary next-sword completion, goal selection and progression on return. Separate desktop/touch, build version and acquisition cohorts; distinguish required tutorial repeats from voluntary crafting.
+
+Start with observed sessions from 3–5 new players, allowing several swords each. Record time spent shaping versus walking, menus, waiting and blocked inventory. This finds usability problems; it does not estimate population retention or prove a causal improvement.
+
+**First focused experiment, once commissions and saving are stable:** compare the same teaching commission with ordinary material access versus one supplied Iron ingot. Primary metric: commission delivery per eligible first-sale player. Counter-metrics: confusion, inventory blockage, repeat-grant abuse, ordinary crafting after delivery and progression/economy distortion. Track D1 return as a downstream outcome. Keep rewards, blueprint and other onboarding changes constant during this comparison.
+
+Collect a baseline before choosing the minimum worthwhile improvement, sample size and run duration; preregister those and a decision rule before comparing variants. Adopt a variant only when the primary improvement is supported without material counter-metric regressions. If traffic is too small, report qualitative findings and uncertainty rather than a percentage uplift.
+
+Track **D1 and D7 return by first-join cohort**, plus whether returning players continue a meaningful goal. Longer sessions alone can reflect waiting or confusion, so assess progress and player feedback alongside time. Roblox likewise connects D1 with the core loop, onboarding and performance, and D7 with progression. [Roblox: Retention](https://create.roblox.com/docs/production/analytics/retention)

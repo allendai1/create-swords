@@ -1,6 +1,6 @@
 # Sword forging study
 
-Browser prototype of the approved forging flow for the starter blades (tantō, wakizashi, katana) (see [Create Swords! GDD](../../Create%20Swords!%20GDD.md) §5 and [Blade Implementation Research](../../Blade%20Implementation%20Research.md)). It is for judging feel before the Roblox port. It does not prove Roblox performance or EditableMesh access in a published game.
+Browser prototype of the starter-blade forging study (tantō, wakizashi, katana); see the current [Game Design Document](../../Design/Game%20Design%20Document.md) §5 and [Blade Implementation Research](../../Development/Blade%20Implementation%20Research.md). Its 90% → 100% refinement stages describe the study, rather than current player-facing forging quality. It does not prove Roblox performance or EditableMesh access in a published game.
 
 ## Run it
 

@@ -4,23 +4,30 @@
 -- Run in Studio (Edit) through MCP execute_luau. Rebuilds Workspace.Village; an earlier build moves to
 -- ServerStorage.Legacy. Same SEED = same street.
 --
--- Local frame: ORIGIN is the street centre, the street runs along X, façades at z = ±16.
---   road 16 wide (|z| < 8), gutters with water (8..10), walkways (10..17.5).
+-- Local frame: ORIGIN is the street centre, the street runs along X, façades at z = ±HALF (22; 16 until 2026-10-21,
+--   Allen: "expand the street a bit, it seems very closed and tight right now").
+--   Measured from each façade: walkway (+1.5..-6), gutter with water (-6..-8), then the road (28 wide, |z| < HALF-8).
+--   Only the road grew, so a plot's front (bridge over the gutter, CustomerSpawn on the road) still fits.
 --   each side, west to east: houses | lot | houses | lot | houses | lot | houses (x -350..350). Since 2026-10-21 a lot
 --   is the width of the shop + back-room workshop (48.5: its corner posts reach ±24.2), so the row is continuous
---   (Allen: "the street reads as one continuous row"); lots are 96 deep (|z| 16..112). The middle north lot is
---   centred on ORIGIN, which is the shop's frontage centre (build_shops.luau).
+--   (Allen: "the street reads as one continuous row"); lots are 96 deep (|z| HALF..HALF+96). The middle north lot is
+--   centred on ORIGIN's x; ORIGIN sits HALF south of the shop's façade (z -576, build_shops.luau), so widening the
+--   street only moves the south row.
 --   west gate zone x -395..-350, shrine plaza x 350..395.
 --   Lots.PlotSlot<N|S><1..3>: invisible lot-sized markers, centre of the lot, LookVector toward the street. A lot
 --   without a player plot (not in TAKEN) gets a closed shopfront, Lots.Closed<N|S><n>: a townhouse with every bay
 --   shuttered, no door, noren or signs. Plaster walls divide the lots from the house backyards behind the row.
 --   Mountains (MOUNTAINS, off): the Blender CliffRing (ServerStorage.Village3D) stretched in X so its inner face is
---   x ±395, z ±130. The invisible Bound walls on that line are always built.
+--   x ±395, z ±130 (not adjusted for the wider street). The invisible Bound walls, at z ±(HALF+114), are always built.
 -- House parts never share a plane with a neighbour: widths are w - 0.04 and neighbouring heights and pitches differ.
 
-local ORIGIN = CFrame.new(17.5, 0, -560)
+local HALF, LOT_W, LOT_D = 22, 48.5, 96 -- the shop's corner posts reach x ±24.2; neighbours start 0.07 beyond
+local ORIGIN = CFrame.new(17.5, 0, -576 + HALF)
 local SEED = 21
-local HALF, LOT_W, LOT_D = 16, 48.5, 96 -- the shop's corner posts reach x ±24.2; neighbours start 0.07 beyond
+-- Ground storeys 2.5 taller than the first build (Allen 2026-10-21: "make the buildings a bit taller, right now the
+-- entrance is barely taller than the player"): openings top out at OT 9.7 instead of 7.2, storeys are 12…14 tall.
+local LIFT = 2.5
+local OT = 7.2 + LIFT
 local SEG_W = (700 - 3 * LOT_W) / 4
 local ROW = { "H", "L", "H", "L", "H", "L", "H" }
 -- Lots with no closed front in Edit: N2 holds the plot template (Workspace.Plot). At runtime PlotService takes the
@@ -155,6 +162,8 @@ local function house(parent, name, hcf, w, sp)
 	local H = G + U
 	local F0, F1 = 1.5, sp.F1
 	local postCol = sp.postCol or C.timberDk
+	-- neighbours alternate sp.alt (0 / 1, closed fronts 2) so ridges and fascias of equal-depth roofs never share a plane
+	local alt = 0.03 * (sp.alt or 0)
 
 	P("Ground", Vector3.new(W, G, D - F0), L(0, G / 2, (F0 + D) / 2), sp.groundCol or C.timberDk, M.Wood, { solid = true })
 	if U > 0 then
@@ -179,22 +188,22 @@ local function house(parent, name, hcf, w, sp)
 		end
 		if kind == "lattice" then
 			P("Kick", Vector3.new(cw, 1.2, 0.35), L(cx, 0.9, F0 - 0.25), C.timberDk, M.Wood)
-			P("Rail", Vector3.new(cw, 0.4, 0.35), L(cx, 7.4, F0 - 0.25), C.timberDk, M.Wood)
-			P("Shoji", Vector3.new(cw, 5.7, 0.1), L(cx, 4.35, F0 - 0.1), (sp.paper or chance(0.4)) and C.paper or C.interior)
+			P("Rail", Vector3.new(cw, 0.4, 0.35), L(cx, OT + 0.2, F0 - 0.25), C.timberDk, M.Wood)
+			P("Shoji", Vector3.new(cw, OT - 1.5, 0.1), L(cx, (1.5 + OT) / 2, F0 - 0.1), (sp.paper or chance(0.4)) and C.paper or C.interior)
 			local n = math.max(2, math.floor(cw / 0.55))
 			for k = 1, n - 1 do
-				P("Slat", Vector3.new(0.22, 5.7, 0.3), L(x0 + k * cw / n, 4.35, F0 - 0.35), C.slat, M.Wood)
+				P("Slat", Vector3.new(0.22, OT - 1.5, 0.3), L(x0 + k * cw / n, (1.5 + OT) / 2, F0 - 0.35), C.slat, M.Wood)
 			end
 		elseif kind == "door" then
-			P("Doorway", Vector3.new(cw, 6.9, 0.1), L(cx, 3.75, F0 - 0.1), C.interior)
+			P("Doorway", Vector3.new(cw, OT - 0.3, 0.1), L(cx, (0.3 + OT) / 2, F0 - 0.1), C.interior)
 			local nw = cw / 3
 			for k = 0, 2 do
-				local strip = P("Noren", Vector3.new(nw - 0.08, 2.7, 0.08), L(x0 + nw * (k + 0.5), 5.85, F0 - 0.95), sp.noren, M.Fabric)
+				local strip = P("Noren", Vector3.new(nw - 0.08, 2.7, 0.08), L(x0 + nw * (k + 0.5), OT - 1.35, F0 - 0.95), sp.noren, M.Fabric)
 				if k == 1 and sp.sign then label(strip, utf8.char(utf8.codepoint(sp.sign, 1)), sp.noren == C.norenW and C.black or C.paper) end
 			end
-			P("NorenRod", Vector3.new(cw, 0.15, 0.15), L(cx, 7.25, F0 - 0.95), C.timberDk, M.Wood)
+			P("NorenRod", Vector3.new(cw, 0.15, 0.15), L(cx, OT + 0.05, F0 - 0.95), C.timberDk, M.Wood)
 		elseif kind == "open" then
-			P("Interior", Vector3.new(cw, 6.9, 0.1), L(cx, 3.75, F0 - 0.1), C.interior)
+			P("Interior", Vector3.new(cw, OT - 0.3, 0.1), L(cx, (0.3 + OT) / 2, F0 - 0.1), C.interior)
 			P("Platform", Vector3.new(cw - 0.08, 1.4, 1.6), L(cx, 1.0, F0 - 0.8), C.cedar, M.WoodPlanks, { solid = true })
 			local gx = x0 + 0.4
 			while gx < x1 - 1.4 do
@@ -207,15 +216,15 @@ local function house(parent, name, hcf, w, sp)
 				gx += s + 0.3
 			end
 		else
-			P("Shutter", Vector3.new(cw, 6.6, 0.3), L(cx, 3.6, F0 - 0.2), sp.shutterCol or C.cedar, M.Wood)
+			P("Shutter", Vector3.new(cw, OT - 0.6, 0.3), L(cx, OT / 2, F0 - 0.2), sp.shutterCol or C.cedar, M.Wood)
 			for k = 1, 2 do
-				P("Batten", Vector3.new(0.18, 6.5, 0.14), L(x0 + k * cw / 3, 3.6, F0 - 0.41), C.timber, M.Wood) -- ends inside the shutter's
+				P("Batten", Vector3.new(0.18, OT - 0.7, 0.14), L(x0 + k * cw / 3, OT / 2, F0 - 0.41), C.timber, M.Wood) -- ends inside the shutter's
 			end
 		end
 	end
-	P("Beam", Vector3.new(WD - 0.1, 0.8, 0.7), L(0, 7.95, F0 - 0.3), postCol, M.Wood)
-	if G - 8.35 > 0.4 then
-		P("Transom", Vector3.new(WD - 0.3, G - 8.45, 0.1), L(0, (8.35 + G - 0.1) / 2, F0 - 0.1), sp.transomCol or C.cream, M.Plaster)
+	P("Beam", Vector3.new(WD - 0.1, 0.8, 0.7), L(0, OT + 0.75, F0 - 0.3), postCol, M.Wood)
+	if G - (OT + 1.15) > 0.4 then
+		P("Transom", Vector3.new(WD - 0.3, G - OT - 1.25, 0.1), L(0, (OT + 1.15 + G - 0.1) / 2, F0 - 0.1), sp.transomCol or C.cream, M.Plaster)
 	end
 
 	-- pent roof over the walkway
@@ -268,7 +277,7 @@ local function house(parent, name, hcf, w, sp)
 			end
 		end
 	elseif U > 0 and sp.style == "kura" then
-		local nwin = W >= 20 and 3 or 2
+		local nwin = W / 4 > 5.25 and 3 or 2 -- shutters reach 2.6 either side of a window
 		local wy = H - 3.4
 		for i = 1, nwin do
 			local wx = -hw + i * W / (nwin + 1)
@@ -322,7 +331,7 @@ local function house(parent, name, hcf, w, sp)
 				P("Gable", Vector3.new(0.5, yr - H, hd), L(sgn * hd / 2, H + (yr - H) / 2, zg) * CFrame.Angles(0, -sgn * math.pi / 2, 0), gCol, gMat, { wedge = true })
 			end
 		end
-		P("Ridge", Vector3.new(1.2, sp.ridgeH, zb - zf + 0.2), L(0, yr + th + sp.ridgeH / 2 - 0.35, (zf + zb) / 2), C.tileDk, sp.roofMat)
+		P("Ridge", Vector3.new(1.2 + alt, sp.ridgeH, zb - zf + 0.2), L(0, yr + th + sp.ridgeH / 2 - 0.35, (zf + zb) / 2), C.tileDk, sp.roofMat)
 		P("TieBeam", Vector3.new(WD - 0.1, 0.6, 0.4), L(0, H + 0.34, front + 0.05), postCol, M.Wood)
 		P("KingPost", Vector3.new(0.5, yr - H - 0.6, 0.32), L(0, H + (yr - H) / 2 + 0.3, front + 0.05), postCol, M.Wood)
 	else
@@ -335,13 +344,13 @@ local function house(parent, name, hcf, w, sp)
 		P("Roof", Vector3.new(xl, th, runF / cs), L(cF.X, cF.Y, cF.Z) * CFrame.Angles(-p, 0, 0), sp.roofCol, sp.roofMat)
 		local cB = Vector3.new(0, yr - runB / 2 * t, (zr + zb) / 2) + Vector3.new(0, cs, sn) * (th / 2 - 0.05)
 		P("Roof", Vector3.new(xl + 0.08, th, runB / cs), L(cB.X, cB.Y, cB.Z) * CFrame.Angles(p, 0, 0), sp.roofCol, sp.roofMat)
-		P("Ridge", Vector3.new(xl + 0.2, sp.ridgeH, 1.3), L(0, yr + th + sp.ridgeH / 2 - 0.35, zr), C.tileDk, sp.roofMat)
+		P("Ridge", Vector3.new(xl + 0.2, sp.ridgeH, 1.3 + alt), L(0, yr + th + sp.ridgeH / 2 - 0.35, zr), C.tileDk, sp.roofMat)
 		if sp.oni then
 			for sgn = -1, 1, 2 do
 				P("Onigawara", Vector3.new(1.0, sp.ridgeH + 1.4, 2.0), L(sgn * (xl / 2 + 0.3), yr + th + (sp.ridgeH + 1.4) / 2 - 0.4, zr), C.tileDk, sp.roofMat)
 			end
 		end
-		P("Fascia", Vector3.new(xl - 0.08, 0.5, 0.3), L(0, H - ovF * t - 0.1, zf + 0.1), C.timberDk, M.Wood)
+		P("Fascia", Vector3.new(xl - 0.08, 0.5, 0.3), L(0, H - ovF * t - 0.1, zf + 0.1 + alt), C.timberDk, M.Wood)
 		for sgn = -1, 1, 2 do
 			P("Gable", Vector3.new(0.5, yr - H, zr - front), L(sgn * (hw - 0.3), H + (yr - H) / 2, (front + zr) / 2), gCol, gMat, { wedge = true })
 			P("Gable", Vector3.new(0.5, yr - H, D - zr), L(sgn * (hw - 0.3), H + (yr - H) / 2, (zr + D) / 2) * CFrame.Angles(0, math.pi, 0), gCol, gMat, { wedge = true })
@@ -352,10 +361,15 @@ local function house(parent, name, hcf, w, sp)
 	if doorX and sp.lantern then
 		local ly, lz = G - 1.6, -2.4
 		if not sp.pent then ly, lz = (sp.balcony and G - 1.6 or G - 3.2), (sp.balcony and F1 - 0.9 or -0.9) end
-		chochin(m, L(doorX + 1.6, ly, lz), sp.lanternCol)
+		local lx = doorX + 1.6
+		if sp.pent and sp.rafters then -- hang it in the gap between two rafters, its cord clear of them
+			local step = WD / math.floor(WD / 1.1)
+			lx = -hd + math.floor((lx + hd) / step + 0.5) * step
+		end
+		chochin(m, L(lx, ly, lz), sp.lanternCol)
 	end
 	if sp.sign and doorPost then
-		local b = P("Signboard", Vector3.new(1.5, 4.4, 0.3), L(doorPost, 4.9, F0 - 1.1), C.cedar, M.Wood)
+		local b = P("Signboard", Vector3.new(1.5, 4.4, 0.3), L(doorPost, OT - 2.3, F0 - 1.1), C.cedar, M.Wood)
 		label(b, sp.sign, C.black, nil, true)
 		if sp.sign == "酒" then ball(m, "Sugidama", 1.8, L(doorX - 1.2, G - 1.9, -2.2), Color3.fromRGB(104, 112, 60), M.Grass) end
 	end
@@ -419,7 +433,7 @@ local function spec(prevH)
 		sp.pitch, sp.ovF, Ur = r(24, 28), 3.6, { 0, 0 }
 	end
 	repeat
-		sp.G = 9.5 + 0.5 * rng:NextInteger(0, 4)
+		sp.G = 9.5 + LIFT + 0.5 * rng:NextInteger(0, 4)
 		sp.U = Ur[1] + 0.5 * rng:NextInteger(0, math.floor((Ur[2] - Ur[1]) * 2))
 	until math.abs(sp.G + sp.U - prevH) >= 0.75
 	return sp
@@ -495,7 +509,7 @@ local function grove(x0, x1, s, d0, d1, n, scale0, scale1)
 	for _ = 1, n do
 		local mdl = placeModel(pick(TREES), Wd(r(x0, x1), 0, s * r(d0, d1)) * CFrame.Angles(0, r(0, 2 * math.pi), 0), r(scale0, scale1), Trees)
 		local cf, size = mdl:GetBoundingBox()
-		local cx, reach = ORIGIN:PointToObjectSpace(cf.Position).X, math.max(size.X, size.Z) / 2 + 1
+		local cx, reach = ORIGIN:PointToObjectSpace(cf.Position).X, math.sqrt(size.X ^ 2 + size.Z ^ 2) / 2 + 1 -- any turn
 		for _, span in LOTS_X do
 			if cx + reach > span[1] and cx - reach < span[2] then
 				mdl:Destroy() -- its crown would hang over a lot
@@ -508,14 +522,14 @@ end
 -- street: road, gutters, walkways (ground layers: road 0.2, walkway 0.3, curbs 0.5, plaza 0.25)
 local rx0, rx1 = -395, 350
 local rl, rc = rx1 - rx0, (rx0 + rx1) / 2
-part(Street, "Road", Vector3.new(rl, 0.2, 16), Wd(rc, 0.1, 0), C.road, M.Pavement, { solid = true })
+part(Street, "Road", Vector3.new(rl, 0.2, 2 * (HALF - 8)), Wd(rc, 0.1, 0), C.road, M.Pavement, { solid = true })
 for s = -1, 1, 2 do
-	part(Street, "Curb", Vector3.new(rl, 0.5, 0.5), Wd(rc, 0.25, s * 8.25), C.stone, M.Slate, { solid = true })
-	part(Street, "Water", Vector3.new(rl, 0.12, 1.0), Wd(rc, 0.06, s * 9.0), C.water, M.SmoothPlastic, { solid = true, refl = 0.12 })
-	part(Street, "Curb", Vector3.new(rl, 0.5, 0.5), Wd(rc, 0.25, s * 9.75), C.stone, M.Slate, { solid = true })
-	part(Street, "Walkway", Vector3.new(rl, 0.3, 7.5), Wd(rc, 0.15, s * 13.75), C.walk, M.Slate, { solid = true })
+	part(Street, "Curb", Vector3.new(rl, 0.5, 0.5), Wd(rc, 0.25, s * (HALF - 7.75)), C.stone, M.Slate, { solid = true })
+	part(Street, "Water", Vector3.new(rl, 0.12, 1.0), Wd(rc, 0.06, s * (HALF - 7)), C.water, M.SmoothPlastic, { solid = true, refl = 0.12 })
+	part(Street, "Curb", Vector3.new(rl, 0.5, 0.5), Wd(rc, 0.25, s * (HALF - 6.25)), C.stone, M.Slate, { solid = true })
+	part(Street, "Walkway", Vector3.new(rl, 0.3, 7.5), Wd(rc, 0.15, s * (HALF - 2.25)), C.walk, M.Slate, { solid = true })
 end
-part(Street, "Plaza", Vector3.new(45, 0.25, 48), Wd(372.5, 0.125, 0), C.stoneLt, M.Cobblestone, { solid = true })
+part(Street, "Plaza", Vector3.new(45, 0.25, 2 * HALF + 16), Wd(372.5, 0.125, 0), C.stoneLt, M.Cobblestone, { solid = true })
 
 -- house rows and lots
 local x, nH, nLot = -350, 0, 0
@@ -527,11 +541,12 @@ for _, kind in ROW do
 				local sp = spec(prevH)
 				prevH = sp.G + sp.U
 				nH += 1
+				sp.alt = nH % 2
 				house(Rows, ("House%s%02d"):format(s < 0 and "N" or "S", nH), ORIGIN * CFrame.new(xx + w / 2, 0, s * HALF) * facing(s), w, sp)
 				xx += w
 				task.wait()
 			end
-			grove(x + 5, x + SEG_W - 5, s, 50, 120, 5, 1.4, 2.0)
+			grove(x + 5, x + SEG_W - 5, s, HALF + 34, HALF + 104, 5, 1.4, 2.0)
 		end
 		x += SEG_W
 	else
@@ -547,7 +562,7 @@ for _, kind in ROW do
 			if not TAKEN[side .. nLot] then
 				-- closed shopfront until a player claims the lot: every bay shuttered, no door, noren, lantern or signs
 				local sp = spec(0)
-				sp.doorBay, sp.bays, sp.lantern, sp.sign, sp.bigSign, sp.bench = 0, { "shutter" }, false, nil, nil, false
+				sp.doorBay, sp.bays, sp.lantern, sp.sign, sp.bigSign, sp.bench, sp.alt = 0, { "shutter" }, false, nil, nil, false, 2
 				local m = house(Lots, ("Closed%s%d"):format(side, nLot), ORIGIN * CFrame.new(x + LOT_W / 2, 0, s * HALF) * facing(s), LOT_W, sp)
 				m:SetAttribute("Lot", slot.Name)
 			end
@@ -560,14 +575,14 @@ end
 -- west: village gate (刀鍛冶の里, "swordsmith village") and walls out to the cliffs
 local gx = -372
 for s = -1, 1, 2 do
-	part(Landmarks, "GatePost", Vector3.new(1.6, 14.7, 1.6), Wd(gx, 8.45, s * 13), C.timberDk, M.Wood, { solid = true })
-	part(Landmarks, "GateFoot", Vector3.new(2.4, 0.8, 2.4), Wd(gx, 0.7, s * 13), C.stone, M.Slate, { solid = true })
-	wall(Landmarks, gx, s, 14, 130)
-	grove(-392, -380, s, 22, 125, 4, 1.5, 2.1)
-	grove(-366, -354, s, 22, 125, 4, 1.5, 2.1)
+	part(Landmarks, "GatePost", Vector3.new(1.6, 14.7, 1.6), Wd(gx, 8.45, s * (HALF - 3)), C.timberDk, M.Wood, { solid = true })
+	part(Landmarks, "GateFoot", Vector3.new(2.4, 0.8, 2.4), Wd(gx, 0.7, s * (HALF - 3)), C.stone, M.Slate, { solid = true })
+	wall(Landmarks, gx, s, HALF - 2, HALF + 114)
+	grove(-392, -380, s, HALF + 6, HALF + 109, 4, 1.5, 2.1)
+	grove(-366, -354, s, HALF + 6, HALF + 109, 4, 1.5, 2.1)
 end
-part(Landmarks, "GateBeam", Vector3.new(1.2, 1.0, 28.5), Wd(gx, 11.0, 0), C.timberDk, M.Wood)
-part(Landmarks, "GateLintel", Vector3.new(1.4, 1.3, 31), Wd(gx, 14.6, 0), C.timberDk, M.Wood)
+part(Landmarks, "GateBeam", Vector3.new(1.2, 1.0, 2 * HALF - 3.5), Wd(gx, 11.0, 0), C.timberDk, M.Wood)
+part(Landmarks, "GateLintel", Vector3.new(1.4, 1.3, 2 * HALF - 1), Wd(gx, 14.6, 0), C.timberDk, M.Wood)
 local gateSign = part(Landmarks, "GateSign", Vector3.new(8, 2.2, 0.4), Wd(gx, 12.8, 0) * CFrame.Angles(0, math.pi / 2, 0), C.timberDk, M.Wood)
 label(gateSign, "刀鍛冶の里", C.paper, Enum.NormalId.Front)
 label(gateSign, "刀鍛冶の里", C.paper, Enum.NormalId.Back)
@@ -575,9 +590,9 @@ do
 	local gp, run = rad(28), 2.6
 	for sgn = -1, 1, 2 do
 		local c = Vector3.new(gx + sgn * run / 2, 15.25 + run / 2 * math.tan(gp), 0) + Vector3.new(sgn * math.sin(gp), math.cos(gp), 0) * 0.2
-		part(Landmarks, "GateRoof", Vector3.new(run / math.cos(gp), 0.5, sgn > 0 and 33.08 or 33), ORIGIN * CFrame.new(c) * CFrame.Angles(0, 0, -sgn * gp), C.tileDk, M.ClayRoofTiles)
+		part(Landmarks, "GateRoof", Vector3.new(run / math.cos(gp), 0.5, sgn > 0 and 2 * HALF + 1.08 or 2 * HALF + 1), ORIGIN * CFrame.new(c) * CFrame.Angles(0, 0, -sgn * gp), C.tileDk, M.ClayRoofTiles)
 	end
-	part(Landmarks, "GateRidge", Vector3.new(0.9, 0.6, 33.4), Wd(gx, 15.25 + run * math.tan(gp) + 0.45, 0), C.tileDk, M.ClayRoofTiles)
+	part(Landmarks, "GateRidge", Vector3.new(0.9, 0.6, 2 * HALF + 1.4), Wd(gx, 15.25 + run * math.tan(gp) + 0.45, 0), C.tileDk, M.ClayRoofTiles)
 end
 chochin(Landmarks, Wd(gx, 8.8, 0), C.red)
 
@@ -588,8 +603,8 @@ for s = -1, 1, 2 do
 	cyl(Landmarks, "ToriiFoot", 1.0, 2.0, Wd(tx, 0.75, s * 7.5), C.black)
 	placeModel(SS.Buildings3D.StoneLantern, Wd(366, 0, s * 6), 1.3, Landmarks, 0.25)
 	placeModel(SS.Buildings3D.StoneLantern, Wd(372, 0, s * 6), 1.3, Landmarks, 0.25)
-	placeModel(s < 0 and SS.Village3D.Sakura1 or SS.Village3D.Maple1, Wd(384, 0, s * 17), 1.8, Trees, 0.25)
-	placeModel(SS.Village3D.Pine2, Wd(364, 0, s * 20), 1.6, Trees, 0.25)
+	placeModel(s < 0 and SS.Village3D.Sakura1 or SS.Village3D.Maple1, Wd(384, 0, s * (HALF + 1)), 1.8, Trees, 0.25)
+	placeModel(SS.Village3D.Pine2, Wd(364, 0, s * (HALF + 4)), 1.6, Trees, 0.25)
 end
 part(Landmarks, "Nuki", Vector3.new(0.8, 0.9, 19), Wd(tx, 11.2, 0), C.vermilion)
 part(Landmarks, "Kasagi", Vector3.new(1.3, 0.9, 21.5), Wd(tx, 14.4, 0), C.vermilion)
@@ -601,12 +616,12 @@ part(Landmarks, "ShrineStep", Vector3.new(1.5, 0.9, 7), Wd(375.25, 0.45, 0), C.s
 do
 	local hcf = Wd(378, 1.2, 0) * CFrame.Angles(0, math.pi / 2, 0)
 	house(Landmarks, "Shrine", hcf, 14, {
-		style = "shrine", G = 8.5, U = 0, D = 12, F1 = 1.5, pitch = 32, ovF = 3.4, ovS = 1.5, ridgeH = 1.4,
+		style = "shrine", G = 8.5 + LIFT, U = 0, D = 12, F1 = 1.5, pitch = 32, ovF = 3.4, ovS = 1.5, ridgeH = 1.4,
 		roofCol = C.copper, roofMat = M.Metal, postCol = C.vermilion, groundCol = C.plaster, transomCol = C.plaster,
 		bays = { "lattice" }, paper = true, doorBay = 0,
 	})
-	part(Landmarks, "Shimenawa", Vector3.new(11, 0.8, 0.8), hcf * CFrame.new(0, 7.0, -0.3), C.straw, M.Fabric, { shape = Enum.PartType.Cylinder })
-	for _, sx in { -3, 0, 3 } do part(Landmarks, "Shide", Vector3.new(0.5, 1.2, 0.05), hcf * CFrame.new(sx, 6.0, -0.75), C.plaster) end
+	part(Landmarks, "Shimenawa", Vector3.new(11, 0.8, 0.8), hcf * CFrame.new(0, 7.0 + LIFT, -0.3), C.straw, M.Fabric, { shape = Enum.PartType.Cylinder })
+	for _, sx in { -3, 0, 3 } do part(Landmarks, "Shide", Vector3.new(0.5, 1.2, 0.05), hcf * CFrame.new(sx, 6.0 + LIFT, -0.75), C.plaster) end
 	part(Landmarks, "OfferingBox", Vector3.new(3.4, 1.6, 1.4), hcf * CFrame.new(0, 0.8, -1.4), C.cedar, M.WoodPlanks, { solid = true })
 end
 
@@ -630,7 +645,8 @@ if MOUNTAINS then
 	ring.Parent = village
 end
 -- invisible walls on the inner face line (the cliff mesh itself does not collide)
-for _, b in { { 0, 130, 790, 2 }, { 0, -130, 790, 2 }, { 395, 0, 2, 260 }, { -395, 0, 2, 260 } } do
+local BZ = HALF + 114 -- the bounds keep their place behind the north lots (z -690)
+for _, b in { { 0, BZ, 790, 2 }, { 0, -BZ, 790, 2 }, { 395, 0, 2, 2 * BZ }, { -395, 0, 2, 2 * BZ } } do
 	local wb = part(village, "Bound", Vector3.new(b[3], 80, b[4]), Wd(b[1], 40, b[2]), C.plaster, nil, { solid = true })
 	wb.Transparency = 1
 end

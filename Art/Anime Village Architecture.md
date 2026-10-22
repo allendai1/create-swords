@@ -9,7 +9,7 @@ tags: [concept-art, architecture, village, anime, create-swords]
 
 # Anime Village Architecture
 
-Allen requested Demon Slayer anime-inspired architecture and a town for the game. Generated two matching concepts with the built-in image generation tool: a mountain swordsmith town and an architecture sheet. This extends [[Art/Japanese Village Concept Art]] as a visual exploration, not an approved replacement layout or an implementation.
+Allen requested Demon Slayer anime-inspired architecture and a town for the game. Generated two matching concepts with the built-in image generation tool: a mountain swordsmith town and an architecture sheet. This extends [[Archive/Art/Japanese Village Concept Art]] as a visual exploration, not an approved replacement layout or an implementation.
 
 ## Town atmosphere
 
@@ -39,4 +39,4 @@ Architecture and roof visibility must also support the requested indoor cutaway 
 
 Exact prompts and reference-image usage: [[References/Anime Village/generation-prompts-v1]].
 
-Related: [[Art/Japanese Village Concept Art]] · [[Art/Player Plot Review]] · [[Art/Smithy Redesign]] · [[Design/Game Design Document]] · [[Home]]
+Related: [[Archive/Art/Japanese Village Concept Art]] · [[Archive/Art/Player Plot Review]] · [[Archive/Art/Smithy Redesign]] · [[Design/Game Design Document]] · [[Home]]
