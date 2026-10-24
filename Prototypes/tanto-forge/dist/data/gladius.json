@@ -1,0 +1,66 @@
+{
+  "id": "gladius",
+  "name": "Gladius",
+  "version": 1,
+  "note": "Exploratory draft (2026-10-23), not approved. Western blade: proportions from general knowledge, not measured, slightly exaggerated for readability. Same 12-strike recipe as the Japanese blades. Units are centimetres. Double-edged: ridge at the middle and a thin back (spineThickness), so the back is a second edge; grinding still works on the whole bevel (BladeView `doubleEdged`). Mainz type: slightly waisted, then a long point.",
+  "stations": 64,
+  "tang": { "length": 10, "width": 1.6 },
+  "doubleEdged": true,
+  "spec": {
+    "note": "Roman gladius (Mainz type): about 52 cm, broad, slightly waisted, long triangular point. Not researched.",
+    "nagasa": 52,
+    "sori": -1.77,
+    "motohaba": 5.6
+  },
+  "stages": {
+    "lengthened": {
+      "length": 40.5,
+      "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
+      "spine": [[0, 1.75], [0.92, 1.7], [1, 1.45]],
+      "edge": [[0, -1.75], [0.92, -1.7], [1, -1.45]],
+      "ridge": [[0, 0.5]],
+      "thickness": [[0, 0.95], [1, 0.82]],
+      "edgeThickness": [[0, 0.55]],
+      "spineThickness": [[0, 0.6]]
+    },
+    "preform": {
+      "length": 51.92,
+      "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
+      "spine": [[0, 2.6], [0.7, 2.4], [1, 1]],
+      "edge": [[0, -2.6], [0.7, -2.4], [1, -1]],
+      "ridge": [[0, 0.5]],
+      "thickness": [[0, 0.86], [1, 0.62]],
+      "edgeThickness": [[0, 0.28]],
+      "spineThickness": [[0, 0.32]]
+    },
+    "refined": {
+      "length": 51.92,
+      "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
+      "spine": [[0, 2.8], [0.35, 2.55], [0.6, 2.7], [0.72, 2.55], [0.85, 1.6], [0.95, 0.6], [1, 0.06]],
+      "edge": [[0, -2.8], [0.35, -2.55], [0.6, -2.7], [0.72, -2.55], [0.85, -1.6], [0.95, -0.6], [1, -0.06]],
+      "ridge": [[0, 0.5]],
+      "thickness": [[0, 0.8], [0.7, 0.6], [0.9, 0.4], [1, 0.12]],
+      "edgeThickness": [[0, 0.03]],
+      "spineThickness": [[0, 0.05], [0.7, 0.07], [0.9, 0.1], [1, 0.33]]
+    }
+  },
+  "forgedAllowance": {
+    "note": "The 90% blade is the refined blade plus this subtle excess along the edge, with a duller, thicker edge. Grinding removes exactly this and nothing more.",
+    "edge": 0.14,
+    "edgeThickness": 0.12
+  },
+  "recipe": [
+    { "stage": "lengthen", "u": 0.12, "radius": 0.3, "side": "center", "flip": false, "turn": 0 },
+    { "stage": "lengthen", "u": 0.38, "radius": 0.3, "side": "center", "flip": false, "turn": 6 },
+    { "stage": "lengthen", "u": 0.62, "radius": 0.3, "side": "center", "flip": true, "turn": -5 },
+    { "stage": "lengthen", "u": 0.88, "radius": 0.3, "side": "center", "flip": true, "turn": 4 },
+    { "stage": "taper", "u": 0.2, "radius": 0.32, "side": "edge", "flip": false, "turn": 0 },
+    { "stage": "taper", "u": 0.5, "radius": 0.32, "side": "edge", "flip": false, "turn": -6 },
+    { "stage": "taper", "u": 0.78, "radius": 0.3, "side": "spine", "flip": true, "turn": 5 },
+    { "stage": "taper", "u": 0.95, "radius": 0.25, "side": "edge", "flip": true, "turn": -4 },
+    { "stage": "tip", "u": 0.97, "radius": 0.12, "side": "edge", "flip": false, "turn": 8 },
+    { "stage": "tip", "u": 0.85, "radius": 0.16, "side": "edge", "flip": false, "turn": 4 },
+    { "stage": "tip", "u": 0.55, "radius": 0.32, "side": "edge", "flip": true, "turn": -4 },
+    { "stage": "tip", "u": 0.2, "radius": 0.32, "side": "edge", "flip": true, "turn": 0 }
+  ]
+}

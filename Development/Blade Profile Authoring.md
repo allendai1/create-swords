@@ -89,4 +89,48 @@ Open `editor.html` next to the forge study (link in the study's bottom bar).
 
 Edits stay in the page until copied out. Nothing is saved to the files automatically.
 
+## Western blades (2026-10-23)
+
+Allen: "Lets do 3 western swords, the longsword, falchion, and the gladius". The three profiles are in `dist/data/` and listed in `profiles.json` after the katana. A one-off script wrote them; its numbers are in the table below. Each one fits its length so the measured nagasa matches the spec exactly, and all three pass the shared validation (coverage 0.31, three grinding passes). Like the Japanese blades, they use the katana's 12-strike recipe and edge allowance. None of the numbers are researched; they're from general knowledge, slightly exaggerated for readability.
+
+| | Longsword | Falchion | Gladius |
+|---|---|---|---|
+| Nagasa | 90 cm | 72 cm | 52 cm |
+| Outline | straight, double-edged, 5.0 cm at the base, tapering to 3.2 cm, then an ogive point over the last 15% | straight back, single edge widening from 3.8 to 5.8 cm at 80%, then sweeping up to a point clipped at the back | double-edged, 5.6 cm at the base, waisted to 5.1 cm, back to 5.4 cm, then a long point from 70% (Mainz type) |
+| Section | diamond: ridge at the middle, thin back | ridge 30% from the back, one bevel | diamond, like the longsword |
+| Thickness | 0.75 → 0.5 → 0.12 cm | 0.7 → 0.5 → 0.12 cm | 0.8 → 0.6 → 0.12 cm |
+| Tang | 18 cm | 12 cm | 10 cm |
+| Measured "sori" | −1.27 cm | −1.08 cm | −1.77 cm |
+
+The measured sori is negative only because the catalogue measure follows the back, which narrows toward the point; the blades are straight (no bend).
+
+**Double-edged blades.** The profile field `doubleEdged: true` (longsword, gladius) makes the back a second edge. The ridge sits at 0.5 and the back is about as thin as the edge, and `BladeView` treats every face as a bevel. The whole blade polishes bright, and the Polishing Station can grind it from either side. The 90% allowance is still only on the front edge, as the model can't do otherwise.
+
+The Japanese sections of `BladeData.luau` are unchanged; Studio's copy matched the committed file before the export. One test fails: `blank.json`'s CRLF line endings, which were there before these profiles and aren't related to them.
+
+## Big swords (2026-10-23)
+
+Allen proposed big swords and gave three buster-sword references (`References/buster sword.jfif`, `buster sword 2.jfif`, `buster sword 3.png`). `dist/data/zanbato.json` is the first, listed in `profiles.json` after the gladius. It was written by a one-off script and passes the shared validation (coverage 0.31, four grinding passes).
+
+| | Zanbatō |
+|---|---|
+| Nagasa | 100 cm: 5 studs at 0.05 studs per cm, about 6.4 with a 1.35-stud grip (Allen: "Shrink the Zanbatō blade to about 100 cm so it's around 6.5 studs with the grip"; it was 130 cm, about 8 studs) |
+| Outline | straight single-edged slab, 18.5 cm wide (about 5.4 : 1, read off the references); the back runs straight to the point, and from 82% the edge rises in a straight chisel cut (about 45°) to meet it. Until Allen's "Slanted tip reversed" (2026-10-23) the cut was mirrored, with the point on the edge, as in references 2 and 3; reference 1, which he follows, has it on the back. |
+| Section | ridge 78% of the way to the edge, then one bevel; flat, thick back |
+| Thickness | 1.23 → 1.08 → 0.69 → 0.23 cm |
+| Tang | 26 cm (for a two-handed grip) |
+| Measured "sori" | −0.53 cm (the blade is straight; with the point on the back, the chord nearly follows the back) |
+
+Every shape value in all three stages was scaled by 100/130 from the first draft, so the proportions didn't change. Grinding now takes three passes.
+
+Left out on purpose: the references' two holes (this model can't cut holes, and the holes and bolted collar are what make it Square Enix's Buster Sword).
+
+The shared test "display quality never rounds up to unearned 100%" ground one edge-to-edge pass and expected the blade to be nearly done. That only holds up to about 90 cm, so its setup now grinds until refined. The suite: 155 passed, 1 failed (the old `blank.json` CRLF).
+
+**Exported 2026-10-23** with the Big Sword Stand ([[Sessions/2026-10-23#Big Sword Stand]]): `roblox/BladeData.luau` and Studio's `BladeData` are byte-identical (28,302 bytes; 28,343 after the tip was reversed), and `ForgeCheckSpec` expects seven blueprints. Studio's `ServerStorage.Tests.BladeGolden` still holds only the three Japanese blades; the western export didn't copy it either.
+
+![[References/Big Swords/zanbato-preview-100cm.jpg]]
+
+*Edit-mode preview (`Workspace.ZanbatoPreview`, y = 300): katana (4.9 studs), zanbato with a stand-in collar and grip (6.4 studs), and a 5-stud block for a player. The 130 cm draft is in `zanbato-preview-1.jpg`.*
+
 Related: [[Current Status|Current Status]] · [[Archive/Art/Blade Shaping Study|Blade Shaping Study]] · [[Art/Sword Silhouettes|Sword Silhouettes]]

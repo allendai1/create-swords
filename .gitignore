@@ -12,3 +12,6 @@
 # Python bytecode caches
 __pycache__/
 *.py[cod]
+
+# Reference videos stay local (too large for GitHub)
+*.mp4

@@ -1,0 +1,66 @@
+{
+  "id": "longsword",
+  "name": "Longsword",
+  "version": 1,
+  "note": "Exploratory draft (2026-10-23), not approved. Western blade: proportions from general knowledge, not measured, slightly exaggerated for readability. Same 12-strike recipe as the Japanese blades. Units are centimetres. Double-edged: ridge at the middle and a thin back (spineThickness), so the back is a second edge; grinding still works on the whole bevel (BladeView `doubleEdged`).",
+  "stations": 64,
+  "tang": { "length": 18, "width": 1.6 },
+  "doubleEdged": true,
+  "spec": {
+    "note": "Knightly longsword: about 90 cm, straight, double-edged, tapering to an ogive point. Not researched.",
+    "nagasa": 90,
+    "sori": -1.27,
+    "motohaba": 5
+  },
+  "stages": {
+    "lengthened": {
+      "length": 70.2,
+      "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
+      "spine": [[0, 1.7], [0.92, 1.6], [1, 1.35]],
+      "edge": [[0, -1.7], [0.92, -1.6], [1, -1.35]],
+      "ridge": [[0, 0.5]],
+      "thickness": [[0, 0.95], [1, 0.82]],
+      "edgeThickness": [[0, 0.55]],
+      "spineThickness": [[0, 0.6]]
+    },
+    "preform": {
+      "length": 89.97,
+      "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
+      "spine": [[0, 2.4], [0.85, 1.75], [1, 0.9]],
+      "edge": [[0, -2.4], [0.85, -1.75], [1, -0.9]],
+      "ridge": [[0, 0.5]],
+      "thickness": [[0, 0.86], [1, 0.62]],
+      "edgeThickness": [[0, 0.28]],
+      "spineThickness": [[0, 0.32]]
+    },
+    "refined": {
+      "length": 89.97,
+      "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
+      "spine": [[0, 2.5], [0.5, 2.1], [0.85, 1.6], [0.93, 1.05], [0.98, 0.4], [1, 0.06]],
+      "edge": [[0, -2.5], [0.5, -2.1], [0.85, -1.6], [0.93, -1.05], [0.98, -0.4], [1, -0.06]],
+      "ridge": [[0, 0.5]],
+      "thickness": [[0, 0.75], [0.85, 0.5], [1, 0.12]],
+      "edgeThickness": [[0, 0.03]],
+      "spineThickness": [[0, 0.06], [0.85, 0.09], [1, 0.33]]
+    }
+  },
+  "forgedAllowance": {
+    "note": "The 90% blade is the refined blade plus this subtle excess along the edge, with a duller, thicker edge. Grinding removes exactly this and nothing more.",
+    "edge": 0.14,
+    "edgeThickness": 0.12
+  },
+  "recipe": [
+    { "stage": "lengthen", "u": 0.12, "radius": 0.3, "side": "center", "flip": false, "turn": 0 },
+    { "stage": "lengthen", "u": 0.38, "radius": 0.3, "side": "center", "flip": false, "turn": 6 },
+    { "stage": "lengthen", "u": 0.62, "radius": 0.3, "side": "center", "flip": true, "turn": -5 },
+    { "stage": "lengthen", "u": 0.88, "radius": 0.3, "side": "center", "flip": true, "turn": 4 },
+    { "stage": "taper", "u": 0.2, "radius": 0.32, "side": "edge", "flip": false, "turn": 0 },
+    { "stage": "taper", "u": 0.5, "radius": 0.32, "side": "edge", "flip": false, "turn": -6 },
+    { "stage": "taper", "u": 0.78, "radius": 0.3, "side": "spine", "flip": true, "turn": 5 },
+    { "stage": "taper", "u": 0.95, "radius": 0.25, "side": "edge", "flip": true, "turn": -4 },
+    { "stage": "tip", "u": 0.97, "radius": 0.12, "side": "edge", "flip": false, "turn": 8 },
+    { "stage": "tip", "u": 0.85, "radius": 0.16, "side": "edge", "flip": false, "turn": 4 },
+    { "stage": "tip", "u": 0.55, "radius": 0.32, "side": "edge", "flip": true, "turn": -4 },
+    { "stage": "tip", "u": 0.2, "radius": 0.32, "side": "edge", "flip": true, "turn": 0 }
+  ]
+}

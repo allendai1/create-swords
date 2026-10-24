@@ -244,16 +244,50 @@ Rows marked **superseded/clarified** remain as history. Current clarifications: 
 | 2026-10-22 | **Teaching commissions: visitors, the request board and rewards** | Claude's defaults for the approved sequence. The **Guard Captain** walks in after the first sale and asks for the Iron Wakizashi (90%+, **120 coins**; an Iron Wakizashi sells for about 95). E on him or on the shop's request board accepts and teaches the wakizashi; the sword is handed in at the board through a picker. The **Wandering Swordsman** asks for a Katana of any metal (90%+, **300 coins**) after the wakizashi is delivered and the third shop sale, and teaches it. Requests don't expire: an unaccepted one waits on the board and its visitor comes back next visit. No guaranteed Iron (still the open proposal in [[Design/Core Loop Review]]). Rewards and triggers are tuning knobs. | [[Development/Code Map#First session and saving (2026-10-22)]], [[Sessions/2026-10-22#Roadmap 1–3: build audit, first-session journey and saving]] |
 | 2026-10-22 | **Blueprints are learned; fittings carry a tradition** | Only learned blueprints show at the anvil and can be forged (checked by the server): the tantō from the start, the others when their commission is accepted. Every blueprint and hilt has a tradition, all Japanese for now; the bench only offers, and the server only fits, hilts of the blade's tradition. Fitting milestones stay 0/2/4/7/10/15 swords until playtesting. | [[Development/Code Map#First session and saving (2026-10-22)]] |
 | 2026-10-22 | **Saving: what comes back and how** | Claude's defaults for roadmap 3: session-locked DataStore saves (contents in [[Development/Saving]]). Displayed swords go back on the same holders, rack contents on the racks, upgrades on whichever lot the player gets. An ingot left in a furnace comes back hot; ore rolled but not collected comes back as cold ingots; a blade mid-forge restarts from its still-hot ingot. A lock still in use is waited on for about 30 s, then taken over. A failed load kicks with a rejoin message rather than starting blank. Studio saves to its own store. | [[Development/Saving]], [[Sessions/2026-10-22#Roadmap 1–3: build audit, first-session journey and saving]] |
+| 2026-10-22 | **Employees: visible work, one user per station, station-based unlocks** | Allen's inbox notes, answered: employees play the crafting animation at their station; a station is kept by whoever starts a job there (player or employee) and the other waits; each employee unlocks when its role's second station is bought (furnace operator after Furnace 2, smith after Anvil 2), and the cashier with the Upgraded Store. Design only; employees are roadmap 5. | [[Design/Workshop Growth#Station sharing, unlocks and visible work (confirmed 2026-10-22)]] |
+| 2026-10-22 | **Offers come from the customer, shown as a percentage** | Allen: "the accept/decline of a sale should be a popup from the NPC"; the price "does not need to be shown ... $100 [+20%]". The offer is a bubble over the customer (owner only), the 20 s timer runs wherever you are; it reads "$120 [+20%]" in green above the sword's worth, "$85 [-15%]" in red below, "$100" when equal. Displayed swords have no tag. Claude's defaults: "$" wording, the bubble titled with the sword name. | [[Sessions/2026-10-22#Inbox items resolved]] |
+| 2026-10-22 | **The first request takes any metal** | Allen: the tutorial "may take many rolls" to find Iron; he chose any metal over a supplied ingot or a guaranteed roll. The Guard Captain asks for a Wakizashi (90%+, 120 coins); the id stays `IronWakizashi` for saves. Resolves Core Loop Review refinement 2. | [[Sessions/2026-10-22#Inbox items resolved]] |
+| 2026-10-22 | **Hilt seated by dragging** | Allen: three clicks "doesn't seem very interactive". Drag the hilt along onto the tang in one motion (or hold Space / A / R2); it seats with a clang. Untimed, can't fail; the seat bonus is unchanged. | [[Sessions/2026-10-22#Inbox items resolved]] |
+| 2026-10-22 | **"Workshop open!" after Ore Slot 2** | Allen: after Ore Slot 2 "no indication of whats next". A short banner and confetti when it's bought after the first request. | [[Sessions/2026-10-22#Inbox items resolved]] |
+| 2026-10-22 | **Gems, daily streak and the Gem Shop** | Allen: daily rewards "should give gems ... used to buy shop upgrades you can't get in the physical shop". Gems are saved; a daily 7-day streak that never resets gives 5, 5, 10, 10, 15, 15, 30; the Gem Shop (button on the left) sells Better Advertising (25/60/120: walk-ins 12–22 → 6–12 s) and More Clients (40/100: 2 → 4 at once). VIP clients later. Prices and amounts are Claude's defaults. | [[Sessions/2026-10-22#Inbox items resolved]] |
+| 2026-10-22 | **Villagers, NPC collisions, markers, hotbar gap, anvil chart** | From Allen's inbox: 5 villagers stroll the street's centre; customers and villagers don't collide with players; the + markers sit centred on each holder, unclipped, within 9 studs; the hotbar has a clear gap; the anvil chart is redrawn so both outlines share one frame and read as the sword. | [[Sessions/2026-10-22#Inbox items resolved]] |
 | 2026-10-22 | **Gamepad controls for the core loop** | From the build audit: R2 strikes and B leaves the anvil; Y buys on an upgrade pad; Y accepts and L2 declines an offer card (the buttons say "(Y)" and "(L2)" on a gamepad; X stays the prompts' key, and a pad's Buy (Y) wins over the card while you stand on it); R1/L1 cycle the hotbar through the bar and then the bag. Polishing still has no gamepad input. | [[Sessions/2026-10-22#Roadmap 1–3: build audit, first-session journey and saving]] |
+| 2026-10-22 | **Take back with E** | Allen: "The F to take back on the sword holder clashes with the E GUI to put on sale." Take back is E too; only the nearest of a holder's prompts shows. | [[Sessions/2026-10-22#Second inbox list]] |
+| 2026-10-22 | **The wall racks become the sword shelf** | Allen: the wall rack is "a bit small, leaving the swords tightly packed", and suggested the concept-art shelf. Asked, he chose to replace all four wall racks with it, same prices and 3 swords each. Claude's defaults: 6.7 wide, tiers 2 studs apart, swords on two cradles, mon on the crest. | [[Sessions/2026-10-22#Second inbox list]] |
+| 2026-10-22 | **The Upgraded Store looks grand** | Allen: the upgrade "doesn't seem rewarding enough"; asked what it should give, "The upgraded shop should feel more grand compared to the default." Visual only, no new mechanics. Claude's defaults: beams, lanterns, shelf lamps, mon banners, a tatami platform with a gold screen, runner, bonsai and chests inside; a gold-framed signboard, lanterns and nobori outside. | [[Sessions/2026-10-22#Second inbox list]] |
+| 2026-10-22 | **Block mountains** | Allen: "could we try to just do rectangular blocks as mountains". The terrain hills and peaks are replaced by stepped stacks of boxes (grass, then rock, pale caps on the tallest) in the same ring, the west still open. | [[Sessions/2026-10-22#Second inbox list]] |
+| 2026-10-22 | **Earth street with a stone centre path, stone kept to compare** | Allen: "The roads look ugly." Offered earth with a stone centre path, tidy cut stone, or plain earth, he answered "1 and 2". Both are built behind a `ROAD_STYLE` switch; earth is live until he picks. | [[Sessions/2026-10-22#Second inbox list]] |
+| 2026-10-22 | **Friends as customers and villagers** | Allen: "Could we have the roaming customers and also customers be people from our friends list?" Approved default: a shop's customers wear the avatars and display names of the owner's Roblox friends, street villagers those of anyone in the server; random looks fill in. Claude's defaults: never the same friend twice at once, friends in the server skipped, villagers swapped only out of sight, commission visitors unchanged. | [[Sessions/2026-10-22#Second inbox list]] |
+| 2026-10-22 | **Collection book: blade × metal** | Allen: a book of swords unlocked and still to unlock, "might be a lot of variations?" Approved default: 39 entries (13 metals × tantō, wakizashi, katana), silhouettes until made, polished and etched as badges, saved. Etch patterns and hilts are not separate entries. This is the first part of the Material Index; discovery feedback for new metals is still to do. | [[Sessions/2026-10-22#Second inbox list]] |
+| 2026-10-22 | **Shelf refinements** | Allen: remove the sakura decoration; the holder "skews to the left"; + markers "in between the left and right holders"; a short sword like the tantō should still rest on the holder; the front piece "less tall … the blade should be the highlight". No mon on the crest; cradles even about the middle; a low front lip; cradles close in under short swords. Supersedes "mon on the crest" in the shelf row above. | [[Sessions/2026-10-22#Refinements]] |
+| 2026-10-22 | **Allen's SwordTable replaces the display table** | Allen: "I imported a SwordTable. I want to use that in replace of our current one. Wire up the swords to be on it", and he likes its bevelled edges. Claude's defaults: wood with brass corner caps; the three stands turned to run along the table, one behind another on its middle (Allen: "have them aligned in the middle"; replaces Claude's first diagonal row), so customers see the blades' faces, not their edges (Allen confirmed: "Keep the stands turned along the table"); same prices and holder paths. Supersedes the 2026-10-20 sword-stand table. | [[Sessions/2026-10-22#Refinements]] |
+| 2026-10-22 | **No NPC name tags; offer bubble by proximity** | Allen: "names should not be shown on the NPCs"; the offer GUI "is visible from anywhere. It should be based on proximity"; timer on the name's row, top right; no "They love it". Claude's default: the bubble shows within 35 studs of the camera. Friends still wear their avatars, without names. | [[Sessions/2026-10-22#Refinements]] |
+| 2026-10-22 | **Stations told apart by tools, walls and signs** | Allen's Refinement list: enlarge each station's main tool, station-specific wall racks/shelves/tools/sample swords, three overhead signs or banners in the wooden architecture, dividers only if still alike. Claude's defaults: a hilt vise and big tsuba, a wide stone on a bed and a bucket, a chisel case and andon; kanban signs with kanji and English name on arms from the band beam; no dividers. | [[Sessions/2026-10-22#Station refinements]] |
+| 2026-10-22 | **A held sword goes straight on the holder** | Allen: "if I'm holding a sword and I press a slot it automatically goes in without me selecting, same if I press E." The picker opens only when your hands are empty. | [[Sessions/2026-10-22#Holding a sword puts it straight on a holder]] |
+| 2026-10-22 | **Ceiling fades with the roof** | Allen: "I can see the beams and the lights while the roof is invisible." The Upgraded Store's tie beams and hanging lanterns fade with the roof and their lights go out. | [[Sessions/2026-10-22#Refinements]] |
+| 2026-10-22 | **Manual etching parked** | Allen: "is there a way to have players be able to manually etch their sword following the guide?" Not picked for now. Proposed default for later: trace the guide line with mouse or finger, hold Space / A to let it etch itself, no accuracy score. | [[Random thoughts]] |
+| 2026-10-22 | **Stylized anvil: integrated metal base** | Allen's brief for the Blender anvil: follow the reference sheet's horn, face and waist, but leave out its stone blocks, wooden pedestal, gold trim and emblem; the body flares into four metal feet. Built as `Models/Stations/AnvilV2`, not yet in the game. | [[Sessions/2026-10-22#Stylized anvil (Blender)]] |
+| 2026-10-22 | **Genshin-style look under test** | Allen wants a Genshin-inspired look (smooth geometry, hand-painted textures, soft painterly shading, vibrant colours). Built as a switchable test on the live map (`build_style_test` "on"/"off"): lighting, painted MaterialVariants, livelier colours, one smooth tree, one softened house. Not adopted yet; Allen judges it in Play. Roblox has no custom shaders, so toon shading is out of reach. | [[Sessions/2026-10-22#Genshin-style look test]] |
+| 2026-10-22 | **Genshin style rolled out** | Allen: "Roll the Genshin style out across the village: smooth trees for the pines and bamboo, rounded mountains, a painted sky, and the other houses and plot softened." Claude's defaults: buildings softened in place (round posts, ridges and fascias, rolled eaves, Inazuma blue-violet on dark-grey roofs); a cloud-pruned pine for Pine1, a tiered soft conifer for Pine2, broadleaf maples and sakura, a smooth bamboo clump; one rounded hill or peak per block stack; stations, displays, pads, shrubs and rocks unchanged; still switchable. Sky: Allen's own Toolbox skybox replaces the painted one. Supersedes "Genshin-style look under test" and the block mountains' look. | [[Sessions/2026-10-22#Genshin style rolled out]] |
+| 2026-10-22 | **No smooth trees or rounded mountains** | Allen: "Remove all the trees and mountains you added, they're hideous." The low-poly trees, bamboo and block mountains stay; the rest of the Genshin style (lighting, painted materials, colours, softened buildings, his Toolbox sky) stays on. Supersedes the nature and mountain parts of "Genshin style rolled out". | [[Sessions/2026-10-22#Smooth trees and mountains removed]] |
+| 2026-10-22 | **No trees, shrubs or scattered rocks for now** | Allen: "remove all the trees, we'll add them in later" and "Remove all the bushes and rocks you have randomly placed". Every tree (village, shrine, hills, planters), shrub and scattered rock is off the map, kept in `ServerStorage.Legacy`; trees come back later in a look still to choose. Supersedes the trees, shrubs and rocks of the 2026-10-22 atmosphere pass. | [[Sessions/2026-10-22#All trees, shrubs and rocks cleared]] |
+| 2026-10-22 | **FreeStylized textures for the village** | Allen picked FreeStylized (free, commercial use allowed) and approved Claude's picks: Ground_02 earth, Ground_Stones_01 paving, Concrete_Wall_01 plaster, Stones_Wall_02 wall bases, Wood_10 timber, Wood_02 dark timber, Wood_11 planks, in the Paint* variants. They replace the procedurally painted tiles except the roof. | [[Sessions/2026-10-22#FreeStylized textures swapped in]] |
+| 2026-10-22 | **Shop holds only what the game uses** | Allen: "remove the extras in the shop not related to the game"; he picked the tansu chests, the counter with its props and the Upgraded Store's grand decor (kept in `ServerStorage.Legacy.ShopExtras_removed`). The Upgraded Store keeps its upper storey, gold-framed signboard and wall lamps. Supersedes the decor of "The Upgraded Store looks grand". | [[Sessions/2026-10-22#Shop extras removed, black hilt wrap]] |
+| 2026-10-22 | **Black hilt wrap** | Allen: "make the handle/wrapping black instead of the leather its at currently". Wooden, Leather, Iron and Bronze hilts wrap black; Gold (red) and Gem (purple) keep theirs. | [[Sessions/2026-10-22#Shop extras removed, black hilt wrap]] |
+| 2026-10-22 | **Fantasy anvil** | Allen: "can we replace our anvil with te fantasy_anvil i put in". His model replaces the anvil body; it stands on its own pedestal on the floor stone, without the stump, so its face stays near the old working height (3.46 vs 3.28). | [[Sessions/2026-10-22#Fantasy anvil]] |
+| 2026-10-22 | **Blades shine with polish** | Allen: "Is there a way to make the swords shinier?", then "do all of them". Metal reflections back on (environment specular 1); metal blades use matte, half and mirror steel by polish level, so polishing visibly pays off; a fully polished blade sparkles now and then. Stone and Obsidian keep their looks; picker art stays matte. | [[Sessions/2026-10-22#Shinier swords]] |
+| 2026-10-22 | **Shop in Autumn Terracotta** | Allen compared five palettes on the lots and picked "autumn terracotta": terracotta roof, dark timber, warm slats, cream plaster, deep green noren on the shop and workshop. The village houses keep their blue-violet roofs. | [[Sessions/2026-10-22#Autumn Terracotta picked]] |
 
 ## Current open design work
+
+Consolidated with live numbers and recommendations on 2026-10-23: [[Design/Alignment Review — 2026-10-23#Decisions waiting]].
 
 - Review [[Design/Core Loop Review|Core Loop Review]]: first-session flow, picker clarity, heating pace, sales interruptions, and polishing incentive.
 - Tune circle count, polishing duration/feedback, Japanese blueprint prices, fittings milestones, and visitor unlocks.
 - Define the letter interface, storage, and exact customer taste matching. Commission delivery is through a sword picker.
 - Choose specific special characters and their requests.
 - Tune the five initial employee roles and later ore attendant: starting quality, levels, speed, finisher polish ceilings, hiring and worker-count limits; reconcile the older 90% worker/recovery model with 100% player forging and the separate polish bonus; define data/value rules before implementation. Hilting and polishing share the finisher role. Define paid recipe-training scope, ownership and costs.
-- Define courier order rules, timers, capacity, rewards and persistence; retain direct commission hand-in.
+- ~~Define courier order rules, timers, capacity, rewards and persistence~~ — decided and built 2026-10-22 ([[#Deliveries, bright shop, nameplate, icons — 2026-10-22]]); tune the numbers after play.
 - Tune weather traffic bonuses/scheduling and the implemented roof fade/cutaway transitions. Pottery comparison values remain unapproved balance.
 
 ## Roadmap brainstorming decisions — 2026-10-22
@@ -270,3 +304,174 @@ Rows marked **superseded/clarified** remain as history. Current clarifications: 
 - **First employee revised — sword crafter:** Allen selected a worker who operates the anvil, polishes and puts the sword in its rack. This supersedes the first-hire smith/finisher separation and makes the earlier five-role count provisional. Hilt assembly responsibility and input supply need clarification before finalizing the combined job; polishing remains on assembled swords.
 
 These are design decisions, not implementation claims. See [[Design/Workshop Growth#Wealth and staged automation (confirmed 2026-10-22)]] and [[Development/Roadmap]]. Claude is working on roadmap sections 1–3; this discussion refines later progression.
+
+## Core loop additions — 2026-10-22
+
+Allen picked rotating requests, reputation, Faster Heating / Lucky Roller, a coins/gems HUD, a sword complete card and NEW metal discovery. Claude's defaults, all tuning knobs ([[Sessions/2026-10-22#Core loop: requests, reputation, heat/luck, HUD, reward card]]):
+
+- **Orders open after the first commission** (the Iron Wakizashi hand-in), 2 on the board, 3 from reputation 3. A twist's station must be bought before it is asked for. Reward ≈ 1.5× the least fitting sword's shop value, +5% per reputation level, plus 1–3 gems. No expiry and no skip for now.
+- **Reputation never drops** (cozy: no penalty for declining offers). Points 1 / 3 / 5 for sale / order / commission; 8 levels. Effects now: walk-ins and the third order; special visitors later.
+- **Faster Heating and Lucky Roller have three tiers each** (the GDD listed Lucky Roller I–V); luck multiplies all non-Common odds and Common takes the rest.
+- **The HUD shows coins and reputation beside the gem button; the reward card waits for station cameras to close** and shows the gain from the step just done (not a value breakdown).
+
+## The sword crafter — 2026-10-23
+
+Allen's answers: the crafter fits the best hilt you've unlocked; takes cold ingots from the Ingot Rack and heats them at a free furnace; starts at 70% and levels to 100%. Claude's defaults, all tuning knobs: Anvil 2 1,500 after the Ingot Rack; hire 1,000; training tantō 200 / wakizashi 600 / katana 1,500, only for shapes you've made; +3% a level, a level every 3 swords; forge 30 → 15 s, polish 10 → 5 s; cheapest ingot first; it always polishes fully when the station is bought and free; it fits hilts at Anvil 2, not the Hilt Bench; its swords don't count toward hilt milestones; below 80% the value multiplier floors at ×1.0. Resolves the crafter's open hilt and input questions in [[Design/Workshop Growth#First employee — sword crafter (latest decision, 2026-10-22)]]. [[Sessions/2026-10-23#The sword crafter (first employee)]]
+
+## Strong-glow etchings — 2026-10-23
+
+Allen picked the strongest of three rendered looks: thicker strokes, whitened cores, a wide coloured halo on the dark etch body, so every metal's marks read (Blue Steel, Obsidian and Starmetal included). Accepted cost: about 2.3× the build time, built over frames on world swords; colours sit closer together. [[Sessions/2026-10-23#Etchings that pop (strong glow)]]
+
+## Deliveries, bright shop, nameplate, icons — 2026-10-22
+
+- **Deliveries follow Create Pottery!'s window** (Allen's two screenshots): Orders and Cart tabs, Bulk and Special orders with Skip, Capacity and Speed bought in the window (not on pads), the four-step trip tracker, the order pinned on screen. Claude's numbers, all tuning knobs: Delivery Cart 1,200 coins after Ore Slot 2; capacity 3–6 crates; trips 2:30 → 1:10; pay ≈ request pay × count × 1.1, one reputation per sword. One order at a time; offers don't expire; cancel before sending returns the swords; trips finish offline (server clock). Courier capacity is the order size limit. Supersedes the open delivery rules in [[Design/Workshop Growth#Optional remote delivery orders]].
+- **Bright shop:** roofs cast no shadow into the shop, a pale floor and soft unshadowed lamps; toned down once at Allen's request.
+- **Plot nameplate:** avatar bust and "<name>'s Plot" high over every claimed plot.
+- **Icons come from VectorIcons' decals for now** ([[Art/Icon Library]]).
+
+## Economy pass 1 — 2026-10-23
+
+Allen took decisions 1–3 of [[Design/Alignment Review — 2026-10-23#Decisions waiting]] as recommended ([[Sessions/2026-10-23#Economy pass 1]]):
+
+- **One new board order every ~3 minutes** while the board has room, instead of an instant refill. Claude's defaults: the board still opens full after the first commission; the clock runs on the server clock and is saved, so the board fills while you're away; a new reputation slot waits its turn; a dimmed "New order · in m:ss" card shows when the next one comes.
+- **Orders pay 1.2× the handed-in sword's value; deliveries 1.3× the packed swords' value.** Supersedes the flat estimates (about 1.5× a middling sword plus 5% a reputation level; for deliveries that × count × 1.1). Claude's defaults: the board card says "+20% value" and the picker shows each sword's pay; a delivery card shows "+30%" until something is packed, then the coins.
+- **Polish multiplies the whole value by 1.10.** Supersedes "+10% value" added to the other finish bonuses (2026-10-20). The "+10% value" texts stay, now exact.
+- **The cart pays 1.1× the packed swords' value** (decision 20, the same day). At 1.3×, with only the trip as a limit, the cart beat the shop's average first offer for every sword; 1.1× sits above a first offer and below a patient or liked sale. Supersedes the 1.3× above. [[Sessions/2026-10-23#Cart pay lowered to 1.1×]]
+
+## Refinements 2 — 2026-10-23
+
+Allen's [[Refinements2]] notes and two additions made during the work ([[Sessions/2026-10-23#Refinements 2]]):
+
+- **A HUD menu of icon buttons** (VectorIcons): Shop, Charts for the store upgrades "for now" (replacing the gem icon on that button), a gift for the daily reward, a sword for the collection book (replacing the book), a crew button once an employee is hired (Friends icon) and Settings. Claude's defaults: a 3-across grid under the coin, reputation and gem counters; gems become a counter like coins.
+- **The Shop button opens a Robux shop, empty for now** (Allen picked it over pointing it at the Gem Shop): the window says "Coming soon" until gem packs or passes exist.
+- **Settings: Music and Sound on/off, saved with progress** (Allen's pick over volume sliders or an empty window).
+- **Hiring the crafter is a tycoon pad** ("Buy Worker … instead of opening GUI"): Sword Crafter, 1,000 coins, after Anvil 2, on Anvil 2's spot. Supersedes the window's Hire card.
+- **Two more display tables in the Upgraded Store:** Claude's prices 900 and 1,300, chained after Display Table 2, mirroring Tables 1 and 2 on the right side.
+- **The delivery door is there from the start, shut**, and the Delivery Cart slides it open; the pad keeps its timing (after Ore Slot 2).
+- **The finishing stations stand apart** (3 studs between counters), and the etching wall shows three real etched swords instead of a part-built prop.
+- **Studio's Reset progress starts over in place** instead of kicking; the Dev panel sits bottom right and folds away.
+- **No "Take back" label** on a holder with your sword; pads sink in when stepped on.
+
+## Refinements 2, second list — 2026-10-23
+
+Allen rewrote [[Refinements2]] with a new list and answered questions on it ([[Sessions/2026-10-23#Refinements 2, second list]]):
+
+- **Requests come by mail; no visitors, no request board.** "remove the concept of the visitors with their requests. i want the requests to come through mail. for example, we can have a mail button. when clicked it opens your inbox with mail from various people that wanted something. when you have what they're looking for, you can submit in the UI to them and get your reward." Allen took the recommended follow-ups: **every order is mail too** (the request board is removed; same 3-minute clock, pay and gems) and the tutorial goes **letter, then pad** (after the first sale the Guard Captain's letter arrives; the guide says open your mail, then buy the Wakizashi Blueprint, then hand it in from the mail, then Ore Slot 2). Supersedes the in-person teaching commissions and the board (2026-10-19, 2026-10-22).
+- **Blueprints are tycoon pads:** "the different swords you get are earned by just buying them through the tycoon pads." Wakizashi Blueprint 60, Katana Blueprint 400 after it (Allen picked 60 / 400 over 150 / 1,000). Claude's defaults: one pad spot by the anvil; letters no longer teach; a blueprint learned from an older commission counts its pad as bought; Studio's Skip tutorial no longer teaches blueprints.
+- **Crew window: the full Create Pottery! set** (roster, stats, station page), with **one crafter working at Anvil 2** (Allen picked it over adding Anvils 3–4). Taise is the first crafter's name "for now"; an overhead role, name and level in that order; no "Need ingots" bubble (it stands idle); slow walking; the hammer held right.
+- **The ore roller moves to the left wall, by the Ingot Rack** (out of the back corner).
+- **Station windows hide the rest of the HUD** and bring it back when closed.
+- **Workshop racks use the shop holders' icon markers.**
+- **Someone pulls the delivery cart**, out and back, seen coming home as the timer ends.
+
+## More refinements — 2026-10-23
+
+Allen's [[More refinements]] notes and answers ([[Sessions/2026-10-23#More refinements]]):
+
+- **A station the crafter is using, or heading to, is blocked for you:** "an employee is using something, we shouldnt be able to use it. also if employee is on the way to sue something, it should also be blocked." Claude's defaults: covers the Ingot Rack, furnaces, the Polishing Station and the Finished Sword Rack; the crafter only takes a furnace with nothing heating in it; it gives the full sword rack back while waiting for room.
+- **The cart is the quick, sure sale; the shop pays more:** "delivery means you get guarantee cash and its quicker to dump a bunch of swords into it to get money quick, but store means people are going to usually pay more." Allen picked **0.8× the swords' value** (over 0.9× and 1.0×) and **a bigger cart where a Bulk Order takes any sword** (over bigger with named shapes, or sizes unchanged). Claude's defaults: Capacity 6 / 9 / 12 / 15, Special Orders 2–4 swords, bulk gems 1 + count ÷ 3. Supersedes the 1.1× above.
+- **Parking bays, as rickshaws:** "in the clay game, there's also a concept of parking spaces. upgrading parking space means more cars can pull in and means more customers." Allen picked **rickshaws** (over horses at hitching posts and ox carts) and **keeping More Clients, the bays adding to it** (over replacing it). Claude's defaults: three bays on the street in front of the shop, Rickshaw Bay 1 (500, after Display Table 1) → 2 (1,500) → 3 (4,000); customers beyond More Clients' count come by rickshaw.
+- **NPCs walk at 6** ("in the clay game, npcs have a walk speed of 6"): customers and villagers. Claude's default: the crafters keep their roster walk speeds.
+- **Ingots on the shelf look like ingots:** a bevelled trapezoid bar mesh, also used for the carried ingot and picker cards.
+- **"Katana Sword", not "Katana Blueprint"**, on the pads (and "Wakizashi Sword").
+
+## Urgency phase 1 — 2026-10-23
+
+Allen asked for stage 1 of [[Design/Workshop Urgency Recommendations]] with Claude making the implementation choices ([[Sessions/2026-10-23#Urgency phase 1: cues, crew status, 45 s offers]]):
+
+- **Regular offers last 45 s** (was 20), as the brief's starting value; prices and haggling stay on the card at the customer. Playtest: an anvil visit plus the walk to the shop takes about 35 s, so 45 s fits it; hand polishing is unmeasured.
+- **Four quiet cue sounds, each with a visual twin:** furnace ready (ding; the ingot glows and "Ready!" shows through walls), a new customer's offer (one bell; a coin and the seconds left over a customer you're too far from, no price), a sale (coins; the existing notice and "+N"), the cart back (a rattle; the pinned order's green "Ready!"). In `SoundService.Effects.Cues`, muted by Settings' Sound switch, one per 1.5 s per kind; none for the crafter's own steps or a same-customer raise. Claude's picks from the ProSoundEffects library, unheard; Allen to judge by ear.
+- **A waiting customer's card comes 1.5 s after the last one closed** (playtest: it replaced the old card in the same instant).
+- **The crew window explains the crafter:** what it is doing, or why it waits (no shape, no sword rack, rack full, no ingots, no free furnace, you polishing), on its roster card and Stats panel, amber while waiting, with a dot on the HUD's crew button. Keeps the no-speech-bubbles decision (Refinements2).
+- **Overlapping work is taught once, after the tutorial** (Ore Slot 2 bought): "Heat the next ingot first" while you hold a hot ingot or a bare blade with a cold ingot and a free furnace, until you do it. Not saved (can return once a session, never after 10 swords).
+
+## Urgency phase 2 — 2026-10-23
+
+Allen asked for the recommended next changes; Claude built stage 2 of [[Design/Workshop Urgency Recommendations]] and made these choices (all easy to undo; not played) ([[Sessions/2026-10-23#Urgency phase 2: the crafter's furnace and your forgotten ingot]]):
+
+- **Anvil 2 needs the Ingot Rack, Furnace 2 and the Finished Sword Rack** (was the Ingot Rack only), so a working crafter always has its own furnace, input and output. Plots that already own Anvil 2 or the crafter keep them.
+- **A ready ingot you leave in a furnace for 10 s may be taken out by the crafter when it needs that furnace;** it goes into your hands, still hot, with one notice. Chosen over reserving a furnace for the crafter (that would leave you one) and over waiting (what phase 1 found blocked it most).
+- **Buffers unchanged** until play shows a need (rack 6 ≈ 7 min of crafter output, Ingot Rack 12 ≈ 14 min; the Ingot Rack became 6 later the same day at Allen's request, about 7 min). **Protecting special metals from the crafter** stays open until it's designed; the crafter still takes the cheapest ingot first.
+
+## Racks, ingots, NPC walking — 2026-10-23
+
+Allen's list ([[Sessions/2026-10-23#Racks split, one ingot model, NPC walking, no offer ping]]):
+
+- **Workshop racks: store and take apart.** The + opens only what you can store; clicking or tapping an item on the rack takes it (the bag still opens a take-only list).
+- **One ingot model everywhere:** the ore box's ingot, at its size, on the rack, in hand and on cards.
+- **Ingot Rack holds 6** full-size ingots (was 12 small ones). Older saves with more keep them.
+- **The coin-and-seconds ping over far customers is removed** (reverses that part of urgency phase 1; the bell stays).
+- **NPCs path round furniture and walk without stutter** (crafter everywhere, customers inside the shop).
+- **A marker per rack slot** (later the same day, Allen: "it should be 6 to hold the 6 ingots"): bags take, + stores; and the crafter polishes standing, arm out, not lunging ([[Sessions/2026-10-23#Ingot grip, a marker per rack slot, polishing pose]]).
+- **Station pickers show only swords you can use there** (Allen: "they should just not be be shown"): polished swords at polishing, etched at etching, and non-fitting swords for deliveries and mail are left out, not greyed ([[Sessions/2026-10-23#Pickers show only swords you can use]]).
+
+## Sword-shaping experiment — 2026-10-23
+
+An isolated prototype ([[Prototypes/sword-shaping/README]], [[Sessions/2026-10-23#Sword-shaping prototype (experiment)]]) to test whether choosing where to hammer, turning the blade and correcting its shape is worth doing by hand for rare materials. **Not approved as a replacement for current forging**; whether to keep exploring it is open.
+
+- **Rules being tested:** edge up narrows, flat widens; the player chooses any spot; no prescribed strike order; overshoot allowed; length and curve fixed for now.
+- **Score:** Shape match from the finished shape only, separate from quality and value. Allen: "any way we can be more generous about the accuracy matching?" → within **0.08 cm** of the line counts as perfect, which puts 100% in reach with full strikes. Craftsmanship bonuses and crafter ceilings stay later decisions.
+
+## Metal textures — 2026-10-23
+
+Allen: "Im looking for a way we can either generate custom materials for our game or use free online assets. That way we're not just using a solid color for all of our ingots/swords", then "Try" ([[Sessions/2026-10-23#Metal textures on ingots and blades]]).
+
+- **One shared, tinted surface instead of one texture per metal:** near-white maps that the metal's colour tints, as the Genshin-style Paint variants do. Ingots are hammered; blades go forged → brushed → mirror with their polish (the existing BladeShine levels).
+- **Generated with numpy, not Material Maker:** the Material Maker MCP needs Godot 4.7 and a Material Maker checkout and is alpha; it is kept in mind for the few metals that want their own pattern (Damascus, Starmetal, Rainbow Alloy). Free CC0 sets (ambientCG, Poly Haven) are an option too but look realistic.
+
+## New metals and a Secret tier — 2026-10-23
+
+Allen: "Implement some of these" (from the metal brainstorm, [[Design/Metal Ideas]]). Picked by me, one per tier, to try each way of adding a metal ([[Sessions/2026-10-23#New metals]]):
+
+- **Pewter** (Common), **Rose Gold** (Uncommon), **Jade** (Rare, glass like Obsidian): tint only.
+- **Dragonsteel** (Legendary): its own scale texture.
+- **Watermelon** in a new **Secret** rarity: ×25 value, 0.1% (taken from Common), red rarity colour. Proposed numbers; Allen to confirm. Joke metals go here.
+- Adding a metal dilutes the others in its tier (Iron, Copper and Stone each 15% instead of 20%).
+- **Etches keep a textured metal visible** (Allen: "Yes ideally the texture stays visible"): on Dragonsteel and Watermelon an etch draws only its band or marks, with no dark body. Dragonsteel's etch colour became gold so it reads on red scales ([[Sessions/2026-10-23#Etches on textured metals]]).
+- **30 metals** (Allen: "I want to have around 30 different metals/ingots in the game"): twelve more, picked by me from [[Design/Metal Ideas]] and spread 5 / 6 / 6 / 5 / 5 / 3 over Common to Secret. Cheap looks first (Roblox materials: Glass gems, Ice, Marble, CrackedLava, Neon, Cardboard, Rubber). Each tier's odds stay; its metals share them ([[Sessions/2026-10-23#Thirty metals]]).
+- **The collection book shows metals, not swords** (Allen: "instead of every sword combination in the book, i think it makes more sense to just have every material you've discovered. we can just use the ingot"): one card per metal with its ingot as an image, not a 3D viewport; metals not yet collected are dark ingot silhouettes ("they should just be dark or greyed out ingot silhouettes"). The blade × metal records stay in the save, unused ([[Sessions/2026-10-23#Collection book: one ingot per metal]]).
+
+## Blueprint shapes — 2026-10-23
+
+- **New blueprints must look different.** Allen: more Japanese variants (tachi, nodachi, ō-kissaki…) are "a bit redundant, they look very similar". Next blueprints are picked for clearly different outlines (length class, width profile, curve, point), not more katana-like Japanese blades. Which ones, and in what order, is still open: [[Design/Sword Profile Ideas#Suggested order]]. ([[Sessions/2026-10-23#More sword shapes]])
+- **Three western swords: longsword, falchion, gladius** (Allen: "Lets do 3 western swords, the longsword, falchion, and the gladius, along with their respective hilts"). They're bought on the blueprint pad after the Katana Sword: Longsword 1,000 → Falchion 2,000 → Gladius 3,500 coins, with base prices 160 / 220 / 280. Prices, stars and order are my placeholders until the economy pass. Each has its own hilt model ([[Sessions/2026-10-23#Western swords and automatic hilts]]).
+- **Hilts are fitted automatically, not chosen** (Allen: "instead of having players choose their hilts, when they go to the hilt station, the correct hilt is automatically applied.. so japanese swords have a japanese hilt, and western swords have their respective hilts. no need to choose"). The blueprint decides the hilt's shape: the katana hilt for Japanese blades, each western blade its own. The six tiers (Wooden … Gem, unlocked at 0/2/4/7/10/15 swords, +0 to +40%) stay and only colour it; the bench always fits the best tier unlocked. This supersedes "Fittings match each sword tradition … choose fittings" (2026-10-19) and the tradition check from 2026-10-22.
+- **Every etch is see-through** (Allen: "lets do the see through etch on every metal like we do with dragonsteel and watermlon"): an etch draws only its band or marks, in the metal's etch colour, over the blade's own metal; no dark body on any metal. Swords etched before are drawn the same way. The etched guard keeps a dark iron centre ([[Sessions/2026-10-23#See-through etch on every metal]]).
+
+## Furnace model — 2026-10-23
+
+- **Allen's smelting furnace replaces the old furnace model** (Allen: "can we replace our current furnace with this"), for both furnaces, at the old furnace's height. The door's vents glow while an ingot heats ([[Sessions/2026-10-23#Smelting furnace replaces the furnace model]]).
+
+## Sword slashes — 2026-10-23
+
+- **Clicking with a held sword swings a slash combo, looks only** (Allen: "players can click and it does slashes. it doesn't need to do damage, just the animations"). It's a four-slash combo, one slash per click (Allen first asked for three: "clicking once would play the first slash, 2nd time, 2nd slash, and 3rd time for final slash"; then, after a recording, "maybe we can separate into 4 different slashes?"), cut from the `Sword Slashes` combo in `Workspace["Sword Animations"]`. Wait too long between clicks and it starts over. There's no hit detection or damage. Combat stays out of scope ([[Sessions/2026-10-23#Sword slashes on click]]).
+
+## Big swords — 2026-10-23
+
+- **Big swords are a category** (Allen: "the big swords would require you to purchase a standing big sword rack and it only holds one. they can sell for a lot"). The first is the **Zanbatō**, 100 cm (Allen: "Shrink the Zanbatō blade to about 100 cm so it's around 6.5 studs with the grip").
+- **Claude's defaults, to tune:** the Big Sword Stand costs 2,500 and comes after the Upgraded Store; it stands by the back wall, left of the workshop door; the sword stands upright, blade up. The Zanbatō is ★5 at 1,000 coins base with the katana's hilt for now, and it has no blueprint pad yet. Big swords go only on the stand and nothing else goes there ([[Sessions/2026-10-23#Big Sword Stand]]).
+- **The Zanbatō's point is on the back** (Allen chose "Slanted tip reversed"): the back runs straight to the point and the chisel cut slopes down to the edge, as in the first buster-sword reference ([[Sessions/2026-10-23#Zanbatō tip reversed]]).
+
+## Refinements 3 — 2026-10-24
+
+From [[Refinements3]] ([[Sessions/2026-10-24#Refinements 3]]).
+
+- **Merge Ore Slots, a rebirth for the ore box only** (Allen: "once you get 6 rollers, you can actually merge so that rare clay turns up more often and you get back a single roller and new ones cost more. it goes from 1x to 1.5x. Its basically a rebirth"; then "Repeatable, gentler prices"). Free, repeatable: Ore Slots 2–6 reset, luck ×(1 + 0.5 per merge) on top of Lucky Roller, Ore Slot prices ×1.5 per merge. Coins, upgrades and everything else stay. This is the one exception to "no rebirth/prestige reset" (2026-10-22), which otherwise stands.
+- **Luck keeps paying past the old ceiling** (Claude): the rarer tiers take their luck-multiplied odds from the rarest down while every tier below keeps at least 10%, so each merge still raises rare ore. Unchanged below luck ~2.24.
+- **Spin the ore box as often as you like** (Allen: "Players should be able to spin the ores as many times as they want"). Supersedes "collect before rolling again" (2026-10-22). Ore still waiting goes into your hands first; what doesn't fit is rolled over.
+- **Deliveries: you choose the swords** (Allen: "once i accept a delivery. it should show a page that i can then choose which swords to fill into the delivery. look at the clay game reference"): a packing page after Accept, with Auto-Fill (cheapest first), Cancel Order and Fill the Crate. Swords leave your inventory only when the crate is filled.
+- **Reputation shows only in the Deliveries window** (Allen chose "Delivery window only"): no star/level pill on the HUD. **The pinned order is off by default**, with a Pin toggle (Allen: "just have it in the delivery window, not visible by default").
+- **Mail orders arrive 3 to 10 minutes apart at random, with no countdown** (Allen: "Should be no 'new order in 3 minutes' text. The orders should actually be randomized, with a minimum of 3 minutes to say 10 minutes"). Supersedes "one new order every 3 minutes" (2026-10-23).
+- **Left HUD: just the icons**, no plates (Allen: "Remove the background on left UIs so its just the icons"); **the gem shop button is the House icon**.
+- **Fewer words:** "Sold X for Y" with no buyer's name; no "(Polished)" in sword names; no "back in your inventory" (and no "on display", same rule); toolbox swords say the blade ("Katana") with the metal small underneath (Allen chose "Metal, small"); no "1x".
+- **A held cold ingot goes straight into the furnace**; closing the anvil's picker leaves the anvil.
+- **A second Finished Sword Rack** (Allen chose "Second rack" over a bigger one): 600, after the first.
+- **New employees, one person per role, each hired on a pad** (Allen: "Implement a Stocker Employee, and cashier employee", "shop promoter … would act as a stat increaser for pulling more people", "sword etcher … in the settings you choose what etch you want him to do. would require a second sword etching station"; then "A pad each"). Supersedes "no automated etcher is selected" (Workshop Growth).
+  - **Stocker:** rack → empty shop holders (Allen chose this over also restocking ingots).
+  - **Cashier:** sells at or above a % over value that you set on a slider (Allen's rule, quoted in the session note); below it he declines and the customer may raise. Your first two sales stay yours.
+  - **Shop Promoter:** walk-ins sooner and one more customer at once (Claude's default for "stat increaser").
+  - **Sword Etcher:** works only at Etching Table 2, the pattern picked on his crew page; the Stocker leaves un-etched swords for him.
+  - Placeholders to tune (Claude): prices Stocker 2,000 / Cashier 3,000 / Promoter 1,500 / Etching Table 2 2,500 / Etcher 2,000; names Sora, Aki, Kaito, Yume; a level every 5 jobs to Lv. 11, one perk each.
+- **Air, a new Epic metal** (Allen: "an airsword that is part transparent?"; then "Epic"): see-through glass blade, solid ingot.
+- **Rainbow Alloy gets an original rainbow texture** (Allen: "use the rainbow texture i added"; then "Make my own"): his `rainbow.webp` is a watermarked stock preview, so it isn't used.
+- **The middle lots line up with the street** (Allen: "The shop building is misaligned with the actual street"): N2 and S2 no longer stand 8 studs back as a junction.

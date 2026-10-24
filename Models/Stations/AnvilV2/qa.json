@@ -1,0 +1,105 @@
+{
+  "triangles": 10000,
+  "cage_faces": 542,
+  "size_studs": [
+    4.402,
+    1.958,
+    2.3
+  ],
+  "x_range": [
+    -2.602,
+    1.8
+  ],
+  "qa": {
+    "ok": true,
+    "pass": true,
+    "errors": [],
+    "warnings": [],
+    "ground_z": 0.0,
+    "zfighting": [],
+    "floating": [],
+    "back_to_back": [],
+    "enclosed": [],
+    "objects": {
+      "AnvilV2": {
+        "verts": 5002,
+        "faces": 10000,
+        "tris": 10000,
+        "ngons": 0,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "wire_edges": 0,
+        "loose_verts": 0,
+        "degenerate_faces": 0,
+        "zero_length_edges": 0,
+        "inconsistent_normals_edges": 0,
+        "duplicate_verts": 0,
+        "islands": 1,
+        "inside_out_islands": 0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "materials": 1,
+        "uv_maps": 1,
+        "uv_oob_pct": 0.0,
+        "uv_zero_area_faces": 0,
+        "uv_overlap_pct": 0.0,
+        "uv_coverage_pct": 58.4
+      }
+    }
+  },
+  "renders": [
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\AnvilV2\\review\\anvil_v2_front_three_quarter.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\AnvilV2\\review\\anvil_v2_rear_three_quarter.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\AnvilV2\\review\\anvil_v2_left.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\AnvilV2\\review\\anvil_v2_right.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\AnvilV2\\review\\anvil_v2_front.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\AnvilV2\\review\\anvil_v2_back.png",
+    "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\AnvilV2\\review\\anvil_v2_top.png"
+  ],
+  "export_roblox": {
+    "ok": true,
+    "preset": "roblox",
+    "format": "fbx",
+    "files": [
+      {
+        "file": "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\AnvilV2\\AnvilV2.fbx",
+        "ok": true,
+        "kb": 1182.2,
+        "objects": [
+          "AnvilV2"
+        ]
+      }
+    ],
+    "warnings": []
+  },
+  "export_roblox_gltf": {
+    "ok": true,
+    "preset": "roblox_gltf",
+    "format": "gltf",
+    "files": [
+      {
+        "file": "C:\\Users\\Allen\\Documents\\Create Swords!\\Models\\Stations\\AnvilV2\\AnvilV2.glb",
+        "ok": true,
+        "kb": 1070.9,
+        "objects": [
+          "AnvilV2"
+        ],
+        "summary": {
+          "nodes": 1,
+          "meshes": 1,
+          "materials": 1,
+          "images": 1,
+          "animations": 0,
+          "skins": 0,
+          "tris": 10000,
+          "extensions": [],
+          "animation_names": []
+        }
+      }
+    ],
+    "warnings": []
+  }
+}

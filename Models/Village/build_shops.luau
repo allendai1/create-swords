@@ -10,7 +10,9 @@
 -- face the entrance").
 -- Rebuilds Shop.Starter.Shell and Shop.Upgraded.Shell (the shop room; they swap on the Upgraded Store pad) and sets
 -- their Floor and InsideZone, and rebuilds Plot.Workshop (front wall with the door, workshop walls, floor, roof) and
--- Yard.ShopFront. A model this script didn't build goes to Legacy instead.
+-- Yard.ShopFront. A model this script didn't build goes to Legacy instead. The Upgraded Store's grand decor (2026-10-22)
+-- was removed the same day (Allen: "remove the extras in the shop not related to the game"); it is in
+-- ServerStorage.Legacy.ShopExtras_removed.Upgraded_Grand.
 -- Stations, displays and pads are placed by hand or by build_workshop.luau (the workshop's furniture and layout, run
 -- after this script); this script only builds the building.
 -- Workspace.Plot in lot N2 is the template every player's plot is copied from (PlotService, vault: Design/Six Plots).
@@ -62,6 +64,7 @@ local C = {
 	interior = Color3.fromRGB(30, 22, 18),
 	pot = Color3.fromRGB(160, 92, 62),
 	pipe = Color3.fromRGB(150, 94, 60),
+	gold = Color3.fromRGB(198, 156, 72),
 }
 
 -- part / cyl / ball / glow / label / chochin: as in build_street.luau
@@ -122,12 +125,12 @@ local function label(p, text, col, vertical)
 	t.Parent = g
 	g.Parent = p
 end
-local function chochin(parent, cf, col)
+local function chochin(parent, cf, col, range) -- range 0: no light
 	local b = cyl(parent, "Chochin", 1.9, 1.5, cf, col)
 	cyl(parent, "ChochinCap", 0.22, 1.0, cf * CFrame.new(0, 1.03, 0), C.black)
 	cyl(parent, "ChochinCap", 0.22, 1.0, cf * CFrame.new(0, -1.03, 0), C.black)
 	part(parent, "Cord", Vector3.new(0.08, 1.0, 0.08), cf * CFrame.new(0, 1.6, 0), C.black)
-	glow(b, 12)
+	if range ~= 0 then glow(b, range or 12) end
 end
 
 local L = function(x, y, z) return SHOP_CF * CFrame.new(x, y, z) end
@@ -350,7 +353,7 @@ local function shopRoom(model, U)
 			[("%.2f,%.2f"):format(-XS, back)] = true, [("%.2f,%.2f"):format(XS, back)] = true,
 		},
 	})
-	commissionBoard(shell, back - T / 2)
+	-- no request board since 2026-10-23: letters and orders come by mail (MailController)
 	local H = G + U
 	if U > 0 then
 		-- kura upper storey: black plaster block, shuttered windows, hachimaki band, pent roof with the signboard
@@ -380,8 +383,12 @@ local function shopRoom(model, U)
 		end
 		part(roof, "Gutter", Vector3.new(2 * HW - 0.2, 0.35, 0.35), L(0, yLo - 0.45, zLo + 0.05), C.pipe, M.Metal, { shape = Enum.PartType.Cylinder })
 		cyl(roof, "Downpipe", yLo - 0.75, 0.3, L(-(HW - 0.6), 0.3 + (yLo - 0.75) / 2, zLo + 0.05), C.pipe, M.Metal)
-		local kanban = part(roof, "Kanban", Vector3.new(12, 2.0, 0.35), L(0, G + 2.5, F1 - 1.3), C.timberDk, M.Wood)
-		label(kanban, "刀鍛冶", C.paper)
+		-- a bigger signboard in a gold frame (Allen 2026-10-22: "more grand"); its top stays under the upper windows' surrounds
+		local kanban = part(roof, "Kanban", Vector3.new(17, 2.2, 0.35), L(0, G + 2.4, F1 - 1.3), C.timberDk, M.Wood)
+		label(kanban, "刀鍛冶", C.gold)
+		for _, e in { { 0, 1.1, 17.24, 0.14 }, { 0, -1.1, 17.24, 0.14 }, { 8.55, 0, 0.14, 2.06 }, { -8.55, 0, 0.14, 2.06 } } do
+			part(roof, "KanbanFrame", Vector3.new(e[3], e[4], 0.08), L(e[1], G + 2.4 + e[2], F1 - 1.49), C.gold, M.Metal)
+		end
 		mainRoof(roof, { front = F1, D = SZ, H = H, pitch = 26, ovF = 2.6, ovB = 0.2, ovS = 0.6, ridgeH = 1.8, oni = true, roofCol = C.tileDk, gableCol = C.kuroPl })
 		for sgn = -1, 1, 2 do chochin(shell, L(sgn * 9, G - 1.6, -2.4), C.red) end
 	else

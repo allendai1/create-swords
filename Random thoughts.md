@@ -12,18 +12,10 @@ Single inbox for new ideas. Confirmed behavior belongs in [[Design/Game Design D
 
 ## Ideas still to resolve
 
-- Give the level more polish and atmosphere while preserving the chosen simplified map.
-- Employees should visibly create swords using the relevant crafting animation.
-- Players and employees should not use the same station simultaneously; settle assignment and priority rules.
-- Consider unlocking each employee when the corresponding second station is bought, such as a furnace operator after Furnace 2 or a smith after a second anvil.
-- Consider making the cashier available after the shop upgrade.
-- The + icons next to racks are on the left side when it should be in the middle. they should be spaced out better. they also collide with things around it, causing parts to be chopped off. they should only be visible when close, i shouldnt be able to see them once i walk away.
-- needs to be a small gap between inventory items/toolbar items
-- the accept/decline of a sale should be a popup from the NPC, not as a popup just on the bottom right of our screen
-- NPCs should be non-collidable with player
-- Random NPCs walking the street would be a nice detail touch.
-- Need to establish Daily Rewards
-- Price of the sword on display rack does not need to be shown. we just need to know how much the player gets for example $100 [+20%] on the gui, so it shows how extra they're getting compared to how much it's worth. so in this case, 100 is how much it's worth x 1.20.
+- is there a way to have players be able to manually etch their sword following the guide? *(Parked 2026-10-22. Proposed default when picked up: trace the guide line with mouse or finger, hold Space / A to let it etch itself, no accuracy score; [[Design/Decisions Log]].)*
+- Pick the street style: earth with a stone centre path (live) or tidy cut stone. Both are built behind `ROAD_STYLE` in `build_simple` ([[Sessions/2026-10-22#Second inbox list]]).
+
+The rest of the second 2026-10-22 list was answered and built: [[Sessions/2026-10-22#Second inbox list]].
 
 ## Organized elsewhere
 
@@ -31,4 +23,6 @@ Single inbox for new ideas. Confirmed behavior belongs in [[Design/Game Design D
 - Later capped offline workshop earnings and one-time employee costs/no wages: [[Design/Workshop Growth#Later capped offline earnings (confirmed 2026-10-22)]]. Direction selected; cap, rate and material rules still need design.
 - Current inventory/hotbar/backpack: [[Art/UI Design]]. The old custom-inventory idea is implemented.
 - Loot-box presentation, collecting before reroll, delivery-bay space, animated etching and the faster first sword are recorded as built in [[Current Status]]. Original quick notes: [[Archive/Design/Completed quick thoughts — 2026-10-22]].
+- Employee station sharing and unlocks (confirmed 2026-10-22): [[Design/Workshop Growth#Station sharing, unlocks and visible work (confirmed 2026-10-22)]]. Original wording of the 2026-10-22 list: [[Archive/Design/Completed quick thoughts — 2026-10-22#Resolved inbox list (2026-10-22)]]; of the second list: [[Archive/Design/Completed quick thoughts — 2026-10-22#Second inbox list (2026-10-22)]].
 - Earlier original wording: [[Archive/Design/Random thoughts before growth alignment — 2026-10-19]].
+- Urgency, from Allen's Create Pottery! play notes (2026-10-23): [[Building urgency in the game]] and [[Design/Urgency Review]] (proposals P1–P8 waiting); original wording in [[Archive/Design/Building urgency — original thoughts — 2026-10-23]].

@@ -1,0 +1,66 @@
+{
+  "id": "zanbato",
+  "name": "Zanbatō",
+  "version": 1,
+  "doubleEdged": false,
+  "note": "Exploratory draft (2026-10-23), not approved. First big sword: a two-handed slab as tall as the player, straight single edge, chisel point: the back runs straight to the point and the cut slopes from it down to the edge. Silhouette inspired by Allen's buster-sword references (References/buster sword*), without their two holes or bolted collar. Same 12-strike recipe as the other blades. Units are centimetres.",
+  "stations": 64,
+  "tang": { "length": 26, "width": 3 },
+  "spec": {
+    "note": "Not researched: proportions read off the references (about 5.4 : 1 long to wide), scaled to 100 cm (Allen 2026-10-23: about 6.5 studs with the grip).",
+    "nagasa": 100,
+    "sori": -0.5299,
+    "motohaba": 18.462
+  },
+  "stages": {
+    "lengthened": {
+      "length": 77,
+      "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
+      "spine": [[0, 4.615], [0.92, 4.769], [1, 4.154]],
+      "edge": [[0, -4.615], [0.92, -4.769], [1, -4.154]],
+      "ridge": [[0, 0.85]],
+      "thickness": [[0, 1.692], [1, 1.538]],
+      "edgeThickness": [[0, 1.077]],
+      "spineThickness": [[0, 1.654]]
+    },
+    "preform": {
+      "length": 99.9986,
+      "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
+      "spine": [[0, 8.077], [0.95, 8.308], [1, 7.692]],
+      "edge": [[0, -8.077], [0.8, -8.077], [1, 6.154]],
+      "ridge": [[0, 0.7]],
+      "thickness": [[0, 1.462], [1, 1.077]],
+      "edgeThickness": [[0, 0.385]],
+      "spineThickness": [[0, 1.423]]
+    },
+    "refined": {
+      "length": 99.9986,
+      "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
+      "spine": [[0, 9.231], [0.985, 9.231], [1, 8.923]],
+      "edge": [[0, -9.231], [0.82, -9.231], [0.865, -4.808], [0.91, -0.385], [0.955, 4.038], [1, 8.462]],
+      "ridge": [[0, 0.78]],
+      "thickness": [[0, 1.231], [0.8, 1.077], [0.97, 0.692], [1, 0.231]],
+      "edgeThickness": [[0, 0.05]],
+      "spineThickness": [[0, 1.231]]
+    }
+  },
+  "forgedAllowance": {
+    "note": "The 90% blade is the refined blade plus this subtle excess along the edge, with a duller, thicker edge. Grinding removes exactly this and nothing more.",
+    "edge": 0.14,
+    "edgeThickness": 0.12
+  },
+  "recipe": [
+    { "stage": "lengthen", "u": 0.12, "radius": 0.3, "side": "center", "flip": false, "turn": 0 },
+    { "stage": "lengthen", "u": 0.38, "radius": 0.3, "side": "center", "flip": false, "turn": 6 },
+    { "stage": "lengthen", "u": 0.62, "radius": 0.3, "side": "center", "flip": true, "turn": -5 },
+    { "stage": "lengthen", "u": 0.88, "radius": 0.3, "side": "center", "flip": true, "turn": 4 },
+    { "stage": "taper", "u": 0.2, "radius": 0.32, "side": "edge", "flip": false, "turn": 0 },
+    { "stage": "taper", "u": 0.5, "radius": 0.32, "side": "edge", "flip": false, "turn": -6 },
+    { "stage": "taper", "u": 0.78, "radius": 0.3, "side": "spine", "flip": true, "turn": 5 },
+    { "stage": "taper", "u": 0.95, "radius": 0.25, "side": "edge", "flip": true, "turn": -4 },
+    { "stage": "tip", "u": 0.97, "radius": 0.12, "side": "edge", "flip": false, "turn": 8 },
+    { "stage": "tip", "u": 0.85, "radius": 0.16, "side": "edge", "flip": false, "turn": 4 },
+    { "stage": "tip", "u": 0.55, "radius": 0.32, "side": "edge", "flip": true, "turn": -4 },
+    { "stage": "tip", "u": 0.2, "radius": 0.32, "side": "edge", "flip": true, "turn": 0 }
+  ]
+}

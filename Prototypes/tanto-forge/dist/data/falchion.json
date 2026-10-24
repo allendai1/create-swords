@@ -1,0 +1,65 @@
+{
+  "id": "falchion",
+  "name": "Falchion",
+  "version": 1,
+  "note": "Exploratory draft (2026-10-23), not approved. Western blade: proportions from general knowledge, not measured, slightly exaggerated for readability. Same 12-strike recipe as the Japanese blades. Units are centimetres. Single edge that widens toward the point like a cleaver, with the back clipped down to the tip.",
+  "stations": 64,
+  "tang": { "length": 12, "width": 1.6 },
+  "spec": {
+    "note": "Cleaver-like falchion (Conyers type): straight back, edge widening to about 6.5 cm before the point (exaggerated for readability). Not researched.",
+    "nagasa": 72,
+    "sori": -1,
+    "motohaba": 3.6
+  },
+  "stages": {
+    "lengthened": {
+      "length": 56.2,
+      "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
+      "spine": [[0, 1.6], [0.92, 1.65], [1, 1.4]],
+      "edge": [[0, -1.6], [0.92, -1.65], [1, -1.4]],
+      "ridge": [[0, 0.85]],
+      "thickness": [[0, 0.95], [1, 0.82]],
+      "edgeThickness": [[0, 0.55]],
+      "spineThickness": [[0, 0.92]]
+    },
+    "preform": {
+      "length": 71.99,
+      "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
+      "spine": [[0, 1.8], [1, 1.2]],
+      "edge": [[0, -1.8], [0.8, -3.8], [1, -0.8]],
+      "ridge": [[0, 0.4]],
+      "thickness": [[0, 0.86], [1, 0.62]],
+      "edgeThickness": [[0, 0.28]],
+      "spineThickness": [[0, 0.85]]
+    },
+    "refined": {
+      "length": 71.99,
+      "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
+      "spine": [[0, 1.8], [0.75, 1.8], [0.88, 1.65], [0.96, 1.15], [1, 0.6]],
+      "edge": [[0, -1.8], [0.3, -2.5], [0.6, -3.8], [0.8, -4.7], [0.88, -4.3], [0.94, -2.9], [0.98, -1.1], [1, 0.5]],
+      "ridge": [[0, 0.3]],
+      "thickness": [[0, 0.7], [0.8, 0.5], [0.95, 0.35], [1, 0.12]],
+      "edgeThickness": [[0, 0.03]],
+      "spineThickness": [[0, 0.75]]
+    }
+  },
+  "forgedAllowance": {
+    "note": "The 90% blade is the refined blade plus this subtle excess along the edge, with a duller, thicker edge. Grinding removes exactly this and nothing more.",
+    "edge": 0.14,
+    "edgeThickness": 0.12
+  },
+  "recipe": [
+    { "stage": "lengthen", "u": 0.12, "radius": 0.3, "side": "center", "flip": false, "turn": 0 },
+    { "stage": "lengthen", "u": 0.38, "radius": 0.3, "side": "center", "flip": false, "turn": 6 },
+    { "stage": "lengthen", "u": 0.62, "radius": 0.3, "side": "center", "flip": true, "turn": -5 },
+    { "stage": "lengthen", "u": 0.88, "radius": 0.3, "side": "center", "flip": true, "turn": 4 },
+    { "stage": "taper", "u": 0.2, "radius": 0.32, "side": "edge", "flip": false, "turn": 0 },
+    { "stage": "taper", "u": 0.5, "radius": 0.32, "side": "edge", "flip": false, "turn": -6 },
+    { "stage": "taper", "u": 0.78, "radius": 0.3, "side": "spine", "flip": true, "turn": 5 },
+    { "stage": "taper", "u": 0.95, "radius": 0.25, "side": "edge", "flip": true, "turn": -4 },
+    { "stage": "tip", "u": 0.97, "radius": 0.12, "side": "edge", "flip": false, "turn": 8 },
+    { "stage": "tip", "u": 0.85, "radius": 0.16, "side": "edge", "flip": false, "turn": 4 },
+    { "stage": "tip", "u": 0.55, "radius": 0.32, "side": "edge", "flip": true, "turn": -4 },
+    { "stage": "tip", "u": 0.2, "radius": 0.32, "side": "edge", "flip": true, "turn": 0 }
+  ]
+}

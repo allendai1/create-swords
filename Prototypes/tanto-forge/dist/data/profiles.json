@@ -3,6 +3,10 @@
   "profiles": [
     { "id": "tanto", "file": "tanto.json" },
     { "id": "wakizashi", "file": "wakizashi.json" },
-    { "id": "katana", "file": "katana.json" }
+    { "id": "katana", "file": "katana.json" },
+    { "id": "longsword", "file": "longsword.json" },
+    { "id": "falchion", "file": "falchion.json" },
+    { "id": "gladius", "file": "gladius.json" },
+    { "id": "zanbato", "file": "zanbato.json" }
   ]
 }

@@ -21,4 +21,6 @@ These are full-sword visual concepts. The anvil's shaping target would use the b
 
 Created with the built-in image generation tool. Full prompt: [[References/Sword Silhouettes/generation-prompt-v1]].
 
+More shapes (Japanese, Western, other and fictional, with editor fit): [[Design/Sword Profile Ideas|Sword Profile Ideas]].
+
 Related: [[Home]] · [[Design/Game Design Document|Game Design Document]] · [[Archive/Player Plot Concept Art|Player Plot Concept Art]]

@@ -2,7 +2,7 @@
 title: Animated Blade Etching
 type: design-handoff
 status: v1 built 2026-10-21 (Eclipse + Flame playback); the other five patterns built 2026-10-22; Edit-mode checks pass; playtest pending
-updated: 2026-10-22
+updated: 2026-10-23
 tags: [etching, blades, implementation, handoff]
 ---
 
@@ -316,6 +316,10 @@ All five were built on 2026-10-22 in these stroke orders; see **Five more patter
 - [x] Update the build evidence in Code Map/Roadmap and the relevant session note. Separate actual Studio/device checks from unrun cases. No publishing is part of this handoff.
 
 Useful small automated checks: path-to-surface mapping at base/middle/tip; clamped monotonic progress; exact final-mask agreement; pen-up travel drawing nothing; cache-key separation; session cleanup and stale-response handling. Use the existing project test/probe setup where available.
+
+## Strong glow (2026-10-23)
+
+Stroked marks are drawn 1.7× wider, with a core lifted toward white and a 0.24 cm halo of the metal's colour over the dark body, so they read on every metal. Stroke pieces are 0.25 cm. Details, cost and renders: [[Sessions/2026-10-23#Etchings that pop (strong glow)]].
 
 ## API references
 

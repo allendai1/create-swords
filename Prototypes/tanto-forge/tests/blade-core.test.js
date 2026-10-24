@@ -156,7 +156,8 @@ function suite() {
 
   test('display quality never rounds up to unearned 100%', () => {
     let s = forgedState();
-    for (let u = 0; u <= 1.0001; u += 0.01) s = core.applyGrind(blade, s, u, 0.5);
+    // Long blades need several passes (see the edge-to-edge test), so grind until done.
+    while (!core.isRefined(blade, s)) for (let u = 0; u <= 1.0001; u += 0.01) s = core.applyGrind(blade, s, u, 0.5);
     s.refinement[N - 1] = 0.98;
     assert.ok(core.quality(blade, s) > 99.9);
     assert.strictEqual(core.displayQuality(blade, s), 99);

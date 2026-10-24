@@ -3,7 +3,7 @@ title: UI Design
 status: in progress
 tags: [ui, figma, create-swords]
 type: "art"
-updated: "2026-10-22"
+updated: "2026-10-24"
 ---
 
 # UI Design
@@ -77,7 +77,36 @@ Built on 2026-10-18 as the shared `ItemPicker` module ([[Development/Code Map|Co
 - The forge timer label isn't AlwaysOnTop (Studio's capture couldn't show it that way); it floats 4.6 studs up so it clears your head.
 - Phone (under 500 px tall): one row of compact cards, centred below the Roblox top bar.
 
-Related: [[Home]] · [[Design/Game Design Document|Game Design Document]] · [[Development/Code Map|Code Map]]
+**2026-10-22:** coins/reputation HUD and gem button use VectorIcons ([[Art/Icon Library]]); the Deliveries window follows Create Pottery!'s ([[Sessions/2026-10-22#Deliveries]]); a holder you can pick up from shows the bag icon ([[Sessions/2026-10-22#Pick-up marker]]). Earned coins pop up mid-screen and fly into the coin pill ([[Sessions/2026-10-22#Coins fly to the balance]]).
+
+**2026-10-23, editable in Studio:** every screen everyone sees now lives in `StarterGui` (pickers, coins/reputation, hotbar and bag, Gem Shop and daily reward, collection book, Deliveries, reward card, guide, polish/etch/hilt-seat HUDs, the offer bubble), so it can be restyled in Studio's UI editor; repeated pieces are in each GUI's hidden `Templates` frame (turn its `Visible` on to edit them). In Edit only what a new player sees at join shows: the coins and reputation pills, the gem button and the book button. Map: [[Development/Code Map#Client controllers and interface]]. Polish applied with it:
+- **Feel:** buttons and cards pop under the cursor or finger (1.04 hover, 0.94 held); windows rise 16 px as they open; things you can't do yet (locked cards, unaffordable Gem Shop and cart upgrades, Deliveries' Accept/Pack/Send while unavailable) get a dark veil and shake when tapped.
+- **Phone (844×390):** windows scale to the screen but never below 0.7 (Deliveries was shrinking to 0.45), and long content scrolls instead; tap targets are at least 44 px. On touch the hotbar shows as many stacks as fit left of the jump button (6 + bag at 844×390); the rest sit at the front of the bag. The pinned delivery order moved off hotbar slot 1 into the left HUD stack.
+- **Numbers:** amounts have thousands commas; a coin amount on its own shows the coin icon (the offer bubble's "$4514" is now coin + "4,514").
+- **Type and colour:** Gotham (`GothamSSm`) everywhere, Bold for titles, names, chips and buttons, Medium for hints; close rings identical; toast green is the sage `#7FA65A`.
+- **Controls:** Q and Backspace close a picker as well as gamepad B; D-pad left no longer opens the Gem Shop over another window.
+
+**2026-10-23, HUD menu** ([[Sessions/2026-10-23#Refinements 2]]): the left edge is the reputation, coin and gem counters (gems no longer a button), then a 3-across grid of 44 px icon buttons in the counters' style, VectorIcons ([[Art/Icon Library]]): **Shop** (an empty Robux shop for now), **Charts** (the Gem Shop's store upgrades; the House icon since 2026-10-24), **gift** (daily reward, with the amber dot), **sword** (collection book), **crew** (the sword crafter's window, once hired) and **Settings** (Music and Sound switches). Shop and Settings windows match the Gem Shop. The Studio-only Dev panel sits bottom right behind a "Dev" button. This supersedes "the gem button and the book button" above.
+
+**2026-10-23, mail, crew window, the HUD stepping aside** ([[Sessions/2026-10-23#Refinements 2, second list]]): a **Mail** button (Scroll icon) is first in the menu; its inbox is a Gem Shop-style window of rows (sender, New tag, the sword wanted, coin/gem reward, a green Hand in that is veiled and shakes when nothing fits) and a "New order in m:ss" row (removed 2026-10-24; an empty inbox now says "No mail"). The **crew window** follows Create Pottery!'s three screens: a roster of crafter cards (stars, role, name, trait, Quality and Forge Time bars with ▲/▼ against the one at work, price or Lvl + XP or a lock), a stats page (rows, portrait, XP bar) and "Where should <name> work?". While a station HUD or any window is up, the counters, menu, hotbar, guide line and pinned order hide and come back on close (`HudFocus`). The workshop racks show the shop holders' + and bag markers instead of Roblox's prompt box.
+
+**2026-10-24, the left HUD is just icons** ([[Sessions/2026-10-24#Refinements 3]]): Allen: "Remove the background on left UIs so its just the icons." The menu buttons, the coin and gem counters and the pinned order have no plate or border; their numbers have a dark outline (2 px, RGB 43, 28, 19); icons are 38 px (were 30) in the 44 px buttons. A gamepad's selection still shows an amber edge. The Gem Shop button is the **House** icon ([[Art/Icon Library]]). The reputation (star/level) pill is hidden; reputation shows only as "Rank N" in the Deliveries header. The pinned order is off by default: **Pin** on the packing page or on the active order card turns it on for the session. It sits where the reputation pill was, and turns green "Ready!" when the cart is back (text only, no border). This supersedes the plates, the reputation pill and the Charts button above.
+
+**2026-10-24, the delivery packing page:** Allen: "once i accept a delivery. it should show a page that i can then choose which swords to fill into the delivery. look at the clay game reference". Accepting an order opens the packing page in place of the Orders list, after Create Pottery!'s; the trip tracker stays below.
+- **Top:** order chips (Bulk/Special, town, Pin), the pay, what it wants, "Tap swords to pack them".
+- **Crate:** one slot per sword (64 px grid; up to 15 wrap onto two rows).
+- **Your swords:** only the ones that fit, as compact cards (130×150): what the cart pays, art, name, metal chip. Cheapest first.
+- **Buttons:** **Auto-Fill** (cheapest first, keeping your best for the shop), **Cancel Order**, **Fill the Crate** (veiled, and shakes, until every slot is full).
+- Tap a card to pack it and a slot to take it back; a card shakes when the crate is full. On a gamepad the first card is selected. Half-packed crates from old saves show as locked full slots.
+- **Known:** the Pin chip is 44 px tall, about 31 px on a phone (under the 44 px rule); the card prices can add up to 1 off the total (rounding; the total is the real pay); etched swords show no etch on their card art.
+
+**2026-10-24, crew window tabs and staff pages:** with the four new employees ([[Design/Decisions Log#Refinements 3 — 2026-10-24]]) the crew window gets a **tab per hired role**, in a column off the window's left edge (shown from two tabs; the open tab outlined green). The window and its tabs stay centred together, so they fit screens from 660 px wide.
+- **Staff page** (one per employee): the role as the title, portrait, name, Lv and XP bar (n / 5), Obtained, jobs done, the perk (Walk Speed, Answer Time, Walk-in Speed, Etch Time) and the live status line (amber while waiting).
+- **Cashier setting:** a slider, "Sells offers of at least" / "value +10%", −20% to +50% in 5% steps, a mark at +0%. Drag, tap the bar, or d-pad left/right.
+- **Etcher setting:** "Etches <pattern>" and a **Patterns** button. It opens a picker of katana cards, one per pattern; his current one has a green "Etching" chip.
+- The crew button shows once anyone is hired. Its dot lights only when someone waits on you (the crafter out of ingots or rack space, the Etcher without a pattern or a free hook), not for a Stocker who's simply idle.
+
+Related: [[Home]] · [[Design/Game Design Document|Game Design Document]] · [[Development/Code Map|Code Map]] · [[Art/Icon Library]]
 
 ## Hotbar (2026-10-21)
 
@@ -86,7 +115,7 @@ Allen: "can you implement a custom toolbar that replaces roblox's default one. I
 - Built as `StarterPlayerScripts.Hotbar` in place of Roblox's bar:
   - Black slots at 0.45 transparency, square corners, a 2-px black border. The border turns light on the stack in hand.
   - Same layout as the reference, in Gotham Bold.
-- **Stacks:** ingots of the same metal and heat share a slot (`2x`, `3x`); every sword has its own (`1x`).
+- **Stacks:** ingots of the same metal and heat share a slot (`2x`, `3x`); every sword has its own (`1x`). Since 2026-10-24 there is no `1x`: the count shows only from 2x ([[Art/UI Design#Sword titles (2026-10-24)|Sword titles]]).
 - **Controls:** keys 1–9 and 0, a click or a tap equip; again puts it away.
 - **At this early iteration:** the backpack button was absent. The later [[Art/UI Design#Backpack (2026-10-21)|Backpack]] section records its implementation. Gamepad cycling remains to confirm/complete.
 
@@ -107,6 +136,13 @@ Allen: "this website has halftones you can download and then import into studio 
 | band | terry, Terry_Texture_2 | 81226516654110 | rbxassetid://116775024801046 |
 | linear | sinister, halftone | 97661412300159 | rbxassetid://95235950580832 |
 | long | LongWhiteCircle_Halftone | 115475022231464 | rbxassetid://136287015859304 |
+| from centre | `Art/halftonefromcenter.png` (added by Allen 2026-10-23) | — | rbxassetid://120711750535473 |
+| quelly 2 | `Art/quelly2.png` (2026-10-23) | — | rbxassetid://88275800038595 |
+| quelly 4 | `Art/quelly4.png` (2026-10-23) | — | rbxassetid://115124542347724 |
+| quelly 5 | `Art/quelly5.png` (2026-10-23) | — | rbxassetid://95005144131326 |
+| dense tile | generated, staggered dot tile for `ScaleType.Tile` (2026-10-23) | — | rbxassetid://106477061422613 |
+
+The 2026-10-23 four were made white (alpha kept), shrunk to at most 512 px and uploaded as images through Studio. `Art/Terry_Texture_2.png` is the "band" above (already uploaded). Tried on the collection book's cards, `ScaleType.Crop` over the whole card, dark and white at 70% ([[Sessions/2026-10-23#Collection book: one ingot per metal]]).
 
 The three corner and diagonal pieces are densest at their bottom-left; rotate −90° to put the dots in a slot's bottom-right. Clip with a CanvasGroup that has the slot's UICorner.
 
@@ -152,3 +188,12 @@ Allen: "can you implement a backpack so when players have over 9 in their toolba
 ![[References/hotbar-bag-mock.jpg]]
 
 *Mock in Edit with stand-in ingots; the live bar draws the real items.*
+
+### Sword titles (2026-10-24)
+
+From [[Refinements3]] ([[Sessions/2026-10-24#Refinements 3]]): a sword slot says the blade, with the metal small underneath (Allen chose "Metal, small"; his note broke off at "The type can be").
+- **Title:** the blade's name ("Katana"), raised 11 px.
+- **Metal line:** a small label at the slot's bottom (14 px tall, Gotham Bold, scaled 7–12 px, black stroke 1.5). It is tinted by the metal's rarity, lightened 45% toward white: the plain rarity colour almost vanished on a slot already filled with it.
+- **Ingots** keep their full names ("Hot Iron Ingot") and the title's old place, with no metal line.
+- **Count:** only from 2x; a single item shows none.
+- **Known:** the raised title overlaps the bottom 8 px of the art box (only the hilt or tip corner in the diagonal framing); not yet seen with real art.

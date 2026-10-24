@@ -4,7 +4,8 @@
 -- at the top of Art/Town Street Redesign References, References/Town Street Redesign/06-simple-separated-plots-v1.png and
 -- simplified-map-prompt.md. Six identical plots, three per side of one broad paved street, each separated from the next
 -- by a paved lane a full frontage wide (half a frontage at first; Allen: "expand the map and separate the houses more");
--- a modest junction at the middle pair; the lane between lots 1 and 2 runs
+-- all six fronts on one line (Allen 2026-10-23: "The shop building is misaligned with the actual street"; the middle
+-- pair stood 8 back as a junction till then); the lane between lots 1 and 2 runs
 -- on through the back wall (turned on the south side: between S2 and S3); a timber gate west, a small shrine east; a few
 -- small townhouses at the edges only. No stalls, trees or filler houses.
 -- Run in Studio (Edit) through MCP execute_luau. Rebuilds Workspace.Village (an earlier build moves to
@@ -15,15 +16,25 @@
 -- retired (their maps are parked in ServerStorage.Legacy).
 --
 -- Plan, in the north frame (x along the street, west −; the north side at −z; "depth" = distance from the street centre):
---   lots 48.5 × 96 at x −96.5, 0, 96.5 with 48-wide lanes between; fronts at depth 36 (72 apart), the middle pair at 44.
+--   lots 48.5 × 96 at x −96.5, 0, 96.5 with 48-wide lanes between; fronts at depth 36 (72 apart).
 --   Each lot: an earth pad with stone edging on its sides and back (outside the building) and the current street's
 --   front cross-section (walkway 1.5 under the façade to 6 out, water channel 6…8 out), so the plot template fits.
 --   Small single-storey houses on the street front at x ±180.75, and one by each side lane outside the back wall.
 --   Town wall: gate line x −200, back walls at depth 172, the east wall behind the shrine plaza at x 248.
 --   The south side is the same plan turned 180° about ORIGIN; gate, shrine and their walls are placed in world terms.
--- Ground tops: lane paving 0.12, plot pads 0.16, street and junction 0.2, plaza 0.25, water 0.26, walkway 0.3,
--- edging 0.36, curbs 0.5. Same-kind ground parts never overlap.
+-- Ground tops: lane paving 0.12, plot pads 0.16, street 0.2, plaza 0.25, water 0.26, centre stones 0.26,
+-- walkway 0.3, edging 0.36, curbs 0.5, gutter bridges 0.62. Same-kind ground parts never overlap.
+--
+-- Street surfaces (Allen 2026-10-22: "The roads look ugly."; the generated TownFlagstone read as noisy, high-contrast
+-- grey tiles). ROAD_STYLE picks one of two to compare. "earth": packed earth (period Edo), a strip of cut stones down
+-- the middle, and the plots' stone gutter (curb, water, curb) carried along the open stretches of the street's edges,
+-- with a stone bridge at each delivery way. "stone": even cut-stone slabs in one calm grey. Both are tiling textures
+-- uploaded from Models/Village/road_textures.py (MaterialVariants TownEarth and TownSlab, made here).
+-- loadstring(...Source)("road") restyles the live street only (Road, Paving, Junction, Street.RoadStyle), leaving the
+-- rest of the map, and anything moved by hand, alone; a full build makes the same street.
 
+local MODE = ... -- nil: build the whole map; "road": restyle the live street only
+local ROAD_STYLE = "earth" -- "earth" | "stone"
 local SEED = 23
 local LIFT = 2.5 -- ground storeys as tall as the street's (openings top out at OT 9.7)
 local OT = 7.2 + LIFT
@@ -440,7 +451,7 @@ local function spec(prevH, style)
 end
 
 -- ---------------------------------------------------------------- simple map plan
-local HALF, MID = 36, 8 -- outer fronts at depth 36 (72 apart); the middle pair 8 further back: a modest junction
+local HALF, MID = 36, 0 -- fronts at depth 36 (72 apart); MID: the middle pair's setback (8, a junction, till 2026-10-23)
 local LOT_W, LOT_D = 48.5, 96
 local LOTS = { { -96.5, HALF }, { 0, HALF + MID }, { 96.5, HALF } } -- lot centre x and front depth, lots 1…3 west to east
 local LANE = { -72.25, -24.25 } -- the lane between lots 1 and 2 (48 wide), which runs on through the back wall
@@ -459,22 +470,39 @@ local function slab(parent, name, F, x0, x1, d0, d1, top, col, mat)
 	return part(parent, name, Vector3.new(x1 - x0, top, d1 - d0), F * CFrame.new((x0 + x1) / 2, top / 2, -(d0 + d1) / 2), col, mat, { solid = true })
 end
 
--- the generated flagstone MaterialVariant (MaterialService "TownFlagstone" on Pavement, StudsPerTile 24) when the place
--- has it, plain Pavement otherwise
-local FLAGS = game:GetService("MaterialService"):FindFirstChild("TownFlagstone", true)
-local function paving(p, col)
-	if FLAGS then p.MaterialVariant, p.Color = FLAGS.Name, col or Color3.fromRGB(226, 220, 208) end
+-- street surfaces: the style's MaterialVariant (made or updated in MaterialService) on the road, junctions and lanes;
+-- the textures are greyscale, tinted by the part colour
+local MS = game:GetService("MaterialService")
+local function variant(name, base, colorMap, normalMap, studs, pattern)
+	local v = MS:FindFirstChild(name) or Instance.new("MaterialVariant")
+	v.Name, v.BaseMaterial, v.ColorMap, v.NormalMap, v.StudsPerTile, v.MaterialPattern = name, base, colorMap, normalMap, studs, pattern
+	v.Parent = MS
+	return name
+end
+local SURFACE = ROAD_STYLE == "earth" and {
+	base = M.Ground, road = Color3.fromRGB(196, 160, 116), lane = Color3.fromRGB(184, 158, 124),
+	variant = variant("TownEarth", M.Ground, "rbxassetid://126923524824747", "rbxassetid://95753092475786", 24, Enum.MaterialPattern.Organic),
+} or {
+	base = M.Pavement, road = Color3.fromRGB(150, 148, 144), lane = Color3.fromRGB(150, 148, 144),
+	variant = variant("TownSlab", M.Pavement, "rbxassetid://134124888275477", "rbxassetid://126594211996820", 16, Enum.MaterialPattern.Regular),
+}
+local function surface(p, kind) -- kind: "road" (the street and junctions) or "lane"
+	p.Material, p.MaterialVariant, p.Color = SURFACE.base, SURFACE.variant, SURFACE[kind]
 	return p
 end
 
--- walkway, curbs and water channel along a front. fcf: on the façade line at the run's middle, LookVector toward the
--- street; the run is len long along its local x.
-local function frontage(parent, fcf, len)
+-- the stone water channel (curb, water, curb) 6…8 out from a front. fcf: on the façade line at the run's middle,
+-- LookVector toward the street; the run is len long along its local x.
+local function channel(parent, fcf, len)
 	local function at(z, y) return fcf * CFrame.new(0, y, z) end
-	part(parent, "Walkway", Vector3.new(len, 0.3, 7.5), at(-2.25, 0.15), C.walk, M.Slate, { solid = true })
 	part(parent, "Curb", Vector3.new(len, 0.5, 0.5), at(-6.25, 0.25), C.stone, M.Slate, { solid = true })
 	part(parent, "Water", Vector3.new(len, 0.26, 1.0), at(-7, 0.13), C.water, M.SmoothPlastic, { solid = true, refl = 0.12 })
 	part(parent, "Curb", Vector3.new(len, 0.5, 0.5), at(-7.75, 0.25), C.stone, M.Slate, { solid = true })
+end
+-- walkway and channel along a front
+local function frontage(parent, fcf, len)
+	part(parent, "Walkway", Vector3.new(len, 0.3, 7.5), fcf * CFrame.new(0, 0.15, -2.25), C.walk, M.Slate, { solid = true })
+	channel(parent, fcf, len)
 end
 
 -- plaster wall with a tile cap; cf on the ground at its middle, its length along local z
@@ -530,6 +558,53 @@ local function smallHouse(parent, name, hcf, w, d)
 	return house(parent, name, hcf, w, sp)
 end
 
+-- the earth style's stones and gutters, in Street.RoadStyle (empty for "stone")
+local function roadStyle(Street)
+	local f = Instance.new("Folder")
+	f.Name = "RoadStyle"
+	f.Parent = Street
+	if ROAD_STYLE ~= "earth" then return end
+	local rs = Random.new(SEED + 1) -- its own stream, so the map's (house styles) is the same with either style
+	-- cut stones down the middle, 5 wide, from the road's west end to the plaza
+	local x = XW - 29
+	while true do
+		local len, g = rs:NextNumber(2.2, 3.2), rs:NextInteger(-6, 6)
+		if x + len > XE - 1 then break end
+		part(f, "RoadStone", Vector3.new(len, 0.16, 5), Wd(x + len / 2, 0.18, 0), Color3.fromRGB(168 + g, 162 + g, 152 + g), M.Slate, { solid = true })
+		x += len + 0.22
+	end
+	-- gutters where no front's channel lines the street (lane mouths, gaps by the end houses),
+	-- in line with the fronts' (depth 28…30), and a bridge across at each delivery way (lot centre − 33)
+	local w = LOT_W / 2
+	for _, F in { NF, SF } do
+		for _, s in { { XW + 0.9, -CORNER_X - 10 }, { -CORNER_X + 10, LOTS[1][1] - w }, { LOTS[1][1] + w, LOTS[2][1] - w } } do
+			for _, k in { 1, -1 } do -- and mirrored: the street's plan is symmetric about x = 0
+				channel(f, F * CFrame.new(k * (s[1] + s[2]) / 2, 0, -HALF) * STREET, s[2] - s[1])
+			end
+		end
+		for _, lot in LOTS do
+			part(f, "GutterBridge", Vector3.new(6, 0.52, 2.6), F * CFrame.new(lot[1] - 33, 0.36, -(HALF - 7)), C.stone, M.Slate, { solid = true })
+		end
+	end
+end
+
+if MODE == "road" then -- restyle the live street only
+	local Street = workspace.Village.Street
+	for _, p in Street:GetChildren() do
+		if p.Name == "Road" or p.Name == "Junction" then
+			surface(p, "road")
+		elseif p.Name == "Paving" then
+			surface(p, "lane")
+		elseif p.Name == "RoadStyle" then
+			p:Destroy()
+		end
+	end
+	roadStyle(Street)
+	local n = 0
+	for _, d in Street.RoadStyle:GetDescendants() do if d:IsA("BasePart") then n += 1 end end
+	return ("Street restyled (%s): %d parts in RoadStyle"):format(ROAD_STYLE, n)
+end
+
 -- ---------------------------------------------------------------- build
 local old = workspace:FindFirstChild("Village")
 if old then
@@ -548,7 +623,8 @@ local function folder(name)
 end
 local Street, Houses, Lots, Walls, Landmarks = folder("Street"), folder("Houses"), folder("Lots"), folder("Walls"), folder("Landmarks")
 
-paving(part(Street, "Road", Vector3.new(XE - (XW - 30), 0.2, 2 * (HALF - 8)), Wd((XE + XW - 30) / 2, 0.1, 0), C.road, M.Pavement, { solid = true }))
+surface(part(Street, "Road", Vector3.new(XE - (XW - 30), 0.2, 2 * (HALF - 8)), Wd((XE + XW - 30) / 2, 0.1, 0), C.road, M.Pavement, { solid = true }), "road")
+roadStyle(Street)
 
 for _, F in { NF, SF } do
 	local tag = F == NF and "N" or "S"
@@ -556,9 +632,8 @@ for _, F in { NF, SF } do
 	local lo, hi = math.min(m * XW, m * XB), math.max(m * XW, m * XB)
 
 	-- lanes and buffers: one paving slab from the street's edge to the back wall, and the lane on past it
-	paving(slab(Street, "Paving", F, lo, hi, HALF - 8, BACK, 0.12, LANE_COL, M.Pavement), LANE_COL)
-	paving(slab(Street, "Paving", F, LANE[1], LANE[2], BACK, BZ, 0.12, LANE_COL, M.Pavement), LANE_COL)
-	paving(slab(Street, "Junction", F, LOTS[2][1] - LOT_W / 2, LOTS[2][1] + LOT_W / 2, HALF - 8, HALF + MID - 8, 0.2, C.road, M.Pavement))
+	surface(slab(Street, "Paving", F, lo, hi, HALF - 8, BACK, 0.12, LANE_COL, M.Pavement), "lane")
+	surface(slab(Street, "Paving", F, LANE[1], LANE[2], BACK, BZ, 0.12, LANE_COL, M.Pavement), "lane")
 
 	for n, lot in LOTS do
 		local xc, d = lot[1], lot[2]
