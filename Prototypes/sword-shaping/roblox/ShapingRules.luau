@@ -21,6 +21,9 @@ Rules.CONFIG = {
 	perfect = 0.08, -- cm: a station this close counts fully matched, so 100% is reachable with full strikes
 	tolerance = 0.25, -- cm beyond `perfect`: a station that much further off counts 37% matched
 	flag = 0.15, -- cm: a local error worth pointing at
+	smoothAt = 90, -- shape match %: from here the sanding block comes out (Rules.sand)
+	sandRate = 0.5, -- cm a second the sanding block takes off under its centre
+	sandRadius = 0.04, -- it reaches this far either side (fraction of the blade, ≈ 2.8 cm on the katana)
 	timing = { windup = 0.12, drop = 0.06, deform = 0.1, recover = 0.18, turn = 0.45 }, -- seconds
 }
 local C = Rules.CONFIG
@@ -116,6 +119,37 @@ function Rules.score(s: State, widths: { number }?): (number, number, number)
 		end
 	end
 	return 100 * sum / weight, worst, worstE
+end
+
+-- Sanding (Allen, Refinement 4 made it a one-click Smooth; Refinements 5: "the smoothing should be another manual step.
+-- It should involve holding mouse down and basically 'sand down' the bumps so that they fit perfectly into the guide
+-- lines"): from a match of CONFIG.smoothAt, held over the blade at u for `seconds`, it takes width off the workable
+-- stations around u, never past the target line. It only takes material off, so a section hammered too narrow still
+-- costs. sand returns the cm it took off in all.
+local EXCESS = 0.01 -- cm over the line that counts as crossing it
+function Rules.canSmooth(s: State): boolean
+	if Rules.score(s) < C.smoothAt then
+		return false
+	end
+	for i = 1, s.n do
+		if s.mask[i] > 0 and s.width[i] > s.target[i] + EXCESS then
+			return true
+		end
+	end
+	return false
+end
+
+function Rules.sand(s: State, u: number, seconds: number): number
+	local took = 0
+	for i = 1, s.n do
+		local k = Rules.falloff(s.u[i] - u, C.sandRadius)
+		if k > 0 and s.mask[i] > 0 and s.width[i] > s.target[i] then
+			local w = math.max(s.target[i], s.width[i] - C.sandRate * k * seconds)
+			took += s.width[i] - w
+			s.width[i] = w
+		end
+	end
+	return took
 end
 
 -- BladeCore params for widths `w` (default the current ones): the target's, with the edge at spine - width.

@@ -26,7 +26,7 @@ Reference: `References/Concept Art/ingot crate opening`. It shows a wooden chest
 - **Where:** it replaces the open supply chest in the workshop's back-left corner, on the same spot.
 - **Look:** a closed wooden box, 9.4 × 4.6 and 1.75 tall, with a 0.4-thick lid. Two dark iron straps run over the lid and down the front, and an iron handle plate sits on the front.
 - **Room for all six:** the lid fits all six ore slots, three across and two deep, even when only slot 1 is bought.
-- **The lever** stays beside the box.
+- **The lever** stays beside the box. Since 2026-10-25 it is big and in the middle: 1.6× with a thick arm and a red knob, front and centre of the roller (Allen, after Create Pottery!'s: "it's thick and not a side note. its in the middle"); the Ore Slot pad moved 5 studs right, onto the old Lucky Roller pad's spot ([[Sessions/2026-10-25#Refinements 5]]).
 - **Empty slots show nothing.** An ingot on the lid always means rolled ore waiting to be collected, so the box on an unclaimed lot is bare.
 
 ## The roll (3.6 s)
@@ -56,16 +56,16 @@ Everyone near the box sees the show. Only the player who rolled can collect.
 
 Allen: "Players should be able to spin the ores as many times as they want" ([[Sessions/2026-10-24#Refinements 3]]).
 - The lever is off only while a roll plays.
-- Pulling it with ore still waiting puts that ore into your hands first, as many as fit (a NEW card for a first-time metal). What doesn't fit is rolled over.
+- Pulling it with ore still waiting puts that ore into your hands first (a NEW card for a first-time metal). Until later the same day, only as many as fit (6 in hand), and the rest was rolled over; there is no hand limit now ([[Sessions/2026-10-24#No hand limit, 1.7× ingots, labels that don't overlap]]).
 - Then the show plays as before, and each pull still rolls every bought slot.
-- Collecting with E is unchanged, including "Your hands are full".
+- Collecting with E is unchanged ("Your hands are full" went with the hand limit, later the same day).
 
 ## Merge Ore Slots (2026-10-24)
 
 A rebirth for the ore box only (Allen: "Its basically a rebirth"; then "Repeatable, gentler prices"). The one exception to "no rebirth/prestige reset" ([[Design/Decisions Log#Refinements 3 — 2026-10-24]]).
 - **Where:** once Ore Slots 2–6 are bought, Ore Slot 6's pad spot becomes **Merge Ore Slots**, labelled "Luck ×1.5" (the luck after this merge), with the button "Merge".
-- **What it does:** free. Ore Slots 2–6 go back to unbought; slot 1, coins and everything else stay. Luck becomes ×(1 + 0.5 × merges) on top of Lucky Roller, and the Ore Slot pads cost ×1.5 per merge (Slot 2: 75 → 112 → 168; Slot 6: 4,000 → 6,000 → 9,000). Repeatable.
-- **Waiting ore** goes to your hands first. With no room for it, the merge is refused ("Your hands are full"), so locked slots never hold ore.
+- **What it does:** free. Ore Slots 2–6 go back to unbought; slot 1, coins and everything else stay. Luck becomes ×(1 + 0.5 × merges) (on top of Lucky Roller until it was removed on 2026-10-25; merging is now the only luck), and the Ore Slot pads cost ×1.5 per merge (Slot 2: 75 → 112 → 168; Slot 6: 4,000 → 6,000 → 9,000). Repeatable.
+- **Waiting ore** goes to your hands first, all of it, so locked slots never hold ore. (Until the hand limit went, later the same day, a merge with no room for it was refused.)
 - **No accidents:** the Merge button waits 1 s after the pad appears under you, so mashing Buy through Ore Slot 6 can't merge.
 - **After a merge:** the Ingot Rack, Lucky Roller I and Delivery Cart pads stay available; the tutorial counts as done, and "Workshop open!" doesn't replay.
 - **Luck past the old ceiling:** the roll used to break above luck ~2.24. Now each merge keeps raising rare ore, while Common and Uncommon never drop under 10%. At Lucky III, Legendary is 1.7%, then 2.6% / 3.5% / 4.4% after 1 / 2 / 3 merges (`Materials.roll`).
@@ -88,3 +88,21 @@ In Edit, not in Play:
 Allen's playtest list is in [[Sessions/2026-10-22#Ore loot box and collect first]].
 
 Related: [[Art/Workshop Layout]] · [[Design/Game Design Document]] · [[Design/Tycoon Upgrades]] · [[Development/Code Map]] · [[Sessions/2026-10-22]]
+
+## Six stands (2026-10-24)
+
+Allen: "All the ores together with the black background clutter and make it hard to see the ore or the description. I think instead of a create, we could have them on 6 individual stands. also a bit higher, less off the floor." Supersedes [[#The box]] (the crate and its lid) and the lid in [[#The roll (3.6 s)]].
+
+- **Six stands on the right wall**, one per ore slot: an iron foot, a wooden post and a plank cap banded in iron, the ingot lying along the wall on top.
+- **Two rows of three.** The back row stands taller and sits between the front row's stands, so no ingot or label is behind another.
+- **Higher:** the ingots sit 3.0 studs up in front and 4.2 behind (about 2.3 on the lid).
+- **Labels:** the name and rarity as outlined text, no plate, just over the ingot.
+- **The roll:** each rolled stand's ingot rises off its stand, spins through the metals, locks in one after another and settles back onto its stand, 3.6 s as before. The lever is unchanged.
+- Bought stands show empty until rolled; Ore Slots 2–6 stay hidden until bought.
+- **Bigger ingots, spread out (later the same day):** the ingot is 1.7× (Allen: "so when held, when on the rack, when revealed in the spin, it is more visible"), then 1.275× with 1.8 × 3.25 caps ("25% smaller", [[Sessions/2026-10-24#Rack ingots back on their shelves, the ingot 25% smaller]]), the stands 4.3 apart (were 3.15). The labels are sized in studs, an ingot long, so they shrink with the stands and never run into each other; the Ore Slot, Merge and Lucky pads' labels sit low, under the ingots ([[Sessions/2026-10-24#No hand limit, 1.7× ingots, labels that don't overlap]]).
+
+![[References/Ore Loot Box/stands-big-ingots.jpg]]
+
+![[References/Ore Loot Box/stands-rolled.jpg]]
+
+[[Sessions/2026-10-24#Anvil picks first, the rack's markers together, ore stands]]

@@ -475,3 +475,69 @@ From [[Refinements3]] ([[Sessions/2026-10-24#Refinements 3]]).
 - **Air, a new Epic metal** (Allen: "an airsword that is part transparent?"; then "Epic"): see-through glass blade, solid ingot.
 - **Rainbow Alloy gets an original rainbow texture** (Allen: "use the rainbow texture i added"; then "Make my own"): his `rainbow.webp` is a watermarked stock preview, so it isn't used.
 - **The middle lots line up with the street** (Allen: "The shop building is misaligned with the actual street"): N2 and S2 no longer stand 8 studs back as a junction.
+
+## Refinement 4 — 2026-10-24
+
+From [[refinement4]] ([[Sessions/2026-10-24#Refinement 4]]).
+
+- **No lowball offers: customers open at the sword's value to +20%** (Allen: "Customers should never make lowball offers"; then "Value to +20%"): Farmer 100–110%, Adventurer 100–115%, Knight 105–120%, ×1.25 when they like it. Supersedes the 70–110% openers (2026-10-19 tuning). Raises and patience are unchanged.
+- **Every offer has its own card, over its customer, several at once** (Allen's bug: "A customer says 'I'll give you X coins,' but the corresponding offer cannot be seen"); a customer says the offer only when its card shows. Supersedes "a waiting customer's card comes 1.5 s after the last one closed" (2026-10-23) except for the tutorial's first two sales, which still come one at a time.
+- **The Cashier holds the cash** (Allen: "The cashier should hold all the cash so the player can walk up to him and collect it"): his sales go into a till over his counter, collected by walking up to it (Claude's default: no key to press); a save counts it in your coins.
+- **The racks are never the crafter's** (Claude, from Allen's bug "Holding an ingot and pressing E sometimes does not store it"): the Ingot Rack and Finished Sword Rack stay usable while he walks over. Narrows "if employee is on the way to use something, it should also be blocked" (More refinements, 2026-10-23) to stations: furnaces, Anvil 2, the Polishing Station.
+- **Holding what a rack takes, E stores it** (Claude, as Allen's furnace rule from Refinements 3).
+- **The Shop Promoter faces the street and the Cashier the shop** (Allen's bugs: both "facing the wrong way"): the promoter turns only to people in front of him; the cashier doesn't turn.
+- **Employees wear catalog outfits** (Allen: "Give employees more complete outfits"; looks chosen by Claude): Japanese work clothes per role, ids in `Shared/Employees`.
+- **The furnace corner is dimmer** (Allen: "too bright near the furnace").
+- **Ingot Rack 2** (Allen's idea: "one more ingot shelf"; he chose to build both ideas): a second 6-slot shelf, 500, after the Ingot Rack. Price is a placeholder.
+- **Smoothing in the shaping prototype** (Allen's idea; he chose to build both ideas): from a 90% match, Smooth files off what still crosses the outline; it never adds material. The 90% is a tuning knob (`ShapingRules.CONFIG.smoothAt`). Still an experiment, not the game's crafting.
+- **Any ingot you hold goes on the Ingot Rack, and cools there** (Allen, after playtesting: "ingot is in my hand, pressing the + doesn't put the ingot in … it should open up only when i have nothing selected or say a sword which is ineligible"; his ingot was hot). Supersedes "hot ingots stay in hand" (2026-10-20). **A rack item goes into the slot you click** ("it doesn't put it where i selected"), and keeps it.
+- **The Cashier holds the cash; E at him collects it** (Allen: "he should be holding it, and displaying a cash amount that he has. and i should be able to go up and interact, press e with him to get the cash out. not just automatically"). Supersedes collecting by walking up to the counter (same day).
+- **Station wall swords are real game swords** (Allen: "the decorations on the station walls with swords should use real swords from our game. there's no reason to create a fake sword when our game has real swords already"): the Hilt Bench's and Polishing Station's part-built samples are replaced by `buildSword` props, like the Etching Table's. Rule for later dressing: show real swords, never part-built ones.
+
+## Phone playtest — 2026-10-24
+
+From Allen's phone screenshots ([[Sessions/2026-10-24#Phone playtest: HUD, toolbox, windows, station walls]]).
+
+- **Mobile first** (Allen: "from now on I want you to remember to prioritize mobile players. it makes up over 70% of the roblox playerbase, so optimizing for that audience is required"). Every UI and interaction is laid out and checked for a landscape phone first.
+- **The HUD is one column under Roblox's top-left buttons**: coins, gems, the menu, the pinned order (Allen: "I want the gold and gems status just about under the official roblox icons"). Roblox's chat window moves to the top right (Claude, so it doesn't cover them).
+- **The toolbox is centred on the screen** (Allen: "The toolbox isn't centered correctly"), narrower on a phone so it stays clear of the jump button.
+- **A window's X is in its top-right corner** (Allen: "its in the middle and not on the top right of the GUI").
+- **No sale notice** (Allen: "Remove the 'sold sword for x coins' notification. its not needed").
+- **The Hilt Bench wall shows real hilts of several shapes and fittings; the Polishing wall's sword shimmers** (Allen: "put various hilts up on the wall so it shows well that its hilting station", "have the sword shimmer more"). Real game models only, as for the wall swords.
+- **Settings and Daily Reward live in Roblox's top bar** (Allen: "7 icons to the left, which is a bit too much ... move setting to the topbar using this package ... move daily rewards up to the top as well"), through TopbarPlus. **A red circle on Daily Reward while it's claimable** ("i'd also like for daily rewards to have a red circle"), cleared by claiming, not by opening the window.
+- **A station's view starts only once you've picked** (Allen: "our camera shouldnt be in the forging view yet with the other guis until we select the ingot or sword"): the anvil's pickers come first, over the room.
+- **The six ore slots are six raised stands, not a crate** (Allen: "instead of a create, we could have them on 6 individual stands. also a bit higher, less off the floor"), with plain outlined labels. Supersedes the ore loot box's crate (2026-10-22).
+- **No limit on ingots in hand** (Allen: "I see a "your hands are full" when holding 6 ingots. remove this limit"). Supersedes "carrying is capped at 6" (2026-10-20) for ingots: a lever pull or a merge takes all the waiting ore ([[Sessions/2026-10-24#No hand limit, 1.7× ingots, labels that don't overlap]]).
+- **The ingot is 1.7× bigger, everywhere it shows** (Allen: "just resize the ingot say 1.70x, so when held, when on the rack, when revealed in the spin, it is more visible"; "why does the furnace need to be changed"). Still one model; the stands and both Ingot Racks are spaced out to fit, the furnace is not.
+- **Labels over the ore stands are sized in the world, and the roller's pad labels sit low** (Allen: "the button text is overlapping as well as the rest of the texts on the ingots").
+- **The workshop is rearranged from Allen's layout planner** (Allen: "Can we reorganize our stations somehow? i want a way to visualize where to move things", then "try to apply my moves"): furnaces and ingot racks on the left wall, anvils on the back hearth, the finishing stations on the right wall, the ore stands in the middle. Supersedes the 2026-10-22 workshop layout for positions. Further rounds go through the same page ([[Sessions/2026-10-24#Planner moves applied]]).
+- **The ingot is 1.275× its first size** (Allen: "we can also make the size of the ingots a bit smaller. like 25% smaller"), down from 1.7× the same day; still one model everywhere.
+- **The left column hugs Roblox's top bar on a phone and sits down the middle of the left edge on taller screens** (Allen: "after fixing the ui for mobile, it messed up on the desktop version now"). Narrows "the HUD is one column under Roblox's top-left buttons" (the same day) to phones. **HUD layout lives in StarterGui, not in scripts** (Allen: "you should move them how they are in startergui"): it adapts by its own sizes and constraints ([[Sessions/2026-10-24#The left column back in the middle on desktop, laid out in StarterGui]]).
+
+## Soft-bevelled stations — 2026-10-24
+
+- **The stations get soft bevels like the shop's SwordTable** (Allen: "I would like our current stations to also have those soft bevels"). Claude's defaults: same designs and sizes; every block and cylinder part gets a rounded bevel of 0.2 of its smallest side (at most 0.09 studs), scaled from the table top's measured 0.2-of-thickness chamfer, rounded rather than flat for "soft". The furnaces, anvils, prop swords and hilts, and the workshop fittings stay as they are. [[Sessions/2026-10-24#Soft-bevelled stations]]
+- **The shop's wall shelves get the same soft bevels** (Allen: "try the shelves in the shop as well"): Wall Racks 1–4, same rule. The hearth, counter, Big Sword Stand and the shop's other pieces stay as they are (Allen: "Leave it at the stations for now"). [[Sessions/2026-10-24#The shop's wall shelves]]
+
+## Station decorations — 2026-10-24
+
+- **Station decorations hang on a wall; the Etching Tables' go on the right wall** (Allen: "have them hanging on the wall to their right"). Claude's defaults for "omit the unnecessary ones": each Etching Table keeps its sign and its rack of etched swords; the ink shelf, chisel board and scroll go; the Polishing Station loses its cloth rail; the Hilt Bench keeps everything (hilts and tsubas are its identity) and only moves flush to the back wall. [[Sessions/2026-10-24#Station decorations on the walls]]
+
+## Polish sparkle — 2026-10-24
+
+- **A mirror-polished blade's sparkle runs along its curve instead of popping at random** (Allen: "have the sparkle run across the blades curve, so it actually looks likes it shimmering"). Claude's defaults: a wave of 14 sparkles base to tip in 0.5 s along the edge bevel, every 2.5–4.5 s (the `Shimmer` wall katana every 1.2–2 s, bigger, with its light following the wave). [[Sessions/2026-10-24#The polish sparkle runs along the blade]]
+- **One sparkle, accelerating, not a wave** (Allen: "just 1 sparle effect and it goes along the blade instead of a trail", "it should get faster/accelerate as it gets towards the tip"): a single sparkle travels the curve in 0.7 s with an ease-in (distance = time²). Supersedes the 14-sparkle wave above. [[Sessions/2026-10-24#The polish sparkle runs along the blade]]
+- **The polish shimmer is a soft glare, as on a drawn katana** (Allen shared a clip: "i want to replicate that"): a soft white streak a fifth of the blade long on the edge, blooming, sliding guard to tip with the ease-in, fading in and out, in place of the four-point sparkle. Kept guard-to-tip (the clip's runs toward the hilt). [[Sessions/2026-10-24#The polish sparkle runs along the blade]]
+
+## Refinements 5 — 2026-10-25
+
+- **Anvil 2 is a second anvil, shared with the crafter; he has it first** (Allen: "Pressing E on the 2nd anvil should not open up the Sword Crafters/Employee menu. It should act as a second anvil"; picked "Shared, crafter has priority"). He waits while you're at it, then holds it ("In use") until he's done. The crew window opens only from the Employee button; Etching Table 2 has no prompt. Both anvils face the same way. [[Sessions/2026-10-25#Refinements 5]]
+- **Lucky Roller I–III removed; merging is the only luck** (Allen: "So we have a merging system that gives luck, but also an upgrade that gives luck?"; picked "Remove it"). No refunds or save handling: the game has no players yet. Supersedes the Lucky Roller rows of 2026-10-22. [[Sessions/2026-10-25#Refinements 5]]
+- **Furnace 2 only after Faster Heating III** (Allen). Anvil 2 still needs Furnace 2. [[Sessions/2026-10-25#Refinements 5]]
+- **Employees max at Lv. 5, after several hours of work** (Allen: "level up way too fast and have too many levels"; picked "Several hours"). Claude's defaults: Lv. 2/3/4/5 at 10/30/70/150 swords (≈ 12 min, 40 min, 1.5 h, 3 h), the staff ×2.5 jobs; crafter quality +8%/level (70 → 100%). Supersedes Lv. 11 at 3 swords (5 jobs) a level. [[Sessions/2026-10-25#Refinements 5]]
+- **Pad labels show only near you, on one line, and crowded pads moved apart** (Allen: "The games upgrade buttons text is too cluttered"; picked "Both"). Claude's defaults: 14 studs, "Name · price"; the blueprint pad to the workshop's middle stone circle (Allen: "it needs to be in a clearer position"), the Ore Slot pad onto the Lucky Roller's old spot. [[Sessions/2026-10-25#Refinements 5]]
+- **The ore roller's lever is big and in the middle** (Allen, after the Create Pottery! lever: "it's thick and not a side note. its in the middle"). Claude's defaults: 1.6× with a thick arm and red knob, front and centre of the roller. [[Sessions/2026-10-25#Refinements 5]]
+- **Tutorial: UI steps get a spotlight; a Gem Shop step once you have gems** (Allen). Claude's defaults: the screen dims around the button with a pulsing amber ring; "Open the Gem Shop" (House button), then "Gems buy boosts for your shop that last" over the upgrades, once (saved). [[Sessions/2026-10-25#Refinements 5]]
+- **Mail Hand in takes the sword itself, for every order** (Allen; picked "Every order"): the cheapest that fits, no picker. [[Sessions/2026-10-25#Refinements 5]]
+- **Fewer popups:** no "ingot collected", no "Ingot loaded", no pause on the finished blade; a new metal is a small toast, not a card (Allen: "too intrusive"). [[Sessions/2026-10-25#Refinements 5]]
+- **Shaping prototype: the guide lines on the blade, and sanding by hand** (Allen: "the smoothing should be another manual step ... hold mouse down and basically 'sand down' the bumps"; picked "Overlay on the blade" and "Stops at the line"). The diagram is gone; supersedes the one-click Smooth of Refinement 4. [[Sessions/2026-10-25#Refinements 5]]

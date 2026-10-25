@@ -52,7 +52,7 @@ Details: [[Design/Six Plots]], [[Design/Tycoon Upgrades]], [[Art/Workshop Layout
 | `ShopService` | Owner-specific displays, per-plot customer routes/spawners, offers/haggling and sale payouts. 2–4 customers at once per plot (More Clients), plus one per Rickshaw Bay (`Rickshaws`, 2026-10-23), plus one with the Shop Promoter (2026-10-24). Since 2026-10-24 a hired Cashier answers offers for you. Since 2026-10-23 `DisplaySword` and the restore on claim check `Blueprints.fits` (big swords only on `BigSword` holders). |
 | `PolishService` | BeginPolish/PolishSword, station reach/unlock checks, refinement replay/timing validation, state update and rebuilt sword. `PolishSword(swordId, saved, leaving)`: leaving the station sends what was polished (or nil) with `leaving = true`, which keeps a partial polish and ends the session; `PlayerPolishing` on the station from BeginPolish until then keeps the crafter off it (2026-10-23). |
 | `EtchService` | Valid sword/pattern, own unlocked station/reach and one-etch-per-sword checks; accepted finish updates authoritative state. |
-| `RackService` | Own-plot ingot/sword storage and retrieval; capacities 6 ingots (12 until 2026-10-23), swords up to the open hooks (`Upgrades.openSlots`: 6, or 12 with Finished Sword Rack 2, since 2026-10-24; was a fixed 6), 6 carried. |
+| `RackService` | Own-plot ingot/sword storage and retrieval; capacities 6 ingots (12 until 2026-10-23), swords up to the open hooks (`Upgrades.openSlots`: 6, or 12 with Finished Sword Rack 2, since 2026-10-24; was a fixed 6). No carry cap since 2026-10-24 (was 6 ingots). |
 | `LeverAnimator` | Lever hold/release motion for plot rollers. |
 | `DevTools` | Studio-only coin and example-sword grants; guarded by `RunService:IsStudio()`. |
 
@@ -96,6 +96,8 @@ Legacy `BladeProfile`, `AnvilScore` and probe modules may remain dependencies or
 | `EtchHud`, `HiltSeatGui` | `EtchingTableController`, `HiltBenchController` | Matching close rings (`Close`). |
 | `StrikeRingGui`, `GrindMap` | `AnvilController` | `AnvilHud` and `AnvilPoints` were already here. |
 | `OfferBubble`, `ShopHud` | `ShopController` | `OfferBubble` (BillboardGui) holds the `OfferCard` that was in ShopHud; `ShopHud.Templates.SlotMarker` for the + / bag / for-sale markers. |
+
+**Pack copies (2026-10-24):** `HudGui_Pack`, `GemGui_Pack`, `MenuGui_Pack`, `HotbarGui_Pack`, `PickerGui_Pack` and `OfferBubble_Pack`, in `ServerStorage.UIPackCopies` since the GUI review the same day (they were in StarterGui, copied into every player's PlayerGui unused), are disabled restyles in the look of Allen's free UI pack (`StarterGui.UIMegaPack`), kept for comparison. No script reads them; they have every child their controller indexes, so swapping names puts one in. See [[Sessions/2026-10-24#UI pack comparison]].
 
 `UiFx` (ModuleScript, 2026-10-23) is the shared behaviour: `press` (hover 1.04 / held 0.94), `open`/`close` (16 px rise, 0.22 s), `dim` + `nudge` (a veil and a shake for what you can't do yet), `fit` (UIScale to the screen, never under 0.7), `commas` and `COIN`. Backups of every changed controller: `ServerStorage.Legacy.<Name>_beforeStarterGui` (and `ShopHud_beforeStarterGui`).
 
@@ -500,3 +502,193 @@ Shelf, grand store, block mountains, roads, friends and the collection book ([[S
 
 - **Hand edits, not in the builders:** Finished Sword Rack 2 and both racks' raise and widening, Etching Table 2, the cashier's counter and the new pads (only `MergeSlots` is in `build_workshop`'s `PADS`). `build_workshop`'s shelf constants are updated, so its shelf section is safe to rerun; it doesn't know Etching Table 2.
 - **Backups:** `ServerStorage.Legacy.<Name>_beforeRefinements3md` (list in the session note), `VillageAlign_beforeRefinements3md` (the moved street pieces), `SwordRack_beforeGuardFit`, `SwordRack2_beforeGuardFit`, `Junction_beforeAlign`, `Junction_beforeAlign_S`. New instances have none (delete to undo): `Smithy.SwordRack2`, `SwordRack.Slots.Slot7–12`, `Smithy.EtchingTable2`, `Shop.CashierCounter`, `Pads.MergeSlots/SwordRack2/Stocker/Cashier/Promoter/EtchingTable2/Etcher`.
+
+## Refinement 4 (2026-10-24)
+
+[[Sessions/2026-10-24#Refinement 4]] ([[refinement4]]). Supersedes, above: the crafter claiming the Ingot Rack and Finished Sword Rack (`claim(smithy.IngotRack)`, `claim(smithy.SwordRack)`, `promptsOf`'s second-rack case, the racks' `CrafterBusy` checks in RackService and RackController), `INGOT_CAP` 6, the single offer card (`current`, `bubble`, `answer(accept)`), `asking` as a boolean and askOwner's own wait, the Cashier turning to each customer and paying straight into your coins, the Promoter turning to anyone within 40 studs, plain-coloured employee looks, Customers' 70–110% openers and the furnace lights at 2.2 / 16.
+
+| Script / instance | 2026-10-24 |
+|---|---|
+| `EmployeeService` (crafter) | The racks are never claimed: step 1 walks to `spot(plot, IngotRack.Slots["Slot"..<the cheapest ingot's rackSlot>], STAND.IngotRack)` and takes the cheapest ingot there is on arrival (none left: the round ends); step 5 walks to the rack and waits `rackFull` while it is full, no claim. `claim`/`release` are for stations only (furnaces, Anvil 2, the Polishing Station) and walk `station:GetDescendants()`. |
+| `EmployeeService` (looks) | `ReplicatedStorage.Crafters` is parented at once; each look is built on its own thread by `dress(look, outfit)`: body colours, then `look.outfit`'s `Shirt`, `Pants`, `HairAccessory`, `HatAccessory`, `FaceAccessory` on the HumanoidDescription. A failed load warns "Employee outfit:" and builds the plain look. Each accessory's Handle is set where its `AccessoryWeld` holds it (in ReplicatedStorage nothing solves the welds, so the crew portraits had them off the head). `makeWorker` finding no look yet returns nil and the loops retry a second later. |
+| `EmployeeService` (Promoter) | `waveOne(plot, …)`: `post(plot, "promoter")` gives his stand and the street point; he turns to the nearest root within 40 studs whose offset from his stand points toward the street (`to:Dot(street - stand) > 0`), else to the street, then waves. |
+| `Shared/Employees` | `Look` type with `outfit = { shirt, pants, hair?, hat?, face? }` (catalog ids; accessories as comma-separated strings). Locals at the top name the shared ids: `APRON` 5318191953, `WORK_KIMONO` 6530310794, `JUDO_KIMONO` 11692674238, `DARK_PANTS` 6530312930, `HAKAMA` 3905873202, the Roblox ninja headbands `WHITE_BAND` 11297746 / `BLACK_BAND` 11297708 / `ORANGE_BAND` 11297766. Staff: Sora jinbei 5666689617, Aki haori 182766522 + `HAKAMA`, Kaito yukata 8292171266 + `ORANGE_BAND`, Yume floral kimono 5780332981 / 5780335276 + Horn Rimmed Glasses 22151904. Hair: Roblox's 398672920, 376548738, 376527350, 343584973, 80922251, 63690008. |
+| `RackService` (follow-up) | `placeAll(slots, list)`: each rack item keeps `rackSlot` (slot number); a `store` with RackAction's new 5th argument (the + used) gets that slot, others or a taken/locked one get the first free open slot, and `showIngots` / `showSwords` draw from it. `take` clears it. Not saved (a rejoin fills from slot 1). `store` takes any ingot, hot or cold (`takeIngot(player, id)`), and sets it cold. |
+| `RackService` | No `INGOT_CAP`: `showIngots` draws every slot in `IngotRack.Slots` and `store` caps at `Upgrades.openSlots(IngotRack.Slots)` (6, or 12 with Ingot Rack 2). No `CrafterBusy` check. `near(player, smithy, which)` measures `REACH` (12) to the nearer unlocked rack's prompt part (`IngotRack`/`IngotRack2.Shelf1`, `SwordRack`/`SwordRack2.Plinth`), not to the first rack's box, which takes in Slot7–12 (review fix; the sword racks had it since Refinements 3). |
+| `RackController` | `RACKS.Ingot.also` = `IngotRack2.Shelf1.RackPrompt`. `heldId(which)`: a held cold ingot's `IngotId` (Ingot) or a held sword's `SwordId` (Sword). `storeOrOpen(slot?)` (E on either prompt with no slot, or the + marker with its slot): stores the held item through `act(which, "store", id, slot)`, else opens the picker (whose picks carry the slot too). Follow-up: `heldId` and `canStore` count any ingot, hot or cold; the store picker lists hot ones as "Hot X Ingot". `usable()` is only `not Locked`; the click-to-take no longer checks `CrafterBusy`. |
+| `Shared/Upgrades` | `IngotRack2` ("Ingot Rack 2", 500, after IngotRack). |
+| `EmployeeController` | `portrait(view, id)` marks the view's `Portrait` attribute; with the look not in yet (still being dressed on the server) it waits for it (30 s) and draws it if the view still wants that look (review fix: portraits opened at server start stayed blank). |
+| `Workspace.Plot.Smithy.IngotRack2`, `IngotRack.Slots.Slot7–12`, `Pads.IngotRack2` | A clone of the Ingot Rack (TycoonItem, `Upgrade = IngotRack2`) at plot (−0.1, 0, +6.8) from the first, box z 5.55…12.05 on the right wall, 0.1 off the wall line to clear the post at z 6.68…7.72; its `Shelf1.RackPrompt` is the second prompt. Its six slots are `IngotRack.Slots.Slot7–12` (each TycoonItem of `IngotRack2`), so `IngotRack`'s box now spans both racks (fine for RackService's 12-stud reach). The pad is a copy of `Pads.IngotRack` moved the same, `Workshop = true`. |
+| `ShopController` | One card per offer: `cards[id] = { gui, spot?, muted? }`, each `gui` a clone of `PlayerGui.OfferBubble` (the original stays disabled as the template), named `Offer<id>`, with its own buttons, countdown and fallback spot part; `close(id)`, `answer(id, accept)`. `rang` (weak keys) rings an offer once per customer. `bindPad()` binds Y / L2 while any card is up and answers `nearest()` (the card over the customer nearest you); every open card's buttons say "(Y)" / "(L2)" on a gamepad. |
+| `ShopService` (offers) | `asking[owner]` counts the owner's open cards. `waitCard(owner, still)` waits for no open card only while `sold < 2` (the tutorial), and always for `CARD_GAP` (1.5 s) since the last card closed (review fix: the card after the tutorial's last sale rang over its coins); `runCustomer` calls it before reading the offer's terms and before each `say(npc, "I'll give you …")` (not for the Cashier), so the line comes with its card. `askOwner(owner, info)` no longer waits or takes `still`. |
+| `ShopService` (Cashier) | No `NpcWalk.face(clerk, …)`. `till[owner]`: a sale he makes adds the offer there (not `addCoins`). `showTill(plot, owner)` dresses the plot's `Cashier` NPC: `TillPouch` (a brown Fabric ball welded in his right hand), a `TillSign` BillboardGui on it (the offer card's coin `15402839520` and the amount, AlwaysOnTop, styled like "Rack Full!"), `CollectPrompt` on his root ("Collect", E, 10 studs, no line of sight) and a looped toolnone track (`HOLD` 507768375) holding the arm out; all shown only while the till has cash. `collectTill` (the prompt, owner only) pays it into your coins. A 0.5 s loop per plot redresses him if he was made again. (Follow-up after Allen's playtest; it was a sign on the counter's coin tray, collected by walking up.) `SmithyCore.onSave` adds the till to `save.coins`; `onLeave` clears it. |
+| `Shared/Customers` | `offerMin`/`offerMax`: Farmer 1.0/1.10, Adventurer 1.0/1.15, Knight 1.05/1.20. |
+| `Workspace.Plot.Smithy.Forge.Fire.PointLight`, `Forge2`'s | Brightness 0.9, Range 11 (were 2.2, 16); shadows kept. No builder sets them. |
+| `ReplicatedStorage.Prototypes.ShapingRules` | `CONFIG.smoothAt` 90, `timing.smooth` 1.2. `Rules.canSmooth(s)`: score ≥ smoothAt and some workable station over the target by more than 0.01 cm. `Rules.smooth(s)`: every workable station wider than the target set to it (returns how many); never widens. |
+| `ReplicatedStorage.Prototypes.ShapingPrototype` | `smoothButton` ("Smooth", between Turn and Finish), shown by `drawDiagram` while `Rules.canSmooth`; `smoothOut()` sweeps base → point over `T.smooth` (each station eases in over 0.1 u as the sweep passes, flash and sparks follow it). `stats.smooths`; the Finish card adds "· smoothed"; the log line and `Inspect` report `smooths` (and `canSmooth`). |
+| `ServerStorage.Tests.SaveSpec` | 88 checks: + no opening offer under value or over +20%, Ingot Rack 2 after the Ingot Rack, `openSlots` 6 then 12. |
+| `ServerStorage.Tests.ShapingRulesSpec` | 26 checks: + the seven smoothing checks. `AnvilSelfCheck`'s knight range is 105–120 (131–150 liked). |
+| `Workspace.Plot.Smithy.HiltBench.PropSwords`, `PolishStation.PropSwords` (follow-up) | Real swords from `SmithyCore.buildSword` (`ForgedSword`, `Prop`, no `SwordId`), as `EtchingTable.Dress.PropSwords`: `PropSword_Fittings` (katana, Steel, Gem hilt, unpolished) with its Handle at plot (−23.1, 4.25, 19.02), `PropSword_Polished` (katana, Silver, Gold hilt, fully polished) at (−23.1, 4.25, 7.72); X along +z, Y toward the room, Z (the edge) up. They replace the part-built samples (now `Legacy.HiltBenchWallSword_beforeRealSword`, `PolishStationWallSword_beforeRealSword`). Hand edits: `build_workshop`'s `sampleSword` calls would build the part ones again if its finishing section were rerun. |
+| `ServerStorage.UIMegaPack` (follow-up) | Allen's free UI pack, moved out of `StarterGui` intact: its `ButtonIconScripts` replayed each button's `IdleSound` in game (the static he heard). In ServerStorage nothing of it runs or reaches clients. |
+
+- **Hand edits, not in a builder:** Ingot Rack 2 and its pad, the furnace lights, the two wall prop swords.
+- **Backups:** `ServerStorage.Legacy.<Name>_beforeRefinements4` (list in the session note). New instances have none (delete to undo): `Smithy.IngotRack2`, `IngotRack.Slots.Slot7–12`, `Pads.IngotRack2`.
+
+## Phone HUD and station walls (2026-10-24)
+
+[[Sessions/2026-10-24#Phone playtest: HUD, toolbox, windows, station walls]]. Supersedes, above: the left-edge stack centred on the screen (`HudGui.Coins` y −52, `GemGui.Gems` y 0 around the middle, `MenuGui.Buttons` 30 below it, `PinnedOrder` above the coins), the toolbox centred left of the jump button, the five window headers' title-and-X row, the sale notice, the Hilt Bench's part-built hanging hilts and the 2–4.5 s glint on every polished blade only.
+
+| Script / instance | 2026-10-24 |
+|---|---|
+| `HudGui.Coins`, `GemGui.Gems`, `MenuGui.Buttons`, `DeliveryGui.PinnedOrder` | The left column, in StarterGui only (no script places it; `UiFx.underTopbar` / `leftColumn` and DeliveryController's follow-the-menu `place()` are gone, later the same day). Each is a lane: AnchorPoint (0, 0.5), Position (0, 12, 0.5, 29), Size Y (1, −58), a `UISizeConstraint` MaxSize Y 372, so it runs from under the 58 px top bar to the screen's foot, at most 372 tall, centred in that space. Content: `Coins.Row` y 0, `Gems.Row` y 40, `Buttons` a `UIPadding` top 90 (Size X 148, AutomaticSize None), `PinnedOrder.Row` y 194. Coins at 58 on a phone up to 430 tall, 219 at 753, 383 at 1080. |
+| `Hud` | The gems' "+N" `pop` goes beside `GemGui.Gems.Row` (the `Gems` frame is its lane). |
+| `Hotbar` | `refresh`: the bar and the bag at `UDim2.new(0.5, 0, …)` (were `-clear / 2`); `barCap` and the bag's columns from `view.X - 2 * clear` (`clear` = `JUMP` 170 on touch), so a centred bar never reaches the jump button. |
+| `GemGui.GemShop`, `GemGui.DailyReward`, `MenuGui.ShopWindow`, `MenuGui.SettingsWindow`, `MailGui.Window` `.Header` | No `UIListLayout`; Size (1, 0, 0, 52), AutomaticSize None; `Title` anchor (0.5, 0.5) at the centre; `Close` anchor (1, 0) at (1, 18, 0, −12): 10 px in from the window's top-right corner through its 28 / 22 px padding. Paths unchanged (`Header.Close`). |
+| `TextChatService.ChatWindowConfiguration` | `HorizontalAlignment` Right (was Left: it opened over the coins). |
+| `ShopService` | No sale notice (`notice(owner, "Sold …")` removed); `commas` stays for the till's sign. |
+| `SwordRenderer` | `glint(part, length, shimmer)`: with the sword's `Shimmer` attribute, glints every 0.3–0.8 s at 0.8 (else 2–4.5 s at 0.55) and a `PointLight` (range 2.2, up to 3) tweens base → tip over 0.9 s every 2.5–3.5 s. Glints and the sheen skip while the blade's `LocalTransparencyModifier` is 1 (a locked station's prop). A `Shimmer` sword glints even if not fully polished. |
+| `Workspace.Plot.Smithy.PolishStation.PropSwords.PropSword_Polished` | `Shimmer` = true. |
+| `Workspace.Plot.Smithy.HiltBench.PropHilts` | Five `buildSword` models with the `ForgedSword` tag removed (hilts only, no blade drawn), `Prop`, no `SwordId`: `PropHilt_katana_Gem` z 24.92, `_falchion_Gold` 25.72, `_gladius_Leather` 26.55 (under `Model3D.HiltRail`), `_longsword_Iron` 16.95, `_katana_Bronze` 17.92 (under the new `Model3D.HiltRail2`, z 16.3…18.25), at x −23.15, grip X up, Y toward the room, the guard end at y 7.05, each on a `HiltCord` from the rail. Replaces `Legacy.HiltBenchHangingHilts_beforeRealHilts`. Hand edits. |
+| `HudFocus` (round 2) | `sources`, `parts`, `parked`, `wanted` are strong tables (were weak-keyed: an Instance's handle is collected while no script holds it, so entries vanished and nothing hid); `forget(x)` on `x.Destroying` clears them. |
+| `UiFx.topbarIcon(name, image, order, onTap)` | `Icon.new():setName():setImage():setOrder():oneClick()` from `ReplicatedStorage.TopbarPlus.Icon`, `selected` → `onTap`; `setEnabled(false)` while `MenuGui.Buttons` is parked in a `HudHold` (HudFocus hiding the HUD). |
+| `MenuController`, `GemController` (round 2) | `topbarIcon("Settings", …, 2)` → the Settings window; `topbarIcon("DailyReward", …, 1)` → the daily window. GemController's `apply`: `dailyIcon:notify(noticeClear.Event)` when today's reward starts waiting, `noticeClear:Fire()` when it's claimed. `MenuGui.Buttons.Settings` and `.Daily` `Visible` false in StarterGui (wiring kept). |
+| `ReplicatedStorage.TopbarPlus` | Allen's TopbarPlus v3.5.0 package, moved from Workspace; `READ_ME` (RunContext Client, makes an "Example" icon) `Enabled` false. |
+| `ShopService` (round 2) | `holding` is a strong table, cleared on the clerk's `Destroying`. |
+| `AnvilController` (pick first) | `enter` is now `enterView` (forward-declared): the camera, AnvilHud and points GUI only. `use()` on the prompt: `checkIngot()`, then `enterView()` with a blade still on the anvil, else `openIngotPicker()` over the room; the blade picker's pick runs `BeginForge` and then `enterView()` (if not in it) and `startBlade`. `choosing` is true while an anvil picker is up outside the view: `PromptHidden` closes it; `pickerClosed` clears it. A failed start toasts outside the view. |
+| `SlotMarker.new(adornee, offset, state, near?)` | `near`: measure `SHOW_RANGE` from that part instead of the marker. `RackController` passes each slot's nearer rack prompt part (`Shelf1` / `Plinth` of the rack or its second), so a rack's markers show together with its prompt. |
+| `Workspace.Plot.Smithy.OreRoller.Stand1-6` | No `LootBox` (in `Legacy.LootBox_beforeStands`). Each stand: `Foot` (iron, 1.6 × 0.25 × 1.6, on the floor), `Post` (wood, 0.6 square), `Pedestal` = the cap (WoodPlanks 1.4 × 0.22 × 2.6; the Collect prompt's part) with an iron `Band`, and the `Ore` ingot lying along plot z, 0.02 proud of the cap. Front row x 18.3 at z −7.05 / −10.2 / −13.35 (Stand1-3, ore centre 3.0 above the floor), back row x 21.1 at z −5.475 / −8.625 / −11.775 (Stand4-6, 4.2). Tags and `Upgrade` attributes unchanged. Hand edit: `build_workshop` still builds the crate. |
+| `OreBoxShow` (stands) | No lid, hinge or glow: each rolled stand's copy rises from its ingot's rest `HOVER` 1.6 studs (from `RISE_AT` 0.1 over 0.55 s), spins and flickers until it locks in (2.0 s + 0.12 s apart), and drops back at `DROP_AT` 3.05; copies are parented to the roller. `RollTime` (ForgeService's `BOX_TIME`) unchanged at 3.6. |
+| `ForgeService` (labels) | `OreLabel`: no plate or corner, text stroked (30, 20, 14), 16 px, `StudsOffset` 0.95, `LightInfluence` 0. |
+
+## Bigger ingots, no hand limit (2026-10-24)
+
+[[Sessions/2026-10-24#No hand limit, 1.7× ingots, labels that don't overlap]]. Supersedes, above: `MAX_INGOTS` / `CARRY_CAP` 6 and "Your hands are full" (ForgeService, RackService, Guide), Hook_CollectOre's refusal when ore still waits on Slots 2–6, "what didn't fit is rolled over", the ingot's 2.3 × 0.75 × 1.2 and its Grip `(0, -0.3, 0.35)`, the stands' 3.15 spacing and 1.4 × 2.6 caps, the Ingot Racks' 5.8 × 1.3 shelves, and `OreLabel` at 150 × 44 px, 16 px, `StudsOffset` 0.95.
+
+| Script / instance | 2026-10-24 |
+|---|---|
+| `ForgeService` | No carry cap: `takeOre` is false only with no ore or someone else's; the Collect prompt always takes; a pull's `collectWaiting` takes every waiting ore; `Hook_CollectOre(plot, player)` is false only while that box rolls. `OreLabel`: `Size` `UDim2.fromScale(ore.Size.X, 1.1)` (studs: an ingot long), `StudsOffset` `ore.Size.Y / 2 + 0.6`, text `TextScaled`. ponytail note: carried ingots are Tools and save entries, so stack them if hoards ever slow pushes. |
+| `RackService` | `take` has no carry cap. |
+| `Guide` | No `MAX_INGOTS` branch (and no `anyHot` / `anyCold`). |
+| `TycoonService.padVisual` | Label `StudsOffset` y = the pad marker's `LabelHeight` attribute, else 4.2. |
+| `Workspace.Plot.Pads` OreStand2–6, MergeSlots, Lucky1–3 | `LabelHeight` 1.6. `Pads.IngotRack` / `IngotRack2` at plot (18.9, z 3.45 / 12.88), in front of their racks. |
+| `SmithyCore.buildIngot` | Grip `CFrame.new(0, -0.56, 0.6)`: the measured grip scaled with the bar (not measured again). |
+| `ReplicatedStorage.SwordParts.Ingot` | 3.91 × 1.275 × 2.04 (1.7×). Every stand `Ore` and `IngotRack.Slots.Slot1–12` match it. `ItemPicker`'s card art keeps its own size; the furnace's glowing bar is a separate small part. |
+| `Workspace.Plot.Smithy.OreRoller.Stand1–6` | Front row x 18.3 at z −6.3 / −10.6 / −14.9 (Stand1–3), back row x 21.1 at −4.15 / −8.45 / −12.75 (Stand4–6), template plot space. `Pedestal` 2.3 × 0.22 × 3.4, `Band` 2.34 × 0.06 × 3.44, `Ore` 0.02 over the cap (centre 2.96 front, 4.16 back). Stand4 is beside the lever, past its swing. Hand edit. |
+| `Workspace.Plot.Smithy.IngotRack`, `IngotRack2` | Two bars a shelf: `Shelf0–2` 8.7 × 2.3 deep at x 22.0, `Back` 9.2 wide at x 23.1, `SideL/R` 2.44 deep at x 21.98, `Top` 9.4 × 2.49 at x 21.945. Rack 1 centred z 3.45 (left end unchanged), Rack 2 z 12.88 (both at the same x now). Slots at x 21.95, z centre ± 2.085, y 0.9275 / 2.4375 / 3.9875. Hand edit. |
+| `Workspace.Plot.Smithy.WorkshopFittings` (shelf, brackets, bundles, crate over Rack 2) | Raised 0.5, clear of Rack 2's top. |
+
+## Workshop rearranged (2026-10-24)
+
+[[Sessions/2026-10-24#Planner moves applied]]. Supersedes, above: the stations' plot positions (the stands, racks, furnaces, anvils, finishing stations), the pads' spots, and the shelf over Rack 2 at z 12–18.
+
+| Script / instance | 2026-10-24 |
+|---|---|
+| `EmployeeService.spot` | Turns the `STAND` offset by the station model's (or its nearest model ancestor's) `Turned` attribute before adding it. `STAND` stays as the stations stood before the moves. |
+| `Workspace.Plot.Smithy` stations | Moved by the planner (table in the session note). `Turned` on Anvil2 (90), Forge and Forge2 (90), EtchingTable (90), EtchingTable2 (270), HiltBench (90), OreRoller (270). Anvil and Anvil2 0.6 higher, on the `WorkshopFittings.Hearth` (slate, top 0.3). `Anvil2.AnvilStone` clipped to the hearth, 0.06 over it. Hand edits. |
+| `Workspace.Plot.Pads` | The workshop pads moved with their stations: an upgrade's own pad, OreStand/Lucky/Merge with the ore stands, Heat with the Furnace, Crafter with Anvil 2, Etcher with Etching Table 2, Stocker with the sword rack, the five blueprint pads together. |
+| [Workshop layout planner](https://claude.ai/artifact/4M7MEYLC4ekJ5Xk4MfGSSA) | A claude.ai page with a db: the plan comes from an Edit export of the template (every visible part's top-down outline, walls, pads, prompts); moves are kept in `layout/moves` as `{ id: { dx, dz, rot, about } }` (plot studs, degrees of yaw about `about`). To apply: `PivotTo(pc * CFrame.new(about + d) * CFrame.Angles(0, rot, 0) * CFrame.new(-about) * pc:ToObjectSpace(pivot))` for the station and its pads, add `rot` to `Turned`, check overlaps, re-export, republish and empty `layout/moves`. `IngotRack.Slots.Slot7–12` are Ingot Rack 2's (their `Upgrade` attribute): move them with IngotRack2, not with the IngotRack model they sit in. |
+
+## Smaller ingot, rack slots re-seated (2026-10-24)
+
+[[Sessions/2026-10-24#Rack ingots back on their shelves, the ingot 25% smaller]]. Supersedes, above: the ingot's 3.91 × 1.275 × 2.04, Grip `(0, -0.56, 0.6)`, the stand caps' 2.3 × 3.4 and the rack slot positions.
+
+| Script / instance | 2026-10-24 |
+|---|---|
+| `ReplicatedStorage.SwordParts.Ingot` | 2.93 × 0.96 × 1.53 (1.275× the first ingot); every stand `Ore` and `IngotRack.Slots.Slot1–12` match it. |
+| `SmithyCore.buildIngot` | Grip `CFrame.new(0, -0.4, 0.45)`. |
+| `IngotRack.Slots.Slot1–6` / `Slot7–12` | Seated from Ingot Rack's / Ingot Rack 2's own shelves: x at the shelf's middle (22.0), z the rack's centre ± a quarter of its inner width (2.15), 0.01 over each shelf. |
+| `OreRoller.Stand1–6` | `Pedestal` 1.8 × 0.22 × 3.25, `Band` 1.84 × 0.06 × 3.29, `Ore` 0.02 over the cap. |
+
+## GUI review fixes (2026-10-24)
+
+[[Sessions/2026-10-24#GUI review against the Roblox UI skills]].
+
+| Script / instance | 2026-10-24 |
+|---|---|
+| `Hud` | `here(p)` = `p − HudGui.AbsolutePosition`: a screen point in the HudGui's offsets (it ignores the inset; `AbsolutePosition` doesn't). `centre()` (the flying coins' target) and `pop()` (the "+N") go through it. |
+| `DeliveryController` | `call()` returns nil at once while `busy` (one `DeliveryRemote` request at a time); the Cart's Buy returns early while `busy`. |
+| `EmployeeController` | `act()` returns false at once, no toast, while `busy` (one `EmployeeRemote` request at a time). |
+| `ServerStorage.UIPackCopies` | The six `_Pack` screens, moved out of StarterGui. |
+| `MailGui.Window`, `MailController` | Position (0.5, 0, 0.5, 29) (was 0.5, 0); `UiFx.fit(win.Fit, 650, 570)` (was 460): 0.7 and 322 tall on a 382–390 px phone, under the top bar. [[Sessions/2026-10-24#Mail and Crew windows fit a phone]] |
+| `CrewGui.Window` | 780 × 460 (was 520): `UIPadding` top / bottom 16, `Rule` y 54, `Roster` / `Stats` / `Station` / `Staff` at y 62, 724 × 366; `Stats.Panel` and `Staff.Panel` 144 tall; `Station.List` 300 tall; `Tabs` y 62. Fit unchanged (980 × 560): 322 tall at 0.7. |
+| `Workspace.Plot` stations, round 2 (2026-10-24) | EtchingTable centre z 6.45, EtchingTable2 −3.44, PolishStation 18, OreRoller 1.48 (template plot space); their pads with them. [[Sessions/2026-10-24#Planner moves, round 2]]. |
+| `Workspace.Plot.PlayerSpawn` | 10 × 0.3 × 5.7, centre z 7.15 (was 8 deep at z 6): starts 0.5 behind the ore stands. Moves back 12 with the Upgraded Store like the workshop. |
+
+## Soft-bevelled stations (2026-10-24)
+
+[[Sessions/2026-10-24#Soft-bevelled stations]]. Supersedes, above: the stations' blocks and cylinders being Parts.
+
+| Script / instance | 2026-10-24 |
+|---|---|
+| `Workspace.Plot.Smithy` OreRoller, IngotRack(2), HiltBench, PolishStation, EtchingTable(2), SwordRack(2) | Every visible block / cylinder Part is a MeshPart cloned from `StationBevels`, with the Part's name, CFrame, size, colour, material, collision flags, attributes and children. `CollisionFidelity` Box (blocks) / Hull (cylinders). Hand edit: `build_workshop` still builds Parts. |
+| `ServerStorage.Buildings3D.StationBevels` | 89 MeshParts from Model 113523110859732 (attribute `SourceAsset`), one per part size: `B<x>_<y>_<z>` / `C<length>_<diameter>` in millistuds (cylinders along X). To bevel a Part of a listed size, clone its key and copy the Part's properties over. |
+| `ServerStorage.Legacy.<Station>_beforeBevel` | The nine stations as Parts, before the swap. |
+| `Models/Stations/Bevelled/build_bevelled.py` | Blender: `build()` makes one bevelled mesh per key from `stations_parts.json` (exported from Studio) and assembles the stations for review; `export()` writes `StationBevels.fbx` (`roblox` preset). Bevel 0.2 × the smallest side, ≤ 0.09, 3/2/1 segments, weighted normals. New sizes: add them to the json, rebuild, upload again. |
+| `ServerStorage.Builders.coplanar_check` | Checks Parts and wedges only, so it skips the bevelled stations; run it on `Legacy.*_beforeBevel` (the same flat faces). |
+| `Workspace.Plot.Shop.Displays.WallRack1–4` | Bevelled the same way (blocks and the two `Gable` wedges; `CollisionFidelity` Box / Hull). Cradles keep `Holds`; `Legacy.WallRack<n>_beforeBevel` hold the Parts. [[Sessions/2026-10-24#The shop's wall shelves]] |
+| `StationBevels` wedge keys | `W<x>_<y>_<z>`: a Roblox WedgePart (slope to −z). The mesh is about 3% under its key's size (the bevel trims the tips): set the part's full size on the clone. 103 shapes from Models 113523110859732, 70663660121319 and 80110813584400 (per-part `SourceAsset` on the later two). |
+| `build_bevelled.py` (shelves) | Reads every `*_parts.json` (`stations_parts.json`, `shelves_parts.json`); `wedge_mesh` builds wedges turned 180° about the vertical to cancel Roblox's import turn; `export(keys, name)` writes only the given keys. |
+
+## Station decorations on the walls (2026-10-24)
+
+[[Sessions/2026-10-24#Station decorations on the walls]]. Supersedes, above: where the finishing stations' wall decor sits.
+
+| Instance | 2026-10-24 |
+|---|---|
+| `Plot.Smithy.EtchingTable(2).Dress` | `Sign*` and `RackArm`/`RackPeg` + `PropSwords` turned −90° about Y onto the right wall (wall ends at plot x −23.52). Sign centres z 6.4 / −3.44; racks z 3.3 / −5.1. No `InkShelf`, `Bracket`, `InkJar`, `ChiselBoard`, wall `ChiselHandle`/`ChiselTip` or `Scroll*` any more (`Legacy.EtchingTable(2)_omittedDecor`). Counter pieces (cradles, case, stylus, andon, `DemoSword`) unchanged, so `EtchPlayback`'s hiding is unaffected. |
+| `Plot.Smithy.PolishStation.Model3D` | `Sign*` x −0.5; `StoneShelf`/`Bracket`/`Whetstone` x −0.5, z +2.05; `Peg`s and `PropSwords` x −0.5, z +1.5. No `ClothRail`/`HangingCloth` (`Legacy.PolishStation_omittedDecor`). |
+| `Plot.Smithy.HiltBench` | `Model3D` `Sign*`, `Guard*`, `HiltRail(2)`, `Peg` and all of `PropHilts` / `PropSwords` z +0.22 (flush to the back wall). |
+| `ServerStorage.Legacy.<Station>_beforeWallDecor` | EtchingTable, EtchingTable2, PolishStation, HiltBench before the move. Hand edits: `build_workshop` still builds the old decor. |
+
+| `ShopService` `showTill` (2026-10-24) | `TillSign.Plate` is transparent (no `UICorner` / `UIStroke`); `Plate.Amount` has a `UIStroke` (43, 28, 19), 2 px. [[Sessions/2026-10-24#The Cashier's till without a backing]] |
+
+## NPC review fixes (2026-10-24)
+
+[[Sessions/2026-10-24#NPC review (roblox-npc-ai)]].
+
+| Script | 2026-10-24 |
+|---|---|
+| `NpcWalk` | `to`: a private `follow` (one path, or the fallback points) is tried, then once more with a fresh path; stuck = `STALL` 2 s without `HEADWAY` 0.25 studs of progress, or the old timeout; still stuck, it steps into place (target X/Z, its own height and turn) and returns false. `steady(hum)`: FallingDown, Ragdoll, Climbing off. |
+| `ShopService` | `Slot.customer` is the customer's ctx or false. `runCustomer` sets `ctx.slot` / `ctx.npc`; `sendCustomer` frees the slot and destroys the NPC on an error. `makeNpc` calls `NpcWalk.steady`. |
+| `EmployeeService` | `makeWorker` calls `NpcWalk.steady`; `walkTo` is just `NpcWalk.to` (it steps into place itself now). |
+| `StreetLife` | Requires `NpcWalk`; `make` calls `NpcWalk.steady`. |
+
+## Polish sparkle wave (2026-10-24)
+
+[[Sessions/2026-10-24#The polish sparkle runs along the blade]]. Supersedes both `SwordRenderer` glint rows above.
+
+| Script | 2026-10-24 |
+|---|---|
+| `SwordRenderer` | Requires `Shared.BladeCore`. `wavePath(params)`: `WAVE_POINTS` 14 blade-space points from u 0.04 to 0.96, halfway between the ridge line and the edge on each station's normal from `BladeCore.centerline`, lerped between stations. `glint(part, path, shimmer)`: one Attachment + ParticleEmitter (sparkles_main, `LockedToPart`, life 0.3–0.4 s, size 0.45 / 0.7 with `Shimmer`) per point; every 2.5–4.5 s (1.2–2 s with `Shimmer`) emits one per point in order over `WAVE_TIME` 0.5 s. With `Shimmer`, the `PointLight` attachment steps along the same points and its brightness tweens to 3 and back over the wave. The stop function only ends the loop; the attachments go when `free()` destroys the blade part. |
+| `SwordRenderer` (later the same day) | Supersedes the `glint` description in the row above: one Attachment + ParticleEmitter (`LockedToPart`, life `WAVE_TIME` 0.7 s, size 0.55 / 0.8 with `Shimmer`, held from 0.15 to 0.85 of its life, RotSpeed 180). Each sweep emits one particle at `path[1]`, then on Heartbeat moves the attachment to the point at `s²` of the way along `wavePath` (`s` = time / `WAVE_TIME`, lerped between the 14 points). The `Shimmer` `PointLight` is on the same attachment. Requires `RunService`. |
+| `SwordRenderer` (glare, later still) | Supersedes the sparkle in the row above. `GLARE` = `rbxasset://textures/particles/explosion01_implosion_main.dds`; `WAVE_TIME` 0.6, `GLARE_LENGTH` 0.22 of the path. `along(path, u)` lerps the 14 `wavePath` points. `glint`: a `Beam` (Stretch, Segments 1, width 0.3 / 0.45 with `Shimmer`, FaceCamera, ZOffset 0.1, LightEmission 1, LightInfluence 0, Brightness 4) between `tail` and `head` attachments; per Heartbeat `front = s²·(1 + GLARE_LENGTH)`, head at `front`, tail at `front − GLARE_LENGTH` (clamped to the path), Transparency `1 − sin(πs)`; transparent between sweeps. The `Shimmer` `PointLight` is on `head`. |
+
+## Refinements 5 (2026-10-25)
+
+[[Sessions/2026-10-25#Refinements 5]]. Backups: `ServerStorage.Legacy.<Name>_beforeRefinements5` (and `OreRoller_beforeRefinements5`).
+
+| Script / instance | 2026-10-25 |
+|---|---|
+| `ForgeService`, `ForgeController` | No "<metal> ingot collected" notice (`takeOre`) and no "Ingot loaded" toast. |
+| `RewardCard` | A first-collected metal (`Discovered`) is `ItemPicker.toast("New metal: X")`, not a card. |
+| `Plot.Smithy` `IngotRack`, `IngotRack2`, `SwordRack`, `SwordRack2` | `ModelStreamingMode = Atomic`: `RackController` builds a marker per slot once, from `Slots` as it finds them, so slots still streaming in had none (4 of 6 / 1 of 6 / 3 of 6). |
+| `PromptFilter` | Every prompt it guards is in `prompts`. 4×/s: a prompt near your head (within its distance + 2) whose part a ray from your head can't reach gets `MaxActivationDistance` 0 locally (`reach` keeps the old value and restores it once clear). The ray ignores the prompt part's first Model ancestor, characters/NPC models, and parts that are non-colliding or Transparency ≥ 0.95 (up to 6 skips). |
+| `StarterGui.CrewGui` | `IgnoreGuiInset` true, `DeviceSafeInsets` (the Dim reaches the top). |
+| `Plot.Smithy.Anvil2` | Turned to face as `Anvil` (look −z world); `AnvilStone` (the mat) left where it was; `Turned` stays 90 so the crafter's `STAND` spot stays on the room side. `Face.CrafterPrompt` replaced by a copy of `Anvil.Face.ForgePrompt`. `EtchingTable2.Top.EtcherPrompt` deleted. |
+| `AnvilController` | `prompt` / `face` / `mount` become the triggered `ForgePrompt`'s anvil (`ProximityPromptService.PromptTriggered`, any `ForgePrompt` under your `Smithy`); `PromptHidden` likewise. `leave()` re-enables the prompt only without `CrafterOff`. `finish()`: on a saved blade, straight to `leave()` (no `SHOWCASE_TIME`, no result line); a failed save still shows "Couldn't save that blade". |
+| `EmployeeService` | `syncPrompt` gone (no crafter/etcher prompts). `oneSword` step 3 waits while your root is within 3 studs (flat) of `Anvil2.Face`, then `claim(Anvil2)` → walk, hammer → `release(Anvil2)`. `inUseSign(station, on)`: an "In use" BillboardGui on `Anvil2.Face`, styled like "Rack Full!", from `claim` / `release`. |
+| `EmployeeController` | No `PromptTriggered` handler: the crew window opens from the crew button only. |
+| `MailController` | `fitting(why)` → (count, cheapest fitting sword); Hand in calls `Commission("deliver", id, sword)` / `Order("fill", id, sword)` with it directly. No picker. |
+| `Shared/Employees` | `LEVEL_AT` {0, 10, 30, 70, 150}, `MAX_LEVEL` = 5, `STAFF_SCALE` 2.5 (replaces `SWORDS_PER_LEVEL` 3 / `JOBS_PER_LEVEL` 5 / `MAX_LEVEL` 11); `level(made, scale?)` returns (level, into, needed); `QUALITY_STEP` 8. |
+| `Shared/Upgrades` | `Lucky1–3` and `LUCK` removed; `luck(plot)` = `mergeFactor(merges)`. `Furnace2.after` = `"Heat3"`. |
+| `TycoonService` `padVisual` | One TextLabel "Name · price" (commas; the merge pad "Merge Ore Slots · Luck xN"), BillboardGui 240×30, `MaxDistance` 40. |
+| `TycoonController` | Every 0.2 s: each plot's pad `Label` enabled only within `LABEL_RANGE` 14 studs of your root. |
+| `Plot.Pads` | `Lucky1–3` deleted. `OreStand2–6`, `MergeSlots` moved to roller-local x −1.9 (the Lucky pad's spot). The five blueprint pads at plot (2.0, 16.2), the centre of `WorkshopFittings.AnvilStone`. |
+| `Plot.Smithy.OreRoller.Lever` | `ScaleTo(1.6)`; `Arm` X 0.55; `Knob` ×1.25. Base centre at roller-local (−7.4, −2.74, 4.3), its bottom 0.04 under the floor top. `Machine` (the `RollPrompt` part) on the knob, `CanCollide` false, `PivotOffset` set so the roller's pivot is unchanged (`Machine` is its PrimaryPart). |
+| `StarterGui.SpotlightGui` | DisplayOrder 8, `IgnoreGuiInset`. `Hole` (round, `Shade` UIStroke 3000 black at 0.45) and `Ring` (amber stroke, pulsed by `Guide`). Input passes through. |
+| `Guide` | `goal()` returns (text, target, button). Button steps: "Open your mail" → `MenuGui.Buttons.Mail`; "Hand it in from the mail" → the Mail button, or with the mail open that letter's `HandIn` (`mailButton(key)`); `gemTour`: `GemTour` "todo" + tutorial done + gems > 0 + the daily window closed → "Open the Gem Shop" on `Buttons.Upgrades`; "open" → "Gems buy boosts for your shop that last" on `GemShop.Body`. RenderStepped places the hole over the button (+ the top-bar inset for a non-inset screen) while it and its parents are visible; `GuideGui` DisplayOrder 9 while it shows, else 1. |
+| `GemController`, `GemService`, `SmithyCore.FUNNEL` | Funnel step 11 "Opened the Gem Shop" (saved like the others). Gems `state` has `toured`; `("tour")` logs step 11. The controller sets the local player attribute `GemTour` "todo" when not toured, "open" when the shop opens (and calls `tour`), clears it on close. |
+| `ShapingRules` | `sandRate` 0.5 cm/s, `sandRadius` 0.04; `Rules.sand(s, u, seconds)` takes width off workable stations near u (cosine falloff), never under the target; returns cm taken. `Rules.smooth` and `timing.smooth` removed; `canSmooth` gates the Sand button. |
+| `ShapingPrototype` | No diagram: a 64 px top bar (chip, match, legend); buttons at the bottom; Strike (touch) above them. `outline`: 2 × (N − 1) Neon `TargetLine` segments along the target's ring-4 edge on both faces (± thick/2 + 0.06 cm), placed with the blade in `placeBlade`. `paint` tints each station toward `TOO_WIDE` / `TOO_NARROW` by its error (and repaints on `shapeChanged`). `tool` "hammer" / "sand" (`swapTool`, the Sand / Hammer button); in sand mode a held mouse button or touch sets `sanding`, and RenderStepped runs `Rules.sand(state, smoothU, dt)` with a scrubbing `SandBlock` in place of the hammer. `info()` has `canSand`, `tool`. |
+| `SaveSpec` | The luck check is merge-only (`luck` 1 → 2 at 2 merges, `Lucky1` gone) plus `Furnace2.after == "Heat3"`: 89/89. |
+| `ShapingRulesSpec` | Sanding checks replace smoothing's: 27/27. |

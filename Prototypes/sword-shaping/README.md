@@ -14,14 +14,17 @@ To remove it entirely, delete `ReplicatedStorage.Prototypes` and the "Shaping pr
 
 | | Mouse / keyboard | Touch (built, **not tested**) |
 |---|---|---|
-| Choose where | Move the mouse along the blade, or along the diagram | Drag on the blade or the diagram |
+| Choose where | Move the mouse along the blade | Drag on the blade |
 | Strike | Click | **Strike** button (shown on touch devices) |
 | Turn the blade | **R** or **Turn blade** | **Turn blade** |
+| Sand (from a 90% match) | **Sand** swaps the hammer for a sanding block; hold the mouse on the blade and drag to sand the bumps down to the line; **Hammer** swaps back (Refinements 5, 2026-10-25; a one-click Smooth in Refinement 4) | hold a finger on the blade and drag |
 | Score it | **Finish** (card: Keep shaping / New blank) | same |
 | Start over | **Reset blank** | same |
 | Developer | **Dev: narrow-tip preset** (Studio only): a good blade with one section near the point hammered too narrow | same |
 
-Edge up, a strike **narrows** the section under the hammer; flat, it **widens** it. The chip at top left of the panel always says which.
+Edge up, a strike **narrows** the section under the hammer; flat, it **widens** it. The chip at the top left always says which.
+
+**The view (Refinements 5, 2026-10-25):** the blade and anvil fill the screen, with a thin bar on top (side, shape match, legend). The face-on diagram is gone. The target outline glows on the blade itself (both faces, turning with it), and the steel reads red where it's too wide and blue where it's too narrow. Allen: "the actual sword and anvil need to be the main view"; he picked the guide lines "Overlay on the blade".
 
 ## Rules (`ShapingRules`)
 
@@ -29,15 +32,16 @@ Edge up, a strike **narrows** the section under the hammer; flat, it **widens** 
 - A strike changes width by `strength` (0.15 cm) at the aimed point, easing to zero `radius` (7% of the blade, about 4.9 cm) either side. Nothing else moves. The tang end and the point are fixed, blended in smoothly.
 - Strikes never look at the target: you can overwork a section past the line either way. Limits 0.8–4.4 cm keep the mesh valid.
 - **Shape match** is worked out from the final geometry alone: each station within `perfect` (0.08 cm) of the target counts fully; further off, it falls away over `tolerance` (0.25 cm). Too wide and too narrow both count as error. Strike counts, turns and corrections cost nothing. The score is separate from the game's quality and sale values.
-- All tuning (strength, radius, limits, blank width, score band, animation timing) is in `ShapingRules.CONFIG`.
+- **Sand** (Allen, Refinements 5, 2026-10-25: "the smoothing should be another manual step. It should involve holding mouse down and basically 'sand down' the bumps"): once the match reaches `smoothAt` (90%) with some workable station more than 0.01 cm over the target, the Sand button shows. Held at a spot, the block takes `sandRate` (0.5 cm/s) off under its centre, easing to nothing `sandRadius` (4% of the blade) either side, and never past the target line (`Rules.sand`). It never adds material, so a section hammered too narrow still costs; sanding a wide-but-close blade all along scores 100%. It replaces Refinement 4's one-click Smooth ([session note](../../Sessions/2026-10-24.md#refinement-4)). [Session note](../../Sessions/2026-10-25.md#refinements-5).
+- All tuning (strength, radius, limits, blank width, score band, sanding threshold, rate and reach, animation timing) is in `ShapingRules.CONFIG`.
 
 ## Files
 
 | File | Studio location | Role |
 |---|---|---|
 | `roblox/ShapingRules.luau` | `ReplicatedStorage.Prototypes.ShapingRules` | Pure rules and tuning (above). |
-| `roblox/ShapingPrototype.luau` | `ReplicatedStorage.Prototypes.ShapingPrototype` | Client presentation: forge corner, `BladeView` mesh, hammer, tongs, face-on diagram, input, camera, Exit. `workspace.ShapingPrototype.Inspect:Invoke()` reads the live state for checks. |
-| `roblox/ShapingRulesSpec.luau` | `ServerStorage.Tests.ShapingRulesSpec` | 19 checks. Command bar: `print(require(game.ServerStorage.Tests.ShapingRulesSpec:Clone())())` |
+| `roblox/ShapingPrototype.luau` | `ReplicatedStorage.Prototypes.ShapingPrototype` | Client presentation: forge corner, `BladeView` mesh, the target outline on the blade, hammer, sanding block, tongs, top bar, input, camera, Exit. `workspace.ShapingPrototype.Inspect:Invoke()` reads the live state for checks. |
+| `roblox/ShapingRulesSpec.luau` | `ServerStorage.Tests.ShapingRulesSpec` | 27 checks (8 for sanding since 2026-10-25). Command bar: `print(require(game.ServerStorage.Tests.ShapingRulesSpec:Clone())())` |
 | (edit) | `StarterPlayerScripts.DevPanel` | The "Shaping prototype" button. |
 | `screenshots/` | | Play captures, numbered in order of the correction sequence. |
 
