@@ -693,3 +693,47 @@ Allen: "Build the Shop page next: the other passes with live prices, the Starter
 ## Passes on sale — 2026-10-27
 
 Allen: "Put all six passes on sale while the game is private, so the Shop shows prices and I can test buying." All six went on sale through Open Cloud, Lucky Ore included; the developer products stay off sale until built. Before the game goes public, Lucky Ore's Store tab question must be settled ([[Design/Monetization Plan#Open]]). [[Sessions/2026-10-27#Passes on sale]]
+
+## Message bars, floor arrows, red closes, paper letters — 2026-10-27
+
+Allen: tutorial and popup messages on a dark vignette bar; green floor arrows plus a Highlight instead of the bouncing arrow; a red square X on every window, square corners and drop shadows; letters that look like letters. All applied ([[Sessions/2026-10-27#Message bars, floor arrows, red closes, paper letters]]). Supersedes the GuideArrow chevrons, the rounded window corners and the dark round close rings.
+
+## Mailbox from the start, tutorial ends at the first sale — 2026-10-28
+
+Allen (Fixes list): "instead of having player buy the mailbox, just have the mailbox already there. the tutorial finishes after the player makes a sale. then after a few minutes they receive mail asking for a sword." Every plot has the Mailbox (no pad); story letters come 45 s after the sale that makes them due (Allen: "they should get it in about 45 seconds"; 150 s at first). Also from that list: furnace timers through walls on your own plot, the anvil's shape panel replaced by a progress bar, message bars sized to their text, the mail popup middle right. [[Sessions/2026-10-28#Fixes 2026-10-28]]. Supersedes the 15-coin Mailbox pad (2026-10-26).
+
+## The first letter asks for a metal — 2026-10-28
+
+Allen: "the first tutorial quest should not specifically be a wakizashi sword ... the quest should be able to be completed at the progress they're at. the quest should specify the type of material, probably a common material and players should be prompted to keep spinning until they find it. once the metal is found, there should be some message that says that the material is used in the quest." Takeda's letter now wants an Iron Tantō, any quality (round 3, Allen: "it should specifically ask for a sword shape"; the anvil's blade picker spotlights the shape); pulls lean to Iron (1 in 3) while it's open; the ore shows "Takeda wants this!". Also: straight-line guide arrows, a smaller letter popup. [[Sessions/2026-10-28#Fixes 2026-10-28, round 2]]. Supersedes the Wakizashi of any metal at 90%+ (2026-10-22).
+
+## Phone text floor — 2026-10-28
+
+Allen: "the gui on mobile is too small", then "Yes, do all windows". Window text reads at least 14 px on an 844 × 390 phone after the window's fit scale (20 px in a 0.7 window). [[Sessions/2026-10-28#Phone text pass]].
+
+## Station prompts on screen — 2026-10-28
+
+Allen: "instead of having the 'E to do x' gui in the game ... the button is actualy on their screen and they hold that instead" (a reference with an "E Block / Pick Up" card). Station prompts show as one on-screen card over the hotbar that you tap or hold; the shop holders and racks keep their markers. Built in Studio as an asset (Allen: "not during runtime"). [[Sessions/2026-10-28#On-screen action button]].
+
+## Ghost clicks instead of the bouncing arrow — 2026-10-28
+
+Allen: "the red and green bouncing arrow is redundant now if we have the spotlight effect"; "we should have a ghost click animation/tween and spotlight effect when opening the pickers to show exactly what to click". The spotlight's bouncing arrow is gone; in guided steps the pickers spotlight the card to pick and a ghost cursor taps it (only there: "We dont need the ghost for everything"). Supersedes the spotlight arrow (Tips 2026-10-26). [[Sessions/2026-10-28#Playtest fixes: arrows, forge, cards, ghost clicks]].
+
+## Roblox's prompts back; the on-screen card is switched off — 2026-10-28
+
+Allen: "lets revert the change to have the default roblox click instead of our custom button. make it so we can toggle it on or off if i change my mind". Station prompts use Roblox's own look; the card stays built and comes back by ticking `StarterGui.ActionGui.Enabled`. Supersedes "Station prompts on screen" (same day) while the switch is off. [[Sessions/2026-10-28#Roblox's prompts back, the card behind a switch]].
+
+## Fixes 2026-10-28, more — 2026-10-28
+
+No popup for a newly made sword; bigger phone picker cards with one row showing (Allen: "Bigger cards always"); the mail closes after a Send and the coins fly in; a letter preview on each mail row; Takeda's first letter pays 5 gems (enough for Better Advertising) and the Gem Shop step waits for that; Gem Shop stats as multipliers (Customers 1x → 1.2x). [[Sessions/2026-10-28#Six more: popups, phone cards, Send coins, previews, gems, stats]].
+
+## Cascading ore roll — 2026-10-28
+
+Allen: "a cascading loot roller/generator", then "Yes, build it". The roll still draws one metal with the same odds; the box's show starts every ore as Common and climbs it a tier at a time (pop, flash, rising ding) to that result, all slots at once, with no near-miss show. The show lasts as long as the best ore needs (1.75 s for a Common to 4.5 s for a Secret; was 3.6 s). Also: lever hold 1 s (was 1.5). Supersedes the flicker-through-every-metal show (2026-10-22/24). [[Sessions/2026-10-28#Cascading ore roll]].
+
+## Ore Slots: always the next one — 2026-10-28
+
+Allen: "player should always be able to buy the next ore upgrade so once they have 6, they can merge and keep re-doing that cycle". Ore Slots 4–6 need only the slot before; prices (75 / 520 / 3,900 / 26,000 / 100,000, ×1.5 per merge) pace them. Supersedes Economy pass 2's Katana / Falchion / Cashier gates on Ore Slots 4–6 (2026-10-27). [[Sessions/2026-10-28#Ore Slots ungated]].
+
+## NEW means first rolled — 2026-10-28
+
+Allen: "it would be no longer new if we've rolled it already". The lid's NEW shows only on a metal's first roll (saved), on its own line above the name. The collection book still counts collected metals. Supersedes NEW-until-collected (2026-10-22). [[Sessions/2026-10-28#NEW on the first roll, on its own line]].

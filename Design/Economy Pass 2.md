@@ -149,3 +149,5 @@ Walk-ins outnumber swords 5–11× all game, so no sword ever waits for a custom
 - **Events:** a customer event pays only while swords wait (around the crafter, and with three crafters); in between, a heating or forging event is the one that pays.
 
 Related: [[Design/Progression and Economy Review — 2026-10-27]] · [[Design/Tycoon Upgrades]] · [[Design/Workshop Growth]] · [[Design/Core Loop Review]] · [[Development/Roadmap]]
+
+**2026-10-28:** Ore Slots 4–6 are no longer stage-gated; each needs only the slot before ([[Design/Decisions Log#Ore Slots: always the next one — 2026-10-28]]).

@@ -216,3 +216,13 @@ Allen: "Icons are a bit small right now on desktop", then "convert the left colu
 ### Staff rosters (2026-10-26)
 
 Each staff tab in the crew window opens a roster like the crafters' (Allen: "make it so its like Crafters, where you can select your cashier or shop promoter"): the crafter card per member with portrait, role, name, level and XP, and the status line or perk where a crafter has its trait; no stars or bars. Tapping it opens the Staff page, which has a ‹ Back in the window header. [[Sessions/2026-10-26#Staff rosters in the crew window]]
+
+### Message bars, red closes, shadows, letters (2026-10-27)
+
+- **Messages:** full-width black bar, 0.35 transparent, `Vignette` gradient fading to the sides (solid 18–82%: the gradient fades text too), white Heavy text, dark text stroke. Every tutorial line, toast, notice, banner and the new-letter popup.
+- **Windows:** square corners, the picker's soft drop shadow (`Shadow`, 9-slice `rbxassetid://94910504330544`), contents in `Content` over `Fill`.
+- **Close:** red (222,50,46) square, white Heavy "X" with a dark (64,12,10) outline, 3 px dark border, at the window's top right.
+- **Letters:** envelope, torn paper, wax seal with a sword, serif (Merriweather) text, "— name" in Kalam. Art: `Art/ui-envelope.png`, `ui-letter-paper.png`, `ui-wax-seal.png` (from `Art/make_ui_letter_art.py`).
+- **Where to go:** green arrows on the floor (`Art/ui-guide-arrow-beam.png`) and a green Highlight on the target.
+
+**Furnace timer pill (2026-10-28):** `WorldText.ForgeSlot` is a 96 × 34 pill (round ends), 20 px text, dark brown; "Ready!" in green. [[Sessions/2026-10-28#Small fixes: ghost click, prompts, furnace pill, lever hold]]

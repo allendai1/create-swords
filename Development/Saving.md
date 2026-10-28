@@ -82,3 +82,5 @@ If loading fails in a live server, the player is kicked with a rejoin message ra
 - Not yet: Play, rejoining, two servers, a published server ([[Development/Roadmap#3. Persistent progress]]).
 
 Related: [[Design/Game Design Document#12. Technical notes (Roblox)]], [[Current Status]].
+
+**`rolled` (2026-10-28):** metals ever rolled, a list of ids beside `discovered`; missing in older saves (loads empty), unknown ids dropped. Drives the lid's NEW. [[Sessions/2026-10-28#NEW on the first roll, on its own line]]

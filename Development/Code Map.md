@@ -71,7 +71,7 @@ First-sale exceptions: a listing spawns a customer immediately until `sold > 0`;
 | `Shared/Employees` | (2026-10-23) The sword crafter's training prices, levels (`level`, `quality`, `seconds`); its hire is the `Crafter` upgrade in `Shared/Upgrades` (a pad after Anvil 2). `EmployeeService` (server) hires on `Bought_Crafter` (Anvil 2's `CrafterPrompt` stays off until then), trains and switches shapes through the `Employee` remote (anywhere on your plot) and runs the crafter NPC's loop (Ingot Rack → `Hook_HeatIngot` in ForgeService, whose slot carries `OwnerId` 0 so clients count it busy → Anvil 2 → Polishing Station with `CrafterBusy`, set before it walks over, and only while you're not polishing (`PlayerPolishing`) → Finished Sword Rack, redrawn by `Hook_RackChanged` in RackService); `EmployeeController` (client) is its window. SmithyCore saves `crafter`. Since 2026-10-24 also `STAFF`: the Stocker, Cashier, Shop Promoter and Sword Etcher, each on its own pad, saved as `staff` ([[#Refinements 3 (2026-10-24)]]). |
 | `Shared/Deliveries` | (2026-10-22) Delivery offers (bulk/special via `Orders.make`'s kind), status, public view, capacity/speed levels and prices, encode/decode with SmithyCore's sword coders. `DeliveryService` (server) runs the `Delivery` remote (accept, skip, cancel, dispatch, collect, upgrade; since 2026-10-24 there is no `pack` action and `dispatch` takes the chosen sword ids), the cart's roll and crates and the board's timer; `DeliveryController` (client) is the window, its packing page (2026-10-24) and the pinned order. `build_delivery` builds the cart, board and Delivery pad on the template. Since 2026-10-23 `PAY` (1.1; 1.3 at first) and `pay(packed, valueOf)`: DeliveryService pays it on collect and `public(s, now, valueOf)` sends it as `pay` (valueOf = `SmithyCore.swordValue`); a delivery stores no reward. |
 | `Shared/Orders`, `Reputation` | (2026-10-22) Rotating board orders: `make`, `title`, `mismatch`, `decode`, `slots(level)`. Reputation points → level, bar and walk-in factor. ShopService makes, checks and pays both; SmithyCore saves `reputation`, `orders`, `nextOrder`. Since 2026-10-23 the board's clock: `GAP` {180, 600} (since 2026-10-24: a fresh random gap of 3–10 minutes per order; it was `EVERY`, 180 s) and `refill(n, slots, at, now, opening, gap)` on SmithData `orderAt` (ShopService's `refillOrders`, ticked every second per plot from `onPlot`; the board opens full), and `PAY` (1.2) / `pay(value)` on the handed-in sword's value; orders store no reward. `CommissionController` shows "+20% value", each sword's pay and a "New order · in m:ss" card (since 2026-10-23 `MailController` lists the orders as mail; the board is gone; since 2026-10-24 there is no "New order" row and an empty inbox says "No mail"). |
-| `Shared/Etches`, `EtchPatterns`, `EtchCanvas` | Finish catalogue, stroke paths and progressive/final image work. Flame and Eclipse have build records; further patterns require confirmation. Since 2026-10-23 `EtchCanvas` draws the strong glow (GLOW_CM, GLOW, CORE, THICK at its top) and paints raised pixels once per flush; `SwordRenderer` builds world etches over frames. |
+| `Shared/Etches`, `EtchPatterns`, `EtchCanvas` | Finish catalogue, stroke paths and progressive/final image work. Flame and Eclipse have build records; further patterns require confirmation. Since 2026-10-23 `EtchCanvas` draws the strong glow (GLOW_CM, GLOW, CORE, THICK at its top) and paints raised pixels once per flush; `SwordRenderer` builds world etches over frames. Since 2026-10-28 `_flush(dirty, spread)` also yields between pixels in a spread `reveal`, and `spread` may be a number: the seconds of work per frame (`sliceOf`; `true` is `SLICE`, 4 ms). `SwordMeshCache.etch` passes it through. `EtchPlayback.prepare` yields: it builds the finished etch and the show's canvas with `BUILD_SLICE` (10 ms). |
 | `Shared/SwordMeshCache` | Shared, baked-first finished-sword geometry with live fallback and etch/polish appearance. |
 | `SwordMeshes`, `SwordParts.KatanaHilt` | Uploaded finished meshes and dressed hilt/guard templates used by world and viewport art. |
 | `Remotes` | Forge/hilt/polish/etch, state, rack, display/offer and upgrade request/event boundary. Client choices require server ownership, reach and state checks. |
@@ -858,3 +858,84 @@ From [[Design/Monetization Plan#12. Built (2026-10-27, not played)]]; [[Sessions
 | `StarterPlayerScripts.MenuController` | The Shop section: prices from `MarketplaceService:GetProductInfoAsync(id, GamePass)` (only while on sale; "—" and grey otherwise), `Owned` from `Store.owns`, the Starter Pack first until owned (`LayoutOrder` 0, then 99). Lucky Ore's Buy fills and opens `OddsWindow` (`Materials.odds` at the plot's `Upgrades.luck` and + `Store.LUCKY_ORE`, three significant figures, gains green); its Buy prompts the pass. `PolicyService` restricted, or no answer: Lucky Ore's card is hidden. The dot: tutorial done (`MyPlot.tutorialDone`), Starter Pack not owned, Shop not opened this session. |
 | `Shared/Materials` | `odds(luck)`: each rarity's chance in percent (adds to 100); `roll` draws from it, unchanged (200,000 rolls match). |
 | `StarterPlayerScripts.MyPlot` | `tutorialDone(plot)` (the Guide's check), used by AutoRollController and MenuController. |
+
+## UI pass — 2026-10-27
+
+[[Sessions/2026-10-27#Message bars, floor arrows, red closes, paper letters]]. Supersedes, above: `GuideArrow` and `GuideHolderSpot` (gone); window children directly under `Window`.
+
+| Where | What |
+| --- | --- |
+| `ReplicatedStorage.GuideLook` | `Arrow` (Beam template, flat floor arrows) and `Highlight` (the target's glow). |
+| `Guide` | `drawTrail(points)`, `route(from, to)` (PathfindingService, trimmed `START` 2 / `STOP` 4), `glowOf(part)`, `showWay(target)` called each tick; workspace folder `GuideTrail`. |
+| Windows (Mail, Crew, Delivery, MenuGui ×3, GemGui ×2, Collection) | `Shadow` (Z0, the picker's), `Fill` (Z1, background + gradient + stroke), `Content` (Z2, padding, layout, Header, Body…); Crew: no `Content`, its frames at ZIndex 2. |
+| `MailGui…Letter` | `Envelope`, `Seal`, `Paper` (ImageLabel; `Text` inside), `Rule.Diamond`, `Signature` (MailController sets "— name"). `Templates.Letter`: `PaperBg`, `Seal`. |
+| Message bars | `GuideGui.Goal`, `ShopHud.Notice`, `PickerGui.Toast`, `WorkshopOpenGui.Banner`, `MailGui.Popup`: each has a `Vignette` UIGradient. |
+
+## Fixes (2026-10-28)
+
+From `Untitled 1.md`; [[Sessions/2026-10-28#Fixes 2026-10-28]].
+
+| Where | What |
+|---|---|
+| `Guide` | Arrows: one Beam per arrow (`ARROW` 5 studs, `SPACING` 6, counted back from the path's end); `GuideLook.Arrow` TextureMode Stretch. Spotlight hole on whole pixels. `buyStep` says "Buy …". "A customer is coming!" while the first sword is on display. An accepted letter with the mail open → "Close the mail" on `Window.Content.Header.Close`. "Sell it to afford the …". No Mailbox step: nothing after the first sale until the letter. |
+| `ShopService` | `offerCommission(owner, now)`: without `now` it waits `LETTER_DELAY` (45 s since round 2); on join `now`. No `Bought_Mailbox` checks. |
+| `Shared.Upgrades` | No Mailbox. `Workspace.Plot.Shop.Mailbox` has no `Upgrade` or `TycoonItem`; the pad is `ServerStorage.Legacy.Pads_Mailbox_beforeFixes1028`. |
+| `MailController` | The Mail button always shows. |
+| `ForgeService` | Slot `shown`: the timer counts from the full heat time while a tutorial ingot heats in 3 s; the tick is 0.1 s. |
+| `WorldText.ForgeTimers`, `ForgeController` | `StudsOffsetWorldSpace` 0, 6.6, 0 (was `StudsOffset`); your own furnaces' boards are always `AlwaysOnTop`. |
+| `AnvilController`, `AnvilHud` | `Panel` hidden; `Progress` (320 × 14, bottom middle at 1, -124) fills `strikeIndex / #recipe`, full when forged; hidden in the showcase. |
+| `HiltBenchController`, `HiltSeatGui.Ghost` | The Cursor icon slides the hilt home every 1.8 s on the first sword (`state.completed == 0`, not gamepad) until you take hold. |
+| `GuideGui.Goal`, `WorkshopOpenGui.Banner`, `ShopHud.Notice`, `PickerGui.Toast`, `MailGui.Popup` | `AutomaticSize` X, padding 50–80 px, vignette 0 → 0.1 … 0.9 → 1. The popup: AnchorPoint 1, 0.5 at 1, -8, 0.5, 0. |
+
+### Round 2 (2026-10-28)
+
+[[Sessions/2026-10-28#Fixes 2026-10-28, round 2]].
+
+| Where | What |
+|---|---|
+| `Shared.Commissions` | First letter `IronTanto` (round 3; `IronBlade` with any blade in round 2, `IronWakizashi` before): `blueprintId` "tanto", `materialId` "Iron", `minPercent` 0 (any). `mismatch` skips a nil blueprint and a 0 floor; `title` gives "Iron Tantō" (or "Iron blade" for a letter with no shape). |
+| `ForgeService` | `wantedMetal(d)`: the open (offered or active) story letter with a `materialId`. `rollFor` returns it one pull in `WANT_CHANCE` (1/3). `reveal` shows `OreLabel.Wants` ("<sender> wants this!") on a matching ore. |
+| `WorldText.OreLabel` | `Wants` TextLabel under the rarity (hidden by default); the billboard's ClipsDescendants off. |
+| `Guide` | `route` is a straight line (no PathfindingService). For a letter's metal: "Pull again for <metal>" over a lid of another metal, "Pull the lever for <metal>", "Forge an <metal> <best blade>"; only blades of that metal count for "Fit a hilt". |
+| `MailController` | A story letter's title shows "· N%+" only when `minPercent` > 0. |
+| `MailGui.Popup`, `SpotlightGui` | Popup 52 px, portrait 38, text 18 / 14, padding 36. Spotlight `ScreenInsets` None. |
+| `ServerStorage.Tests.SaveSpec` | Commission checks for the Iron blade letter (99 checks). |
+| `Guide` (round 3) | `pickerTarget()`: with a picker up, the accepted letter's `Shape<blueprintId>` card in `PickerGui` is the spotlight target. [[Sessions/2026-10-28#Fixes 2026-10-28, round 3]] |
+| `ForgeService` (round 4) | `wantedMetal` / `WANT_CHANCE` moved above `reveal` (it was nil there: every pull errored). `PickerGui.Templates.CompactCard` text 18 / 13 / 16, `CompactWindow.Body.Empty.EmptyTitle` 22. [[Sessions/2026-10-28#Fixes 2026-10-28, round 4]] |
+| `CrewGui`, `MailGui`, `DeliveryGui`, `GemGui`, `HotbarGui` (phone text pass) | Text sizes raised so each reads ≥ 14 px at the window's phone scale (`UiFx.fit` at 844 × 390). Backups `ServerStorage.Legacy.<Gui>_beforePhoneText`. [[Sessions/2026-10-28#Phone text pass]] |
+
+## On-screen action button (2026-10-28)
+
+[[Sessions/2026-10-28#On-screen action button]].
+
+| Where | What |
+|---|---|
+| `StarterGui.ActionGui` | `Action` card (Row: Key, Words.ActionText / ObjectText; Hold.Fill), `Prompt` ObjectValue. Built in Studio. |
+| `StarterPlayerScripts.ActionButton` (new) | `PromptShown` / `PromptHidden` for prompts with `ScreenButton`; taps → `InputHoldBegin` / `InputHoldEnd`; `PromptButtonHoldBegan` fills Hold over `HoldDuration`. |
+| Plot template prompts | HeatPrompt, ForgePrompt, PolishPrompt, RollPrompt, EtchPrompt, HiltPrompt, ShapePrompt, DeliveryPrompt: Style Custom + `ScreenButton`. |
+| `ShopService` | The till's `CollectPrompt`: Style Custom + `ScreenButton`, ObjectText "Cashier" (the ore's went back to Roblox's prompt the same day). |
+| `Guide` | `actionFor(target)`: the card is the spotlight target when its prompt is in the target's station (`stationOf`). |
+| `Guide` (playtest fixes) | Clears old `GuideTrail` / `GuideArrow` on start; `MAX_ARROWS` 4, `SPACING` 9; `pickerTarget()` for any picker in a guided step (letter's card, else the first); `SpotlightGui.Ghost` taps the spotlit button; no `SpotlightGui.Arrow`. [[Sessions/2026-10-28#Playtest fixes: arrows, forge, cards, ghost clicks]] |
+| `ForgeController` | HeatPrompt off while full with none of yours ready (and while Locked). |
+| `ActionGui.Action.Hold` | One frame + `Progress` UIGradient (Offset.X -0.5 → 0.5), no Fill child. |
+| `MailGui.Popup` | `Words` (Title = sender's name, Hint = "Sent you a letter · Tap to read"); `MailController` sets `Words.Title`. |
+| `GuideLook.Arrow`, `ActionGui.Action`, ghosts | TextureLength 1 (Stretch repeats the texture that many times); the card at `{0.5,0},{0.938,-69}`; `SpotlightGui.Ghost` / `HiltSeatGui.Ghost` 0.09 of screen height (RelativeYY), 26–52 px. [[Sessions/2026-10-28#Single arrows, lower card, ore prompt, ghost size]] |
+| `ActionGui.Action.Row.Key.Tap` | The Cursor icon in the key box on touch (`ActionButton` blanks the key's text then). |
+| `Guide` (ghost, ore step) | `ghostOn`: the ghost shows only on picker cards. `actionFor` returns nil for a target inside an ore `Stand<n>`. |
+| `StarterGui.ActionGui.Enabled` (switch) | Off: Roblox's prompts (ScreenButton prompts Style Default in Studio), `ActionButton` returns at once. On: `ActionButton` sets them Custom client-side and draws the card. Tap icon whenever `TouchEnabled` (not gamepad). |
+| `Guide` (spotlight motion) | `FADE_IN` 0.25, `FADE_OUT` 0.2, `IRIS` 3, `GLIDE` 0.18: `shown` 0–1 drives the shade frames' transparency (from `SHADE`, their Studio value); `rectAt` / `rectSize` ease to the target. `HiltSeatGui.Chevron` removed. |
+| Six more (2026-10-28) | `RewardCard` no assembled-sword card; `HiltBenchController` no inventory toast; `CompactCard` 169 × 195 and `UiFx.fit(COMPACT.Fit, 600, 320)`; `MailController.sent` closes the mail after a Send; `Hud` `waiting` coins fly when HudGui is back; `Letter.Preview`; `Commissions` `gems` (IronTanto 5) paid in `ShopService`; `GemController` tour needs the cheapest boost's gems; `GemUpgrades` stats as multipliers (`rate`). [[Sessions/2026-10-28#Six more: popups, phone cards, Send coins, previews, gems, stats]] |
+
+## Cascading ore roll (2026-10-28)
+
+[[Sessions/2026-10-28#Cascading ore roll]].
+
+| Where | What |
+|---|---|
+| `Shared.Materials` | `CASCADE` (lockAt 1.1, gap 0.06, step 0.55, hold 0.35, drop 0.3), `climbs(m)` (Common 0 … Secret 5), `rollLength(results)`. `roll` unchanged. |
+| `ForgeService` | The still box's pull sets `RollTime` = `Materials.rollLength(results)` before `RollAt` and waits that long (`BOX_TIME` only seeds it). Ore `CollectPrompt` OneGlobally; furnace board 96 wide. |
+| `OreBoxShow` | Rewritten: Common flicker, lock-in, one climb per step with pop, hop, flash, ding (`Cues.RollClimb` cloned onto the ingot). Backup `ServerStorage.Legacy.OreBoxShow_beforeCascade`. |
+| `SoundService.Effects.Cues.RollClimb` | New: the furnace ding at 0.3, roll-off 8–45 studs; pitch set per climb. |
+| Prompts, pill, ghost | 12 station prompts OneGlobally; `RollPrompt` hold 1 s; `WorldText.ForgeSlot` pill (34 tall, round ends, text 20), `ForgeTimers` 96 × 34; Guide ghost stays put and presses. |
+| `Shared.Upgrades` (Ore Slots) | OreStand4/5/6 `after` the previous slot only (no Katana / Falchion / Cashier). [[Sessions/2026-10-28#Ore Slots ungated]] |
+| `SmithyCore` `rolled`, `ForgeService.reveal`, `WorldText.OreLabel.New` | Metals ever rolled (saved); NEW (its own amber line above the name) only on a metal's first roll. [[Sessions/2026-10-28#NEW on the first roll, on its own line]] |

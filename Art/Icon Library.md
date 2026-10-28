@@ -157,6 +157,7 @@ Allen (2026-10-26): "I added a free icon pack to our vault. can we swap out our 
 | Upgrades button (was Red House, same day) | Stats | 71927353031117 | rbxassetid://97477084020092 | the store upgrades button (`MenuGui.Buttons.Upgrades`); Allen: "use Stats 1st Outline instead of the house icon for shop upgrades" |
 | Book button (was Sword, same day) | Blue Book | 111130036886654 | rbxassetid://81875196362916 | the collection book (`MenuGui.Buttons.Book`); Allen: "Use a book instead of the sword icon to show the discovered metals". Claude chose blue: the old sword was blue, and it stands apart from the red and orange beside it |
 | (new, 2026-10-27) | Trash Can | 75641554610978 | rbxassetid://112432692268721 | the bag's trash (`HotbarGui.BagPanel.Trash`, Economy pass 2); uploaded through Open Cloud the same day |
+| (new, 2026-10-28) | Cursor | 88331796722612 | rbxassetid://133171470730444 | the ghost cursors (`HiltSeatGui.Ghost`, `SpotlightGui.Ghost`) and the action card's tap icon on phones (`ActionGui.Action.Row.Key.Tap`), Fixes 2026-10-28; uploaded through Open Cloud the same day |
 
 Claude's picks where the pack had several: Purple Diamond (the old gem was purple; Blue Diamond is the alternative), Red Gift, Red Shopping Cart (or a Red / Golden Shopping Bag), Lighting for speed (or Yellow Shoe), Red House vs Yellow House to keep the trip's start and end apart (the Red House stays only on trip step 1 since the Upgrades button became Stats). `ServerStorage.UIPackCopies` (another session's UI-pack experiment) still holds the old ids.
 
