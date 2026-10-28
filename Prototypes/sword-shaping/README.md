@@ -10,29 +10,33 @@ Question under test: does choosing where to hammer, turning the blade and correc
 
 To remove it entirely, delete `ReplicatedStorage.Prototypes` and the "Shaping prototype" block in `StarterPlayerScripts.DevPanel` (and `ServerStorage.Tests.ShapingRulesSpec`). Nothing else refers to them.
 
+## The Test Anvil (Studio only, 2026-10-25)
+
+To try the new process start to finish: heat an ingot, press E at the **Test Anvil** in the workshop (plot −8, 12), pick the ingot and any sword you know, shape it, and press **Finish**. The match becomes the blade's quality (92% → a 92% blade), and you carry on at the Hilt Bench as usual. Since 2026-10-26 the blade keeps the shape you hammered through hilting, display and sale (`shape` on the blade, `BladeCore.withShape`; [session note](../../Sessions/2026-10-26.md#test-anvil-blades-keep-their-shape)). The anvil and its remote exist only in Studio. Every sword works: the rules scale to each blade's width, and double-edged blades are shaped on both edges. Script: `roblox/TestAnvil.luau` (`StarterPlayerScripts.TestAnvil`); server side `SmithService.FinishShaped`.
+
 ## Controls
 
 | | Mouse / keyboard | Touch (built, **not tested**) |
 |---|---|---|
-| Choose where | Move the mouse along the blade | Drag on the blade |
-| Strike | Click | **Strike** button (shown on touch devices) |
+| Choose where | Move the mouse along the blade, or along the diagram | Drag on the blade or the diagram |
+| Strike | Click; **hold** to keep striking, about 3 a second, wherever you aim (2026-10-25) | **Strike** button (shown on touch devices); hold it to keep striking |
 | Turn the blade | **R** or **Turn blade** | **Turn blade** |
-| Sand (from a 90% match) | **Sand** swaps the hammer for a sanding block; hold the mouse on the blade and drag to sand the bumps down to the line; **Hammer** swaps back (Refinements 5, 2026-10-25; a one-click Smooth in Refinement 4) | hold a finger on the blade and drag |
+| Sand (any time) | **Sand** swaps the hammer for a sanding block; hold the mouse on the blade and drag to sand the bumps down to the line; **Hammer** swaps back (Refinements 5, 2026-10-25; a one-click Smooth in Refinement 4; any time, not from 90%, since later on 2026-10-25) | hold a finger on the blade and drag |
 | Score it | **Finish** (card: Keep shaping / New blank) | same |
 | Start over | **Reset blank** | same |
 | Developer | **Dev: narrow-tip preset** (Studio only): a good blade with one section near the point hammered too narrow | same |
 
 Edge up, a strike **narrows** the section under the hammer; flat, it **widens** it. The chip at the top left always says which.
 
-**The view (Refinements 5, 2026-10-25):** the blade and anvil fill the screen, with a thin bar on top (side, shape match, legend). The face-on diagram is gone. The target outline glows on the blade itself (both faces, turning with it), and the steel reads red where it's too wide and blue where it's too narrow. Allen: "the actual sword and anvil need to be the main view"; he picked the guide lines "Overlay on the blade".
+**The view (Refinements 5, 2026-10-25):** the blade and anvil fill the screen, with a thin bar on top (side, shape match, legend). The face-on diagram is gone. A true-shape silhouette sits in a panel across the top of the screen (the blade face-on as it lies, its curve, point and widths all at one scale; yours filled, the target a white outline; about 27 px per cm on a 1920-wide screen). Widths were stretched 2.5× until later on 2026-10-25, when Allen found the guide "not representative of the blade itself", and the blade is centred below it. Lines drawn on the blade itself were tried and couldn't show millimetres at this camera (~13 px a cm), and the steel reads red where it's too wide and blue where it's too narrow. Allen: "the actual sword and anvil need to be the main view"; he picked the guide lines "Overlay on the blade".
 
 ## Rules (`ShapingRules`)
 
 - The blade's length, curvature and back (spine) line are the finished katana's and never change. Only the edge moves: width per station (64), in cm.
-- A strike changes width by `strength` (0.15 cm) at the aimed point, easing to zero `radius` (7% of the blade, about 4.9 cm) either side. Nothing else moves. The tang end and the point are fixed, blended in smoothly.
+- A strike changes width by `strength` (0.4 cm) at the aimed point, easing to zero `radius` (11% of the blade, about 7.7 cm) either side (0.15 cm and 7% until later on 2026-10-25, Allen: "it takes too many manual hits"; a careful katana went from ~65 strikes to ~13 for 99%). Nothing else moves. The tang end and the point are fixed, blended in smoothly.
 - Strikes never look at the target: you can overwork a section past the line either way. Limits 0.8–4.4 cm keep the mesh valid.
-- **Shape match** is worked out from the final geometry alone: each station within `perfect` (0.08 cm) of the target counts fully; further off, it falls away over `tolerance` (0.25 cm). Too wide and too narrow both count as error. Strike counts, turns and corrections cost nothing. The score is separate from the game's quality and sale values.
-- **Sand** (Allen, Refinements 5, 2026-10-25: "the smoothing should be another manual step. It should involve holding mouse down and basically 'sand down' the bumps"): once the match reaches `smoothAt` (90%) with some workable station more than 0.01 cm over the target, the Sand button shows. Held at a spot, the block takes `sandRate` (0.5 cm/s) off under its centre, easing to nothing `sandRadius` (4% of the blade) either side, and never past the target line (`Rules.sand`). It never adds material, so a section hammered too narrow still costs; sanding a wide-but-close blade all along scores 100%. It replaces Refinement 4's one-click Smooth ([session note](../../Sessions/2026-10-24.md#refinement-4)). [Session note](../../Sessions/2026-10-25.md#refinements-5).
+- **Shape match** is worked out from the final geometry alone: each station within `perfect` (0.16 cm) of the target counts fully; further off, it falls away over `tolerance` (0.5 cm) (0.08 and 0.25 until later on 2026-10-25: Allen wanted it "a bit more generous" and picked 2×). Too wide and too narrow both count as error. Strike counts, turns and corrections cost nothing. The score is separate from the game's quality and sale values.
+- **Sand** (Allen, Refinements 5, 2026-10-25: "the smoothing should be another manual step. It should involve holding mouse down and basically 'sand down' the bumps"): the Sand button is always there (from a 90% match until later on 2026-10-25, Allen: "players should be able to smooth whenever", and it "should smooth out the surrounding bumps ... never past that line"). Held at a spot, the block takes `sandRate` (0.5 cm/s) off under its centre, plus `smoothRate` (8/s) × how far a station stands over its neighbours' average, so a sharp bump rounds off first. It eases to nothing `sandRadius` (4% of the blade) either side and never cuts past the target line (`Rules.sand`). It never adds material, so a section hammered too narrow still costs; sanding a wide-but-close blade all along scores 100%. It replaces Refinement 4's one-click Smooth ([session note](../../Sessions/2026-10-24.md#refinement-4)). [Session note](../../Sessions/2026-10-25.md#refinements-5).
 - All tuning (strength, radius, limits, blank width, score band, sanding threshold, rate and reach, animation timing) is in `ShapingRules.CONFIG`.
 
 ## Files
@@ -41,7 +45,7 @@ Edge up, a strike **narrows** the section under the hammer; flat, it **widens** 
 |---|---|---|
 | `roblox/ShapingRules.luau` | `ReplicatedStorage.Prototypes.ShapingRules` | Pure rules and tuning (above). |
 | `roblox/ShapingPrototype.luau` | `ReplicatedStorage.Prototypes.ShapingPrototype` | Client presentation: forge corner, `BladeView` mesh, the target outline on the blade, hammer, sanding block, tongs, top bar, input, camera, Exit. `workspace.ShapingPrototype.Inspect:Invoke()` reads the live state for checks. |
-| `roblox/ShapingRulesSpec.luau` | `ServerStorage.Tests.ShapingRulesSpec` | 27 checks (8 for sanding since 2026-10-25). Command bar: `print(require(game.ServerStorage.Tests.ShapingRulesSpec:Clone())())` |
+| `roblox/ShapingRulesSpec.luau` | `ServerStorage.Tests.ShapingRulesSpec` | 28 checks (5 for sanding, 4 for other blades; 2026-10-25). Command bar: `print(require(game.ServerStorage.Tests.ShapingRulesSpec:Clone())())` |
 | (edit) | `StarterPlayerScripts.DevPanel` | The "Shaping prototype" button. |
 | `screenshots/` | | Play captures, numbered in order of the correction sequence. |
 

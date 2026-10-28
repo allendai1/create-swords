@@ -157,32 +157,41 @@ return function(): string
 	end
 	check("reset restores the starting blank", same)
 
-	-- sanding (Refinements 5; one-click smoothing in Refinement 4): only when close, only near the block, only takes
+	-- sanding (Refinements 5; any time, rounding bumps off first, since 2026-10-25): only near the block, only takes
 	-- excess off, and a wide-but-close blade sanded all along finishes at 100%
 	local function sweep() -- the block held a second at every spot from base to point
 		for k = 0, 200 do
 			Rules.sand(s, k / 200, 1)
 		end
 	end
-	check("no sanding on the blank", not Rules.canSmooth(s))
 	local function offset(cm: number)
 		for i = 1, s.n do
 			s.width[i] = s.target[i] + cm * s.mask[i]
 		end
 	end
-	offset(0.3)
-	check("no sanding while still far off", Rules.score(s) < C.smoothAt and not Rules.canSmooth(s), `{Rules.score(s)}`)
-	offset(0.15)
-	check("sanding once close and wide", Rules.score(s) >= C.smoothAt and Rules.canSmooth(s), `{Rules.score(s)}`)
-	local far = s.width[math.floor(0.2 * (s.n - 1)) + 1]
+	Rules.reset(s)
+	local farI = math.floor(0.2 * (s.n - 1)) + 1
+	local far = s.width[farI]
 	local took = Rules.sand(s, 0.5, 0.1)
-	check("a moment's sanding takes a little, only near the block", took > 0 and s.width[math.floor(0.2 * (s.n - 1)) + 1] == far, `{took}`)
+	check("sanding works from the blank on, only near the block", took > 0 and s.width[farI] == far, `{took}`)
+	offset(0.1)
+	local b = math.floor(0.5 * (s.n - 1)) + 1
+	s.width[b] += 0.3
+	local bump, beside = s.width[b], s.width[b + 1]
+	Rules.sand(s, s.u[b], 0.05)
+	check("a sharp bump rounds off faster than the even excess beside it", bump - s.width[b] > 3 * (beside - s.width[b + 1]),
+		`{bump - s.width[b]} vs {beside - s.width[b + 1]}`)
 	sweep()
 	check("sanding all along stops on the line: 100%", math.abs(Rules.score(s) - 100) < 1e-6, `{Rules.score(s)}`)
-	check("nothing left to sand after", not Rules.canSmooth(s))
+	local onLine = true
+	for i = 1, s.n do
+		if s.width[i] < s.target[i] - 1e-9 then
+			onLine = false
+		end
+	end
+	check("sanding never cuts past the line", onLine)
 	offset(-0.15)
 	local narrow = table.clone(s.width)
-	check("no sanding when only too narrow", not Rules.canSmooth(s))
 	sweep()
 	local kept = true
 	for i = 1, s.n do
@@ -191,6 +200,31 @@ return function(): string
 		end
 	end
 	check("sanding never adds material", kept)
+
+	-- every blade (Refinements 5, the Test Anvil): cm values scale with the blade, double-edged blades shape both edges
+	local big = Rules.new(target, { scale = 2 })
+	local mid = math.floor(0.5 * (big.n - 1)) + 1
+	check("a blade twice as wide gets twice the blank and the strike", math.abs(big.width[mid] - 2 * C.blankWidth) < 1e-9
+		and math.abs(big.strength - 2 * C.strength) < 1e-9 and math.abs(big.perfect - 2 * C.perfect) < 1e-9)
+	local before2 = big.width[mid]
+	Rules.strike(big, 0.5, -1)
+	check("its strike moves twice as much", math.abs((before2 - big.width[mid]) - 2 * C.strength) < 0.02, `{before2 - big.width[mid]}`)
+	local two = Rules.new(target, { symmetric = true })
+	local p2 = Rules.params(two, target)
+	local centred, sided = true, true
+	for i = 1, two.n do
+		if math.abs((p2.spine[i] + p2.edge[i]) / 2 - two.center[i]) > 1e-9 or math.abs(p2.spine[i] - p2.edge[i] - two.width[i]) > 1e-9 then
+			centred = false
+		end
+	end
+	local p1 = Rules.params(s, target)
+	for i = 1, s.n do
+		if p1.spine[i] ~= target.spine[i] then
+			sided = false
+		end
+	end
+	check("double-edged: both edges move, evenly about the centre", centred)
+	check("single-edged: the back never moves", sided)
 
 	table.insert(lines, 1, `{passed} passed, {failed} failed`)
 	return table.concat(lines, "\n")

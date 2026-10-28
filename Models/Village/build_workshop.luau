@@ -638,12 +638,13 @@ do
 			d:SetAttribute("SourceAsset", nil)
 			local m = fresh(d, "Table")
 			for _, src in KIT.Table:GetDescendants() do
-				if src:IsA("BasePart") then
+				-- no brass corner caps, and a plain plastic top (Allen 2026-10-25: "remove the corner caps from the tables. Make the
+				-- table top have a plastic finish, no wood grains")
+				if src:IsA("BasePart") and not src.Name:match("^corner_cap") then
 					local p = src:Clone()
 					p.CFrame = O * kitAt:ToObjectSpace(src.CFrame)
 					local kind = src.Name:match("^(%a+)")
-					local brass = src.Name:match("^corner_cap")
-					dress(p, if brass then C.brass else if src.Name:match("foot") then woodDk else wood, if brass then M.Metal else M.Wood, SOLID[kind] == true)
+					dress(p, if src.Name:match("foot") then woodDk else wood, if kind == "tabletop" then M.SmoothPlastic else M.Wood, SOLID[kind] == true)
 					p.Parent = m
 				end
 			end
@@ -667,7 +668,7 @@ do
 						p.CFrame = to * from:ToObjectSpace(src.CFrame)
 						if src.Name:match("prong_%d_2$") then p.CFrame -= Vector3.new(0, LIP, 0) end
 						local brass = src.Name:match("cap_gold")
-						dress(p, if brass then C.brass else woodDk, if brass then M.Metal else M.Wood, false)
+						dress(p, if brass then C.brass else woodDk, if brass then M.Metal else M.SmoothPlastic, false) -- plastic like the top (2026-10-25)
 						if not src.Name:match("base$") then p:SetAttribute("Holds", "Slot" .. k) end
 						p.Parent = sm
 					end

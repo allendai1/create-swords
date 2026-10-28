@@ -76,6 +76,7 @@ Built on 2026-10-18 as the shared `ItemPicker` module ([[Development/Code Map|Co
 - Hot ingots on the anvil get a 30% orange tint so the metal still shows.
 - The forge timer label isn't AlwaysOnTop (Studio's capture couldn't show it that way); it floats 4.6 studs up so it clears your head.
 - Phone (under 500 px tall): one row of compact cards, centred below the Roblox top bar.
+- **2026-10-26:** cards are square with a charcoal-to-black gradient; a bigger 3D item (184 px) with a thin white rim (gold until later that day) and lighter blades, the name below it, and the chip as a top-left tag; a chip every card shares is hidden (prices always show). The light pool tried earlier was removed. The picker windows have a tiled seigaiha (wave-scale) pattern under their brown at half strength (Allen's pick from wave and seigaiha boards). [[Sessions/2026-10-26#Brighter picker cards]]
 
 **2026-10-22:** coins/reputation HUD and gem button use VectorIcons ([[Art/Icon Library]]); the Deliveries window follows Create Pottery!'s ([[Sessions/2026-10-22#Deliveries]]); a holder you can pick up from shows the bag icon ([[Sessions/2026-10-22#Pick-up marker]]). Earned coins pop up mid-screen and fly into the coin pill ([[Sessions/2026-10-22#Coins fly to the balance]]).
 
@@ -152,7 +153,7 @@ The three corner and diagonal pieces are densest at their bottom-left; rotate �
 
 Allen first said the swords weren't clear, then asked for sizes, brighter renders, rounded corners, an opaque background, halftones, playful palettes and a black outline. Each was tried live in his playtest, side by side. Then: "Use rarity colours with a black 1px item outline and ink-black slot edges and text strokes, corner halftone, L size with hilt, 10px corners, bright lighting."
 
-- **Slot:** 100 × 112, 10 px corners, a 3 px black edge (white on the stack in hand).
+- **Slot:** 100 × 112, 10 px corners, a 3 px black edge (white on the stack in hand). Since 2026-10-26: 84 × 94, 8 px corners, a 2 px edge ([[Art/UI Design#Smaller hotbar (2026-10-26)|Smaller hotbar]]).
 - **Background:** the item's rarity colour, from its metal: Common slate, Uncommon green, Rare blue, Epic purple, Legendary gold. Stone, copper and iron are all Common, so early on the bar is slate.
 - **Halftone:** the "corner" halftone in the bottom-right at 72% transparency.
 - **Text:** white Gotham Heavy with a black stroke.
@@ -194,6 +195,24 @@ Allen: "can you implement a backpack so when players have over 9 in their toolba
 From [[Refinements3]] ([[Sessions/2026-10-24#Refinements 3]]): a sword slot says the blade, with the metal small underneath (Allen chose "Metal, small"; his note broke off at "The type can be").
 - **Title:** the blade's name ("Katana"), raised 11 px.
 - **Metal line:** a small label at the slot's bottom (14 px tall, Gotham Bold, scaled 7–12 px, black stroke 1.5). It is tinted by the metal's rarity, lightened 45% toward white: the plain rarity colour almost vanished on a slot already filled with it.
-- **Ingots** keep their full names ("Hot Iron Ingot") and the title's old place, with no metal line.
+- **Ingots** show the metal ("Hot Iron", "Rose Gold"; "Ingot" dropped 2026-10-26) in the title's old place, with no metal line.
 - **Count:** only from 2x; a single item shows none.
 - **Known:** the raised title overlaps the bottom 8 px of the art box (only the hilt or tip corner in the diagonal framing); not yet seen with real art.
+
+### Smaller hotbar (2026-10-26)
+
+Allen, on a phone: "the toolbars borders are too thick. the half-tones are only on a part of the entire box, also only 4 are on that actual toolbox. i want to be able to fit 6 in the toolbar including the backpack, so make them a bit smaller." [[Sessions/2026-10-26#Smaller hotbar]]
+
+- **Slots:** 84 × 94 (were 100 × 112), everything inside scaled to 0.84, gap 13. Edges 2 px (were 3), on the slots, the bag button and the bag.
+- **Halftone:** the "diagonal" one (`rbxassetid://100487902471709`) over the whole slot, densest bottom-right, still 72% transparent. The stretched "corner" one only reached half the slot.
+- **Fit:** a phone shows 5 stacks + the bag at 812 × 375 and more on wider phones; desktop still 9 + the bag.
+- **Why only 3 showed:** new stacks went into the bag whenever the bar's phone cap was low at that moment (at join), and stayed there. They now join the bar up to 9; any past the screen's room wait at the front of the bag, as designed.
+- **Palette:** a new UI palette is open; three options went to Allen (A Bright forge, B Night forge, C Sky smith). Nothing changed yet.
+
+### Left column sized in StarterGui (2026-10-26)
+
+Allen: "Icons are a bit small right now on desktop", then "convert the left column to Scale + constraints in StarterGui and remove the runtime Grow". The coins, gems, menu and pinned order lanes are Scale of their lane (the screen under the top bar, at most 445 px, 0.6 as wide as tall), so Edit shows what a desktop player sees: 59 px menu buttons, 37 px coin, 26 px numbers. A 390 px-tall phone keeps the old 44 px buttons, 28 px coin and 20 px numbers. Icons are kept square by aspect constraints; numbers are `TextScaled` with a 10 to 27 px bound. Windows and pickers still use `Fit` + `UiFx.fit` at runtime. [[Sessions/2026-10-26#Bigger left HUD on desktop]]
+
+### Staff rosters (2026-10-26)
+
+Each staff tab in the crew window opens a roster like the crafters' (Allen: "make it so its like Crafters, where you can select your cashier or shop promoter"): the crafter card per member with portrait, role, name, level and XP, and the status line or perk where a crafter has its trait; no stars or bars. Tapping it opens the Staff page, which has a ‹ Back in the window header. [[Sessions/2026-10-26#Staff rosters in the crew window]]

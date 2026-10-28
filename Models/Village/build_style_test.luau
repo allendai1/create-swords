@@ -37,11 +37,19 @@ local VARIANTS = { -- material -> variant name, colour, normal, roughness, studs
 	[M.Plaster] = { "PaintPlaster", "rbxassetid://114247096053626", "rbxassetid://120651475898439", "rbxassetid://123719430392581", 12, ORG }, -- concrete_wall_01
 	[M.Cobblestone] = { "PaintStoneWall", "rbxassetid://102112150562734", "rbxassetid://78427713544782", "rbxassetid://87281238737955", 8, REG }, -- stone_wall_02
 	[M.Wood] = { "PaintWood", "rbxassetid://72745151340574", "rbxassetid://140198157126085", "rbxassetid://100215486081163", 6, REG }, -- wood_10
-	[M.WoodPlanks] = { "PaintPlanks", "rbxassetid://78959118116249", "rbxassetid://136328900133866", "rbxassetid://121990948339552", 8, REG }, -- wood_11
+	[M.WoodPlanks] = { "PaintPlanks", "rbxassetid://105972709052239", "rbxassetid://121504611557776", "rbxassetid://128123986434735", 8, REG }, -- wood_planks_04 (wood_11 until 2026-10-25)
 	[M.ClayRoofTiles] = { "PaintRoof", "rbxassetid://137400459495419", "rbxassetid://106493324917155", "rbxassetid://121070485923113", 6, REG }, -- painted
 }
 -- dark timber (original colour value under DARK) takes the charred wood_02 instead of PaintWood
 local DARK, WOOD_DARK = 0.3, { "PaintWoodDark", "rbxassetid://93837455108828", "rbxassetid://124033836867990", "rbxassetid://137594363565195", 6, REG }
+-- WoodPlanks parts named Crate take the crate face (wood_planks_23, one per side), the workshop floor big stone tiles
+-- (floor_tiles_01) instead of PaintStone (2026-10-25)
+local CRATE = { "PaintCrate", "rbxassetid://130954007368883", "rbxassetid://100407329175578", "rbxassetid://114032215629679", 2.4, REG }
+local FLOOR = { "PaintFloor", "rbxassetid://101845192412037", "rbxassetid://121592573740112", "rbxassetid://91814594551450", 12, REG }
+-- shelves and tables (Allen 2026-10-25: "the wood material on the shelves and tables, can we find a replacement on the
+-- site too"): plain Wood parts of the shop displays, the cashier counter and the workshop stations take wood_09; their
+-- colours stay (they mean things)
+local FURNITURE = { "PaintFurniture", "rbxassetid://80000437047508", "rbxassetid://111894518273687", "rbxassetid://121990948339552", 5, REG }
 local LIGHT = {
 	ClockTime = 15.2, Brightness = 2.7, ExposureCompensation = -0.05,
 	OutdoorAmbient = Color3.fromRGB(150, 162, 196), ColorShift_Top = Color3.fromRGB(255, 226, 190),
@@ -91,6 +99,19 @@ local function roots()
 	end
 	return list
 end
+local function furniture() -- the plain Wood parts the shelves-and-tables texture goes on
+	local parts = {}
+	for _, path in { { "Shop", "Displays" }, { "Shop", "CashierCounter" }, { "Smithy" } } do
+		local inst = plot
+		for _, n in path do inst = inst and inst:FindFirstChild(n) end
+		for _, p in inst and inst:GetDescendants() or {} do
+			if p:IsA("BasePart") and p.Material == M.Wood and (p.MaterialVariant == "" or p.MaterialVariant == FURNITURE[1]) then
+				table.insert(parts, p)
+			end
+		end
+	end
+	return parts
+end
 local function scope()
 	local parts = {}
 	for _, root in roots() do
@@ -112,6 +133,7 @@ if mode == "off" then
 		end
 	end
 	for _, p in scope() do restore(p) end
+	for _, p in furniture() do restore(p) end
 	return "style off: lighting, materials, colours and shapes restored"
 end
 
@@ -130,6 +152,9 @@ local function variant(material, d)
 end
 for material, d in VARIANTS do variant(material, d) end
 variant(M.Wood, WOOD_DARK)
+variant(M.WoodPlanks, CRATE)
+variant(M.Slate, FLOOR)
+variant(M.Wood, FURNITURE)
 
 local function vivid(c) -- more saturation (light colours less, so the road and plaster don't go yellow), lifted darks
 	local h, s, v = c:ToHSV()
@@ -217,9 +242,13 @@ end
 for _, p in scope() do
 	local d = VARIANTS[p.Material]
 	if d == VARIANTS[M.Wood] and select(3, (p:GetAttribute("StyleTest_Color") or p.Color):ToHSV()) < DARK then d = WOOD_DARK end
+	if d == VARIANTS[M.WoodPlanks] and p.Name == "Crate" then d = CRATE end
+	if d == VARIANTS[M.Slate] and plot and p == plot.Workshop:FindFirstChild("Floor") then d = FLOOR end
 	if d then set(p, "MaterialVariant", d[1]) end
 	if p.Material ~= M.Neon then set(p, "Color", vivid(p:GetAttribute("StyleTest_Color") or p.Color)) end
 end
+local furnished = furniture()
+for _, p in furnished do set(p, "MaterialVariant", FURNITURE[1]) end
 local nAdd = 0
 for _, root in roots() do
 	for _, f in root:GetDescendants() do -- clear earlier additions, so a rerun doesn't double them
@@ -301,4 +330,4 @@ for _, name in { "Starter", "Upgraded" } do
 	end
 end
 
-return ("style on: %d parts restyled, %d parts added to buildings, %d plot parts in Autumn Terracotta, %d shop lamps"):format(#scope(), nAdd, nPalette, nLamps)
+return ("style on: %d parts restyled, %d furniture parts, %d parts added to buildings, %d plot parts in Autumn Terracotta, %d shop lamps"):format(#scope(), #furnished, nAdd, nPalette, nLamps)

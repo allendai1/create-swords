@@ -23,6 +23,8 @@ Starter Shop with **one three-sword wall rack**, one ore slot, one unlocked sing
 
 ## Recorded branches and prices
 
+**Since Economy pass 2 (2026-10-27):** every price is new and each stage's pads also wait for the goal before them (the Katana, Longsword, Sword Crafter, Falchion, Stocker, Shop Promoter, Gladius, Cashier, Sword Etcher, Zanbatō); the Zanbatō, Anvil 3 and Anvil 4 are new pads. The current prices and gates are in [[Design/Economy Pass 2#2. The spine: the next sword, the next employee]]; the chains below still hold, the prices in them are the earlier ones.
+
 | Branch | Chain / price in coins |
 |---|---|
 | Ore | Ore Slot 2 (75) → 3 (300) → 4 (900) → 5 (2,000) → 6 (4,000); since 2026-10-24 these prices are ×1.5 per merge, rounded down (Slot 2: 75 → 112 → 168; Slot 3: 300 → 450; Slot 6: 4,000 → 6,000 → 9,000) |

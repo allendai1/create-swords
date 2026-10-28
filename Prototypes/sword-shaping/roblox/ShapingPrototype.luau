@@ -6,14 +6,18 @@
 -- sends nothing to the server. Tweens as in Shared/BladeProbe, mesh from Shared/BladeView.
 --
 -- Opening it holds the character still (Humanoid WalkSpeed/Jump 0) and switches every other screen off.
--- Mouse: move to choose where, click to strike. R or Turn blade turns it. Touch: drag on the blade to choose, Strike
--- to hit. Finish scores the shape; Reset blank starts over; Exit leaves.
+-- Mouse: move to choose where (on the blade or the diagram), click (or hold) to strike. R or Turn blade turns it. Touch:
+-- drag on the blade or the diagram to choose, Strike (or hold it) to hit. Finish scores the shape; Reset blank starts over; Exit leaves.
 -- Refinements 5 (Allen: "the actual sword and anvil need to be the main view"; the guide lines "Overlay on the blade"):
--- no diagram. The blade and anvil fill the screen; the target outline glows on the blade itself (both faces, turning
--- with it), the steel reads red where it's too wide and blue where it's too narrow, and the match and side sit in a
--- thin bar at the top. Sand (from a match of ShapingRules.CONFIG.smoothAt with some of the blade still over the line)
--- swaps the hammer for a sanding block: hold the mouse (or a finger) on the blade and drag to sand the bumps down to
--- the line, never past it (Rules.sand). Hammer swaps back.
+-- the blade and anvil are the main view, centred below the panel; a true-shape silhouette (yours filled, the target outlined) sits at the top
+-- (lines drawn on the blade itself were tried and couldn't show millimetres at this camera), and the steel reads red
+-- where it's too wide and blue where it's too narrow. Sand (any time, 2026-10-25) swaps the hammer for a sanding block:
+-- hold the mouse (or a finger) on the blade and drag to sand the bumps down to the line, never past it, sharp bumps
+-- first (Rules.sand). Hammer swaps back. Holding the mouse (or Strike) with the hammer out keeps striking, about 3 a
+-- second, wherever you aim (2026-10-25, Allen: "hold down to hit automatically").
+-- Shaping.start(opts?): opts.blueprintId (default "katana": any blueprint with a BladeCore blade; Rules scales to its
+-- width and double-edged blades shape both edges), opts.onFinish(match, widths) -> saved: Finish hands it the match and
+-- the widths (cm per station) and leaves when it says saved, instead of the score card (the Studio-only Test Anvil, TestAnvil LocalScript).
 
 local ContextActionService = game:GetService("ContextActionService")
 local Players = game:GetService("Players")
@@ -42,6 +46,8 @@ local HOVER, RAISE = 0.2, 0.7 -- hammer face above the blade while aiming, and w
 local FLASH_TIME = 0.35
 local RING = BladeCore.RING
 local ROLL = { edge = -math.pi / 2, flat = 0 } -- turned about the blade's length; -90° puts the edge on top
+local ELEVATION = math.rad(64) -- the camera's, steep enough that edge up reads as a thin line and flat as the full face
+local TOWARD_CAMERA = Vector3.new(0, math.sin(ELEVATION), math.cos(ELEVATION))
 
 local HOT = Color3.fromRGB(232, 104, 36)
 local AIM = Color3.fromRGB(255, 212, 120)
@@ -67,17 +73,23 @@ local function easeInOut(t: number): number
 	return if t < 0.5 then 4 * t * t * t else 1 - (-2 * t + 2) ^ 3 / 2
 end
 
-function Shaping.start()
+function Shaping.start(opts: { blueprintId: string?, onFinish: ((number, { number }) -> boolean)? }?)
 	if Shaping.current then
 		return
 	end
 	Shaping.current = {}
 	local player = Players.LocalPlayer
 	local camera = Workspace.CurrentCamera
-	local blade = Blueprints.blade("katana")
+	local blueprintId = opts and opts.blueprintId or "katana"
+	local onFinish = opts and opts.onFinish
+	local blade = Blueprints.blade(blueprintId)
 	local N: number = blade.stations
 	local target = blade.shapes[5]
-	local state = Rules.new(target)
+	local widest = 0
+	for i = 1, N do
+		widest = math.max(widest, target.spine[i] - target.edge[i])
+	end
+	local state = Rules.new(target, { scale = widest / C.refWidth, symmetric = blade.profile.doubleEdged == true })
 	local shown = table.clone(state.width) -- what's drawn; eases toward state.width after a strike
 	local params = Rules.params(state, target, shown)
 
@@ -128,7 +140,7 @@ function Shaping.start()
 	clang.Parent = folder
 
 	-- ---------- the blade, its tang and the tongs ----------
-	local view = BladeView.new("katana", params, blade.length + 10)
+	local view = BladeView.new(blueprintId, params, blade.length + 10)
 	view.part.Material = Enum.Material.SmoothPlastic
 	view.part.Color = Color3.new(1, 1, 1) -- the vertex colours carry the heat
 	view.part.Parent = folder
@@ -161,14 +173,10 @@ function Shaping.start()
 		tongPart("Rein", Vector3.new(0.03, 0.03, (to - from).Magnitude), CFrame.lookAt((from + to) / 2, to))
 	end
 
-	local outline: { { part: Part, cf: CFrame } } = {} -- the target line's segments (built below)
 	local roll, lift = ROLL.edge, 0
 	local function placeBlade()
 		local cf = ORIGIN * CFrame.new(BASE_X, lift, 0) * CFrame.Angles(roll, 0, 0) * CFrame.Angles(0, YAW, 0)
 		view.part.CFrame = cf
-		for _, seg in outline do
-			seg.part.CFrame = cf * seg.cf
-		end
 		local tangCf = cf * CFrame.new(-tangLen / 2, 0, -baseMid * S)
 		tang.CFrame = tangCf
 		local grip = tangCf * CFrame.new(-tangLen * 0.05, 0, 0)
@@ -194,22 +202,6 @@ function Shaping.start()
 		shapeChanged = true
 	end
 
-	-- The target outline on the blade: the target's edge on both faces, a little proud of the steel, glowing.
-	local OUTLINE = Color3.fromRGB(255, 255, 255)
-	do
-		local tp = BladeCore.buildPositions(Rules.params(state, target, state.target))
-		local function edgeAt(i: number, face: number): Vector3
-			local o = ((i - 1) * RING + 4 - 1) * 3 -- ring 4: edge top
-			return Vector3.new(tp[o + 1], face * (target.thick[i] / 2 + 0.06), tp[o + 3]) * S
-		end
-		for _, face in { 1, -1 } do
-			for i = 1, N - 1 do
-				local a, b = edgeAt(i, face), edgeAt(i + 1, face)
-				local seg = block("TargetLine", Vector3.new(0.025, 0.012, (b - a).Magnitude + 0.01), CFrame.identity, OUTLINE, Enum.Material.Neon)
-				table.insert(outline, { part = seg, cf = CFrame.lookAt((a + b) / 2, b) })
-			end
-		end
-	end
 
 	-- A station's world point the hammer lands on: halfway across the blade, on its top.
 	local function topOf(i: number): Vector3
@@ -317,20 +309,22 @@ function Shaping.start()
 		return b
 	end
 
-	-- The top bar: which side is up, the match, and what the colours mean (the blade itself is the guide below it).
+	-- The panel with the face-on diagram, at the top (Refinements 5, Allen: "the actual sword and anvil need to be the main
+	-- view, while the sword guide lines should be on the top"; lines drawn on the blade itself couldn't show millimetres
+	-- at this camera, ~13 px a cm, so the magnified diagram is back). The camera centres the blade below it.
 	local panel = Instance.new("Frame")
 	panel.AnchorPoint = Vector2.new(0.5, 0)
 	panel.Position = UDim2.new(0.5, 0, 0, 12)
-	panel.Size = UDim2.new(1, -24, 0, 64)
+	panel.Size = UDim2.new(1, -24, 0, 240) -- full width (the silhouette is true width and needs the room); layout() sets the height
 	panel.BackgroundColor3 = PANEL
 	panel.BackgroundTransparency = 0.08
 	corner(panel, 12)
-	local limit = Instance.new("UISizeConstraint")
-	limit.MaxSize = Vector2.new(860, 64)
-	limit.Parent = panel
+	local fit = Instance.new("UIScale") -- smaller on a phone, so the blade keeps room below it
+	fit.Scale = math.min(1, camera.ViewportSize.Y / 600)
+	fit.Parent = panel
 	local pad = Instance.new("UIPadding")
 	for _, k in { "PaddingLeft", "PaddingRight", "PaddingTop", "PaddingBottom" } do
-		(pad :: any)[k] = UDim.new(0, 8)
+		(pad :: any)[k] = UDim.new(0, 12)
 	end
 	pad.Parent = panel
 	panel.Parent = gui
@@ -344,12 +338,141 @@ function Shaping.start()
 	scoreLabel.Position = UDim2.fromScale(1, 0)
 	scoreLabel.Size = UDim2.fromOffset(300, 28)
 	scoreLabel.TextXAlignment = Enum.TextXAlignment.Right
-	local legend = text(panel, '<font color="#ffffff">━</font> target line    <font color="#eb4838">■</font> too wide    <font color="#4896ff">■</font> too narrow', 13, TEXT)
+	local legend = text(panel, '<font color="#ffffff">━</font> target    <font color="#c45c28">■</font> yours    <font color="#eb4838">■</font> too wide    <font color="#4896ff">■</font> too narrow', 13, TEXT)
 	legend.RichText = true
 	legend.AnchorPoint = Vector2.new(0, 1)
 	legend.Position = UDim2.fromScale(0, 1)
 	legend.Size = UDim2.new(1, 0, 0, 16)
 	legend.TextXAlignment = Enum.TextXAlignment.Left
+
+	-- The silhouette (Allen, Refinements 5: "a true-shape silhouette: curved, with the point ... my blade filled and the
+	-- target as an outline", like Create Pottery!'s Target / Yours). The blade face-on as it lies, base left, true to
+	-- shape: back line, curve and widths all at one scale (2026-10-25: the 2.5x width stretch made it look unlike the
+	-- blade; the panel spans the screen instead, so errors still show). Yours is filled (red past the target, blue where
+	-- it falls short); the target is a white outline.
+	-- (Until then a straightened width chart, widths under 1.4 cm cut off, ~4x taller than long: "it doesnt seem" like
+	-- the blade.)
+	local PLOT_MIN, PLOT_MAX, PAD, SUB = 80, 170, 8, 2 -- px (the plot's height fits the blade), px, columns per station gap
+	local plotH = PLOT_MAX
+	local plot = Instance.new("Frame")
+	plot.Position = UDim2.fromOffset(0, 38)
+	plot.Size = UDim2.new(1, 0, 0, plotH)
+	plot.BackgroundColor3 = Color3.fromRGB(24, 16, 11)
+	plot.Active = true
+	corner(plot, 6)
+	plot.Parent = panel
+	local function bar(color: Color3, transparency: number, z: number): Frame
+		local f = Instance.new("Frame")
+		f.BorderSizePixel = 0
+		f.BackgroundColor3 = color
+		f.BackgroundTransparency = transparency
+		f.ZIndex = z
+		f.Parent = plot
+		return f
+	end
+	-- a frame as a strip from a to b (px), `across` px wide
+	local function strip(f: Frame, a: Vector2, b: Vector2, across: number)
+		local d = b - a
+		f.AnchorPoint = Vector2.new(0.5, 0.5)
+		f.Position = UDim2.fromOffset((a.X + b.X) / 2, (a.Y + b.Y) / 2)
+		f.Size = UDim2.fromOffset(across, math.max(d.Magnitude, 0.5))
+		f.Rotation = math.deg(math.atan2(d.Y, d.X)) - 90
+	end
+	-- a list (numbers or Vector2s) at fractional station f
+	local function sampleAt(list: { any }, f: number): any
+		local i = math.clamp(math.floor(f), 1, N - 1)
+		return list[i] + (list[i + 1] - list[i]) * (f - i)
+	end
+	-- the back line and the way to the edge per station (cm), turned like the blade on the anvil: base -> point left to right
+	local spineAt: { Vector2 }, toEdge: { Vector2 } = {}, {}
+	do
+		local tp = BladeCore.buildPositions(Rules.params(state, target, state.target))
+		local turn = CFrame.Angles(0, YAW, 0)
+		for i = 1, N do
+			local function ring(r: number): Vector2
+				local o = ((i - 1) * RING + r - 1) * 3
+				local v = turn * Vector3.new(tp[o + 1], 0, tp[o + 3])
+				return Vector2.new(v.X, v.Z)
+			end
+			spineAt[i] = ring(1)
+			toEdge[i] = (ring(4) - ring(1)).Unit
+		end
+	end
+	local COLS = (N - 1) * SUB + 1
+	local cols = {}
+	for k = 1, COLS do -- the steel, what sticks out past the target (either side, double-edged), what falls short
+		cols[k] = { body = bar(Color3.fromRGB(196, 92, 40), 0, 1), wideA = bar(TOO_WIDE, 0, 2), wideB = bar(TOO_WIDE, 0, 2),
+			gapA = bar(TOO_NARROW, 0.5, 2), gapB = bar(TOO_NARROW, 0.5, 2) }
+	end
+	-- Where steel `w` wide lies across station f, in cm from the target's back line (the target runs 0 to t): from the
+	-- back line out, or (double-edged) centred on the target's centre line.
+	local function span(w: number, t: number): (number, number)
+		if state.symmetric then
+			return (t - w) / 2, (t + w) / 2
+		end
+		return 0, w
+	end
+	local outlineSegs = {} -- the target: edge, back line, base end
+	for k = 1, 2 * (N - 1) + 1 do
+		outlineSegs[k] = bar(Color3.new(1, 1, 1), 0, 5)
+	end
+	-- Fit the blank to the plot (on its first draw and whenever the plot's width changes): px per cm and where cm 0,0 is.
+	local scale, origin, colW, laidOutFor = 1, Vector2.zero, 2, -1
+	local function toPx(p: Vector2): Vector2
+		return origin + p * scale
+	end
+	local function edgePx(f: number, width: number): Vector2
+		return toPx(sampleAt(spineAt, f)) + sampleAt(toEdge, f).Unit * width * scale
+	end
+	local function layout(): boolean
+		local w = plot.AbsoluteSize.X / math.max(fit.Scale, 0.01) -- the UIScale shrinks AbsoluteSize; offsets are unscaled
+		if w <= 0 then
+			return false
+		end
+		if w == laidOutFor then
+			return true
+		end
+		laidOutFor = w
+		local lo, hi = Vector2.new(math.huge, math.huge), Vector2.new(-math.huge, -math.huge)
+		for i = 1, N do
+			local a, b = span(state.blank, state.target[i])
+			for _, p in { spineAt[i] + toEdge[i] * a, spineAt[i] + toEdge[i] * b } do
+				lo = Vector2.new(math.min(lo.X, p.X), math.min(lo.Y, p.Y))
+				hi = Vector2.new(math.max(hi.X, p.X), math.max(hi.Y, p.Y))
+			end
+		end
+		local span = hi - lo
+		scale = (w - 2 * PAD) / span.X
+		plotH = math.clamp(span.Y * scale + 2 * PAD, PLOT_MIN, PLOT_MAX)
+		scale = math.min(scale, (plotH - 2 * PAD) / span.Y)
+		plot.Size = UDim2.new(1, 0, 0, plotH)
+		panel.Size = UDim2.new(1, -24, 0, plotH + 90)
+		origin = Vector2.new(w - span.X * scale, plotH - span.Y * scale) / 2 - lo * scale
+		colW = math.ceil((spineAt[N] - spineAt[1]).Magnitude * scale / (COLS - 1)) + 1
+		for i = 1, N - 1 do
+			strip(outlineSegs[i], edgePx(i, state.target[i]), edgePx(i + 1, state.target[i + 1]), 2)
+			strip(outlineSegs[N - 1 + i], toPx(spineAt[i]), toPx(spineAt[i + 1]), 2)
+		end
+		strip(outlineSegs[2 * (N - 1) + 1], toPx(spineAt[1]), edgePx(1, state.target[1]), 2)
+		return true
+	end
+	local band = bar(AIM, 0.82, 3)
+	local aimLine = bar(AIM, 0.1, 6)
+	aimLine.AnchorPoint = Vector2.new(0.5, 0)
+	aimLine.Size = UDim2.new(0, 2, 1, 0)
+	local arrow = text(plot, "", 18, NARROW)
+	arrow.AnchorPoint = Vector2.new(0.5, 0)
+	arrow.Size = UDim2.fromOffset(20, 18)
+	arrow.ZIndex = 7
+	local readout = text(plot, "", 13, TEXT)
+	readout.AnchorPoint = Vector2.new(0.5, 0)
+	readout.Size = UDim2.fromOffset(90, 16)
+	readout.ZIndex = 7
+	readout.TextStrokeTransparency = 0.2 -- readable over the coloured fills
+	local worstMark = text(plot, "▼", 14, TOO_NARROW)
+	worstMark.AnchorPoint = Vector2.new(0.5, 1)
+	worstMark.Size = UDim2.fromOffset(16, 12)
+	worstMark.ZIndex = 7
 
 	local row = Instance.new("Frame")
 	row.AnchorPoint = Vector2.new(1, 1)
@@ -365,7 +488,6 @@ function Shaping.start()
 	row.Parent = gui
 	local turnButton = button(row, "Turn blade · R", 150)
 	local sandButton = button(row, "Sand", 100)
-	sandButton.Visible = false
 	local finishButton = button(row, "Finish", 100)
 	local resetButton = button(row, "Reset blank", 120)
 	local exitButton = button(row, "Exit", 80)
@@ -427,6 +549,8 @@ function Shaping.start()
 	local side = "edge" -- "edge" narrows, "flat" widens
 	local tool = "hammer" -- or "sand" (Refinements 5)
 	local sanding = false -- the mouse / a finger held down with the sanding block out
+	local hammering = false -- the mouse / Strike held with the hammer out: strikes keep coming, wherever you aim
+	local hammerInput: InputObject? = nil -- the touch holding Strike
 	local aimU = 0.5
 	local smoothU = aimU
 	local lockedU: number? = nil -- where a strike in progress lands
@@ -445,8 +569,71 @@ function Shaping.start()
 	end
 
 	local function drawScore()
-		scoreLabel.Text = string.format("Shape match %d%%", math.floor(Rules.score(state, shown) + 0.5))
-		sandButton.Visible = tool == "sand" or Rules.canSmooth(state)
+		if layout() then
+			for k = 1, COLS do
+				local f = 1 + (k - 1) / SUB
+				local w, t = math.min(sampleAt(shown, f), state.maxWidth), sampleAt(state.target, f)
+				local lo, hi = span(w, t)
+				local close = math.abs(w - t) <= state.perfect
+				local strength = math.min(math.abs(w - t) / (0.4 * state.k), 1)
+				local c = cols[k]
+				local function piece(frame: Frame, a: number, b: number, transparency: number)
+					frame.Visible = b > a + 1e-6
+					if frame.Visible then
+						strip(frame, edgePx(f, a), edgePx(f, b), colW)
+						frame.BackgroundTransparency = transparency
+					end
+				end
+				if close then
+					piece(c.body, lo, hi, 0)
+					c.wideA.Visible, c.wideB.Visible, c.gapA.Visible, c.gapB.Visible = false, false, false, false
+				else
+					piece(c.body, math.max(lo, 0), math.min(hi, t), 0)
+					piece(c.wideA, lo, math.min(0, hi), 0.45 - 0.4 * strength)
+					piece(c.wideB, math.max(t, lo), hi, 0.45 - 0.4 * strength)
+					piece(c.gapA, 0, math.min(lo, t), 0.6 - 0.45 * strength)
+					piece(c.gapB, math.max(hi, 0), t, 0.6 - 0.45 * strength)
+				end
+			end
+		end
+		local score, worst, worstE = Rules.score(state, shown)
+		scoreLabel.Text = string.format("Shape match %d%%", math.floor(score + 0.5))
+		worstMark.Visible = math.abs(worstE) > state.flag
+		local mark = toPx(spineAt[worst])
+		worstMark.Position = UDim2.fromOffset(mark.X, mark.Y - 1)
+		worstMark.TextColor3 = if worstE > 0 then TOO_WIDE else TOO_NARROW
+		end
+
+	-- Where the tool is aimed, on the silhouette (every frame: the aim, the shape and the side all move it).
+	local function drawAim()
+		if not layout() then
+			return
+		end
+		local u = lockedU or aimU
+		local reach = if tool == "sand" then C.sandRadius else C.radius
+		local function xOf(v: number): number
+			return toPx(sampleAt(spineAt, math.clamp(v, 0, 1) * (N - 1) + 1)).X
+		end
+		local x0, x1 = xOf(u - reach), xOf(u + reach)
+		band.Position = UDim2.fromOffset(x0, 0)
+		band.Size = UDim2.new(0, x1 - x0, 1, 0)
+		aimLine.Position = UDim2.fromOffset(xOf(u), 0)
+		local f = u * (N - 1) + 1
+		local w, t = sampleAt(shown, f), sampleAt(state.target, f)
+		local _, reachOut = span(w, t)
+		local tip = edgePx(f, math.max(reachOut, t))
+		local y = math.min(tip.Y + 4, plotH - 34)
+		arrow.Text = if tool == "sand" then "▲" elseif side == "edge" then "▲" else "▼"
+		arrow.TextColor3 = if tool == "sand" then GOLD elseif side == "edge" then NARROW else WIDEN
+		arrow.Position = UDim2.fromOffset(tip.X, y)
+		readout.Position = UDim2.fromOffset(tip.X, y + 17)
+		local e = w - t
+		if math.abs(e) <= state.perfect then
+			readout.Text, readout.TextColor3 = "on the line", Color3.fromRGB(150, 230, 140)
+		else
+			readout.Text = cm(e) .. (if e > 0 then " wide" else " narrow")
+			readout.TextColor3 = if e > 0 then TOO_WIDE:Lerp(Color3.new(1, 1, 1), 0.3) else TOO_NARROW:Lerp(Color3.new(1, 1, 1), 0.3)
+		end
 	end
 
 	local function drawSide()
@@ -466,8 +653,8 @@ function Shaping.start()
 		local u = lockedU or smoothU
 		for i = 1, N do
 			local e = shown[i] - state.target[i]
-			local off = math.max(0, math.abs(e) - C.perfect)
-			local c = HOT:Lerp(if e > 0 then TOO_WIDE else TOO_NARROW, math.min(off / 0.3, 1) * 0.85 * state.mask[i])
+			local off = math.max(0, math.abs(e) - state.perfect)
+			local c = HOT:Lerp(if e > 0 then TOO_WIDE else TOO_NARROW, math.min(off / (0.3 * state.k), 1) * 0.85 * state.mask[i])
 			c = c:Lerp(AIM, 0.45 * Rules.falloff(state.u[i] - u, if tool == "sand" then C.sandRadius else C.radius))
 			if flash > 0 then
 				c = c:Lerp(FLASH, flash * Rules.falloff(state.u[i] - flashU, C.radius))
@@ -505,12 +692,27 @@ function Shaping.start()
 			aimU = uOfX(ORIGIN:PointToObjectSpace(ray.Origin + ray.Direction * t).X)
 		end
 	end
+	local function aimAtPlot(x: number)
+		if not layout() then
+			return
+		end
+		local lx = (x - plot.AbsolutePosition.X) / math.max(fit.Scale, 0.01)
+		local u = HI
+		for i = 1, N - 1 do
+			local a, b = toPx(spineAt[i]).X, toPx(spineAt[i + 1]).X
+			if lx <= b then
+				u = state.u[i] + (state.u[i + 1] - state.u[i]) * math.clamp((lx - a) / (b - a), 0, 1)
+				break
+			end
+		end
+		aimU = math.clamp(u, LO, HI)
+	end
 
 	-- ---------- strike and turn ----------
 	local strike: () -> ()
 	local turn: () -> ()
 	local function runQueued()
-		local q = queued
+		local q = queued or (if hammering and tool == "hammer" and not card.Visible then "strike" else nil)
 		queued = nil
 		if q == "strike" then
 			task.spawn(strike)
@@ -600,7 +802,7 @@ function Shaping.start()
 		drawSide()
 		local from, to = roll, ROLL[side]
 		local lift0, lift1 = lift, liftFor(to)
-		local clear = 0.12 + (C.blankWidth * S) / 2
+		local clear = 0.12 + (state.blank * S) / 2
 		tween(T.turn, function(t)
 			local e = easeInOut(t)
 			roll = from + (to - from) * e
@@ -620,7 +822,7 @@ function Shaping.start()
 			return
 		end
 		tool = if tool == "sand" then "hammer" else "sand"
-		sanding = false
+		sanding, hammering = false, false
 		if strikeButton then
 			(strikeButton :: TextButton).Visible = tool == "hammer"
 		end
@@ -668,9 +870,9 @@ function Shaping.start()
 			#Shaping.attempts, if stats.preset then " (preset)" else "", score, math.floor(seconds + 0.5), stats.strikes, stats.corrections,
 			stats.worse, stats.turns, stats.smooths, worstE, state.u[worst]))
 		cardScore.Text = string.format("Shape match %d%%", math.floor(score + 0.5))
-		local worstLine = if math.abs(worstE) > C.flag
+		local worstLine = if math.abs(worstE) > state.flag
 			then `Worst spot: {cm(worstE)} too {if worstE > 0 then "wide" else "narrow"} {place(state.u[worst])}`
-			else "No spot off by more than " .. cm(C.flag)
+			else "No spot off by more than " .. cm(state.flag)
 		cardLines.Text = string.format("%s\n%d:%02d · %d strikes · %d corrections · %d turns%s", worstLine,
 			seconds // 60, math.floor(seconds % 60), stats.strikes, stats.corrections, stats.turns, if stats.smooths > 0 then " · sanded" else "")
 		card.Visible = true
@@ -685,9 +887,11 @@ function Shaping.start()
 		local hHalf = math.atan(math.tan(math.rad(FOV / 2)) * aspect)
 		local spanHalf = (bladeLen + tangLen + 1.6) / 2
 		local dist = spanHalf / math.tan(hHalf)
-		local look = ORIGIN * Vector3.new(midX - tangLen / 2 - 0.4, -0.05, 0.75)
-		local elevation = math.rad(64) -- steep enough that edge up reads as a thin line and flat as the full face
-		return CFrame.lookAt(look + Vector3.new(0, math.sin(elevation) * dist, math.cos(elevation) * dist), look)
+		local look = ORIGIN * Vector3.new(midX - tangLen / 2 - 0.4, 0.05, 0) -- the blade itself, mid-screen (Refinements 5: it sat high, room for the old bottom panel)
+		local cf = CFrame.lookAt(look + TOWARD_CAMERA * dist, look)
+		local studsPerPx = 2 * dist * math.tan(math.rad(FOV / 2)) / math.max(1, vp.Y)
+		local lowerBy = (panel.AbsoluteSize.Y + 12 - 52) / 2 -- px: half of (the panel on top minus the buttons below)
+		return cf + cf.UpVector * lowerBy * studsPerPx
 	end
 	-- The place's PlayerModule has no GetControls, so the character is held still through its Humanoid.
 	local character = player.Character
@@ -729,6 +933,7 @@ function Shaping.start()
 				stats.started = stats.started or os.clock()
 				stats.smooths += 1 -- sanding passes
 			elseif kind == Enum.UserInputType.MouseButton1 then
+				hammering = true
 				task.spawn(strike)
 			end
 		end
@@ -736,6 +941,9 @@ function Shaping.start()
 	connect(UserInputService.InputEnded, function(input: InputObject)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			sanding = false
+		end
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input == hammerInput then
+			hammering, hammerInput = false, nil
 		end
 	end)
 	connect(UserInputService.InputChanged, function(input: InputObject, processed: boolean)
@@ -746,10 +954,30 @@ function Shaping.start()
 			aimAtRay(camera:ScreenPointToRay(input.Position.X, input.Position.Y))
 		end
 	end)
+	for _, signal in { plot.InputBegan, plot.InputChanged } do
+		connect(signal, function(input: InputObject)
+			local kind = input.UserInputType
+			if kind == Enum.UserInputType.MouseMovement or kind == Enum.UserInputType.Touch or kind == Enum.UserInputType.MouseButton1 then
+				aimAtPlot(input.Position.X)
+			end
+		end)
+	end
 	connect(turnButton.Activated, function()
 		task.spawn(turn)
 	end)
-	connect(finishButton.Activated, finish)
+	local saving = false
+	connect(finishButton.Activated, function()
+		if not onFinish then
+			finish()
+		elseif not saving and not busy then -- the Test Anvil: hand the match over and leave once it's saved
+			saving = true
+			local saved = onFinish((Rules.score(state)), table.clone(state.width))
+			saving = false
+			if saved then
+				stop()
+			end
+		end
+	end)
 	connect(sandButton.Activated, swapTool)
 	connect(resetButton.Activated, function()
 		newAttempt(false)
@@ -769,8 +997,11 @@ function Shaping.start()
 		end)
 	end
 	if strikeButton then
-		connect(strikeButton.Activated, function()
-			task.spawn(strike)
+		connect(strikeButton.InputBegan, function(input: InputObject)
+			if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+				hammering, hammerInput = true, input
+				task.spawn(strike)
+			end
 		end)
 	end
 
@@ -808,6 +1039,7 @@ function Shaping.start()
 		if flashing or shapeChanged or math.abs(smoothU - paintedU) > 0.002 then
 			paint()
 		end
+		drawAim()
 		local sandOut = tool == "sand"
 		head.Transparency = if sandOut then 1 else 0
 		handle.Transparency = head.Transparency
@@ -876,7 +1108,7 @@ function Shaping.start()
 			corrections = stats.corrections,
 			turns = stats.turns,
 			smooths = stats.smooths,
-			canSand = Rules.canSmooth(state),
+			hammering = hammering,
 			tool = tool,
 			hammer = head.Position,
 			impact = lastImpact,

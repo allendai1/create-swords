@@ -7,7 +7,9 @@
 --   DeliveryBay.Cart: a two-wheeled handcart on the bay's CartSpot, shafts toward the street gateway, with Crate1-6 on its
 --     bed (DeliveryService shows one per packed sword and rolls the cart out and back). TycoonItem, Upgrade = Delivery.
 --   DeliveryBay.DeliveryBoard: a notice board by the shop wall facing the cart; its Panel holds the DeliveryPrompt and
---     the Status timer. TycoonItem, Upgrade = Delivery.
+--     the Status timer. TycoonItem, Upgrade = Delivery. Since 2026-10-25 the board is FreeStylized's Notice Board 01
+--     (Allen: "Can we add this notice board ... to replace the delivery board we currently have"), a clone of
+--     ServerStorage.Buildings3D.NoticeBoard (Models/Props/notice_board.py), and the Panel is an invisible part over it.
 --   Pad: Delivery inside the shop in front of the delivery wall (the cart's Capacity and Speed are bought in the
 --     Deliveries window, as in Create Pottery!'s van page).
 
@@ -94,28 +96,12 @@ local board = item("DeliveryBoard")
 local function b(name, size, x, y, z, color, material)
 	return part(board, name, size, B * CFrame.new(x, y, z), color, material)
 end
-for _, s in { -1, 1 } do
-	b("Post", Vector3.new(0.35, 5.2, 0.35), s * 1.95, 2.6, 0, C.timber)
-end
-local panel = b("Panel", Vector3.new(3.6, 2.4, 0.2), 0, 3.4, 0, C.plank, M.WoodPlanks)
-b("Cap", Vector3.new(4.6, 0.25, 0.9), 0, 5.32, 0, C.roof, M.ClayRoofTiles)
-for i, x in { -0.95, 0.15, 1.05 } do -- order slips pinned on, 0.04 proud
-	b("Slip", Vector3.new(0.7, 0.9, 0.04), x, 3.25 + (i % 2) * 0.25, -0.12, C.paper, M.SmoothPlastic)
-end
-local face = Instance.new("SurfaceGui") -- the Storage box (VectorIcons, vault: Art/Icon Library) on the board
-face.Name = "Icon"
-face.Face = Enum.NormalId.Front
-face.PixelsPerStud = 50
-face.LightInfluence = 1
-local icon = Instance.new("ImageLabel")
-icon.BackgroundTransparency = 1
-icon.AnchorPoint = Vector2.new(0, 0.5)
-icon.Position = UDim2.fromScale(0.03, 0.27)
-icon.Size = UDim2.fromScale(0.2, 0.3)
-icon.ScaleType = Enum.ScaleType.Fit
-icon.Image = "rbxassetid://15403012566"
-icon.Parent = face
-face.Parent = panel
+local mesh = game:GetService("ServerStorage").Buildings3D.NoticeBoard:Clone() -- papers on its front (-Z)
+mesh.Name = "Board"
+mesh.CFrame = B * CFrame.new(0, mesh.Size.Y / 2, 0)
+mesh.Parent = board
+local panel = b("Panel", Vector3.new(3.6, 2.4, 0.2), 0, 3.4, 0, C.plank, M.WoodPlanks) -- the papers' area
+panel.Transparency = 1
 local prompt = Instance.new("ProximityPrompt")
 prompt.Name = "DeliveryPrompt"
 prompt.ActionText = "Deliveries"

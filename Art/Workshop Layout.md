@@ -83,3 +83,18 @@ Related: [[Archive/Art/Japanese Street]] · [[Design/Tycoon Upgrades]] · [[Desi
 - **The cashier's counter:** the old shop counter is back in the Upgraded Store, in front of the back wall, right of the workshop door, its panel facing the street. It shows once the Cashier (Aki) is hired. Its left end stands 3.7 studs in front of the workshop door, so the doorway stays clear. In Edit it overlaps the starter workshop floor, as every Upgraded Store item does.
 - **Wider wall shelves:** the four wall shelves are 0.6 studs wider toward the shop's front, with the cradles under the grip and the axis 0.05 higher. A longsword (6.05 studs) has 0.07 clear at each end, and WallRack3 clears the open delivery door by 0.05.
 - **Hand edits, not in the builder:** Rack 2 and both racks' raise and widening, Etching Table 2, the counter and the new pads (only `MergeSlots` is in `build_workshop`'s PADS). The shelf numbers are in `build_workshop`, so its shelf section is safe to rerun.
+
+## Rearranged with the planner (2026-10-24)
+
+Allen moved the stations on the [Workshop layout planner](https://claude.ai/artifact/4M7MEYLC4ekJ5Xk4MfGSSA), which supersedes the layout above for where things stand ([[Sessions/2026-10-24#Planner moves applied]]):
+- **Left wall:** the two furnaces, turned to face into the room, and both Ingot Racks nearer the shop.
+- **Back wall:** both anvils on the slate hearth the furnaces left, the blueprint pads beside them, the Hilt Bench in the back-right corner.
+- **Right wall:** the Polishing Station, then both Etching Tables standing out from the wall, facing the shop (all three moved 5–8 studs toward the shop in round 2, [[Sessions/2026-10-24#Planner moves, round 2]]).
+- **Middle, toward the shop:** the ore stands and lever (2 studs further back in round 2; the invisible spawn pad now starts behind them).
+- The wall fittings stayed where they were, so some now hang over different stations.
+
+**Bigger plot and fence (2026-10-26, [[Sessions/2026-10-26#Bigger plots with a fence]]):** Allen: "Make the plot each player owns larger, and add fences around it". The lot grew from 48.5 × 96 to 84 × 122 (plot space x −40 … 44, z −45.5 … 76): the delivery bay, a 16-stud side yard on the shop's other side and a 31-stud back yard behind the pushed workshop are inside it. A low timber fence (dark posts, two light rails) runs round it, open at the shop door and the bay mouth, with a 6-stud gap into the side yard by the shop's street corner. Buildings and stations didn't move. Captures: [[References/Workshop Layout/plot-size-options.jpg]] (the options), [[References/Workshop Layout/plot-fence-top.jpg]], [[References/Workshop Layout/plot-fence-street.jpg]].
+
+## Anvils 3 and 4 (Economy pass 2, 2026-10-27)
+
+Up to three sword crafters work at once, one at each crafter anvil ([[Design/Economy Pass 2]]). Anvils 3 and 4 are copies of Anvil 2, turned the same way, standing on the workshop floor either side of the hearth (0.6 lower than Anvil 2, their slate plates 0.06 above the floor): **Anvil 3** right of the hearth toward the furnaces (plot 14.2, 28.0 in the starter layout), **Anvil 4** between the hearth and the Hilt Bench (plot −9.3, 28.0; 0.37 from the bench, 0.17 from the hearth). With Anvil 2 and yours on the hearth, four anvils stand in a row along the back wall; each crafter works from the spot 3.6 in front of its anvil. Their pads sit on their spots. Move them if the row feels crowded; the crafters follow the anvils.

@@ -541,3 +541,155 @@ From Allen's phone screenshots ([[Sessions/2026-10-24#Phone playtest: HUD, toolb
 - **Mail Hand in takes the sword itself, for every order** (Allen; picked "Every order"): the cheapest that fits, no picker. [[Sessions/2026-10-25#Refinements 5]]
 - **Fewer popups:** no "ingot collected", no "Ingot loaded", no pause on the finished blade; a new metal is a small toast, not a card (Allen: "too intrusive"). [[Sessions/2026-10-25#Refinements 5]]
 - **Shaping prototype: the guide lines on the blade, and sanding by hand** (Allen: "the smoothing should be another manual step ... hold mouse down and basically 'sand down' the bumps"; picked "Overlay on the blade" and "Stops at the line"). The diagram is gone; supersedes the one-click Smooth of Refinement 4. [[Sessions/2026-10-25#Refinements 5]]
+- **Shaping prototype: the diagram is the guide again, at the top; no lines on the blade** (Allen: "is there no way to show it graphically instead of having physical lines? if not, lets bring back the original shape/guideline gui above"). Lines on the 3D blade (thin, glowing, ledges, screen-projected) can't show millimetres at the full-blade camera (~13 px a cm); the magnified diagram can. The blade stays the main view, centred below the panel; the red/blue tint on the steel stays. Supersedes "Overlay on the blade" earlier the same day. [[Sessions/2026-10-25#Refinements 5]]
+- **Shaping prototype: the guide is a true-shape silhouette** (Allen: "is the shape in the preview representative of the actual blade in game? it doesnt seem that way", then "true-shape silhouette: curved, with the point, width stretched evenly about 2.5x, my blade filled and the target as an outline"). It replaces the straightened width chart (widths under 1.4 cm cut off). Precision falls from ~47 to ~28 px per cm of width, for a picture that looks like the blade. [[Sessions/2026-10-25#Refinements 5]]
+- **A Studio-only Test Anvil runs the new shaping process start to finish** (Allen: "take the prototype and apply it to a sample anvil so i can test the flow start to finish"; picked a new Studio-only anvil, match % = blade quality, "every sword"). Anvils 1 and 2 keep the current forging. The rules scale to each blade's width; double-edged blades are shaped on both edges. The client's match is trusted only because it's Studio-only. [[Sessions/2026-10-25#Refinements 5]]
+- **FreeStylized swap: Wood Planks 04 shop floors, Floor Tiles 01 workshop floor, Wood Planks 23 crates** (Allen: "replace some of our current textures with appropriate textures", suggesting Wood Planks 23 and Floor Tiles 09 or 01). Claude's picks: Wood Planks 23 has a cloth banner in every tile, so it dresses the crates, not floors; Floor Tiles 01 over 09 (cleaner). [[Sessions/2026-10-25#FreeStylized texture swap: shop floor, workshop floor, crates]]
+- **The delivery board is FreeStylized's Notice Board 01; shelves and tables wear Wood 09** (Allen: "Can we add this notice board ... to replace the delivery board", "the wood material on the shelves and tables, can we find a replacement on the site too"). Claude's defaults: same spot and height as the old board, the Storage-box icon and paper slips dropped (the board's own papers show what it is); Wood 09 on every plain-Wood part of the shop displays, cashier counter and workshop stations, colours kept. [[Sessions/2026-10-25#Notice board for deliveries, stylized wood on shelves and tables]]
+- **Display tables: no brass corner caps, a plain plastic top** (Allen: "remove the corner caps from the tables. Make the table top have a plastic finish, no wood grains"). SmoothPlastic, colour kept; the legs, aprons and shelf keep Wood 09. Then the sword stands on them too (Allen: "make the sword stands on the table also plastic"); their small gold caps stay metal. [[Sessions/2026-10-25#Display tables: no corner caps, plastic top]]
+
+## Etch refinement — 2026-10-25
+
+- **Etch motifs are sized from the blade width capped at 7 cm, centred on a wider face, and stop where the edge starts rising into a sloped tip** (Allen: "Refine the etchings. the falling stars look off. and fix the issues you pointed out", with a pasted critique: "Fix zanbatō placement, scale, and tip distortion"). Claude's defaults: 7 cm, a slope of 0.25 cm per cm past 40% of the blade, half a width short of it. Flame follows the same cap, so its waves return on the zanbatō. [[Sessions/2026-10-25#Etch refinement]]
+- **The etch halo scales with the blade** (critique: the fixed halo "occupies a much larger fraction of a tantō's width than a zanbatō's"). Claude's default: 7% of the capped mean width. Fracture's shards get a crisp border half a fault wide instead of the soft halo. [[Sessions/2026-10-25#Etch refinement]]
+- **Eclipse's mouths and Woven Wind's crossings are kept open; Stormroot starts from a narrow root with thinner branches; Fracture is one connected band; Falling Stars are bigger stars with thin trails streaming back toward the guard** (the critique's list). Claude's numbers are in the session note. [[Sessions/2026-10-25#Etch refinement]]
+- **Flame's band is the metal colour lifted toward white, like the stroked marks** (critique: "Check contrast on Iron, Black Iron, Gold, and a busy textured material at actual phone size"; Iron's band vanished on Iron). The Etching Table's show already drew it that way. [[Sessions/2026-10-25#Etch refinement]]
+- **Shaping prototype: hold to hammer; stronger, wider strikes; 2× accuracy** (Allen: "it takes too many manual hits to fully forge the shape", "maybe instead of manually hitting they can also hold down to hit automatically?", "accuracy needs to be a bit more generous"). Holding keeps striking at the animation's beat, wherever you aim. `strength` 0.4 cm, `radius` 11% (was 0.15, 7%); `perfect` 0.16 cm, `tolerance` 0.5 cm (was 0.08, 0.25). No fixed strike count: "it just depends on the shape it starts at compared to the silhouette". Still an experiment. [[Sessions/2026-10-25#Anvil shaping: fewer hits, a true-width guide, sanding any time]]
+- **Shaping prototype: the silhouette is drawn at true width across the screen** (Allen: "the guide is not representative of the blade itself"). Replaces the 2.5× width stretch decided earlier the same day. [[Sessions/2026-10-25#Anvil shaping: fewer hits, a true-width guide, sanding any time]]
+- **Shaping prototype: sand any time; sanding rounds bumps off first, never past the line** (Allen: "players should be able to smooth whenever", "a sharp rough bump would turn smoother"). Replaces the 90% gate. [[Sessions/2026-10-25#Anvil shaping: fewer hits, a true-width guide, sanding any time]]
+- **Test Anvil blades keep the shape you hammered** (Allen: "wire in our test anvil so that i can also hilt the blade produced from it", then "Keep the shape I made"). The blade stores its widths, and the Hilt Bench, held and displayed swords, cards, etching and polishing all draw them; polishing a shaped blade changes only its finish. Studio only, like the Test Anvil. [[Sessions/2026-10-26#Test Anvil blades keep their shape]]
+- **Sword meshes built on a client are baked to static content and their live meshes freed** (Allen picked "convert each finished blade into a regular MeshPart, then free the live mesh", then "Yes, build the bake into SwordMeshCache"). Uses `AssetService:CreateDataModelContentAsync`, which Roblox keeps out of the EditableMesh/EditableImage budgets. Each client bakes what it shows; baking once on the server is left for later. [[Sessions/2026-10-26#Live sword meshes are baked]]
+- **Hotbar slots are 84 × 94 with 2 px edges and a whole-slot halftone** (Allen: "the toolbars borders are too thick. the half-tones are only on a part of the entire box ... i want to be able to fit 6 in the toolbar including the backpack, so make them a bit smaller"). Claude's numbers: 0.84 scale, the "diagonal" halftone. New stacks fill the bar up to 9 regardless of the screen. [[Sessions/2026-10-26#Smaller hotbar]]
+- **Ingots are named by their metal alone ("Iron", "Hot Iron")** (Allen: "we don't need to say "ingot" if its like "iron ingot" for example, its obvious its an ingot already"). Tool names, the hotbar and the rack picker. [[Sessions/2026-10-26#Ingot names without "Ingot"]]
+
+- **Station pickers show 2 rows × 3 columns and scroll down** (Allen: "ideally the items scroll vertically and we can have a 2x3 visible"). Replaces 2 × 2 on desktop and one sideways row on phones. [[Sessions/2026-10-26#Fixes: picker grid, mail rework, mailbox]]
+- **No notice when a hot ingot comes out of the furnace** (Allen: "remove that"). [[Sessions/2026-10-26#Fixes: picker grid, mail rework, mailbox]]
+- **A bought Mailbox gates the mail** (Allen: "a physical mailbox players buy at the start during the tutorial which flows nicely into this"). 15 coins, a pad right of the shop door, prompted after the first sale (Allen picked "After 1st sale, ~15 coins"). The Mail button and every letter or order wait for it. [[Sessions/2026-10-26#Fixes: picker grid, mail rework, mailbox]]
+- **Letters come from a named cast with faces** (Allen: "see the image of the NPC that sent it"; picked "3D NPC headshot"). Ten villagers in `Shared/Senders`; the Guard Captain is Takeda, the Wandering Swordsman Musashi. [[Sessions/2026-10-26#Fixes: picker grid, mail rework, mailbox]]
+- **New letters pop up middle right; tapping opens the letter** (Allen picked "Middle right"). [[Sessions/2026-10-26#Fixes: picker grid, mail rework, mailbox]]
+- **The mail is a list of letters with a letter view, Accept / Decline, Send on the row, history at the bottom and an Active only toggle** (Allen's Fixes note). A declined order moves to the history (Allen picked "Move to history"); story letters can't be declined so the tutorial can't stall (Claude's call). Replaces Hand in and "opening the mail reads the letters". [[Sessions/2026-10-26#Fixes: picker grid, mail rework, mailbox]]
+
+- **A shop holder's take-back (bag) markers stand in a straight line just outside the holder's left end, fixed in the world** (later the same day, Allen: "position them all the same based off the sword holder or shelf instead of the sword length"; supersedes "past its pommel"); the + stays in the middle; both circles are 25% smaller (33 px)** (Allen: "the bag icon is to the right so player can see the sword on sale", then "like 25% smaller. also move the backpack to the left ... as i move my camera around the icons get misplaced"). Supersedes the same day's camera-right offset. [[Sessions/2026-10-26#Take-back marker beside the sword]]
+- **UI icons come from the Free Icon Pack by @gvesster, 1st Outline versions, unedited** (Allen: "swap out our existing icons with the corresponding ones from the pack. Use the 1st outline versions"). Replaces VectorIcons. Claude's picks where the pack had several: Purple Diamond, Red Gift, Red Shopping Cart, Lighting, Red / Yellow House. [[Sessions/2026-10-26#Free Icon Pack icons]]
+- **The Mail button uses Allen's own orange mailbox** (his art, dark border). [[Sessions/2026-10-26#Mailbox icon]]
+- **The left HUD column sizes itself with Scale + constraints in StarterGui, no runtime script** (Allen: "Icons are a bit small right now on desktop", then "convert the left column to Scale + constraints in StarterGui and remove the runtime Grow"). Phones keep the old pixel sizes; lanes cap at 445 px, x1.34 on desktop. Claude's numbers: 0.6 lane aspect, 445 px cap. Replaces the same day's runtime `Grow`. [[Sessions/2026-10-26#Bigger left HUD on desktop]]
+- **The store upgrades button is the pack's Stats, the collection book its Blue Book** (Allen: "use Stats 1st Outline instead of the house icon for shop upgrades. Use a book instead of the sword icon"). Blue is Claude's pick. [[Sessions/2026-10-26#Stats and book icons, letters marked read]]
+- **Letters are marked read when opened (saved); the Mail dot and the New chip mean unread letters only** (Allen: "Once a letter has been read, it should be marked as read. so the mailbox notification be can settled once all messages are read"). The dot no longer lights for a sword you could send. [[Sessions/2026-10-26#Stats and book icons, letters marked read]]
+- **Staff tabs open a roster of their members first, like Crafters; the Staff page has a header Back** (Allen: "make it so its like Crafters, where you can select your cashier or shop promoter. so we can add in the future more cashiers or shop promoters"). All four staff roles, Claude's call. Still one per role in the save. [[Sessions/2026-10-26#Staff rosters in the crew window]]
+- **Plots are 84 × 122 with a low wooden fence round them** (Allen: "Make the plot each player owns larger, and add fences around it so it's clear where a player's plot starts and ends"; picked option B and "Low wooden fence, gaps" from a top-down capture). The fence takes in the delivery bay, a side yard and a back yard; it's open at the shop door, the bay mouth and a 6-stud gap into the side yard. Lanes between lots shrink to 12.5 studs; the curb edges are gone. [[Sessions/2026-10-26#Bigger plots with a fence]]
+- **Picker cards get a warm light pool behind the item, a dark rim round it, brighter blades, and no chip when every card shares it** (Allen: "our picker ui looks very dull … no need to have the "store" repeated on all of the buttons", then picked mockup D). Coin prices always show. Then: square charcoal-to-black cards with a thin (1.5 px) rim (gold, then white: "use white"), a bigger sword view with the name below and chips as a corner tag, no light pool; picker windows show a tiled seigaiha pattern under half-clear brown ("Apply seigaiha C at 0.5") and cast a drop shadow; shop take-back bags sit on the table or shelf beside the hilt, a big sword's in its middle; picker and station GUIs have square corners except true circles (Allen: "make all the station guis and picker guis have 0 corner radius") (Allen picked "Charcoal + gold rim" and the thinnest rim from comparison boards). [[Sessions/2026-10-26#Brighter picker cards]]
+- **Chunky low-poly style, piloted on the Ore Roller lever** (Allen's reference: the clay game's Clay Reroll lever, "chunky, small bevels on every edge, flat colours"). The style uses simple convex shapes with big design chamfers, a one-segment 0.04 chamfer on every edge, flat shading and one flat colour per part. The lever was rebuilt to match the reference's shape (loaf body, orange side panel, sage chamfered base) with the same swing. The knob is a plain Roblox Ball part (Allen: "just use a regular roblox sphere part instead of the sphere you made in blender"). Claude's defaults: the reference's colours darkened for the warm workshop light; footprint 2.6 × 3.5; the rest of the level waits for Allen's OK on the look. [[Sessions/2026-10-26#Chunky low-poly style: Ore Roller lever pilot]]
+- **The ore stands stand in two straight rows** (Allen: "make the stands align, right now the back stands are not aligned with front one"): each back stand directly behind a front one, replacing the half-gap stagger. **The lever is built from Roblox Parts** (Allen: "use the parts one"), not the Blender meshes; the chunky style can be done in Parts with Wedges and CornerWedges for the big chamfers, without the small edge chamfers. [[Sessions/2026-10-26#Ore stands aligned, parts lever in]]
+- **World text looks like the clay game's labels and is built in Studio** (Allen: "apply these font changes to all of our in game font ... the physical in game ones like the upgrade buttons, npc names", "Ideally I want most of the texts built as assets in studio"). Gotham Bold with a thick, rounded near-black outline that scales with the text; ore labels show the rarity on its own smaller line. Every billboard is a template in `ReplicatedStorage.WorldText` that scripts clone and fill. Claude's defaults: painted kanji signs, plated signs, the speech bubble and the Buy button keep their look; outline 0.2 of the text height. [[Sessions/2026-10-26#World text: clay-game labels, built as Studio templates]]
+
+## Tips — 2026-10-26
+
+- **Alt frees the mouse in first person** (Allen, tips.md: "add an option for the user to hold ALT while in first POV to move their mouse to select things"). Claude's defaults: either Alt key, also in shift lock, the camera holds still while it's held, no on-screen hint. [[Sessions/2026-10-26#Tips document (tips.md)]]
+- **The tutorial spotlight gets an arrow** (Allen: "add an arrow pointing at highlighted items"): the world arrow's chevrons, bobbing over the spotlit button (under it near the top of the screen). Adds to Refinements 5's no-ring spotlight; there is still no ring.
+- **The workshop door is 8.8 studs wide** (Allen: "make the door to the workshop a bit bigger. (not the store entrance)"), was 5.8; same height. Claude's default: 1.5 wider on each side.
+- **With two or more swords that fit a letter, you choose which to send** (Allen: "allow the user to select which one will be sent"). One fitting sword still sends at once (Allen confirmed). Supersedes Refinements 5's "Send gives the cheapest that fits, no picker" for the 2+ case.
+- **Pad steps say how to buy** (Allen: "make it clear how to buy upgrades"): "Stand on the pad to buy …", then "Press Buy" on the pad.
+- **Carried blades are inventory items** (Allen: "after finishing the blades on the anvil, they don't show up in the inventory ... make sure they are visible"): each blade is a hotbar item, a bare blade you can hold, until its hilt goes on.
+
+## Tutorial fixes — 2026-10-27
+
+- **Saving up for a blueprint, the guide names your best blade** (Allen: "the guide should name the best blueprint I know while I save up"): "Forge a Wakizashi" while you save for the Katana Sword, not "Forge a Tantō". Big swords are never named (only their stand takes one). Found in [[Design/Progression and Economy Review — 2026-10-27#10. The tutorial]]. [[Sessions/2026-10-27#Tutorial fixes: the best blade, a Gem Shop step that ends on a buy]]
+- **The Gem Shop step ends on a buy** (Allen: "the Gem Shop step should end on something I can buy. Use your defaults."). Claude's defaults: Better Advertising's first level costs **5 gems** (was 25), the day-1 daily reward; the step comes once your gems cover it, spotlights its Buy button with "Buy a shop boost with your gems", and buying ends it. Supersedes Refinements 5's "Gems buy boosts for your shop that last" over the whole shop.
+
+## Economy pass 2 direction — 2026-10-27
+
+- **Spins stay free and unlimited; the economy is priced for players who pick rare ore, with a scrap bin for leftover ingots** (Allen: "Keep unlimited free spins. Plan the economy pass around players picking rare ore, plus a scrap bin for leftover ingots."). Answers the review's ore question ([[Design/Progression and Economy Review — 2026-10-27#Questions for Allen]]); keeps Refinements 3's "spin as many times as they want" and 2026-10-24's "remove this limit". Plan: [[Design/Economy Pass 2]]. The bin was dropped in the walkthrough below.
+- **The next sword and the next employee take a meaningful amount of time** (Allen: "plan the economy based around the upgrades, it should take a meaningful amount of time to get the next sword and to also get an employee"). He walked through the plan the same day (below); building it waits for his go-ahead. [[Sessions/2026-10-27#Economy pass 2 plan]]
+
+Allen's answers, walking through [[Design/Economy Pass 2]] ("Walk through pass 2 with me and ask me about each"). [[Sessions/2026-10-27#Economy pass 2 walkthrough]]
+
+- **Prices are built for a Rare+ picker** (Allen picked it over an Epic+ hunter).
+- **The goal order stays:** Katana, Longsword, Sword Crafter, Falchion, Stocker, Shop Promoter, Gladius, Cashier, Sword Etcher, then the Zanbatō and the crew.
+- **8 h to today's last floor pad for a casual picker** (Allen picked "8 h" over 5 h 30 and 12 h); the Katana stays at 20 min and everything after it stretches. Answers the review's length question.
+- **A goal is the last 40% of its stage;** the small buys share the rest (Allen kept 40% over 60% and 25%).
+- **Each stage's pads and cart levels wait for the previous goal** (Allen: "Pads and cart levels").
+- **The Sword Crafter comes trained on your best sword** (Allen: "Trained on hire").
+- **The tutorial keeps its prices:** Mailbox 15, Wakizashi Sword 60, Ore Slot 2 75 (Allen: "Keep them").
+- **The Upgraded Store stays in the Falchion stage** (Allen picked it over the Longsword stage).
+- **A pull replaces the ore left on the lid; there is no scrap bin and scrapping pays nothing** (Allen: "just spin new ones, existing ones are replaced", "Nothing", "no scrap bin"). Supersedes 2026-10-23's "a pull first puts the ore still waiting into your hands" and the plan's bin.
+- **The bag gets a trash icon:** drag a stack onto it to throw the whole stack away (Allen: "opening inventory, there should be a trash icon that allows you to trash it", then "Drag a stack onto it"). Ingots, blades and swords can be trashed (Allen: "Ingots and swords"), and it never asks first (Allen: "Never").
+- **The tutorial teaches the pick:** its first roll asks you to pull again before you collect (Allen: "Inside the tutorial"). Claude's default: the first pull always brings a Common and the second an Uncommon.
+- **Up to three sword crafters work at once,** one each at Anvils 2–4 beside your own anvil; any crafter you've bought can replace a working one (Allen: "Should be at most 3 active sword crafter at a time. different crafters bought can replace active ones if players want. That means 3 anvils can exist"). Supersedes Refinements 2's "One at Anvil 2".
+- **The Zanbatō is sold,** a late goal after the Gladius with the Big Sword Stand in its stage (Allen: "Sell the Zanbatō"). Answers the review's Big Sword Stand question.
+- **The Upgraded Store's upper storey is cream plaster, not black kura** (Allen: "Repaint the Upgraded Store's upper storey and gables to the same cream plaster as the walls"). Window trim, shutters and the hachimaki band stay dark. [[Sessions/2026-10-27#Upgraded Store upper storey made cream]]
+
+Economy pass 2, built the same day (Allen: "Build Economy Pass 2 as decided"), with Claude's defaults where the plan left a choice. [[Sessions/2026-10-27#Economy pass 2 built]]
+
+- **Anvil 4 comes after Anvil 3, not after Haru:** pads can only wait for upgrades, and crew hires aren't upgrades.
+- **Anvils 3 and 4 stand on the workshop floor either side of the hearth,** copies of Anvil 2 turned the same way: Anvil 3 right of it toward the furnaces, Anvil 4 between it and the Hilt Bench; each pad on its anvil's spot. They're your anvils too, like Anvil 2.
+- **A new hire works at a free bought crafter anvil;** with none free they wait in the crew window until you put them somewhere.
+- **The bag's trash is a copy of the bag button with the pack's Trash Can, over the open bag's top-right corner;** dropping a stack there throws the whole stack away.
+- **A save from before keeps its crafters but not where they work** (no live players, so no carry-over): put them back on the crew window's Station page, or Reset progress.
+
+Customer rate, the same day ([[Design/Economy Pass 2#9. Customer rate]]): walk-ins outnumbered swords 5–11× all game, so no customer upgrade or event mattered.
+
+- **A walk-in every 45–75 s, Better Advertising 36–64, 30–52 and 22–42 s; reputation no longer shortens the gap; the tutorial keeps 12–22 s until Ore Slot 2** (Allen: "Apply the recommended customer rate"). Supersedes 2026-10-22's 12–22 s base and reputation's 6% a rank. [[Sessions/2026-10-27#Customer rate applied]]
+
+## Monetization direction — 2026-10-27
+
+Allen: "research all the potential developer products we can have for purchase with robux. gamepasses, 1 starter pack. gamepasses that ease the experience, or provide better bonuses, luck, etc. 1 of them in my mind is an auto ore roller that shows up on your screen for purchase whenever youre near the ore roller itself. its would be a small popup with a lock icon to show you can buy it." Plan: [[Design/Monetization Plan]]. Nothing built.
+
+- **An Auto Ore Roller game pass, offered by a small on-screen popup with a lock icon whenever you're near your ore roller** (Allen's design). Claude's defaults: the pack's Auto Open icon with the Lock on its corner, no text; after purchase the same button is the on/off switch; it stops while a kept rarity (Rare+ to start) lies on a stand.
+- **Exactly one Starter Pack** (Allen). Claude's proposal: a 99 R$ game pass with 100 gems, a Gold ingot and a buyers-only etch; offered by the Shop button's dot, no popup.
+- **GDD §15's rule stands:** Robux speeds things up or adds style; everything can be earned.
+- **Waiting on Allen:** paid luck or not (merging is the only luck since 2026-10-25), the Starter Pack's contents, 2× Coins and coin crates, roll-only or auto-collect, and the restricted-region alternative for luck. [[Sessions/2026-10-27#Monetization plan]]
+
+## Monetization decisions — 2026-10-27
+
+Allen walked through [[Design/Monetization Plan]]'s five questions in two rounds; this settles the open points of "Monetization direction" above. Nothing built.
+
+- **Luck: a Lucky Ore pass, luck one merge higher (+0.5)** (Allen: "It should be an increased luck pass, but doesn't have to be necessarily 2x. I notice in the clay game they have the odds available"). Its odds panel copies Create Pottery!'s Lucky Clay panel: Now → With Lucky Ore, before Roblox's purchase window.
+- **Restricted regions:** players where paid random items are restricted can buy an ingot of a found metal (Epic or Legendary, already in their book) instead of Lucky Ore and bought rain.
+- **Starter Pack: 100 gems and a Gold ingot, 99 R$, no etch** (Allen: "keep the gems, the ingots, no buyers-only etch"). Claude's default: the Etch Pack is dropped too.
+- **Coins and more** (Allen: "50% more coins, coin packs, gem packs, control the weather ( control the temporary server boost), vip pass gives +10% on every sale"): 50% More Coins replaces 2× Coins; VIP gives +10% on every sale; coin packs and gem packs are in. Claude's defaults: the 30-min 2× Coins, Customer Rush and Lucky Hour are dropped; Swift Boots stays.
+- **Four weathers, also bought** (Allen: "the weather should only be around 5 minutes. sunshine can give 2x more customers, rainbow can give higher chance of vip customer, rain gives higher luck for rolling, snowing for more mail/custom requests"), with Robux or gems (Allen picked "The weather too" for gems). Replaces 2026-10-19's "other weather stays at the normal baseline" and "no paid weather controls". Claude's defaults: rain +0.5 luck, snow mail twice as often, 79 R$ or 60 gems, the buyer named.
+- **Auto Ore Roller:** rolls only, with the keep chip starting at Rare+.
+
+[[Sessions/2026-10-27#Monetization walkthrough]]
+
+## Store items on Roblox — 2026-10-27
+
+Allen: "I'll give the API key game-pass and developer-product permission; create the passes and products through Open Cloud." Claude created the plan's 6 passes and 11 developer products in universe 10771581195 ([[Design/Monetization Plan#11. On Roblox (created 2026-10-27)]]). Claude's defaults: everything off sale until its feature is built; no images; managed pricing left off (the API's default); Lucky Ore's and Rain's descriptions carry the odds. [[Sessions/2026-10-27#Passes and products created]]
+
+## Pass features — 2026-10-27
+
+Allen: "after this, work on the actual features the passes give". Built, not played ([[Design/Monetization Plan#12. Built (2026-10-27, not played)]]). Claude's defaults:
+
+- VIP's "gold name tag" is a gold [VIP] before the name in chat (TextChatService).
+- The coin passes multiply (×1.65 with both) and pay when the coins land; the Cashier's till holds boosted coins.
+- Lucky Ore adds +0.5 to the merges' luck.
+- The Auto Ore Roller starts off; its switch and keep chip are saved through the Settings' `Setting` remote; its button shows within 12 studs of the lever.
+- In Studio, pass ownership comes from StoreService's attributes, all off.
+
+[[Sessions/2026-10-27#Pass features built]]
+
+## Shop tension pass — 2026-10-27
+
+Allen picked all three suggestions from [[Design/Pottery Playthrough 2026-10-27]], then "Recommended" for every pick ([[Design/Shop Tension Pass]]):
+- **VIP buyers:** 5% of walk-ins after the tutorial, ×1.75–2.25 the value, no raise, 60 s to answer. Upward only, keeping "no lowball offers".
+- **No browsers who leave without an offer.** Customers say a line about the sword instead.
+- **Sunshine weather, free:** walk-ins ×2 for 5 minutes, every 15–25 minutes, server-wide, not in the tutorial. The bought weathers and the other three come later.
+- **Faster Heating 10 / 6 / 4 / 3 s.**
+- **The 45 s offer timer stays** until a playtest counts the expired offers (more than 1 in 4 → 60 s).
+- Claude's defaults: no head tag on a VIP (a gold outfit and a gold card instead, so it doesn't cover the speech bubble); the Sunshine chip is text, because the icon pack has no sun.
+
+[[Sessions/2026-10-27#Shop tension pass built]]
+
+## Shop page — 2026-10-27
+
+Allen: "Build the Shop page next: the other passes with live prices, the Starter Pack's dot and Lucky Ore's odds panel." Built, not played ([[Design/Monetization Plan#12. Built (2026-10-27, not played)]]). Claude's defaults:
+
+- All six passes as a scrolling list of cards like the Gem Shop's (the Auto Ore Roller too), with the pack's icons and its Golden Robux on the prices; "—" on a grey button while a pass is off sale.
+- The Starter Pack's dot shows after the tutorial until the Shop is opened, once per session, not until it's bought.
+- Lucky Ore's Buy always opens its odds panel first and the purchase is made from there; where paid random items are restricted, its card is hidden until the found-metal ingot (a developer product) exists.
+
+[[Sessions/2026-10-27#Shop page built]]
+
+## Passes on sale — 2026-10-27
+
+Allen: "Put all six passes on sale while the game is private, so the Shop shows prices and I can test buying." All six went on sale through Open Cloud, Lucky Ore included; the developer products stay off sale until built. Before the game goes public, Lucky Ore's Store tab question must be settled ([[Design/Monetization Plan#Open]]). [[Sessions/2026-10-27#Passes on sale]]

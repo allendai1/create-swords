@@ -124,4 +124,43 @@ Allen (2026-10-22): "use this persons profile's inventory for decals for icons w
 
 107 decals listed 2026-10-22 through the public inventory API; the six "Png - 2024-04-…" are unnamed.
 
+**Not VectorIcons:** the Mail button's mailbox is Allen's own art (2026-10-26), orange with a dark border: `Art/mailbox-icon.png` (his transparent file, trimmed, 512 px), decal 103960883488169, image `rbxassetid://87335653488899`. Superseded the same day: a recolour of his blue one (decal 132568019447809, image 98478920552645), his blue one (decal 102623846338085 with a black background from a bad cut-out; fixed as 110906521404418, unused), and the Creator Store decal 112139392490051 "Buzon1" by Fontanero24 (image `rbxassetid://94916333436167`).
+
+## Free Icon Pack (in use since 2026-10-26)
+
+Allen (2026-10-26): "I added a free icon pack to our vault. can we swap out our existing icons with the corresponding ones from the pack. Use the 1st outline versions." Source: `Free Icon Pack v3.1 (Basic)/` in the vault, by **@gvesster** ([linktree](https://linktr.ee/gvesster)). Licence (`License.txt`): commercial use allowed; credit optional; no recolouring, redrawing or reselling, so the icons are uploaded as they are. Each is the pack's `<name> 1st Outline 256px.png`, uploaded through Open Cloud under user 14722022. They replace every VectorIcons image the game used; the VectorIcons table above is now history.
+
+| Was (VectorIcons image) | Pack icon | Decal | Image (use in ImageLabel) | Where |
+|---|---|---|---|---|
+| Coin 15402839520 | Golden Coin | 103523065388496 | rbxassetid://128507157573470 | coin counter, price chips, offer card, `UiFx.COIN`, `ShopService` |
+| Gem 15402880202 | Purple Diamond | 97370737851126 | rbxassetid://103295659547066 | gem counter, Gem Shop, mail rewards, crew prices |
+| Location 15402908284 | Location Pin | 112364395983073 | rbxassetid://113415591953625 | Deliveries town and pin chips, trip step 3 |
+| Lock 15402948246 | Lock | 123617506863506 | rbxassetid://111896329341217 | crew window's locked cards, the Auto Ore Roller button's lock |
+| — | Auto Open | 116762899492598 | rbxassetid://130317504294180 | the Auto Ore Roller button and its Shop card (2026-10-27) |
+| — | Chest | 71703985235233 | rbxassetid://121901041887054 | the Shop's Starter Pack card (2026-10-27) |
+| — | Clover | 136570391206190 | rbxassetid://131251258477861 | the Shop's Lucky Ore card (2026-10-27) |
+| — | VIP | 89655182198190 | rbxassetid://114203217172057 | the Shop's VIP card (2026-10-27) |
+| — | Red Shoe | 89424205690369 | rbxassetid://100968152074624 | the Shop's Swift Boots card (2026-10-27) |
+| — | Golden Robux | 108709281854166 | rbxassetid://116184965509442 | Robux prices on the Shop's Buy buttons (2026-10-27) |
+| Tick 15402951476 | Checkmark | 104889272488046 | rbxassetid://98899943650975 | Deliveries trip ticks |
+| Backpack 15402958715 | Backpack | 85448936637490 | rbxassetid://83638941769486 | hotbar bag button, shop holders' pick-up marker |
+| Gift 15402967660 | Red Gift | 123454384742660 | rbxassetid://116105182486029 | daily reward button |
+| Sword 15402990643 | Sword | 120797359447545 | rbxassetid://120814567140305 | collection book button |
+| Settings 15402995645 | Settings 1 | 113271219896211 | rbxassetid://99173641572787 | Settings button |
+| Storage 15403012566 | Box | 136691697931552 | rbxassetid://98414707930956 | Deliveries title, cart, crate, pinned order |
+| Friends 15403044988 | Friend | 104991759325989 | rbxassetid://135122114385259 | crew button |
+| House 15403056677 | Red House | 118630475635288 | rbxassetid://105855767508083 | store upgrades button, trip step 1 |
+| Home 15403180857 | Yellow House | 117323187468112 | rbxassetid://118316543611583 | trip step 4 |
+| Shop 15403066964 | Red Shopping Cart | 89157273414006 | rbxassetid://72637383694438 | Shop button |
+| Star 15403116835 | Golden Star | 112053000122218 | rbxassetid://121030208444623 | crew stars, Deliveries rank |
+| Speed 15403173250 | Lighting | 116048266590461 | rbxassetid://80859340475570 | Deliveries cart speed |
+| Upgrades button (was Red House, same day) | Stats | 71927353031117 | rbxassetid://97477084020092 | the store upgrades button (`MenuGui.Buttons.Upgrades`); Allen: "use Stats 1st Outline instead of the house icon for shop upgrades" |
+| Book button (was Sword, same day) | Blue Book | 111130036886654 | rbxassetid://81875196362916 | the collection book (`MenuGui.Buttons.Book`); Allen: "Use a book instead of the sword icon to show the discovered metals". Claude chose blue: the old sword was blue, and it stands apart from the red and orange beside it |
+| (new, 2026-10-27) | Trash Can | 75641554610978 | rbxassetid://112432692268721 | the bag's trash (`HotbarGui.BagPanel.Trash`, Economy pass 2); uploaded through Open Cloud the same day |
+
+Claude's picks where the pack had several: Purple Diamond (the old gem was purple; Blue Diamond is the alternative), Red Gift, Red Shopping Cart (or a Red / Golden Shopping Bag), Lighting for speed (or Yellow Shoe), Red House vs Yellow House to keep the trip's start and end apart (the Red House stays only on trip step 1 since the Upgrades button became Stats). `ServerStorage.UIPackCopies` (another session's UI-pack experiment) still holds the old ids.
+
+
+**Not an icon, unused since 2026-10-26:** the picker cards' light pool was a white radial falloff made for it, `Art/ui-light-pool.png`, decal 101391462421390, image `rbxassetid://132693729296321` ([[Sessions/2026-10-26#Brighter picker cards]]).
+
 Related: [[Art/UI Design]]

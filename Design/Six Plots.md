@@ -59,3 +59,5 @@ See [[Archive/Project History/Code Map before cleanup — 2026-10-22#Six player 
   - When a player leaves, their plot goes and the empty plot comes back.
 
 Related: [[Design/Tycoon Upgrades]] · [[Archive/Art/Japanese Street]] · [[Development/Code Map]] · [[Sessions/2026-10-21]] · [[Home]]
+
+**Since 2026-10-26 each lot is 84 × 122 with a fence** ([[Sessions/2026-10-26#Bigger plots with a fence]]): the fence is part of the template (`Plot.Fence`), so every claimed and empty plot has it; the lanes between lots are 12.5 studs wide and the plots end 12 short of the back wall.

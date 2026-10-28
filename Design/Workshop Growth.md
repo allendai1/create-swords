@@ -126,6 +126,8 @@ Confirmed: weather grants **positive traffic bonuses**, with sunshine as the exa
 
 Preserve the first-sale tutorial: no visitors before the first sword is listed; listing triggers the tutorial customer. Weather does not change existing commission requirements or expiry rules. Bonus amounts, weather types/durations, scheduling, and interaction with reputation/customer upgrades remain open. No paid weather controls were chosen.
 
+**2026-10-27:** Allen chose four weathers of about 5 minutes, each with a bonus (sunshine customers, rainbow VIP customers, rain luck, snow mail), which players can also buy with Robux or gems: [[Design/Monetization Plan#3. Weather (Allen's design)]].
+
 ## Roof visibility while indoors
 
 Allen requested that the roof become transparent or disappear when the player is under it, making the workshop feel open. The supplied reference pair shows an opaque exterior and a roof cutaway inside:

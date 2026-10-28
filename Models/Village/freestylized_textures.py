@@ -6,7 +6,11 @@
 # Per texture: colour x ambient occlusion (0.6), then white-balanced (each channel divided by its mean, scaled to 0.82)
 # and mostly greyed (TINT) so the part colour still sets the hue as with the painted tiles, while the texture keeps its
 # own light and dark and a little of its tint; OpenGL normal map (Roblox's convention); roughness floored at 0.6 (no shine). All resized to 1024 (Roblox's
-# limit). Run: python -I freestylized_textures.py <unzipped dir> <out dir>  ->  <variant>_{color,normal,rough}.png
+# limit). Run: python -I freestylized_textures.py <unzipped dir> <out dir> [variant=source ...]  ->  <variant>_{color,normal,rough}.png
+# (with variant=source pairs, only those are made, e.g. PaintFloor=floor_tiles_09 for a trial).
+# 2026-10-25, Allen: "replace some of our current textures with appropriate textures": PaintPlanks wood_11 -> wood_planks_04
+# (clean warm boards), new PaintCrate (wood_planks_23: crate face with iron brackets and a cloth banner, one per crate
+# side) and PaintFloor (floor_tiles_01: big worn stone tiles, the workshop floor).
 import os, sys
 import numpy as np
 from PIL import Image
@@ -20,7 +24,10 @@ TEX = {  # variant -> source name
     "PaintStoneWall": "stone_wall_02",
     "PaintWood": "wood_10",
     "PaintWoodDark": "wood_02",
-    "PaintPlanks": "wood_11",
+    "PaintPlanks": "wood_planks_04",
+    "PaintCrate": "wood_planks_23",
+    "PaintFloor": "floor_tiles_01",
+    "PaintFurniture": "wood_09",  # shop displays, cashier counter, workshop benches and racks (2026-10-25)
 }
 
 
@@ -36,11 +43,11 @@ def load(p, mode):
     return np.asarray(Image.open(p).convert(mode).resize((N, N), Image.Resampling.LANCZOS), dtype=float) / 255
 
 
-def main(src, out):
+def main(src, out, tex=TEX):
     os.makedirs(out, exist_ok=True)
-    for variant, name in TEX.items():
-        col = load(find(src, name, "color", "baseColor"), "RGB")
-        ao = load(find(src, name, "ambient_occlusion", "ambientOcclusion"), "L")
+    for variant, name in tex.items():
+        col = load(find(src, name, "color", "baseColor", "basecolor"), "RGB")
+        ao = load(find(src, name, "ambient_occlusion", "ambientOcclusion", "ambientocclusion"), "L")
         col = col * (1 - 0.6 * (1 - ao))[..., None]
         col = col / col.reshape(-1, 3).mean(0) * 0.82
         grey = (col @ np.array([0.299, 0.587, 0.114]))[..., None]
@@ -54,4 +61,4 @@ def main(src, out):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    main(sys.argv[1], sys.argv[2], dict(a.split("=") for a in sys.argv[3:]) or TEX)

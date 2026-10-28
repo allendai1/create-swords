@@ -321,6 +321,12 @@ Useful small automated checks: path-to-surface mapping at base/middle/tip; clamp
 
 Stroked marks are drawn 1.7× wider, with a core lifted toward white and a 0.24 cm halo of the metal's colour over the dark body, so they read on every metal. Stroke pieces are 0.25 cm. Details, cost and renders: [[Sessions/2026-10-23#Etchings that pop (strong glow)]].
 
+## Refinement (2026-10-25)
+
+After a critique of the pattern pack: motifs sized from the width capped at 7 cm and centred on a wider face, stopped before sloped tips; a halo that scales with the blade; open Eclipse mouths and Woven Wind crossings; Stormroot from a narrow root; Fracture as one connected band with crisp dark faults; Falling Stars rebuilt as bigger stars with thin trails behind them; Flame's waves back on the zanbatō and its band lifted toward white. The etch body is see-through on every metal since 2026-10-23, so the "dark body" above describes the older look. Details: [[Sessions/2026-10-25#Etch refinement]]; renders and formulas: [[References/Etching Table/critique-pack-2026-10-25/etch-pattern-data]].
+
+![[References/Etching Table/critique-pack-2026-10-25/by-blade-katana.png]]
+
 ## API references
 
 Verify current signatures and runtime constraints before implementation:
