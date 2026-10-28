@@ -57,12 +57,12 @@ Allen: "the weather should only be around 5 minutes. sunshine can give 2x more c
 
 | Weather | For every shop in the server, about 5 min | Needs |
 |---|---|---|
-| **Sunshine** | Customers come twice as often | The customer clock (built) |
-| **Rainbow** | VIP customers come more often | VIP customers (not built) |
+| **Sunshine** | Customers come twice as often | The free Sunshine (built in [[Design/Shop Tension Pass]], `ServerScriptService.Weather`) |
+| **Rainbow** | VIP customers come more often | VIP buyers (built in the shop tension pass: `Customers.VIP_CHANCE` 5%) |
 | **Rain** | Luck one merge higher (+0.5) at every roller; adds to Lucky Ore | The odds panel when bought (§4) |
 | **Snow** | Mail orders and commissions come twice as often | The mail clock (built) |
 
-- **Free and bought:** weather also comes on its own (GDD §7; designed, not built). A bought weather starts at once, or straight after another bought one; the buyer is named beside the weather's HUD icon.
+- **Free and bought:** weather also comes on its own (GDD §7): the free Sunshine is built (5 min, every 15–25 min, [[Design/Shop Tension Pass]]); the other three aren't yet. A bought weather starts at once, or straight after another bought one; the buyer is named beside the weather's HUD icon.
 - **Price:** 79 R$ or 60 gems each. Gems from daily rewards (90 a week) or gem packs can buy it, so gems keep a use after the Gem Shop's 325 (Allen).
 - **Guardrails:** a plot still in the tutorial gets no weather bonus (the first-sale gate, GDD §7); one weather at a time; no Robux offers pop up during one.
 - **Rain is a paid random item** when bought, with Robux or with gems (gems can be bought with Robux): the odds panel before buying, and players where that's restricted can't buy rain (they still get it when it falls).
@@ -139,7 +139,7 @@ Code when built: `Shared/Store` (ids and what each gives, read by both sides), `
 3. **Claude:** the Auto Ore Roller: popup, switch, keep chip, auto loop.
 4. **Claude:** the Starter Pack, 50% More Coins, VIP and Swift Boots.
 5. **Claude:** Lucky Ore with the odds panel, and the found-metal ingot for restricted players.
-6. **Claude:** weather: the free weather first, then bought sunshine and snow (their clocks exist), rain (the odds panel), and the rainbow once VIP customers exist; then weather for gems, coin packs and gem packs.
+6. **Claude:** weather: bought Sunshine on top of the free one, then snow (the mail clock exists), rain (the odds panel) and the rainbow (VIP buyers exist); then weather for gems, coin packs and gem packs.
 
 ## 11. On Roblox (created 2026-10-27)
 
