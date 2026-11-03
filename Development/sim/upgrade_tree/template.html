@@ -1,0 +1,216 @@
+<meta charset="utf-8">
+<title>Sell Swords! Upgrade Tree</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a header, a walk-through bar, the tree in its own scroll box (columns = buys deep), the selected pad's card under it. */
+:root {
+  --bg: #eef0ec; --panel: #f9faf7; --fg: #1c2320; --muted: #5d6762; --line: #c9cfc9; --edge: #a9b2ab;
+  --accent: #c2501a; --accent-soft: #f6dccd; --need: #2f6db3;
+  --c-sword: #a87a0c; --c-crew: #23786f; --c-staff: #7a4fb0; --c-ore: #5f5aa8; --c-heat: #c03a2b;
+  --c-storage: #8a6646; --c-stations: #3a8a3a; --c-shop: #2e6aa8; --c-cart: #66707a;
+  --display: "Dela Gothic One", "Hiragino Kaku Gothic ProN", "Arial Black", sans-serif;
+  --body: "Zen Kaku Gothic New", "Hiragino Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121614; --panel: #1a201d; --fg: #e3e8e4; --muted: #9aa49f; --line: #303834; --edge: #47514c;
+  --accent: #f07a3e; --accent-soft: #3d2216; --need: #6aa4ea;
+  --c-sword: #e0b03a; --c-crew: #4fc0b3; --c-staff: #b08ae6; --c-ore: #9a95f0; --c-heat: #f0705e;
+  --c-storage: #c9a07a; --c-stations: #6fc96f; --c-shop: #6aa4ea; --c-cart: #a3adb6; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #121614; --panel: #1a201d; --fg: #e3e8e4; --muted: #9aa49f; --line: #303834; --edge: #47514c;
+  --accent: #f07a3e; --accent-soft: #3d2216; --need: #6aa4ea;
+  --c-sword: #e0b03a; --c-crew: #4fc0b3; --c-staff: #b08ae6; --c-ore: #9a95f0; --c-heat: #f0705e;
+  --c-storage: #c9a07a; --c-stations: #6fc96f; --c-shop: #6aa4ea; --c-cart: #a3adb6; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 28px; display: grid; gap: 14px; max-width: 1400px; margin: 0 auto; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(24px, 4vw, 34px); line-height: 1.1; margin: 0; text-wrap: balance; letter-spacing: .01em; }
+.lede { margin: 0; color: var(--muted); max-width: 65ch; }
+.lede b { color: var(--fg); }
+.bar { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--panel); }
+.seg button { font: 500 14px var(--body); border: 0; background: transparent; color: var(--muted); padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.btn { font: 500 14px var(--body); border: 1px solid var(--line); background: var(--panel); color: var(--fg); padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stats { font-family: var(--mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; display: flex; gap: 14px; flex-wrap: wrap; }
+.stats b { color: var(--fg); font-weight: 500; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.box { overflow: auto; max-height: 66vh; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); -webkit-overflow-scrolling: touch; }
+svg { display: block; }
+.col-label { font: 500 11px var(--mono); fill: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.edge { fill: none; stroke: var(--edge); stroke-width: 1.2; }
+.edge.up { stroke: var(--need); stroke-width: 2.2; }
+.edge.down { stroke: var(--accent); stroke-width: 2.2; }
+.edge.faint { opacity: .18; }
+.node { cursor: pointer; }
+.node rect.card { fill: var(--panel); stroke: var(--line); stroke-width: 1; }
+.node .name { font: 600 12.5px var(--body); fill: var(--fg); }
+.node .price { font: 500 11px var(--mono); fill: var(--muted); }
+.node .dot { stroke: none; }
+.node.sel rect.card { stroke: var(--fg); stroke-width: 2.4; }
+.node.up rect.card { stroke: var(--need); stroke-width: 2; }
+.node.down rect.card { stroke: var(--accent); stroke-width: 2; }
+.node.faint { opacity: .3; }
+/* walk-through */
+.walk .node.locked { opacity: .32; }
+.walk .node.open rect.card { stroke: var(--accent); stroke-width: 2.2; fill: var(--accent-soft); }
+.walk .node.owned rect.card { fill: var(--line); }
+.walk .node.owned .name { text-decoration: line-through; text-decoration-thickness: 1px; }
+@media (prefers-reduced-motion: no-preference) { .walk .node.open rect.card { animation: glow 1.6s ease-in-out infinite; } }
+@keyframes glow { 50% { stroke-opacity: .35; } }
+.card-info { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 8px; min-width: 0; }
+.card-info h2 { margin: 0; font-size: 18px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.card-info .p { font-family: var(--mono); font-size: 14px; color: var(--muted); font-weight: 500; }
+.card-info .kind { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.row { display: grid; grid-template-columns: 92px 1fr; gap: 10px; font-size: 14px; }
+.row > span:first-child { color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 13px var(--body); border: 1px solid var(--line); background: var(--bg); color: var(--fg); padding: 2px 10px; border-radius: 999px; cursor: pointer; }
+.note { font-size: 13px; color: var(--muted); margin: 0; max-width: 75ch; }
+</style>
+
+<div class="wrap" id="app">
+  <header style="display:grid;gap:6px">
+    <h1>Upgrade Tree</h1>
+    <p class="lede" id="lede"></p>
+  </header>
+  <div class="bar">
+    <div class="seg" role="group" aria-label="Mode">
+      <button id="m-explore" aria-pressed="true">Explore</button>
+      <button id="m-walk" aria-pressed="false">Walk through</button>
+    </div>
+    <button class="btn" id="reset" hidden>Start over</button>
+    <div class="stats" id="stats" hidden></div>
+  </div>
+  <div class="legend" id="legend"></div>
+  <div class="box" id="box"><svg id="tree" role="img" aria-label="Upgrade tree"></svg></div>
+  <section class="card-info" id="info" aria-live="polite"></section>
+  <p class="note">Columns count the buys a pad waits behind: <b>Start</b> is open on a new plot, <b>+1</b> needs one pad bought first, and so on. A pad with two lines in waits for both. Crew hires cost gems as well as coins. Cart Capacity and Speed levels, gem upgrades and decorations are bought in their windows and are not shown. Times are the median of 150 simulated free players from run {{RUN}}.</p>
+</div>
+
+<script>
+const NODES = /*DATA*/[];
+const CATS = { sword: "Swords", crew: "Anvils and crafters", staff: "Staff", ore: "Ore slots", heat: "Furnaces and heat",
+  storage: "Ingot and sword racks", stations: "Polish, etch, strikes", shop: "Shop displays", cart: "Cart and parking" };
+const W = 188, H = 44, CW = 222, RH = 54, TOP = 34, LEFT = 14;
+const by = Object.fromEntries(NODES.map(n => [n.id, n]));
+NODES.forEach(n => n.kids = []);
+NODES.forEach(n => n.after.forEach(a => by[a].kids.push(n.id)));
+const ncol = Math.max(...NODES.map(n => n.col)) + 1, nrow = Math.max(...NODES.map(n => n.row)) + 1;
+const fmt = n => n === 0 ? "Free" : n.toLocaleString("en-US");
+const time = m => m == null ? "not reached" : m < 60 ? `${m} min` : `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}`;
+const roots = NODES.filter(n => !n.after.length);
+let mode = "explore", sel = null, owned = new Set();
+
+document.getElementById("lede").innerHTML = `<b>${roots.length}</b> upgrades are open on a new plot. Buying one opens the pads that wait for it, left to right. Tap a pad to see what it needs and what it opens, or walk through the tree buying as you go.`;
+document.getElementById("legend").innerHTML = Object.entries(CATS).map(([k, v]) => `<span><i style="background:var(--c-${k})"></i>${v}</span>`).join("");
+
+function ancestors(id, out = new Set()) { by[id].after.forEach(a => { if (!out.has(a)) { out.add(a); ancestors(a, out); } }); return out; }
+function descendants(id, out = new Set()) { by[id].kids.forEach(k => { if (!out.has(k)) { out.add(k); descendants(k, out); } }); return out; }
+const xy = n => [LEFT + n.col * CW, TOP + n.row * RH];
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+function draw() {
+  const svg = document.getElementById("tree");
+  const w = LEFT * 2 + (ncol - 1) * CW + W, h = TOP + nrow * RH;
+  svg.setAttribute("width", w); svg.setAttribute("height", h); svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  let s = "";
+  for (let c = 0; c < ncol; c++) s += `<text class="col-label" x="${LEFT + c * CW + 2}" y="20">${c === 0 ? "Start" : "+" + c}</text>`;
+  const up = sel ? ancestors(sel) : null, down = sel ? descendants(sel) : null;
+  NODES.forEach(n => n.after.forEach(a => {
+    const p = by[a], [x1, y1] = xy(p), [x2, y2] = xy(n);
+    const sx = x1 + W, sy = y1 + H / 2, ex = x2, ey = y2 + H / 2, mx = (sx + ex) / 2;
+    let cls = "edge";
+    if (sel) {
+      if ((n.id === sel || up.has(n.id)) && (up.has(a))) cls += " up";
+      else if ((a === sel || down.has(a)) && down.has(n.id)) cls += " down";
+      else cls += " faint";
+    }
+    s += `<path class="${cls}" d="M${sx},${sy} C${mx},${sy} ${mx},${ey} ${ex},${ey}"/>`;
+  }));
+  NODES.forEach(n => {
+    const [x, y] = xy(n);
+    let cls = "node";
+    if (sel) cls += n.id === sel ? " sel" : up.has(n.id) ? " up" : down.has(n.id) ? " down" : " faint";
+    if (mode === "walk") cls += owned.has(n.id) ? " owned" : n.after.every(a => owned.has(a)) ? " open" : " locked";
+    s += `<g class="${cls}" data-id="${n.id}" transform="translate(${x},${y})" tabindex="0" role="button" aria-label="${esc(n.name)}, ${fmt(n.price)} coins">
+      <rect class="card" width="${W}" height="${H}" rx="8"/>
+      <circle class="dot" cx="13" cy="${H / 2}" r="4.5" fill="var(--c-${n.cat})"/>
+      <text class="name" x="25" y="18">${esc(n.name)}</text>
+      <text class="price" x="25" y="34">${fmt(n.price)}${n.gems ? " + " + n.gems + " gems" : ""}</text></g>`;
+  });
+  svg.innerHTML = s;
+  svg.classList.toggle("walk", mode === "walk");
+  stats();
+  info();
+}
+
+function chips(ids) { return ids.length ? `<div class="chips">${ids.map(i => `<button class="chip" data-go="${i}">${esc(by[i].name)}</button>`).join("")}</div>` : "<span>Nothing</span>"; }
+
+function info() {
+  const el = document.getElementById("info");
+  if (!sel) {
+    el.innerHTML = `<div class="kind">Open from the start</div><h2>${roots.length} pads on a new plot</h2>${chips(roots.map(r => r.id))}
+      <p class="note">Tap a pad in the tree, or one of these, to follow its branch.</p>`;
+    return;
+  }
+  const n = by[sel];
+  const status = mode === "walk" ? (owned.has(sel) ? "Bought" : n.after.every(a => owned.has(a)) ? "On offer now" : "Locked") : "";
+  el.innerHTML = `<div class="kind">${CATS[n.cat]}${status ? " · " + status : ""}</div>
+    <h2>${esc(n.name)} <span class="p">${fmt(n.price)} coins${n.gems ? " + " + n.gems + " gems" : ""}</span></h2>
+    <div class="row"><span>Needs</span>${n.after.length ? chips(n.after) : "<span>Nothing: open from the start</span>"}</div>
+    <div class="row"><span>Opens</span>${chips(n.kids)}</div>
+    <div class="row"><span>Bought at</span><span>efficient player ${time(n.t.efficient)}, casual player ${time(n.t.casual)}</span></div>
+    ${n.id === "MergeSlots" ? `<p class="note">Merging resets Ore Slots 2–6 to unbought for more luck, and they cost 1.5× more each merge.</p>` : ""}
+    ${mode === "walk" && n.after.every(a => owned.has(a)) ? `<div><button class="btn" data-buy="${n.id}">${owned.has(sel) ? "Undo this buy" : "Buy it"}</button></div>` : ""}`;
+}
+
+function stats() {
+  const el = document.getElementById("stats");
+  el.hidden = mode !== "walk";
+  document.getElementById("reset").hidden = mode !== "walk";
+  if (mode !== "walk") return;
+  const open = NODES.filter(n => !owned.has(n.id) && n.after.every(a => owned.has(a))).length;
+  const spent = [...owned].reduce((t, i) => t + by[i].price, 0);
+  el.innerHTML = `<span>On offer <b>${open}</b></span><span>Bought <b>${owned.size}</b> / ${NODES.length}</span><span>Spent <b>${fmt(spent)}</b></span>`;
+}
+
+function toggleBuy(id) {
+  const n = by[id];
+  if (owned.has(id)) { owned.delete(id); descendants(id).forEach(d => owned.delete(d)); }
+  else if (n.after.every(a => owned.has(a))) owned.add(id);
+}
+
+function pick(id) {
+  if (mode === "walk" && by[id].after.every(a => owned.has(a)) && !owned.has(id)) { toggleBuy(id); sel = id; }
+  else sel = sel === id ? null : id;
+  draw();
+}
+
+document.getElementById("tree").addEventListener("click", e => { const g = e.target.closest(".node"); if (g) pick(g.dataset.id); });
+document.getElementById("tree").addEventListener("keydown", e => { const g = e.target.closest(".node"); if (g && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); pick(g.dataset.id); } });
+document.getElementById("info").addEventListener("click", e => {
+  const go = e.target.closest("[data-go]"), buy = e.target.closest("[data-buy]");
+  if (go) { sel = go.dataset.go; draw(); scrollTo(sel); }
+  if (buy) { toggleBuy(buy.dataset.buy); draw(); }
+});
+function scrollTo(id) {
+  const [x, y] = xy(by[id]), box = document.getElementById("box");
+  box.scrollTo({ left: Math.max(0, x - box.clientWidth / 2 + W / 2), top: Math.max(0, y - box.clientHeight / 2), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+}
+function setMode(m) {
+  mode = m; sel = null;
+  document.getElementById("m-explore").setAttribute("aria-pressed", m === "explore");
+  document.getElementById("m-walk").setAttribute("aria-pressed", m === "walk");
+  draw();
+}
+document.getElementById("m-explore").onclick = () => setMode("explore");
+document.getElementById("m-walk").onclick = () => setMode("walk");
+document.getElementById("reset").onclick = () => { owned.clear(); sel = null; draw(); };
+draw();
+</script>
