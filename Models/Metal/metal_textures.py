@@ -153,6 +153,73 @@ def rainbow(out):  # Allen's Art/Textures/rainbow.webp is a watermarked stock pr
     gray(out, "rainbow_rough", 0.32 + (noise(20) - 0.5) * 0.08)
 
 
+def folds(warp, layers=36):  # pattern-welded steel: bright/dark layers along U, bent by warp (tile units)
+    s = np.sin(2 * np.pi * (yy * layers + warp * layers))
+    return np.clip(s * 1.6, -1, 1) * 0.5 + 0.5  # sharpened: 0 dark layer, 1 bright layer
+
+
+def damascus_set(out, name, warp):  # true greys (part white); the etched dark layers sit lower and rougher
+    t = folds(warp)
+    rgb(out, f"{name}_color", mix((0.30, 0.30, 0.33), (0.86, 0.85, 0.82), t) * (0.96 + 0.08 * noise(3))[..., None])
+    normal(out, name, t * 0.12 + noise(3) * 0.01, 1.0)
+    gray(out, f"{name}_rough", 0.42 - 0.18 * t + (noise(20) - 0.5) * 0.06)
+
+
+def damascus(out):  # three folded-steel patterns to choose from
+    wild = (noise(70) - 0.5) * 0.14 + (noise(18) - 0.5) * 0.04
+    damascus_set(out, "damascus_wild", wild)  # random pattern: meandering layers
+    drops = np.clip(1 - cells(40, 0.8) / 0.45, 0, 1) ** 1.5  # rings pushed up by drilled spots
+    damascus_set(out, "damascus_drops", wild * 0.4 + drops * 0.12)  # raindrop pattern
+    ladder = np.abs(((xx * 7) % 1) - 0.5) * 0.10  # V rungs ground across the blade
+    damascus_set(out, "damascus_ladder", wild * 0.4 + ladder)  # ladder pattern
+
+
+def starmetal(out):  # deep blue-violet nebula with star specks, true colours (part white)
+    cloud = noise(90) * 0.6 + noise(25) * 0.4
+    base = mix((0.05, 0.05, 0.16), (0.36, 0.20, 0.55), np.clip(cloud * 1.4 - 0.35, 0, 1))
+    base = mix(base, (0.20, 0.45, 0.70), np.clip(noise(60) * 2 - 1.2, 0, 1) * 0.6)
+    stars = np.clip((rng.random((N, N)) - 0.9985) * 700, 0, 1)
+    stars = np.clip(blur(stars, 1.2) * 6, 0, 1)
+    rgb(out, "starmetal_color", base + stars[..., None] * 0.9)
+    normal(out, "starmetal", noise(3) * 0.02, 0.6)
+    gray(out, "starmetal_rough", 0.20 - stars * 0.15 + (noise(30) - 0.5) * 0.04)
+
+
+def mythril(out):  # crystalline flakes: wrapped cells, each a slightly different brightness and tilt
+    g, d1 = 14, np.full((N, N), 9.0)
+    pts = (np.stack(np.mgrid[0:g, 0:g], -1).reshape(-1, 2) + 0.5 + (rng.random((g * g, 2)) - 0.5) * 0.9) / g
+    shade, ids = np.zeros((N, N)), rng.random(g * g)
+    for k, (py, px) in enumerate(pts):
+        for oy in (-1, 0, 1):
+            for ox in (-1, 0, 1):
+                d = np.hypot(xx - (px + ox), yy - (py + oy))
+                near = d < d1
+                d1, shade = np.where(near, d, d1), np.where(near, ids[k], shade)
+    gray(out, "mythril_color", 0.82 + shade * 0.16)
+    normal(out, "mythril", shade * 0.03 + noise(2) * 0.01, 1.0)
+    gray(out, "mythril_rough", 0.12 + shade * 0.12)
+
+
+def warped(f, amt, sx):  # sample f at a wrapped, noise-shifted position
+    dy = ((noise(sx) - 0.5) * amt * N).astype(int)
+    dx = ((noise(sx) - 0.5) * amt * N).astype(int)
+    return f[(np.arange(N)[:, None] + dy) % N, (np.arange(N)[None, :] + dx) % N]
+
+
+def doppler(out):  # CS:GO-style candy smoke (after Allen's reference): wisps over black, red / green / blue bands along U
+    wisp = np.zeros((N, N))
+    for s, w in ((40, 0.5), (14, 0.35), (5, 0.15)):  # ridged turbulence, folded twice to curl like smoke
+        r = 1 - np.abs(noise(s) * 2 - 1)
+        wisp += warped(warped(r, 0.10, 60), 0.05, 20) ** 6 * w
+    wisp = np.clip(norm(wisp) * 1.6 - 0.1, 0, 1)
+    t = (xx + (noise(80) - 0.5) * 0.12) % 1  # three bands per tile, soft edges, wraps
+    band = np.stack([np.clip(1 - np.abs(((t - c + 0.5) % 1) - 0.5) * 4.5, 0, 1) for c in (0.17, 0.5, 0.83)], -1)
+    glow = band * (0.10 + 0.95 * wisp + 0.15 * noise(90))[..., None]
+    rgb(out, "doppler_color", glow * np.array((1.0, 0.85, 1.0)) + 0.025)
+    normal(out, "doppler", noise(2) * 0.015, 0.5)  # anodised: smooth
+    gray(out, "doppler_rough", 0.14 + (1 - wisp) * 0.06)
+
+
 if __name__ == "__main__":
     out = sys.argv[1]
     os.makedirs(out, exist_ok=True)

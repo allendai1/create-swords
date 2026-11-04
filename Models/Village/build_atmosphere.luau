@@ -3,8 +3,8 @@
 -- sky, nature (trees, bamboo, shrubs, rocks round the walls and lanes; mountains outside the walls) and street dressing
 -- (a few stalls, crates, barrels and planters at the street's edges). No ambient life (smoke, particles, birds, sounds).
 -- Run in Studio (Edit) through MCP execute_luau: loadstring(game.ServerStorage.Builders.build_atmosphere.Source)().
--- Rerunnable: sets Lighting, clears and rebuilds Workspace.Village.Atmosphere (block mountains included) and clears the
--- Terrain (the builder owns all terrain and makes none). It also lights the village's own lanterns (Andon, Chochin,
+-- Rerunnable: sets Lighting, clears and rebuilds Workspace.Village.Atmosphere (block mountains included) and leaves the
+-- Terrain alone (it makes none). It also lights the village's own lanterns (Andon, Chochin,
 -- the plaza's stone lanterns); the plot template's lanterns are left alone. Same SEED = same result. Rerun it after
 -- build_simple.
 -- Frames and lots are build_simple's (x along the street, west −; "depth" from the street centre; the south side is
@@ -361,7 +361,6 @@ end
 -- grass tiers. Peaks: two grass tiers, rock above, a pale cap on the tallest, and a lower shoulder beside each. The
 -- west, where the road comes in, stays open. Anchored, never collide (the map's bounds keep players in); only the near
 -- hills cast shadows. No terrain any more.
-workspace.Terrain:Clear() -- ponytail: the builder owns all terrain (none now); clear by region if terrain is ever added inside the walls
 local Mountains = folder("Mountains", Backdrop)
 local CEN = ORIGIN.Position + Vector3.new(14, 0, 0) -- middle of the bounds (x 410…898, z −410…10)
 local BX, BZ = 244, 210 -- half extents of the bounds

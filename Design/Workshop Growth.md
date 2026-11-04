@@ -144,4 +144,4 @@ Both files are named "closed roof"; the second is the indoor/cutaway example ref
 
 Allen approved combining hilting and polishing as the **finisher**, with the **stocker** filling the fifth profession. This supersedes the separate-hilter / undecided-polisher wording in the earlier organization record. Balance values and operational details above remain open.
 
-Related: [[Design/Game Design Document]] · [[Design/Decisions Log]] · [[Design/Core Loop Review]] · [[Development/Roadmap]] · [[Current Status]]
+Related: [[Design/Game Design Document]] · [[Design/Decisions Log]] · [[Archive/Design/Core Loop Review]] · [[Development/Roadmap]] · [[Current Status]]

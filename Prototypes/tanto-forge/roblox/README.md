@@ -18,7 +18,7 @@ Luau port of `../dist/js/blade-core.js`, plus a Studio probe that forges and gri
 node Prototypes/tanto-forge/tools/export-luau.js
 ```
 
-That rewrites `BladeData.luau` and `BladeGolden.luau`. Copy both into Studio (same locations), then run the tests.
+That rewrites `BladeData.luau` and `BladeGolden.luau`. Copy only `BladeGolden.luau` into Studio, then run the tests: since 2026-10-23 Studio's `Shared.BladeData` is the source and has blades `dist/data` doesn't (24 against 7 on 2026-10-30), so the generated `BladeData.luau` would drop them. Blades without JSON here have no golden values, and their golden checks in BladeCoreSpec fail.
 
 ## Running the tests
 
@@ -42,7 +42,7 @@ In the command bar, then press Play:
 workspace:SetAttribute("BladeProbe", "katana")
 ```
 
-Space or click strikes; after 12 strikes, hold and drag along the edge to grind; R restarts. Clear the attribute (`workspace:SetAttribute("BladeProbe", nil)`) to switch it off. It doesn't touch the real AnvilController and sends nothing to the server.
+Space or click strikes; after the 10 strikes, hold and drag along the edge to grind; R restarts. Clear the attribute (`workspace:SetAttribute("BladeProbe", nil)`) to switch it off. It doesn't touch the real AnvilController and sends nothing to the server.
 
 ## Things learned in Studio
 

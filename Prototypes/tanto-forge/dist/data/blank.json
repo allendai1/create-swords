@@ -1,12 +1,12 @@
 {
   "id": "universal-blank",
-  "note": "One starting blank for every blueprint (approved 2026-10-19). Units are centimetres. Values are exploratory.",
-  "length": 12,
+  "note": "One starting blank for every blueprint: the ingot. Units are centimetres. A plain bar in the ingot's proportions, as in Studio's BladeData since 2026-10-28 (was 12 x 3.2 x 1.1 cm with a tapered end).",
+  "length": 10,
   "curve": { "sori": 0, "center": 0.5, "spread": 0.35 },
-  "spine": [[0, 1.6], [0.9, 1.6], [1, 1.3]],
-  "edge": [[0, -1.6], [0.9, -1.6], [1, -1.3]],
-  "ridge": [[0, 0.9]],
-  "thickness": [[0, 1.1]],
-  "edgeThickness": [[0, 1]],
-  "spineThickness": [[0, 0.95]]
+  "spine": [[0, 2.6]],
+  "edge": [[0, -2.6]],
+  "ridge": [[0, 0.5]],
+  "thickness": [[0, 3.2]],
+  "edgeThickness": [[0, 3.2]],
+  "spineThickness": [[0, 1]]
 }

@@ -181,7 +181,7 @@ class Sim:
         return self.B.luck(self.merges, "LuckyOre" in self.passes) + rain + beginner
 
     def ingot_cap(self):
-        return 6 * (("IngotRack" in self.owned) + ("IngotRack2" in self.owned))
+        return 6 * sum(r in self.owned for r in ("IngotRack", "IngotRack2", "IngotRack3", "IngotRack4"))  # six a shelf (Racks 3-4: 2026-11-03)
 
     def sword_cap(self):
         return 6 * (("SwordRack" in self.owned) + ("SwordRack2" in self.owned))
@@ -1092,8 +1092,8 @@ class Sim:
         if cid is None:
             self.crafter_busy[anvil] = False
             return
-        walk = self.B.crafters[cid]["walk"]
         lv = self.B.staff_level(self.hired[cid])[0]
+        walk = self.B.crafter_walk(cid, lv)  # grows with level (2026-11-03)
         if phase == "start":
             making = self.best_bp()
             if not making or making == "tanto" and "SwordRack" not in self.owned:
@@ -1104,10 +1104,15 @@ class Sim:
                 return self.crew_waits(anvil, "rackFull")
             if not self.ingot_rack:
                 return self.crew_waits(anvil, "noIngots")
-            metal = min(self.ingot_rack, key=self.B.metal_multiplier)  # the cheapest ingot first
-            self.ingot_rack.remove(metal)
+            # up to `batch` of the cheapest, no more than the Finished Sword Rack has room for (EmployeeService, 2026-11-03)
+            # ponytail: one hook per crafter sword (crafters make no big swords)
+            metals = []
+            for _ in range(min(self.raw["employees"].get("batch", 1), self.sword_cap() - self.hooks(self.sword_rack), len(self.ingot_rack))):
+                m = min(self.ingot_rack, key=self.B.metal_multiplier)
+                self.ingot_rack.remove(m)
+                metals.append(m)
             secs = self.dist(anvil, "IngotRack") / walk
-            return self.push(secs, "crafter", anvil, "furnace", {"metal": metal, "bp": making, "fetched": self.t})
+            return self.push(secs, "crafter", anvil, "furnace", {"metals": metals, "bp": making, "fetched": self.t})
         if phase == "furnace":
             # not one you used in the last YOURS s (EmployeeService, 2026-11-02, Allen: "Only when it's idle")
             idle = [f for f in self.furnaces_owned() if self.t - self.used_at.get(f, -1e9) >= YOURS]
@@ -1124,29 +1129,31 @@ class Sim:
                 self.crew_wait["furnace"] = self.crew_wait.get("furnace", 0.0) + 2.0
                 return self.push(2.0, "crafter", anvil, "furnace", job)
             f = free[0]
-            heat = self.B.heat_time(self.owned, f)
-            self.furnaces[f] = {"who": cid, "metal": job["metal"], "ready": self.t + heat}
+            heat = self.B.heat_time(self.owned, f) * len(job["metals"])  # each in turn at the one furnace
+            self.furnaces[f] = {"who": cid, "metal": job["metals"][0], "ready": self.t + heat}
             job["forge"] = f
             return self.push(self.dist("IngotRack", f) / walk + heat, "crafter", anvil, "forge", job)
         if phase == "forge":
             self.furnaces[job["forge"]] = None
-            secs = self.dist(job["forge"], anvil) / walk + self.B.level_seconds(lv, self.B.crafters[cid]["forge"])
+            secs = self.dist(job["forge"], anvil) / walk + self.B.level_seconds(lv, self.B.crafters[cid]["forge"]) * len(job["metals"])
             return self.push(secs, "crafter", anvil, "polish", job)
         if phase == "polish":
             secs = 0.0
             job["polished"] = "PolishStation" in self.owned
             if job["polished"]:
-                secs = self.dist(anvil, "PolishStation") / walk + self.B.level_seconds(lv, self.raw["employees"]["polishSeconds"])
+                secs = self.dist(anvil, "PolishStation") / walk + self.B.level_seconds(lv, self.raw["employees"]["polishSeconds"]) * len(job["metals"])
             return self.push(secs + self.dist("PolishStation" if job["polished"] else anvil, "SwordRack") / walk, "crafter", anvil, "rack", job)
         if phase == "rack":
-            sw = self.make_sword(job["bp"], job["metal"], self.B.crafter_quality(cid, lv), job["polished"])
-            sw["t"] = {"fetched": job["fetched"], "forged": self.t}
-            if self.hooks(self.sword_rack) + self.hooks([sw]) > self.sword_cap():
-                self.crew_wait["rackFull"] = self.crew_wait.get("rackFull", 0.0) + 3.0
-                return self.push(3.0, "crafter", anvil, "rack", job)
-            self.sword_rack.append(sw)
-            self.hired[cid] += 1
-            self.crew_made += 1
+            while job["metals"]:  # racked one by one; a full rack holds the rest in hand
+                sw = self.make_sword(job["bp"], job["metals"][0], self.B.crafter_quality(cid, lv), job["polished"])
+                sw["t"] = {"fetched": job["fetched"], "forged": self.t}
+                if self.hooks(self.sword_rack) + self.hooks([sw]) > self.sword_cap():
+                    self.crew_wait["rackFull"] = self.crew_wait.get("rackFull", 0.0) + 3.0
+                    return self.push(3.0, "crafter", anvil, "rack", job)
+                self.sword_rack.append(sw)
+                job["metals"].pop(0)
+                self.hired[cid] += 1
+                self.crew_made += 1
             return self.push(self.dist("SwordRack", anvil) / walk, "crafter", anvil, "start")
 
     def on_stocker(self):

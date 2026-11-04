@@ -10,7 +10,7 @@ tags: [monetization, robux, game-pass, developer-product, ore, weather, create-s
 
 Allen, 2026-10-27: "research all the potential developer products we can have for purchase with robux. gamepasses, 1 starter pack. gamepasses that ease the experience, or provide better bonuses, luck, etc. 1 of them in my mind is an auto ore roller that shows up on your screen for purchase whenever youre near the ore roller itself. its would be a small popup with a lock icon to show you can buy it."
 
-Builds on [[Design/Game Design Document#15. Monetization (Robux)|GDD §15]] (its rule stays: **Robux speeds things up or adds style, but anyone can earn everything by playing**) and [[Design/Progression and Economy Review — 2026-10-27#9. Game passes and developer products|the review's §9]]. Pace numbers are `Development/economy_model.py` after [[Design/Economy Pass 2]] and its customer rate: a casual player who keeps Rare+ ore.
+Builds on [[Design/Game Design Document#15. Monetization (Robux)|GDD §15]] (its rule stays: **Robux speeds things up or adds style, but anyone can earn everything by playing**) and [[Archive/Design/Progression and Economy Review — 2026-10-27#9. Game passes and developer products|the review's §9]]. Pace numbers are `Development/economy_model.py` after [[Design/Economy Pass 2]] and its customer rate: a casual player who keeps Rare+ ore.
 
 **Decided with Allen on 2026-10-27** in a walkthrough of the first draft's questions ([[Sessions/2026-10-27#Monetization walkthrough]]); his answers are at the end. **Nothing here is built;** prices are starting points for Roblox's price test (§7). The passes and products exist on Roblox (ids in §11); the passes are on sale while the game is private.
 
@@ -46,9 +46,9 @@ Method: `economy_model.run` for that player with the live customer rate; 50% Mor
 
 ## 2. The Starter Pack (one)
 
-- **Contents:** 100 gems (exactly Better Advertising II + More Clients I) and a **Gold ingot** (Epic ×5, a fixed metal, so not a paid random item). The ingot doesn't fill Gold's book page; that still has to be rolled. No etch (Allen).
+- **Contents (since 2026-10-29):** 100 gems and **10,000 coins** (Allen: "our starterpack is not very enticing, should give a set amount of gold not just a gold ingot"; he chose coins only). Until then: 100 gems (exactly Better Advertising II + More Clients I) and a **Gold ingot** (Epic ×5, a fixed metal, so not a paid random item). The ingot doesn't fill Gold's book page; that still has to be rolled. No etch (Allen).
 - **Price:** 99 R$, the best value in the shop (gem packs give fewer gems per Robux).
-- **Kind: a game pass**, so Roblox keeps it to one purchase and it shows on the game's Store tab. Its gems and ingot are granted once through the same path as every pass (§7), with a `starterGranted` flag in the save.
+- **Kind: a developer product since 2026-11-01** (Allen: "Starterpack should be a dev product, not game pass. but obviously single purchase only"; it was a game pass, now off sale). One purchase is kept by the game: `ProcessReceipt` grants the gems and coins and sets `starterGranted` in the save (the purchase id saved like every product's); that flag is the player attribute `Pass_StarterPack`, so once it's granted the Shop card is gone and the client never prompts it. A second receipt anyway (two servers prompting at once) is still granted, since the player paid, and logged. Studio's Reset progress clears the flag, so it can be bought again. A product doesn't show on the experience's Store tab.
 - **Offer:** after the tutorial, the Shop button gets the amber dot the Mail button uses, and the pack sits first in the Shop window until bought. No popup, no countdown, nothing in the first session's tutorial.
 
 ## 3. Weather (Allen's design)
@@ -62,8 +62,8 @@ Allen: "the weather should only be around 5 minutes. sunshine can give 2x more c
 | **Rain** | Luck one merge higher (+0.5) at every roller; adds to Lucky Ore | The odds panel when bought (§4) |
 | **Snow** | Mail orders and commissions come twice as often | The mail clock (built) |
 
-- **Free and bought:** weather also comes on its own (GDD §7): the free Sunshine is built (5 min, every 15–25 min, [[Design/Shop Tension Pass]]); the other three aren't yet. A bought weather starts at once, or straight after another bought one; the buyer is named beside the weather's HUD icon.
-- **Price:** 79 R$ or 60 gems each. Gems from daily rewards (90 a week) or gem packs can buy it, so gems keep a use after the Gem Shop's 325 (Allen).
+- **Free and bought:** weather also comes on its own (GDD §7): since Fixes2 (2026-10-28) one of the four is always on, 5 min each, the better ones rarer (Sunshine 35, Snow 30, Rain 20, Rainbow 15; [[Design/Decisions Log#Fixes2 — 2026-10-28]]). A bought weather starts at once, or straight after another bought one; the buyer is named beside the weather's HUD icon.
+- **Price:** 79 R$ or 60 gems each. Gems from daily rewards (90 a week) or gem packs can buy it, so gems keep a use after the Gem Shop's 325 (Allen). The Gem Shop costs 990 in all since 2026-11-03 (gentler prices).
 - **Guardrails:** a plot still in the tutorial gets no weather bonus (the first-sale gate, GDD §7); one weather at a time; no Robux offers pop up during one.
 - **Rain is a paid random item** when bought, with Robux or with gems (gems can be bought with Robux): the odds panel before buying, and players where that's restricted can't buy rain (they still get it when it falls).
 
@@ -101,8 +101,8 @@ Nothing else here changes odds or sells a random item.
 
 | Product | What it does | Start price | Notes |
 |---|---|---|---|
-| **Coin pack** | 30 min or 2 h of your current income, worked out on the server | 49 / 149 R$ | Allen |
-| **Gem pack** | 80 / 200 / 500 gems | 99 / 229 / 449 R$ | Allen. Gems also buy weather (§3) |
+| **Coin pack** | 5,000 / 20,000 coins (fixed since 2026-10-28; was 30 min or 2 h of income) | 49 / 149 R$ | Allen |
+| **Gem pack** | 80 / 200 / 500 gems | 99 / 399 / 449 R$ | Allen. Gems also buy weather (§3). 200 is the decoy since 2026-11-02 (was 229) |
 | **Ingot of a found metal** | Pick an Epic or Legendary metal your book already has | 29 / 99 R$ | Only for players where paid luck is restricted (§4) |
 
 ## 7. How every product works (the monetization skill's rules)
@@ -112,7 +112,7 @@ Nothing else here changes odds or sells a random item.
 - **Developer products:** one `ProcessReceipt`. Each purchase id is saved in the player's save together with what it granted, so a repeat receipt grants nothing. `NotProcessedYet` when the player is gone, the save isn't loaded, the product is unknown or the save fails; Roblox retries.
 - **Weather for gems** is spent and started on the server, like a Gem Shop upgrade; the client only asks.
 - **Prices come from Roblox at runtime** (`GetProductInfoAsync`), never typed into the UI. Managed Pricing (regional prices, and price tests of about three weeks that recommend the best prices) is on by default only for items made in Creator Hub; the ones made through Open Cloud have it off (§11).
-- **Where offers appear:** where the player already is (the roller's popup, the Shop window, the weather picker); never during the tutorial, a weather or an offer's countdown; an unaffordable pad keeps its shake, not a Robux prompt (the review's rule).
+- **Where offers appear:** where the player already is (the roller's popup, the Shop window, the weather picker); never during the tutorial, a weather or an offer's countdown (2026-10-31: since Fixes2 one of the four weathers is always on, so "a weather" can only mean a bought one; Claude's reading, for Allen to confirm); an unaffordable pad or gem upgrade still gets its "Not enough coins" notice or shake, and **since 2026-10-28 also offers the smallest coin or gem pack that covers the gap** (Allen: "when buying an upgrade they don't have enough for, we should popup a currency purchase for robux with the small amount needed to complete the purchase"; supersedes the review's no-prompt rule). Only after the tutorial and only while that pack is on sale.
 - **Checks before players:** Studio test purchases of each, a repeated receipt, a player leaving mid-purchase, a failed save; then the economy logged with AnalyticsService.
 
 Code when built: `Shared/Store` (ids and what each gives, read by both sides), `ServerScriptService.StoreService` (registry, receipts, PolicyService), a store page in `MenuGui.ShopWindow` (today "Coming soon"), the popup in its own ScreenGui made in Studio, and a receipts list in `SmithyCore`'s save.
@@ -131,6 +131,7 @@ Code when built: `Shared/Store` (ids and what each gives, read by both sides), `
 - **Private servers:** switch on in the experience settings (free helps friends play together; a monthly price earns Robux). Allen's call.
 - **Rewarded video:** a free player watches an ad for a reward (a few gems, a short sunny spell). Open platform-wide; Roblox plans a Studio plug-in in Q4 2026. Check age and region rules before building.
 - **Premium Payouts** come from Premium players' time in the game, no code; **subscriptions** only once there's something monthly to give.
+  - **Correction (2026-10-31, the monetization brainstorm):** Roblox replaced Premium Payouts with **Creator Rewards** on 2025-07-24; see [[Design/Monetization Ideas — 2026-10-31]] for what pays now (and Roblox Plus).
 
 ## 10. Order and who does what
 
@@ -152,18 +153,30 @@ Universe **10771581195** ("create swords": private, Allen's account, root place 
 | Lucky Ore | 2058881145 | 149 R$ |
 | VIP | 2057315118 | 299 R$ |
 | Swift Boots | 2057291128 | 99 R$ |
-| Starter Pack | 2057171214 | 99 R$ |
+| Starter Pack (off sale since 2026-11-01: now the developer product below) | 2057171214 | 99 R$ |
+| Auto Anvil (2026-10-31) | 2058261392 | 49 R$ |
+| Auto Etch (2026-11-01) | 2064189929 | 49 R$ |
+| Automation Pack (2026-11-01) | 2064634324 | 179 R$ |
+
+**Auto Anvil** (2026-10-31, Allen: "auto-anvil clicker that can be super cheap?"): created through Open Cloud on sale (the game is private), description "Your anvil strikes by itself. Switch it on at the anvil and watch the blade take shape. You can still forge by hand any time." `Shared/Store.PASSES.AutoAnvil`. Price Claude's ("super cheap": half the cheapest pass, Swift Boots). It's comfort, not speed: strikes land at the player's own Faster Strikes pace. [[Sessions/2026-10-31#Auto Anvil]]
 
 | Developer product | Id | Price |
 |---|---|---|
+| Starter Pack (2026-11-01, one-time) | 3727025192 | 99 R$ |
 | Sunshine | 3723120522 | 79 R$ |
 | Rainbow | 3723120527 | 79 R$ |
 | Rain | 3723120529 | 79 R$ |
 | Snow | 3723120534 | 79 R$ |
-| Coin Pack (30 min) | 3723120538 | 49 R$ |
-| Coin Pack (2 h) | 3723120543 | 149 R$ |
+| 5,000 Coins (was Coin Pack (30 min)) | 3723120538 | 49 R$ |
+| 20,000 Coins (was Coin Pack (2 h)) | 3723120543 | 149 R$ |
+| 100,000 Coins (2026-10-28) | 3723420023 | 449 R$ |
+| 300,000 Coins (2026-10-28) | 3723420024 | 999 R$ |
+| 800 Coins (2026-10-29) | 3723663374 | 9 R$ |
+| 1,800 Coins (2026-10-29) | 3723663378 | 19 R$ |
+| 7 Gems (2026-10-29) | 3723663391 | 9 R$ |
+| 15 Gems (2026-10-29) | 3723663397 | 19 R$ |
 | 80 Gems | 3723120545 | 99 R$ |
-| 200 Gems | 3723120547 | 229 R$ |
+| 200 Gems | 3723120547 | 399 R$ (decoy, 2026-11-02, Allen: "I want it"; was 229) |
 | 500 Gems | 3723120548 | 449 R$ |
 | Epic Ingot | 3723120551 | 29 R$ |
 | Legendary Ingot | 3723120555 | 99 R$ |
@@ -183,6 +196,7 @@ Allen: "after this, work on the actual features the passes give". What each pass
 - **The Shop page** (Allen: "Build the Shop page next: the other passes with live prices, the Starter Pack's dot and Lucky Ore's odds panel"; [[Development/Code Map#Shop page (2026-10-27)]]): a scrolling list of the six passes, carded like the Gem Shop, each price from Roblox ("—" while a pass is off sale) and "Owned" once yours. The Starter Pack is first until bought; after the tutorial the Shop button's amber dot shows until you open the Shop, each session.
 - **Lucky Ore's Buy opens its odds panel** (§4): every rarity now and with it, for your own luck; the purchase is made from there. Where paid random items are restricted (or `PolicyService` can't say) its card is hidden; the found-metal ingot that replaces it there comes with the developer products.
 - **Not built:** the developer products, images on Roblox.
+- **2026-10-28:** gem and coin packs built (`StoreService.ProcessReceipt`, saved receipts; coin packs = minutes of income over the last 15 min, floor 50/min), **on sale since later that day** (Allen: "wire in the products"), coin packs fixed at 5,000 / 20,000; Allen confirmed the test purchases work (2026-10-28). [[Sessions/2026-10-28#Gem and coin packs sell: ProcessReceipt; Buy buttons shaded]]
 
 ## Open
 
@@ -211,4 +225,16 @@ Allen: "after this, work on the actual features the passes give". What each pass
 
 ---
 
-Related: [[Design/Game Design Document#15. Monetization (Robux)|GDD §15]] · [[Design/Economy Pass 2]] · [[Design/Progression and Economy Review — 2026-10-27]] · [[Design/Urgency Review]] · [[Design/Workshop Growth]] · [[Art/Icon Library]] · [[Sessions/2026-10-27#Monetization plan]] · [[Sessions/2026-10-27#Monetization walkthrough]]
+Related: [[Design/Game Design Document#15. Monetization (Robux)|GDD §15]] · [[Design/Economy Pass 2]] · [[Archive/Design/Progression and Economy Review — 2026-10-27]] · [[Archive/Design/Urgency Review]] · [[Design/Workshop Growth]] · [[Art/Icon Library]] · [[Sessions/2026-10-27#Monetization plan]] · [[Sessions/2026-10-27#Monetization walkthrough]]
+
+**Auto Ore Roller stops (2026-10-28):** the pass's pill has a rarity chip (Uncommon+ … Legendary+, or off) and a Quests chip (stop on ores an open letter or order needs). [[Sessions/2026-10-28#Auto-Roll stop settings, at the top]]
+
+## Starter Pack as a product, Auto Etch, Automation Pack (2026-11-01)
+
+Allen: "Starterpack should be a dev product, not game pass. but obviously single purchase only" and "a pack that combines all the automation gamepasses"; he chose to add a new **Auto Etch** pass to the pack. Later the same night: "look into a decoy purchase in shop and a best value label" (the label is built; the decoy is a separate proposal). [[Sessions/2026-11-01#Starter Pack as a product, Auto Etch, Automation Pack]]
+
+- **Starter Pack:** developer product **3727025192**, 99 R$, on sale (the game is private), the old pass's description ("10,000 coins and 100 gems, once."). The pass 2057171214 is off sale. §2 has how one purchase is kept.
+- **Auto Etch:** pass **2064189929**, 49 R$ (as the Auto Anvil), on sale, "Your etches draw themselves. You can still hold to etch by hand any time." The etching table's hold-to-etch reads `Store.owns(player, "AutoEtch")` (built by another session).
+- **Automation Pack:** pass **2064634324**, **179 R$**, on sale, "Auto Ore Roller, Auto Anvil and Auto Etch together, for less than the three apart." The three apart are 149 + 49 + 49 = 247 R$; 179 is about 28% off (Claude's price). `Store.owns` counts it as all three. The Shop shows it only while you own none of the three (Claude's default: with one owned, the pack would charge for it again), with a **Best Value** tag.
+- **Best Value** also marks the coin pack and the gem pack that give the most per Robux at Roblox's live prices (today 300,000 Coins, ~300 coins per R$, and 500 Gems, ~1.11 gems per R$), worked out in the Shop, so it follows a price change.
+- **Open:** whether the pack should still be offered (at a lower price) to someone who owns one or two of the three; a pack bought by someone who already owns one pays for that one twice, which the hidden card prevents only inside the game (the Store tab still sells it).

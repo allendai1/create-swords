@@ -1,0 +1,216 @@
+<meta charset="utf-8">
+<title>Sell Swords! Upgrade Tree</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a header, a walk-through bar, the tree in its own scroll box (columns = buys deep), the selected pad's card under it. */
+:root {
+  --bg: #eef0ec; --panel: #f9faf7; --fg: #1c2320; --muted: #5d6762; --line: #c9cfc9; --edge: #a9b2ab;
+  --accent: #c2501a; --accent-soft: #f6dccd; --need: #2f6db3;
+  --c-sword: #a87a0c; --c-crew: #23786f; --c-staff: #7a4fb0; --c-ore: #5f5aa8; --c-heat: #c03a2b;
+  --c-storage: #8a6646; --c-stations: #3a8a3a; --c-shop: #2e6aa8; --c-cart: #66707a;
+  --display: "Dela Gothic One", "Hiragino Kaku Gothic ProN", "Arial Black", sans-serif;
+  --body: "Zen Kaku Gothic New", "Hiragino Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121614; --panel: #1a201d; --fg: #e3e8e4; --muted: #9aa49f; --line: #303834; --edge: #47514c;
+  --accent: #f07a3e; --accent-soft: #3d2216; --need: #6aa4ea;
+  --c-sword: #e0b03a; --c-crew: #4fc0b3; --c-staff: #b08ae6; --c-ore: #9a95f0; --c-heat: #f0705e;
+  --c-storage: #c9a07a; --c-stations: #6fc96f; --c-shop: #6aa4ea; --c-cart: #a3adb6; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #121614; --panel: #1a201d; --fg: #e3e8e4; --muted: #9aa49f; --line: #303834; --edge: #47514c;
+  --accent: #f07a3e; --accent-soft: #3d2216; --need: #6aa4ea;
+  --c-sword: #e0b03a; --c-crew: #4fc0b3; --c-staff: #b08ae6; --c-ore: #9a95f0; --c-heat: #f0705e;
+  --c-storage: #c9a07a; --c-stations: #6fc96f; --c-shop: #6aa4ea; --c-cart: #a3adb6; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 28px; display: grid; gap: 14px; max-width: 1400px; margin: 0 auto; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(24px, 4vw, 34px); line-height: 1.1; margin: 0; text-wrap: balance; letter-spacing: .01em; }
+.lede { margin: 0; color: var(--muted); max-width: 65ch; }
+.lede b { color: var(--fg); }
+.bar { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--panel); }
+.seg button { font: 500 14px var(--body); border: 0; background: transparent; color: var(--muted); padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.btn { font: 500 14px var(--body); border: 1px solid var(--line); background: var(--panel); color: var(--fg); padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stats { font-family: var(--mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; display: flex; gap: 14px; flex-wrap: wrap; }
+.stats b { color: var(--fg); font-weight: 500; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.box { overflow: auto; max-height: 66vh; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); -webkit-overflow-scrolling: touch; }
+svg { display: block; }
+.col-label { font: 500 11px var(--mono); fill: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.edge { fill: none; stroke: var(--edge); stroke-width: 1.2; }
+.edge.up { stroke: var(--need); stroke-width: 2.2; }
+.edge.down { stroke: var(--accent); stroke-width: 2.2; }
+.edge.faint { opacity: .18; }
+.node { cursor: pointer; }
+.node rect.card { fill: var(--panel); stroke: var(--line); stroke-width: 1; }
+.node .name { font: 600 12.5px var(--body); fill: var(--fg); }
+.node .price { font: 500 11px var(--mono); fill: var(--muted); }
+.node .dot { stroke: none; }
+.node.sel rect.card { stroke: var(--fg); stroke-width: 2.4; }
+.node.up rect.card { stroke: var(--need); stroke-width: 2; }
+.node.down rect.card { stroke: var(--accent); stroke-width: 2; }
+.node.faint { opacity: .3; }
+/* walk-through */
+.walk .node.locked { opacity: .32; }
+.walk .node.open rect.card { stroke: var(--accent); stroke-width: 2.2; fill: var(--accent-soft); }
+.walk .node.owned rect.card { fill: var(--line); }
+.walk .node.owned .name { text-decoration: line-through; text-decoration-thickness: 1px; }
+@media (prefers-reduced-motion: no-preference) { .walk .node.open rect.card { animation: glow 1.6s ease-in-out infinite; } }
+@keyframes glow { 50% { stroke-opacity: .35; } }
+.card-info { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 8px; min-width: 0; }
+.card-info h2 { margin: 0; font-size: 18px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.card-info .p { font-family: var(--mono); font-size: 14px; color: var(--muted); font-weight: 500; }
+.card-info .kind { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.row { display: grid; grid-template-columns: 92px 1fr; gap: 10px; font-size: 14px; }
+.row > span:first-child { color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 13px var(--body); border: 1px solid var(--line); background: var(--bg); color: var(--fg); padding: 2px 10px; border-radius: 999px; cursor: pointer; }
+.note { font-size: 13px; color: var(--muted); margin: 0; max-width: 75ch; }
+</style>
+
+<div class="wrap" id="app">
+  <header style="display:grid;gap:6px">
+    <h1>Upgrade Tree</h1>
+    <p class="lede" id="lede"></p>
+  </header>
+  <div class="bar">
+    <div class="seg" role="group" aria-label="Mode">
+      <button id="m-explore" aria-pressed="true">Explore</button>
+      <button id="m-walk" aria-pressed="false">Walk through</button>
+    </div>
+    <button class="btn" id="reset" hidden>Start over</button>
+    <div class="stats" id="stats" hidden></div>
+  </div>
+  <div class="legend" id="legend"></div>
+  <div class="box" id="box"><svg id="tree" role="img" aria-label="Upgrade tree"></svg></div>
+  <section class="card-info" id="info" aria-live="polite"></section>
+  <p class="note">Columns count the buys a pad waits behind: <b>Start</b> is open on a new plot, <b>+1</b> needs one pad bought first, and so on. A pad with two lines in waits for both. Crew hires cost gems as well as coins. Cart Capacity and Speed levels, gem upgrades and decorations are bought in their windows and are not shown. Times are the median of 150 simulated free players from run idle-furnace-2026-11-02.</p>
+</div>
+
+<script>
+const NODES = [{"id":"OreStand2","name":"Ore Slot 2","price":80,"after":[],"cat":"ore","col":0,"row":1,"t":{"efficient":2,"casual":3}},{"id":"OreStand3","name":"Ore Slot 3","price":280,"after":["OreStand2"],"cat":"ore","col":1,"row":1,"t":{"efficient":7,"casual":7}},{"id":"OreStand4","name":"Ore Slot 4","price":2000,"after":["OreStand3"],"cat":"ore","col":2,"row":1,"t":{"efficient":19,"casual":30}},{"id":"OreStand5","name":"Ore Slot 5","price":9800,"after":["OreStand4"],"cat":"ore","col":3,"row":1,"t":{"efficient":56,"casual":122}},{"id":"OreStand6","name":"Ore Slot 6","price":20000,"after":["OreStand5"],"cat":"ore","col":4,"row":1,"t":{"efficient":153,"casual":248}},{"id":"MergeSlots","name":"Merge Ore Slots","price":0,"after":["OreStand6"],"cat":"ore","col":5,"row":1,"t":{"efficient":153,"casual":248}},{"id":"IngotRack","name":"Ingot Rack","price":460,"after":[],"cat":"storage","col":0,"row":5,"t":{"efficient":17,"casual":13}},{"id":"IngotRack2","name":"Ingot Rack 2","price":2000,"after":["IngotRack"],"cat":"storage","col":1,"row":6,"t":{"efficient":20,"casual":33}},{"id":"Furnace2","name":"Furnace 2","price":2800,"after":[],"cat":"heat","col":0,"row":3,"t":{"efficient":23,"casual":44}},{"id":"WakizashiBlueprint","name":"Wakizashi","price":60,"after":[],"cat":"sword","col":0,"row":0,"t":{"efficient":3,"casual":5}},{"id":"MacheteBlueprint","name":"Machete","price":360,"after":["WakizashiBlueprint"],"cat":"sword","col":1,"row":0,"t":{"efficient":5,"casual":10}},{"id":"KatanaBlueprint","name":"Katana","price":1300,"after":["MacheteBlueprint"],"cat":"sword","col":2,"row":0,"t":{"efficient":9,"casual":21}},{"id":"ScimitarBlueprint","name":"Scimitar","price":3600,"after":["KatanaBlueprint"],"cat":"sword","col":3,"row":0,"t":{"efficient":17,"casual":57}},{"id":"LongswordBlueprint","name":"Longsword","price":10200,"after":["ScimitarBlueprint"],"cat":"sword","col":4,"row":0,"t":{"efficient":46,"casual":140}},{"id":"CutlassBlueprint","name":"Cutlass","price":26000,"after":["LongswordBlueprint"],"cat":"sword","col":5,"row":0,"t":{"efficient":116,"casual":331}},{"id":"FalchionBlueprint","name":"Falchion","price":28000,"after":["CutlassBlueprint"],"cat":"sword","col":6,"row":0,"t":{"efficient":172,"casual":346}},{"id":"JianBlueprint","name":"Jian","price":50000,"after":["FalchionBlueprint"],"cat":"sword","col":7,"row":0,"t":{"efficient":211,"casual":null}},{"id":"GladiusBlueprint","name":"Gladius","price":60000,"after":["JianBlueprint"],"cat":"sword","col":8,"row":0,"t":{"efficient":218,"casual":null}},{"id":"KhopeshBlueprint","name":"Khopesh","price":150000,"after":["GladiusBlueprint"],"cat":"sword","col":9,"row":0,"t":{"efficient":313,"casual":null}},{"id":"DadaoBlueprint","name":"Dadao","price":160000,"after":["KhopeshBlueprint"],"cat":"sword","col":10,"row":0,"t":{"efficient":328,"casual":null}},{"id":"RapierBlueprint","name":"Rapier","price":270000,"after":["DadaoBlueprint"],"cat":"sword","col":11,"row":0,"t":{"efficient":434,"casual":null}},{"id":"HookSwordBlueprint","name":"Hook","price":290000,"after":["RapierBlueprint"],"cat":"sword","col":12,"row":0,"t":{"efficient":454,"casual":null}},{"id":"CrescentFangBlueprint","name":"Crescent Fang","price":370000,"after":["HookSwordBlueprint"],"cat":"sword","col":13,"row":0,"t":{"efficient":null,"casual":null}},{"id":"ShardBladeBlueprint","name":"Shard Blade","price":400000,"after":["CrescentFangBlueprint"],"cat":"sword","col":14,"row":0,"t":{"efficient":null,"casual":null}},{"id":"MoonbiteBlueprint","name":"Moonbite","price":530000,"after":["ShardBladeBlueprint"],"cat":"sword","col":15,"row":0,"t":{"efficient":null,"casual":null}},{"id":"SerpentBlueprint","name":"Serpent","price":570000,"after":["MoonbiteBlueprint"],"cat":"sword","col":16,"row":0,"t":{"efficient":null,"casual":null}},{"id":"LeviathanBlueprint","name":"Leviathan Cleaver","price":640000,"after":["SerpentBlueprint"],"cat":"sword","col":17,"row":0,"t":{"efficient":null,"casual":null}},{"id":"ThornspireBlueprint","name":"Thornspire","price":740000,"after":["LeviathanBlueprint"],"cat":"sword","col":18,"row":0,"t":{"efficient":null,"casual":null}},{"id":"SeraphBlueprint","name":"Seraph","price":840000,"after":["ThornspireBlueprint"],"cat":"sword","col":19,"row":0,"t":{"efficient":null,"casual":null}},{"id":"ZanbatoBlueprint","name":"Zanbatō","price":88000,"after":["GladiusBlueprint","BigSwordStand"],"cat":"sword","col":9,"row":1,"t":{"efficient":299,"casual":null}},{"id":"ClaymoreBlueprint","name":"Claymore","price":340000,"after":["ZanbatoBlueprint"],"cat":"sword","col":10,"row":1,"t":{"efficient":null,"casual":null}},{"id":"FlambergeBlueprint","name":"Flamberge","price":430000,"after":["ClaymoreBlueprint"],"cat":"sword","col":11,"row":1,"t":{"efficient":null,"casual":null}},{"id":"Anvil2","name":"Anvil 2","price":0,"after":["Crafter"],"cat":"crew","col":2,"row":4,"t":{"efficient":null,"casual":null}},{"id":"Furnace3","name":"Furnace 3","price":11600,"after":["Anvil3"],"cat":"heat","col":3,"row":4,"t":{"efficient":72,"casual":171}},{"id":"Anvil3","name":"Anvil 3","price":14000,"after":["Crafter"],"cat":"crew","col":2,"row":5,"t":{"efficient":66,"casual":161}},{"id":"Anvil4","name":"Anvil 4","price":22000,"after":["Anvil3"],"cat":"crew","col":3,"row":3,"t":{"efficient":124,"casual":272}},{"id":"Crafter","name":"Sword Crafter (1st hire)","price":2000,"after":["IngotRack","SwordRack"],"cat":"crew","col":1,"row":5,"t":{"efficient":18,"casual":36}},{"id":"Stocker","name":"Stocker","price":12000,"after":["Crafter"],"cat":"staff","col":2,"row":6,"t":{"efficient":61,"casual":149}},{"id":"Cashier","name":"Cashier","price":50000,"after":["UpgradedStore","Crafter"],"cat":"staff","col":4,"row":7,"t":{"efficient":368,"casual":null}},{"id":"Promoter","name":"Shop Promoter","price":40000,"after":["Crafter"],"cat":"staff","col":2,"row":7,"t":{"efficient":351,"casual":439}},{"id":"EtchingTable2","name":"Etching Table 2","price":240000,"after":["EtchingTable","EtchFlame"],"cat":"stations","col":3,"row":5,"t":{"efficient":421,"casual":null}},{"id":"Etcher","name":"Sword Etcher","price":270000,"after":["EtchingTable2"],"cat":"staff","col":4,"row":5,"t":{"efficient":468,"casual":null}},{"id":"Heat1","name":"Faster Heating I","price":580,"after":[],"cat":"heat","col":0,"row":2,"t":{"efficient":18,"casual":16}},{"id":"Heat2","name":"Faster Heating II","price":3000,"after":["Heat1"],"cat":"heat","col":1,"row":2,"t":{"efficient":25,"casual":49}},{"id":"Heat3","name":"Faster Heating III","price":5200,"after":["Heat2"],"cat":"heat","col":2,"row":2,"t":{"efficient":34,"casual":76}},{"id":"F2Heat1","name":"Furnace 2 Heating I","price":1800,"after":["Furnace2"],"cat":"heat","col":1,"row":3,"t":{"efficient":24,"casual":46}},{"id":"F2Heat2","name":"Furnace 2 Heating II","price":9000,"after":["F2Heat1"],"cat":"heat","col":2,"row":3,"t":{"efficient":51,"casual":104}},{"id":"F2Heat3","name":"Furnace 2 Heating III","price":15600,"after":["F2Heat2"],"cat":"heat","col":3,"row":2,"t":{"efficient":144,"casual":208}},{"id":"F3Heat1","name":"Furnace 3 Heating I","price":7000,"after":["Furnace3"],"cat":"heat","col":4,"row":4,"t":{"efficient":76,"casual":177}},{"id":"F3Heat2","name":"Furnace 3 Heating II","price":36000,"after":["F3Heat1"],"cat":"heat","col":5,"row":3,"t":{"efficient":190,"casual":398}},{"id":"F3Heat3","name":"Furnace 3 Heating III","price":62000,"after":["F3Heat2"],"cat":"heat","col":6,"row":2,"t":{"efficient":233,"casual":null}},{"id":"Strikes1","name":"Faster Strikes I","price":500,"after":[],"cat":"stations","col":0,"row":7,"t":{"efficient":7,"casual":14}},{"id":"Strikes2","name":"Faster Strikes II","price":2000,"after":["Strikes1"],"cat":"stations","col":1,"row":9,"t":{"efficient":14,"casual":28}},{"id":"Strikes3","name":"Faster Strikes III","price":5000,"after":["Strikes2"],"cat":"stations","col":2,"row":10,"t":{"efficient":28,"casual":64}},{"id":"Strikes4","name":"Faster Strikes IV","price":10000,"after":["Strikes3"],"cat":"stations","col":3,"row":8,"t":{"efficient":42,"casual":131}},{"id":"Strikes5","name":"Faster Strikes V","price":20000,"after":["Strikes4"],"cat":"stations","col":4,"row":9,"t":{"efficient":102,"casual":234}},{"id":"PolishStation","name":"Polishing Station","price":30,"after":[],"cat":"stations","col":0,"row":6,"t":{"efficient":1,"casual":2}},{"id":"EtchingTable","name":"Etching Table","price":1580,"after":["PolishStation"],"cat":"stations","col":1,"row":7,"t":{"efficient":12,"casual":24}},{"id":"EtchFlame","name":"Flame Etch","price":800,"after":["EtchingTable"],"cat":"cart","col":2,"row":8,"t":{"efficient":12,"casual":26}},{"id":"EtchWovenWind","name":"Woven Wind Etch","price":8000,"after":["EtchFlame"],"cat":"cart","col":3,"row":6,"t":{"efficient":38,"casual":95}},{"id":"EtchFracture","name":"Fracture Etch","price":40000,"after":["EtchWovenWind"],"cat":"cart","col":4,"row":6,"t":{"efficient":199,"casual":425}},{"id":"PolishBoost1","name":"Polish Boost I","price":4000,"after":["PolishStation2"],"cat":"stations","col":2,"row":9,"t":{"efficient":32,"casual":71}},{"id":"PolishBoost2","name":"Polish Boost II","price":16000,"after":["PolishBoost1"],"cat":"stations","col":3,"row":7,"t":{"efficient":89,"casual":220}},{"id":"PolishBoost3","name":"Polish Boost III","price":50000,"after":["PolishBoost2"],"cat":"stations","col":4,"row":8,"t":{"efficient":206,"casual":null}},{"id":"PolishStation2","name":"Polishing Station 2","price":5000,"after":["PolishStation"],"cat":"stations","col":1,"row":8,"t":{"efficient":30,"casual":67}},{"id":"SwordRack","name":"Sword Rack","price":280,"after":[],"cat":"storage","col":0,"row":4,"t":{"efficient":9,"casual":9}},{"id":"SwordRack2","name":"Sword Rack 2","price":2600,"after":["SwordRack"],"cat":"storage","col":1,"row":4,"t":{"efficient":22,"casual":41}},{"id":"WallRack2","name":"Wall Sword Rack 2","price":110,"after":[],"cat":"shop","col":0,"row":8,"t":{"efficient":6,"casual":5}},{"id":"DisplayTable1","name":"Display Table 1","price":440,"after":["WallRack2"],"cat":"shop","col":1,"row":10,"t":{"efficient":25,"casual":11}},{"id":"WallRack5","name":"Back Wall Rack","price":900,"after":["DisplayTable1"],"cat":"shop","col":2,"row":11,"t":{"efficient":35,"casual":18}},{"id":"UpgradedStore","name":"Upgraded Store","price":15000,"after":["WallRack2","DisplayTable1","WallRack5","DisplayTable2"],"cat":"shop","col":3,"row":9,"t":{"efficient":235,"casual":189}},{"id":"WallRack3","name":"Wall Sword Rack 3","price":6400,"after":["UpgradedStore"],"cat":"shop","col":4,"row":10,"t":{"efficient":236,"casual":195}},{"id":"WallRack4","name":"Wall Sword Rack 4","price":30000,"after":["WallRack3"],"cat":"shop","col":5,"row":4,"t":{"efficient":286,"casual":385}},{"id":"DisplayTable2","name":"Display Table 2","price":9000,"after":["DisplayTable1"],"cat":"shop","col":2,"row":12,"t":{"efficient":191,"casual":113}},{"id":"DisplayTable3","name":"Display Table 3","price":42000,"after":["DisplayTable2"],"cat":"shop","col":3,"row":10,"t":{"efficient":358,"casual":469}},{"id":"DisplayTable4","name":"Display Table 4","price":46000,"after":["DisplayTable3"],"cat":"shop","col":4,"row":12,"t":{"efficient":365,"casual":null}},{"id":"DisplayTable5","name":"Display Table 5","price":80000,"after":["DisplayTable4","UpgradedStore"],"cat":"shop","col":5,"row":5,"t":{"efficient":474,"casual":null}},{"id":"DisplayTable6","name":"Display Table 6","price":120000,"after":["DisplayTable5"],"cat":"shop","col":6,"row":3,"t":{"efficient":null,"casual":null}},{"id":"BigSwordStand","name":"Big Sword Stand","price":36000,"after":["UpgradedStore"],"cat":"shop","col":4,"row":11,"t":{"efficient":289,"casual":411}},{"id":"BigSwordStand2","name":"Big Sword Stand 2","price":90000,"after":["BigSwordStand"],"cat":"shop","col":5,"row":6,"t":{"efficient":null,"casual":null}},{"id":"BigSwordStand3","name":"Big Sword Stand 3","price":140000,"after":["BigSwordStand2"],"cat":"shop","col":6,"row":4,"t":{"efficient":null,"casual":null}},{"id":"Parking1","name":"Bay 1","price":2200,"after":[],"cat":"cart","col":0,"row":9,"t":{"efficient":57,"casual":37}},{"id":"Parking2","name":"Bay 2","price":44000,"after":["Parking1"],"cat":"cart","col":1,"row":11,"t":{"efficient":360,"casual":null}},{"id":"Parking3","name":"Bay 3","price":152000,"after":["Parking2"],"cat":"cart","col":2,"row":14,"t":{"efficient":null,"casual":null}},{"id":"Showcase1","name":"Showcase Stand 1","price":3000,"after":["DisplayTable1"],"cat":"cart","col":2,"row":13,"t":{"efficient":78,"casual":52}},{"id":"Showcase2","name":"Showcase Stand 2","price":25000,"after":["Showcase1"],"cat":"cart","col":3,"row":11,"t":{"efficient":280,"casual":300}},{"id":"Showcase3","name":"Showcase Stand 3","price":90000,"after":["Showcase2"],"cat":"cart","col":4,"row":13,"t":{"efficient":null,"casual":null}},{"id":"Delivery","name":"Delivery Cart","price":6200,"after":[],"cat":"cart","col":0,"row":10,"t":{"efficient":165,"casual":84}},{"id":"hire:haru","name":"Hire Haru","price":23000,"after":["Furnace3"],"cat":"crew","gems":10,"col":4,"row":3,"t":{"efficient":137,"casual":286}},{"id":"hire:mei","name":"Hire Mei","price":70000,"after":["Anvil4"],"cat":"crew","gems":25,"col":4,"row":2,"t":{"efficient":244,"casual":null}},{"id":"hire:kenji","name":"Hire Kenji","price":460000,"after":["hire:mei"],"cat":"crew","gems":40,"col":5,"row":2,"t":{"efficient":null,"casual":null}},{"id":"hire:rin","name":"Hire Rin","price":710000,"after":["hire:kenji"],"cat":"crew","gems":80,"col":6,"row":1,"t":{"efficient":null,"casual":null}}];
+const CATS = { sword: "Swords", crew: "Anvils and crafters", staff: "Staff", ore: "Ore slots", heat: "Furnaces and heat",
+  storage: "Ingot and sword racks", stations: "Polish, etch, strikes", shop: "Shop displays", cart: "Cart and parking" };
+const W = 188, H = 44, CW = 222, RH = 54, TOP = 34, LEFT = 14;
+const by = Object.fromEntries(NODES.map(n => [n.id, n]));
+NODES.forEach(n => n.kids = []);
+NODES.forEach(n => n.after.forEach(a => by[a].kids.push(n.id)));
+const ncol = Math.max(...NODES.map(n => n.col)) + 1, nrow = Math.max(...NODES.map(n => n.row)) + 1;
+const fmt = n => n === 0 ? "Free" : n.toLocaleString("en-US");
+const time = m => m == null ? "not reached" : m < 60 ? `${m} min` : `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}`;
+const roots = NODES.filter(n => !n.after.length);
+let mode = "explore", sel = null, owned = new Set();
+
+document.getElementById("lede").innerHTML = `<b>${roots.length}</b> upgrades are open on a new plot. Buying one opens the pads that wait for it, left to right. Tap a pad to see what it needs and what it opens, or walk through the tree buying as you go.`;
+document.getElementById("legend").innerHTML = Object.entries(CATS).map(([k, v]) => `<span><i style="background:var(--c-${k})"></i>${v}</span>`).join("");
+
+function ancestors(id, out = new Set()) { by[id].after.forEach(a => { if (!out.has(a)) { out.add(a); ancestors(a, out); } }); return out; }
+function descendants(id, out = new Set()) { by[id].kids.forEach(k => { if (!out.has(k)) { out.add(k); descendants(k, out); } }); return out; }
+const xy = n => [LEFT + n.col * CW, TOP + n.row * RH];
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+function draw() {
+  const svg = document.getElementById("tree");
+  const w = LEFT * 2 + (ncol - 1) * CW + W, h = TOP + nrow * RH;
+  svg.setAttribute("width", w); svg.setAttribute("height", h); svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  let s = "";
+  for (let c = 0; c < ncol; c++) s += `<text class="col-label" x="${LEFT + c * CW + 2}" y="20">${c === 0 ? "Start" : "+" + c}</text>`;
+  const up = sel ? ancestors(sel) : null, down = sel ? descendants(sel) : null;
+  NODES.forEach(n => n.after.forEach(a => {
+    const p = by[a], [x1, y1] = xy(p), [x2, y2] = xy(n);
+    const sx = x1 + W, sy = y1 + H / 2, ex = x2, ey = y2 + H / 2, mx = (sx + ex) / 2;
+    let cls = "edge";
+    if (sel) {
+      if ((n.id === sel || up.has(n.id)) && (up.has(a))) cls += " up";
+      else if ((a === sel || down.has(a)) && down.has(n.id)) cls += " down";
+      else cls += " faint";
+    }
+    s += `<path class="${cls}" d="M${sx},${sy} C${mx},${sy} ${mx},${ey} ${ex},${ey}"/>`;
+  }));
+  NODES.forEach(n => {
+    const [x, y] = xy(n);
+    let cls = "node";
+    if (sel) cls += n.id === sel ? " sel" : up.has(n.id) ? " up" : down.has(n.id) ? " down" : " faint";
+    if (mode === "walk") cls += owned.has(n.id) ? " owned" : n.after.every(a => owned.has(a)) ? " open" : " locked";
+    s += `<g class="${cls}" data-id="${n.id}" transform="translate(${x},${y})" tabindex="0" role="button" aria-label="${esc(n.name)}, ${fmt(n.price)} coins">
+      <rect class="card" width="${W}" height="${H}" rx="8"/>
+      <circle class="dot" cx="13" cy="${H / 2}" r="4.5" fill="var(--c-${n.cat})"/>
+      <text class="name" x="25" y="18">${esc(n.name)}</text>
+      <text class="price" x="25" y="34">${fmt(n.price)}${n.gems ? " + " + n.gems + " gems" : ""}</text></g>`;
+  });
+  svg.innerHTML = s;
+  svg.classList.toggle("walk", mode === "walk");
+  stats();
+  info();
+}
+
+function chips(ids) { return ids.length ? `<div class="chips">${ids.map(i => `<button class="chip" data-go="${i}">${esc(by[i].name)}</button>`).join("")}</div>` : "<span>Nothing</span>"; }
+
+function info() {
+  const el = document.getElementById("info");
+  if (!sel) {
+    el.innerHTML = `<div class="kind">Open from the start</div><h2>${roots.length} pads on a new plot</h2>${chips(roots.map(r => r.id))}
+      <p class="note">Tap a pad in the tree, or one of these, to follow its branch.</p>`;
+    return;
+  }
+  const n = by[sel];
+  const status = mode === "walk" ? (owned.has(sel) ? "Bought" : n.after.every(a => owned.has(a)) ? "On offer now" : "Locked") : "";
+  el.innerHTML = `<div class="kind">${CATS[n.cat]}${status ? " · " + status : ""}</div>
+    <h2>${esc(n.name)} <span class="p">${fmt(n.price)} coins${n.gems ? " + " + n.gems + " gems" : ""}</span></h2>
+    <div class="row"><span>Needs</span>${n.after.length ? chips(n.after) : "<span>Nothing: open from the start</span>"}</div>
+    <div class="row"><span>Opens</span>${chips(n.kids)}</div>
+    <div class="row"><span>Bought at</span><span>efficient player ${time(n.t.efficient)}, casual player ${time(n.t.casual)}</span></div>
+    ${n.id === "MergeSlots" ? `<p class="note">Merging resets Ore Slots 2–6 to unbought for more luck, and they cost 1.5× more each merge.</p>` : ""}
+    ${mode === "walk" && n.after.every(a => owned.has(a)) ? `<div><button class="btn" data-buy="${n.id}">${owned.has(sel) ? "Undo this buy" : "Buy it"}</button></div>` : ""}`;
+}
+
+function stats() {
+  const el = document.getElementById("stats");
+  el.hidden = mode !== "walk";
+  document.getElementById("reset").hidden = mode !== "walk";
+  if (mode !== "walk") return;
+  const open = NODES.filter(n => !owned.has(n.id) && n.after.every(a => owned.has(a))).length;
+  const spent = [...owned].reduce((t, i) => t + by[i].price, 0);
+  el.innerHTML = `<span>On offer <b>${open}</b></span><span>Bought <b>${owned.size}</b> / ${NODES.length}</span><span>Spent <b>${fmt(spent)}</b></span>`;
+}
+
+function toggleBuy(id) {
+  const n = by[id];
+  if (owned.has(id)) { owned.delete(id); descendants(id).forEach(d => owned.delete(d)); }
+  else if (n.after.every(a => owned.has(a))) owned.add(id);
+}
+
+function pick(id) {
+  if (mode === "walk" && by[id].after.every(a => owned.has(a)) && !owned.has(id)) { toggleBuy(id); sel = id; }
+  else sel = sel === id ? null : id;
+  draw();
+}
+
+document.getElementById("tree").addEventListener("click", e => { const g = e.target.closest(".node"); if (g) pick(g.dataset.id); });
+document.getElementById("tree").addEventListener("keydown", e => { const g = e.target.closest(".node"); if (g && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); pick(g.dataset.id); } });
+document.getElementById("info").addEventListener("click", e => {
+  const go = e.target.closest("[data-go]"), buy = e.target.closest("[data-buy]");
+  if (go) { sel = go.dataset.go; draw(); scrollTo(sel); }
+  if (buy) { toggleBuy(buy.dataset.buy); draw(); }
+});
+function scrollTo(id) {
+  const [x, y] = xy(by[id]), box = document.getElementById("box");
+  box.scrollTo({ left: Math.max(0, x - box.clientWidth / 2 + W / 2), top: Math.max(0, y - box.clientHeight / 2), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+}
+function setMode(m) {
+  mode = m; sel = null;
+  document.getElementById("m-explore").setAttribute("aria-pressed", m === "explore");
+  document.getElementById("m-walk").setAttribute("aria-pressed", m === "walk");
+  draw();
+}
+document.getElementById("m-explore").onclick = () => setMode("explore");
+document.getElementById("m-walk").onclick = () => setMode("walk");
+document.getElementById("reset").onclick = () => { owned.clear(); sel = null; draw(); };
+draw();
+</script>

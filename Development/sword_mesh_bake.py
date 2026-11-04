@@ -1,9 +1,11 @@
 # Local helper for ServerStorage.Builders.bake_sword_meshes (vault: Development/Sword Mesh Pipeline).
 # Run: python -I sword_mesh_bake.py   (needs ROBLOX_API_KEY; listens on 127.0.0.1:34999)
 #   POST /bake/<name>  body = Studio mesh dump -> glb -> Open Cloud upload; replies {"operationId": ...}
-#   GET  /op/<id>      -> {"assetId": ...} | {"pending": true} | {"error": ...}
+#   GET  /op/<id>      -> {"assetId": ...} | {"pending": true} | {"error": ...}   (id: letters, digits, _ and - only, else 400)
+# Only Studio gets in: header X-Studio: 1 and Host 127.0.0.1:34999 or localhost:34999, else 403 (a web page can't add
+# the header without a CORS preflight, which this refuses; the Host check stops DNS rebinding).
 # Dump format: u32 face count, then per face corner: pos f32x3, rgb u8x3, uv f32x2, normal f32x3.
-import http.server, json, os, struct, sys, tempfile, urllib.error, urllib.parse, urllib.request, uuid
+import http.server, json, os, re, struct, sys, tempfile, urllib.error, urllib.parse, urllib.request, uuid
 
 API = "https://apis.roblox.com/assets/v1/"
 CREATOR = "14722022"
@@ -74,7 +76,13 @@ class Handler(http.server.BaseHTTPRequestHandler):
         data = json.dumps(obj).encode()
         self.send_response(code); self.send_header("Content-Type", "application/json"); self.end_headers(); self.wfile.write(data)
 
+    def from_studio(self):
+        port = self.server.server_address[1]
+        return self.headers.get("X-Studio") == "1" and self.headers.get("Host") in (f"127.0.0.1:{port}", f"localhost:{port}")
+
     def do_POST(self):
+        if not self.from_studio():
+            return self.reply({"error": "forbidden"}, 403)
         name = urllib.parse.unquote(self.path[len("/bake/"):])
         try:
             raw = self.rfile.read(int(self.headers["Content-Length"]))
@@ -86,8 +94,13 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.reply({"error": f"{type(e).__name__}: {e}"}, 500)
 
     def do_GET(self):
+        if not self.from_studio():
+            return self.reply({"error": "forbidden"}, 403)
+        op = self.path[len("/op/"):]
+        if not self.path.startswith("/op/") or not re.fullmatch(r"[\w-]+", op):
+            return self.reply({"error": "bad operation id"}, 400)
         try:
-            d = call(urllib.request.Request(API + "operations/" + self.path[len("/op/"):]))
+            d = call(urllib.request.Request(API + "operations/" + op))
             if not d.get("done"):
                 return self.reply({"pending": True})
             r = d.get("response") or {}

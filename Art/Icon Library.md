@@ -158,6 +158,20 @@ Allen (2026-10-26): "I added a free icon pack to our vault. can we swap out our 
 | Book button (was Sword, same day) | Blue Book | 111130036886654 | rbxassetid://81875196362916 | the collection book (`MenuGui.Buttons.Book`); Allen: "Use a book instead of the sword icon to show the discovered metals". Claude chose blue: the old sword was blue, and it stands apart from the red and orange beside it |
 | (new, 2026-10-27) | Trash Can | 75641554610978 | rbxassetid://112432692268721 | the bag's trash (`HotbarGui.BagPanel.Trash`, Economy pass 2); uploaded through Open Cloud the same day |
 | (new, 2026-10-28) | Cursor | 88331796722612 | rbxassetid://133171470730444 | the ghost cursors (`HiltSeatGui.Ghost`, `SpotlightGui.Ghost`) and the action card's tap icon on phones (`ActionGui.Action.Row.Key.Tap`), Fixes 2026-10-28; uploaded through Open Cloud the same day |
+| (new, 2026-10-29) | Yellow Pencil | 120099822977965 | rbxassetid://118651920601553 | the Decorate button (`DecorateGui.Bar.Button.Icon`); uploaded through Open Cloud the same day |
+| (new, 2026-10-29) | Newspaper | 84057899692702 | rbxassetid://107527990961861 | Gem Shop: Better Advertising (`GemController.ICONS`) |
+| (new, 2026-10-29) | Add Player | 82371815001127 | rbxassetid://88703652327500 | Gem Shop: More Clients |
+| (new, 2026-10-29) | Clock | 84555907209561 | rbxassetid://111560518823098 | Gem Shop: Quicker Mail (More VIPs reuses VIP) |
+| (new, 2026-10-29) | Rays 8 (generated, `Art/Rays/make_rays.py`) | 73902782556492 | rbxassetid://134553992083874 | Book sword-card trial |
+| (new, 2026-10-29) | Rays 12 (generated) | 72061563758965 | rbxassetid://83620843088174 | Book sword cards (`CollectionGui.Templates.Entry.HalftoneClip.Rays`) |
+| (new, 2026-10-29) | Rays 16 (generated) | 123982004424303 | rbxassetid://116236609353664 | Book sword-card trial |
+| (new, 2026-10-29) | Rays 12 thin (generated) | 109655384040328 | rbxassetid://121169487058902 | Book sword-card trial |
+| (new, 2026-10-29) | Rays 8 soft (generated) | 95474019773782 | rbxassetid://129391700345307 | Book sword-card trial |
+| (new, 2026-10-29) | Clock | 91795454936894 | rbxassetid://103149202505392 | a skipped cart offer's countdown card (`DeliveryGui.Templates.Waiting.Row.Icon`); uploaded through Open Cloud the same day |
+| (new, 2026-10-31) | Hammer | 124434057088650 | rbxassetid://99067729549436 | the Auto Anvil's switch (`AnvilHud.Auto.Icon`) and its Shop card (`MenuGui.ShopWindow…Grid.AutoAnvil.Icon`); uploaded through Open Cloud the same day |
+| (new, 2026-11-03) | Full Body | 118674563903488 | rbxassetid://96517349143124 | the top bar's customer count (`MenuController`); uploaded through Open Cloud the same day |
+| (2026-11-03) | Chest, Purple Diamond (reused) | — | rbxassetid://121901041887054, rbxassetid://103295659547066 | Daily Reward's day 7 tile and the gem piles (`GemGui.Templates.Day7`, `Day.Content.Gem`) |
+| (new, 2026-11-01) | Blue Pencil | 74976205523480 | rbxassetid://135907823788203 | the Auto Etch Shop card (`MenuGui.ShopWindow…Grid.AutoEtch.Icon`) and the Automation Pack card's three icons; uploaded through Open Cloud the same day |
 
 Claude's picks where the pack had several: Purple Diamond (the old gem was purple; Blue Diamond is the alternative), Red Gift, Red Shopping Cart (or a Red / Golden Shopping Bag), Lighting for speed (or Yellow Shoe), Red House vs Yellow House to keep the trip's start and end apart (the Red House stays only on trip step 1 since the Upgrades button became Stats). `ServerStorage.UIPackCopies` (another session's UI-pack experiment) still holds the old ids.
 
@@ -165,3 +179,19 @@ Claude's picks where the pack had several: Purple Diamond (the old gem was purpl
 **Not an icon, unused since 2026-10-26:** the picker cards' light pool was a white radial falloff made for it, `Art/ui-light-pool.png`, decal 101391462421390, image `rbxassetid://132693729296321` ([[Sessions/2026-10-26#Brighter picker cards]]).
 
 Related: [[Art/UI Design]]
+
+- **Robux (white, black outline)** (2026-10-28, from Allen's white glyph, outline drawn in Python): `rbxassetid://130714407534821` (decal 92851862334470). Every Robux price in the menus. Replaced, the same day, the plain white one (`rbxassetid://78774617292066`) and Allen's outlined PNG (`rbxassetid://121060800507219`). [[Sessions/2026-10-28#Allen's white Robux icon on every price]]
+- **Hand-drawn edge, 9-slice** (2026-10-28, drawn in Python): `rbxassetid://123259227611606` (decal 106084933756621; v2: outward-only wobble, 4 px bottom; v1 was `rbxassetid://87935563698428`), `SliceCenter` (60, 60, 140, 140), `SliceScale` 0.5 for corners 12 (0.42 → 10, 0.67 → 16); margins 12 (2×) round the element, 28 below for the shadow. [[Sessions/2026-10-28#Hand-drawn 9-slice edges with a shadow (Shop)]]
+- **Hand-drawn edge, flush 9-slice** (2026-10-28): `rbxassetid://115309352819076` (decal 76883182205764), the line wholly inside the element, no shadow; for frames that clip their children. Same SliceCenter and scales as the shadowed one. Place both centred on the element (AnchorPoint 0.5).
+- **Hand-drawn edge, thin** (2026-10-28): shadowed `rbxassetid://122361462361934` (decal 139979687540860), flush `rbxassetid://132769440329704` (decal 112265679105129); same SliceCenter, scales and margins as the heavy edge. Inner cards, rows and buttons use these; window frames keep the heavy edge.
+
+## Weather icons (2026-10-28)
+
+Allen (2026-10-28): "Instead of the weather being text, have [an icon] on the bottom left like this" (Create Pottery's bottom-left weather cloud). The Free Icon Pack has no sun, snowflake or rainbow and its licence forbids redrawing, so these four are **original art** drawn in Python/PIL in the pack's 1st Outline look (navy 4,4,53 outline ~11 px, flat cel shading with a lighter top and a white glint), 256 px transparent PNGs in `Art/Weather Icons/`, uploaded through Open Cloud under user 14722022. Used by `StarterGui.WeatherGui.Icon` (the image ids are its attributes, one per weather).
+
+| Weather | File | Decal | Image (use in ImageLabel) |
+| --- | --- | --- | --- |
+| Sunny | `Art/Weather Icons/Weather Sunny 256px.png` | 75152016083161 | rbxassetid://115256783918429 |
+| Snow | `Art/Weather Icons/Weather Snow 256px.png` | 92434272203147 | rbxassetid://126239471090216 |
+| Rain | `Art/Weather Icons/Weather Rain 256px.png` | 100747657646529 | rbxassetid://77332354838190 |
+| Rainbow | `Art/Weather Icons/Weather Rainbow 256px.png` | 87803876739033 | rbxassetid://130216775479362 |

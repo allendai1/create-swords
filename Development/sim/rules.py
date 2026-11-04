@@ -334,6 +334,10 @@ class Balance:
         top = len(self.raw["employees"]["levelAt"])
         return rng_range[0] + (rng_range[1] - rng_range[0]) * (level - 1) / (top - 1)
 
+    def crafter_walk(self, crafter_id, level):
+        """Employees.crafterWalk: walk speed lerped by level (2026-11-03)."""
+        return self.level_seconds(level, self.crafters[crafter_id]["walk"])
+
     def perk(self, role, count):
         """Employees.perk."""
         e = self.raw["employees"]

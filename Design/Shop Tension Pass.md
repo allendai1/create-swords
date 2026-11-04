@@ -12,7 +12,7 @@ Allen picked all three suggestions from [[Design/Pottery Playthrough 2026-10-27#
 - **No lowball offers** ([[Design/Decisions Log]], Refinement 4: "Customers should never make lowball offers", value to +20%). The spread can only go up, so it becomes **VIP buyers**: the high tail of Pottery's +10%–139%.
 - **The rush is the Sunshine weather** from the monetization plan (Allen: "sunshine can give 2x more customers", about 5 minutes). It is built free first; the bought version comes with the monetization work.
 
-The [[Design/Urgency Review#5. Guardrails|guardrails]] hold throughout: nothing before Ore Slot 2, one surprise at a time, nothing owned lost, no Robux prompt during an event.
+The [[Archive/Design/Urgency Review#5. Guardrails|guardrails]] hold throughout: nothing before Ore Slot 2, one surprise at a time, nothing owned lost, no Robux prompt during an event.
 
 ## Model
 

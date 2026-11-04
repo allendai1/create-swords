@@ -14,7 +14,7 @@ Historical snapshot retained during the 2026-10-22 cleanup. Current guidance: [[
 *Working title: **Sell Swords!** (alternatives were Create Swords! and Craft Swords!).*
 
 > Refined from the original brainstorm in [[Archive/Create Swords!|Create Swords!]]. The brainstorm is left untouched; this note is the working design.
-> Current design direction approved 2026-10-19. This document describes the intended game, not a claim that the changes are implemented. Earlier prototype details remain in [[Development/Code Map|Code Map]], session notes, and [[Archive/Design/GDD before 2026-10-19 revision|GDD before 2026-10-19 revision]]. New onboarding proposals are separate in [[Design/Core Loop Review|Core Loop Review]].
+> Current design direction approved 2026-10-19. This document describes the intended game, not a claim that the changes are implemented. Earlier prototype details remain in [[Development/Code Map|Code Map]], session notes, and [[Archive/Design/GDD before 2026-10-19 revision|GDD before 2026-10-19 revision]]. New onboarding proposals are separate in [[Archive/Design/Core Loop Review|Core Loop Review]].
 
 ---
 
@@ -133,7 +133,7 @@ Value = Blueprint base
       × NPC preference bonus (see §7)
 ```
 
-The tooltip on a finished sword shows each factor so players learn what to chase. Since 2026-10-20 every player-forged blade is 100% (×2.0) and a full polish is a +10% finish bonus. Review that incentive in [[Design/Core Loop Review|Core Loop Review]]. Employee quality below 90% needs explicit value/refinement rules before implementation, particularly if starting quality is below the table's 80% baseline; do not invent extrapolation. Optional finishes remain optional; other proposed bonuses still need tuning.
+The tooltip on a finished sword shows each factor so players learn what to chase. Since 2026-10-20 every player-forged blade is 100% (×2.0) and a full polish is a +10% finish bonus. Review that incentive in [[Archive/Design/Core Loop Review|Core Loop Review]]. Employee quality below 90% needs explicit value/refinement rules before implementation, particularly if starting quality is below the table's 80% baseline; do not invent extrapolation. Optional finishes remain optional; other proposed bonuses still need tuning.
 
 ### 6.5 Hilt Bench and fittings
 
@@ -180,7 +180,7 @@ The tooltip on a finished sword shows each factor so players learn what to chase
 - Relationships grow through ordinary sales and unlock personal commission chains.
 - Coins and gems remain proposed rewards; commissions remain a gem source.
 - **Commission delivery:** open the commission and select the finished sword through a picker, then receive the agreed reward. This also applies to the first Iron Wakizashi commission; it does not require putting the sword on sale or negotiating.
-- Exact letter interface, active-request capacity, and ordinary commission timing are not settled. The proposed first-session flow in [[Design/Core Loop Review|Core Loop Review]] is not yet approved.
+- Exact letter interface, active-request capacity, and ordinary commission timing are not settled. The proposed first-session flow in [[Archive/Design/Core Loop Review|Core Loop Review]] is not yet approved.
 
 ### 9.1 Remote delivery orders
 
@@ -285,7 +285,7 @@ Implementation details and script paths are maintained in [[Development/Code Map
 
 The full dated record is [[Design/Decisions Log|Decisions Log]]. The approved 2026-10-19 decisions supersede conflicting prototype rules, including the medieval cabin, timed forging, minimum-hit failure, damaging grinding, timed hilt taps, smartphone commissions, and universal fitting ladder.
 
-See [[Sessions/2026-10-19]] for this revision's scope and [[Design/Core Loop Review|Core Loop Review]] for recommendations still awaiting discussion.
+See [[Sessions/2026-10-19]] for this revision's scope and [[Archive/Design/Core Loop Review|Core Loop Review]] for recommendations still awaiting discussion.
 
 ## 14. Build plan
 
@@ -293,7 +293,7 @@ See [[Development/Roadmap|Roadmap]] for implementation status. Prior completed p
 
 Anvil forging, final polishing on its own station, and the Japanese workshop have implementation records. Remaining work includes design/build gaps, first-session progression, saving, village/plot growth, relationships, employees, courier orders, weather traffic bonuses, and indoor roof visibility. The new growth features are not recorded as implemented. [[Development/Roadmap]] owns the actionable task list; this document owns intended game behavior.
 
-[[Design/Core Loop Review]] distinguishes confirmed tutorial choices from unapproved pacing and interaction recommendations.
+[[Archive/Design/Core Loop Review]] distinguishes confirmed tutorial choices from unapproved pacing and interaction recommendations.
 
 ## 15. Monetization (Robux)
 

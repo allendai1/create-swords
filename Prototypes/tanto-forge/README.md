@@ -5,10 +5,10 @@ Browser prototype of the starter-blade forging study (tantō, wakizashi, katana)
 ## Run it
 
 ```bash
-python3 -m http.server 8765 --directory Prototypes/tanto-forge/dist
+python3 -m http.server 8766 --bind 127.0.0.1 --directory Prototypes/tanto-forge/dist
 ```
 
-Then open <http://localhost:8765> for the forge study (pick a blueprint at the bottom, or open `#katana` / `#wakizashi`) and <http://localhost:8765/editor.html> for the profile editor. Opening `index.html` straight from disk will not work, because the page fetches its data files. No install or build step: `dist/` is the site. Three.js r160 is vendored in `dist/vendor/` (MIT, licence included).
+Then open <http://localhost:8766> for the forge study (pick a blueprint at the bottom, or open `#katana` / `#wakizashi`) and <http://localhost:8766/editor.html> for the profile editor. (Port 8765 belongs to `Development/sim/receive.py`, which takes Studio's playtest logs.) Opening `index.html` straight from disk will not work, because the page fetches its data files. No install or build step: `dist/` is the site. Three.js r160 is vendored in `dist/vendor/` (MIT, licence included).
 
 Tests (plain Node, any version from 14):
 
@@ -21,7 +21,7 @@ node Prototypes/tanto-forge/tests/blade-core.test.js
 | Path | Role | Ports to Roblox? |
 |---|---|---|
 | `dist/data/blank.json` | The universal starting blank (shared by every blueprint) | Yes, as data |
-| `dist/data/tanto.json`, `wakizashi.json`, `katana.json` | Stage shapes, 90% edge allowance, 12-strike recipe, tang, catalogue spec | Yes, as data |
+| `dist/data/tanto.json`, `wakizashi.json`, `katana.json` | Stage shapes, 90% edge allowance, 10-strike recipe, tang, catalogue spec | Yes, as data |
 | `dist/data/profiles.json` | Which blueprints the pages and tests load, in order | Yes |
 | `dist/js/blade-core.js` | Shape sampling, strike/grind state, quality, mesh positions, save/load, profile checks, file format | Yes, rewrite in Luau |
 | `dist/js/main.js` | Three.js scene, hammer, input, sparks, sound, HUD | No, exploratory |
@@ -41,6 +41,6 @@ node Prototypes/tanto-forge/tests/blade-core.test.js
 
 ## Not approved (exploratory)
 
-All three blade profiles; 12 strikes and their order/positions/turns/flips; swing, impact and move timings; exact tantō proportions, blank size, tang and heat glow; 7.5% per strike; grinding speed (about four passes).
+All three blade profiles; the strikes' order/positions/turns/flips (the count is 10 since 2026-10-30, Allen: "Yes do 10 hits"; it was 12); swing, impact and move timings; exact tantō proportions, blank size, tang and heat glow; 9% per strike; grinding speed (about four passes).
 
 `.openai/hosting.json` is left from the earlier session's private Site registration and is unused here.

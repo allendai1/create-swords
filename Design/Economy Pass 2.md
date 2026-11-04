@@ -8,7 +8,7 @@ tags: [economy, progression, pricing, upgrades, ore, crew, create-swords]
 
 # Economy Pass 2
 
-Allen, 2026-10-27, after [[Design/Progression and Economy Review — 2026-10-27|the economy review]]: "Keep unlimited free spins. Plan the economy pass around players picking rare ore, plus a scrap bin for leftover ingots." Then: "Also plan the economy based around the upgrades, it should take a meaningful amount of time to get the next sword and to also get an employee." The same day he walked through the plan and answered each part; his answers are in each section and in the [[Design/Decisions Log#Economy pass 2 direction — 2026-10-27|Decisions Log]].
+Allen, 2026-10-27, after [[Archive/Design/Progression and Economy Review — 2026-10-27|the economy review]]: "Keep unlimited free spins. Plan the economy pass around players picking rare ore, plus a scrap bin for leftover ingots." Then: "Also plan the economy based around the upgrades, it should take a meaningful amount of time to get the next sword and to also get an employee." The same day he walked through the plan and answered each part; his answers are in each section and in the [[Design/Decisions Log#Economy pass 2 direction — 2026-10-27|Decisions Log]].
 
 **Built 2026-10-27 in Edit, not played** (Allen: "Build Economy Pass 2 as decided"; [[Sessions/2026-10-27#Economy pass 2 built]], [[Development/Code Map#Economy pass 2 (2026-10-27)]]). Two things differ from the plan below: Anvil 4 comes after Anvil 3, not after Haru (pads can only wait for upgrades, not crew hires), and a save from before keeps its crafters but not where they work (the crew window's Station page puts them back). Every number here comes from `Development/economy_model.py` (`python economy_model.py`): its picking player, `STAGES` and `fit()`. Seconds per sword, per pull and how often a Zanbatō sells are still estimates (§8). Pass 1 was [[Sessions/2026-10-23#Economy pass 1]].
 
@@ -148,6 +148,12 @@ Walk-ins outnumber swords 5–11× all game, so no sword ever waits for a custom
 - **Customers at once:** where swords wait, walk-ins overlap, and a shop capped at two turns some away while you take your time over an offer, so More Clients and the bays start to count too (not in the model).
 - **Events:** a customer event pays only while swords wait (around the crafter, and with three crafters); in between, a heating or forging event is the one that pays.
 
-Related: [[Design/Progression and Economy Review — 2026-10-27]] · [[Design/Tycoon Upgrades]] · [[Design/Workshop Growth]] · [[Design/Core Loop Review]] · [[Development/Roadmap]]
+Related: [[Archive/Design/Progression and Economy Review — 2026-10-27]] · [[Design/Tycoon Upgrades]] · [[Design/Workshop Growth]] · [[Archive/Design/Core Loop Review]] · [[Development/Roadmap]]
 
 **2026-10-28:** Ore Slots 4–6 are no longer stage-gated; each needs only the slot before ([[Design/Decisions Log#Ore Slots: always the next one — 2026-10-28]]).
+
+**2026-10-28:** Wall Racks 3–4 and Display Tables 2–3 are no longer stage-gated (Allen: always something affordable); each needs only the Upgraded Store or the one before ([[Design/Decisions Log#Shop-floor pads out of the stage gates — 2026-10-28]]).
+
+**2026-10-28:** the goal order, stage gates, crew timing and Falchion/Gladius training are superseded by [[Archive/Design/Upgrade Order Review — 2026-10-28]] (decided, not built): the crafter at about 1 h, three crafters by about 6 h, two stages open, a new sword teaches the crew, the first merge about 2 h in ([[Design/Decisions Log#Upgrade order — 2026-10-28]]).
+
+**2026-10-28, later:** the upgrade order is built ([[Archive/Design/Upgrade Order Review — 2026-10-28#Built (2026-10-28, not played)]]); this note's prices and gates are history.

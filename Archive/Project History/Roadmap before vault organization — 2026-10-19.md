@@ -35,7 +35,7 @@ The approved [[Design/Game Design Document|Game Design Document]] v0.3 supersede
 - [ ] In-person and letter commissions; untimed special requests; familiarity and personal chains.
 - [ ] New traditions introduced by visitor commissions, further blueprints bought with coins.
 - [ ] Functional facility bonuses with cosmetic-only decoration; retain cashier and apprentice.
-- [ ] Review proposed onboarding in [[Design/Core Loop Review|Core Loop Review]] before implementing its interaction and pacing recommendations.
+- [ ] Review proposed onboarding in [[Archive/Design/Core Loop Review|Core Loop Review]] before implementing its interaction and pacing recommendations.
 - [ ] Playtest the revised loop, including the fifth sword and optional-grinding economy; implement saving.
 
 ## Historical implementation phases

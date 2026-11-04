@@ -6,8 +6,9 @@
 --                            facing -Z; parts with Wheel = true turn about WheelCentre; attributes Pull (the puller
 --                            stands this far ahead of the axle), Seat (where a rider's seat top is), Step (where a rider
 --                            gets out, on the left).
---   Workspace.Plot.Parking.Bay1..3   TycoonItems of Parking1..3: a slate slab (Slab) on the street in front of the
---                            shop, just past its gutter, its top 0.04 proud, and a post with a 車 sign at the far end.
+--   Workspace.Plot.Parking.Bay1..3   TycoonItems of Parking1..3: a cobblestone slab (Slab) on the street in front of the
+--                            shop, just past its gutter, its top 0.04 proud, a dark stone kerb round it and a wooden
+--                            bollard at each shop-side corner (the 車 sign and post went 2026-11-01).
 --                            (Until 2026-10-24 the middle lots stood 8 back and the bays sat on a paved junction;
 --                            since the lots lined up with the street, the same plot-space spot is on the street.)
 --   Workspace.Plot.Pads.Parking1..3  pad markers on the bays (copies of Pads.Delivery).
@@ -33,6 +34,9 @@ local SPOKE = Color3.fromRGB(196, 156, 98)
 local BRASS = Color3.fromRGB(200, 160, 70)
 local CLOTH = Color3.fromRGB(165, 40, 35)
 local HOOD = Color3.fromRGB(32, 28, 30)
+local PAVING = Color3.fromRGB(150, 142, 130)
+local KERB_STONE = Color3.fromRGB(84, 80, 76)
+local IRON = Color3.fromRGB(50, 50, 55)
 
 local function part(parent: Instance, name: string, size: Vector3, cf: CFrame, color: Color3, material: Enum.Material?, shape: Enum.PartType?): Part
 	local p = Instance.new("Part")
@@ -122,25 +126,22 @@ for i, x in BAYS do
 	bay.Name = `Bay{i}`
 	local centre = pv * CFrame.new(x, 0, BAY_Z)
 	local slabCf = CFrame.new(centre.Position.X, GROUND + 0.04 - SLAB.Y / 2, centre.Position.Z) * centre.Rotation
-	local slab = part(bay, "Slab", SLAB, slabCf, Color3.fromRGB(112, 106, 98), Enum.Material.Slate)
+	local slab = part(bay, "Slab", SLAB, slabCf, PAVING, Enum.Material.Cobblestone)
 	slab.CanQuery = true
-	-- a post at the far (-x) end on the shop side, its sign facing the street
-	local post = part(bay, "Post", Vector3.new(0.3, 2.8, 0.3), slabCf * CFrame.new(-SLAB.X / 2 - 0.4, 1.4 + SLAB.Y / 2, SLAB.Z / 2 - 0.3), DARK_WOOD, Enum.Material.Wood)
-	post.CanCollide = true
-	local sign = part(bay, "Sign", Vector3.new(1.2, 1.2, 0.12), post.CFrame * CFrame.new(0, 0.9, -0.21), Color3.fromRGB(226, 205, 168), Enum.Material.Wood)
-	local gui = Instance.new("SurfaceGui")
-	gui.Face = Enum.NormalId.Front -- toward the street (plot -z)
-	gui.PixelsPerStud = 80
-	gui.LightInfluence = 1
-	local t = Instance.new("TextLabel")
-	t.Size = UDim2.fromScale(1, 1)
-	t.BackgroundTransparency = 1
-	t.Text = "車"
-	t.TextScaled = true
-	t.TextColor3 = Color3.fromRGB(60, 24, 20)
-	t.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold) -- as the shop's kanji signs
-	t.Parent = gui
-	gui.Parent = sign
+	-- a dark stone kerb round the slab (0.08 over its top) and a short wooden bollard with an iron cap at each shop-side
+	-- corner (Allen 2026-11-01: "remove the sign on the rickshaw bays, and improve how they look"); none collide
+	local KERB, KERB_H = 0.35, 0.14
+	local ky = SLAB.Y / 2 + 0.08 - KERB_H / 2
+	for _, sz in { -1, 1 } do
+		part(bay, "Kerb", Vector3.new(SLAB.X + KERB, KERB_H, KERB), slabCf * CFrame.new(0, ky, sz * SLAB.Z / 2), KERB_STONE, Enum.Material.Slate)
+	end
+	for _, sx in { -1, 1 } do
+		part(bay, "Kerb", Vector3.new(KERB, KERB_H, SLAB.Z - KERB), slabCf * CFrame.new(sx * SLAB.X / 2, ky, 0), KERB_STONE, Enum.Material.Slate)
+		local foot = slabCf * CFrame.new(sx * (SLAB.X / 2 + 0.55), SLAB.Y / 2 - 0.04, SLAB.Z / 2 - 0.1)
+		local up = CFrame.Angles(0, 0, math.rad(90)) -- cylinders run along x
+		part(bay, "Bollard", Vector3.new(1.4, 0.5, 0.5), foot * CFrame.new(0, 0.7, 0) * up, DARK_WOOD, Enum.Material.Wood, Enum.PartType.Cylinder)
+		part(bay, "BollardCap", Vector3.new(0.12, 0.58, 0.58), foot * CFrame.new(0, 1.46, 0) * up, IRON, Enum.Material.Metal, Enum.PartType.Cylinder)
+	end
 	bay:SetAttribute("Upgrade", `Parking{i}`)
 	CollectionService:AddTag(bay, "TycoonItem")
 	bay.Parent = folder

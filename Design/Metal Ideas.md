@@ -26,6 +26,7 @@ Cost to add: **tint** = a row in `Shared/Materials`, uses the shared IngotMetal 
 - Sunsteel (Neon, glows) — **built, Legendary**; Voidsteel, Spirit Glass (tint or effect)
 - Sakura Steel: pale pink, petal etch; a festival metal (texture)
 - Kitsune Gold, Orichalcum, Adamantite (texture)
+- Doppler: CS:GO-style red / green / blue candy smoke over dark metal (texture, `metal_textures.py doppler`) — **built 2026-10-29, Legendary**
 - Air: pale blue-white glass, the blade about 45% see-through, a solid ingot (Glass tint with an `alpha`; Allen: "an airsword that is part transparent?") — **built, Epic** (2026-10-24)
 - Rainbow Alloy: soft spectrum bands with paper grain, a katana red at the hilt to violet at the tip (texture, `metal_textures.py` `rainbow`, an original after Allen's watermarked `rainbow.webp`) — **texture built 2026-10-24**, Legendary; sized for the katana, so a tantō shows red to yellow and a longsword runs on into blue
 

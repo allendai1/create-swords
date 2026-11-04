@@ -67,11 +67,11 @@ Lengths are blade only (nagasa), without the tang.
 |---|---|---|
 | **Zanbatō** | A cleaver-like slab as tall as the player, nearly the same width from base to a squared tip. Great late-game showpiece. | Easy |
 | **Sakabatō** | A katana with the edge on the **inside** of the curve. A one-line twist on the katana; fun commission. | Easy (flip the curve) |
-| **Crescent Fang** | The back curves inward like a new moon while the edge bulges out, so the blade is thin at both ends and fat in the middle. | Easy |
-| **Shard Blade** | Faceted crystal look: a straight back, an edge made of three flat runs that meet at corners, and a diagonal chisel tip. | Care (sharp corners) |
+| **Crescent Fang** | The back curves inward like a new moon while the edge bulges out, so the blade is thin at both ends and fat in the middle. | Easy · **built 2026-10-29** |
+| **Shard Blade** | Faceted crystal look: a straight back, an edge made of three flat runs that meet at corners, and a diagonal chisel tip. | Care (sharp corners) · **built 2026-10-29** |
 | **Ember Tongue** | A katana whose edge waves like flames only in its top half, so it flickers on the rack. Pairs with [[Art/Flame Etch|Flame Etch]]. | Care (more stations) |
-| **Serpent** | The whole blade snakes in an S: back and edge wave together, like a stretched kris. | Care |
-| **Leviathan Cleaver** | Very wide falchion with a notch cut out of the back near the tip. | New feature (notch) if it is a hole; Easy if it is a step |
+| **Serpent** | The whole blade snakes in an S: back and edge wave together, like a stretched kris. | Care · **built 2026-10-29** |
+| **Leviathan Cleaver** | Very wide falchion with a notch cut out of the back near the tip. | New feature (notch) if it is a hole; Easy if it is a step · **built 2026-10-29** |
 | **Twin Fang** | A blade that splits into two points at the tip. | New feature (fork) |
 | **Sawtooth** | Long serrated teeth along the back, smooth edge in front. | New feature (serrations) |
 | **Moonhook** | The tip curls back over itself into a hook. | New feature (hook) |
@@ -82,7 +82,7 @@ Allen 2026-10-23: "I feel like more japanese swords is a bit redundant, they loo
 
 1. **Japanese line stops at the katana**, plus at most one showpiece that doesn't look like a katana: **Zanbatō** (a giant squared slab). Tachi, nodachi, ō-kissaki, shōbu, unokubi and Sakabatō all read as "a katana" from a few studs away, so they're dropped as blueprints. They could come back later as cosmetic variants, not as new blueprints.
 2. **Western tradition, each one a different silhouette:**
-   - **Longsword:** the knight's first commission ([[Design/Alignment Review — 2026-10-23|Alignment Review]] question 9). Straight and double-edged.
+   - **Longsword:** the knight's first commission ([[Archive/Design/Alignment Review — 2026-10-23|Alignment Review]] question 9). Straight and double-edged.
    - **Falchion:** a cleaver that gets wider toward the point.
    - **Gladius:** short and broad.
    - **Rapier or Estoc:** a needle.
@@ -98,4 +98,6 @@ The double-edged swords need the Care workaround once; after that, they can all 
 
 **Big swords, 2026-10-23:** Allen proposed a big-sword category (two-handed, one per standing rack, high price) and gave three buster-sword references. The **Zanbatō** is the first: profile `zanbato`, see [[Development/Blade Profile Authoring#Big swords (2026-10-23)]]. The Zweihänder, claymore and flamberge are the other big candidates.
 
-Related: [[Art/Sword Silhouettes|Sword Silhouettes]] · [[Development/Blade Profile Authoring|Blade Profile Authoring]] · [[Design/Game Design Document|Game Design Document]] · [[Design/Alignment Review — 2026-10-23|Alignment Review — 2026-10-23]]
+**Fictional sheet, 2026-10-29:** Allen asked to look at the fictional silhouettes ("Render first, then pick"; ornate custom hilts for the ones built). ![[References/Sword Silhouettes/fictional-silhouettes-v1.png]] The nine above plus three originals drawn from the fantasy swords in References/Swords (not copies): **Seraph** (long needle blade with winged flares above the guard), **Thornspire** (three pairs of backward barbs in the lower third), **Moonbite** (curved cleaver with a round bite out of the edge near the guard). Lengths are Claude's. **Picked (Allen): the seven distinct shapes, Crescent Fang, Shard Blade, Serpent, Leviathan Cleaver, Seraph, Thornspire and Moonbite, "make them look like their references though"**: Seraph after the winged gold sword, Thornspire after the barbed sword with the split tip, Moonbite after the curved cleaver with the round notch, each with an ornate custom hilt from Blender. Seraph and Thornspire copy the two swords in References/Swords/roblox unique swords.png exactly (Allen: "copy the exact designs. they're not from another game"). Moonbite keeps the shape of the curved cleaver with the round notch but not that reference's exact look (the file is named for Demon Slayer and carries its kanji). **Built 2026-10-29 (not played):** all seven, with their own hilts, on a third blueprint pad after the Flamberge; Seraph and Thornspire traced from the reference picture (silhouette IoU 0.94 and 0.93), the Thornspire's open slot painted on as the blade model can't cut a hole. [[Sessions/2026-10-29#Seven fictional swords]]
+
+Related: [[Art/Sword Silhouettes|Sword Silhouettes]] · [[Development/Blade Profile Authoring|Blade Profile Authoring]] · [[Design/Game Design Document|Game Design Document]] · [[Archive/Design/Alignment Review — 2026-10-23|Alignment Review — 2026-10-23]]

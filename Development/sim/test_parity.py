@@ -148,6 +148,7 @@ class Employees(unittest.TestCase):
         for c in G["quality"]:
             self.assertEqual(B.crafter_quality(c["crafter"], c["level"]), c["out"], c)
             self.assertTrue(close(B.level_seconds(c["level"], B.crafters[c["crafter"]]["forge"]), c["seconds"]), c)
+            self.assertTrue(close(B.crafter_walk(c["crafter"], c["level"]), c["walk"]), c)
 
     def test_perk(self):
         for c in G["perk"]:

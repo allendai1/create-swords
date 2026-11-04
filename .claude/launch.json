@@ -4,8 +4,24 @@
     {
       "name": "tanto-forge",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8765", "--directory", "Prototypes/tanto-forge/dist"],
-      "port": 8765
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8766",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "Prototypes/tanto-forge/dist"
+      ],
+      "port": 8766
+    },
+    {
+      "name": "dialogue-editor",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "Development/Dialogue Editor/server.js"
+      ],
+      "port": 8767
     }
   ]
 }

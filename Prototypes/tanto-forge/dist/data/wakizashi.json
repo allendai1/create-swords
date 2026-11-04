@@ -3,7 +3,7 @@
   "name": "Wakizashi",
   "kanji": "脇差",
   "version": 1,
-  "note": "Exploratory draft, not approved. Proportions follow typical real blades from general knowledge (not measured), slightly exaggerated for readability. Units are centimetres. Same 12-strike recipe as the tantō (approved: same hit count initially). Curves are [u, value] points along the blade (0 = base, 1 = point), read with monotone cubic interpolation. spine/edge are offsets from the centreline (spine positive); ridge is the fraction of the way from spine to edge.",
+  "note": "Exploratory draft, not approved. Proportions follow typical real blades from general knowledge (not measured), slightly exaggerated for readability. Units are centimetres. Same 10-strike recipe as the tantō (approved: same hit count initially). Curves are [u, value] points along the blade (0 = base, 1 = point), read with monotone cubic interpolation. spine/edge are offsets from the centreline (spine positive); ridge is the fraction of the way from spine to edge.",
   "stations": 64,
   "tang": { "length": 10, "width": 2 },
   "spec": {
@@ -53,17 +53,15 @@
     "edgeThickness": 0.12
   },
   "recipe": [
-    { "stage": "lengthen", "u": 0.12, "radius": 0.3, "side": "center", "flip": false, "turn": 0 },
-    { "stage": "lengthen", "u": 0.38, "radius": 0.3, "side": "center", "flip": false, "turn": 6 },
-    { "stage": "lengthen", "u": 0.62, "radius": 0.3, "side": "center", "flip": true, "turn": -5 },
-    { "stage": "lengthen", "u": 0.88, "radius": 0.3, "side": "center", "flip": true, "turn": 4 },
-    { "stage": "taper", "u": 0.2, "radius": 0.32, "side": "edge", "flip": false, "turn": 0 },
-    { "stage": "taper", "u": 0.5, "radius": 0.32, "side": "edge", "flip": false, "turn": -6 },
-    { "stage": "taper", "u": 0.78, "radius": 0.3, "side": "spine", "flip": true, "turn": 5 },
-    { "stage": "taper", "u": 0.95, "radius": 0.25, "side": "edge", "flip": true, "turn": -4 },
-    { "stage": "tip", "u": 0.97, "radius": 0.12, "side": "edge", "flip": false, "turn": 8 },
-    { "stage": "tip", "u": 0.85, "radius": 0.16, "side": "edge", "flip": false, "turn": 4 },
-    { "stage": "tip", "u": 0.55, "radius": 0.32, "side": "edge", "flip": true, "turn": -4 },
-    { "stage": "tip", "u": 0.2, "radius": 0.32, "side": "edge", "flip": true, "turn": 0 }
+    { "stage": "lengthen", "u": 0.17, "radius": 0.4, "side": "center", "flip": false, "turn": 0 },
+    { "stage": "lengthen", "u": 0.5, "radius": 0.4, "side": "center", "flip": false, "turn": 6 },
+    { "stage": "lengthen", "u": 0.83, "radius": 0.4, "side": "center", "flip": true, "turn": -5 },
+    { "stage": "taper", "u": 0.2, "radius": 0.38, "side": "edge", "flip": true, "turn": 0 },
+    { "stage": "taper", "u": 0.55, "radius": 0.38, "side": "spine", "flip": false, "turn": -6 },
+    { "stage": "taper", "u": 0.88, "radius": 0.32, "side": "edge", "flip": false, "turn": 5 },
+    { "stage": "tip", "u": 0.97, "radius": 0.12, "side": "edge", "flip": true, "turn": 8 },
+    { "stage": "tip", "u": 0.85, "radius": 0.16, "side": "edge", "flip": true, "turn": 4 },
+    { "stage": "tip", "u": 0.55, "radius": 0.32, "side": "edge", "flip": false, "turn": -4 },
+    { "stage": "tip", "u": 0.2, "radius": 0.32, "side": "edge", "flip": false, "turn": 0 }
   ]
 }

@@ -2,7 +2,7 @@
   "id": "longsword",
   "name": "Longsword",
   "version": 1,
-  "note": "Exploratory draft (2026-10-23), not approved. Western blade: proportions from general knowledge, not measured, slightly exaggerated for readability. Same 12-strike recipe as the Japanese blades. Units are centimetres. Double-edged: ridge at the middle and a thin back (spineThickness), so the back is a second edge; grinding still works on the whole bevel (BladeView `doubleEdged`).",
+  "note": "Exploratory draft (2026-10-23), not approved. Western blade: proportions from general knowledge, not measured, slightly exaggerated for readability. Same 10-strike recipe as the Japanese blades. Units are centimetres. Double-edged: ridge at the middle and a thin back (spineThickness), so the back is a second edge; grinding still works on the whole bevel (BladeView `doubleEdged`).",
   "stations": 64,
   "tang": { "length": 18, "width": 1.6 },
   "doubleEdged": true,
@@ -50,17 +50,15 @@
     "edgeThickness": 0.12
   },
   "recipe": [
-    { "stage": "lengthen", "u": 0.12, "radius": 0.3, "side": "center", "flip": false, "turn": 0 },
-    { "stage": "lengthen", "u": 0.38, "radius": 0.3, "side": "center", "flip": false, "turn": 6 },
-    { "stage": "lengthen", "u": 0.62, "radius": 0.3, "side": "center", "flip": true, "turn": -5 },
-    { "stage": "lengthen", "u": 0.88, "radius": 0.3, "side": "center", "flip": true, "turn": 4 },
-    { "stage": "taper", "u": 0.2, "radius": 0.32, "side": "edge", "flip": false, "turn": 0 },
-    { "stage": "taper", "u": 0.5, "radius": 0.32, "side": "edge", "flip": false, "turn": -6 },
-    { "stage": "taper", "u": 0.78, "radius": 0.3, "side": "spine", "flip": true, "turn": 5 },
-    { "stage": "taper", "u": 0.95, "radius": 0.25, "side": "edge", "flip": true, "turn": -4 },
-    { "stage": "tip", "u": 0.97, "radius": 0.12, "side": "edge", "flip": false, "turn": 8 },
-    { "stage": "tip", "u": 0.85, "radius": 0.16, "side": "edge", "flip": false, "turn": 4 },
-    { "stage": "tip", "u": 0.55, "radius": 0.32, "side": "edge", "flip": true, "turn": -4 },
-    { "stage": "tip", "u": 0.2, "radius": 0.32, "side": "edge", "flip": true, "turn": 0 }
+    { "stage": "lengthen", "u": 0.17, "radius": 0.4, "side": "center", "flip": false, "turn": 0 },
+    { "stage": "lengthen", "u": 0.5, "radius": 0.4, "side": "center", "flip": false, "turn": 6 },
+    { "stage": "lengthen", "u": 0.83, "radius": 0.4, "side": "center", "flip": true, "turn": -5 },
+    { "stage": "taper", "u": 0.2, "radius": 0.38, "side": "edge", "flip": true, "turn": 0 },
+    { "stage": "taper", "u": 0.55, "radius": 0.38, "side": "spine", "flip": false, "turn": -6 },
+    { "stage": "taper", "u": 0.88, "radius": 0.32, "side": "edge", "flip": false, "turn": 5 },
+    { "stage": "tip", "u": 0.97, "radius": 0.12, "side": "edge", "flip": true, "turn": 8 },
+    { "stage": "tip", "u": 0.85, "radius": 0.16, "side": "edge", "flip": true, "turn": 4 },
+    { "stage": "tip", "u": 0.55, "radius": 0.32, "side": "edge", "flip": false, "turn": -4 },
+    { "stage": "tip", "u": 0.2, "radius": 0.32, "side": "edge", "flip": false, "turn": 0 }
   ]
 }

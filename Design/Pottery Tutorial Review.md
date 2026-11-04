@@ -8,7 +8,7 @@ tags: [design, onboarding, retention, reference]
 
 # Pottery Tutorial Review
 
-Source: [[References/Create Pottery! game image reference/first 3 minutes of the game.mp4]]. Related: [[Design/Core Loop Review]].
+Source: [[References/Create Pottery! game image reference/first 3 minutes of the game.mp4]]. Related: [[Archive/Design/Core Loop Review]].
 
 Reviewed the recording visually through sampled frames and closer inspection of tutorial transitions. Duration is **3:44.7**, with timestamps below measured from the recording start. The clip starts with the avatar already beside the clay roller; loading, actual spawn and anything before recording are not shown. Audio was not assessed. This is one recorded session, not evidence of typical new-player speed or measured retention. Desktop notifications in the capture are not game UI.
 

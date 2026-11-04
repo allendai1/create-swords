@@ -8,7 +8,7 @@ tags: [design, onboarding, economy, pacing, reference]
 
 # Pottery Playthrough 2026-10-27
 
-Source: Allen's 8:12 recording of Create Pottery from a fresh start (`Downloads/Recording 2026-10-27 203704.mp4`, not copied into the vault). Read as frames every 2 s, with full-res frames for prices and timers. Related: [[Design/Pottery Tutorial Review]] (an older 3:44 run of an earlier version), [[Design/Progression and Economy Review — 2026-10-27]].
+Source: Allen's 8:12 recording of Create Pottery from a fresh start (`Downloads/Recording 2026-10-27 203704.mp4`, not copied into the vault). Read as frames every 2 s, with full-res frames for prices and timers. Related: [[Design/Pottery Tutorial Review]] (an older 3:44 run of an earlier version), [[Archive/Design/Progression and Economy Review — 2026-10-27]].
 
 The game has been rebalanced since the older run:
 - The first offer is $64, not $105.
@@ -115,6 +115,6 @@ What it says:
 1. **First sale and second-sale gap: ours is already ahead.** Same first sale (about 64, about 1:30), and our second comes about 2 minutes sooner. The 12–22 s tutorial walk-ins and offer-every-time customers prevent the slump Allen felt. Keep both until Ore Slot 2.
 2. **Our early buys are cheaper and more frequent.** Pottery makes every buy cost 1.5–2 sales and empty the wallet, then shows a price about 3× higher. Ours are pocket change until the Polishing Station. That suits a guided tutorial; after "Workshop open!" the 210–520 pads still cost only 1–3 sales each.
 3. **Our felt jump comes late.** Pottery's ×3 hits at the second level of every item (minute 6–8). Ours is one cliff at the Katana (2000). Pottery's pattern would mean repricing pads in pairs (level 1 cheap, level 2 ×3). That is not needed while the 20-minute Katana is the goal.
-4. **Our offers are shorter and safer.** 45 s against 60, and no gamble in the amount. Pottery's +10%–139% spread and customers who don't offer make each walk to the shop a bet. This is the "VIP buyers with tastes" idea already in [[Design/Progression and Economy Review — 2026-10-27]] §5.
+4. **Our offers are shorter and safer.** 45 s against 60, and no gamble in the amount. Pottery's +10%–139% spread and customers who don't offer make each walk to the shop a bet. This is the "VIP buyers with tastes" idea already in [[Archive/Design/Progression and Economy Review — 2026-10-27]] §5.
 5. **Not measured:** none of our numbers are timed in play. Time the first two sales and the first five buys in the next fresh-start playtest, then put the real times in this table.
 

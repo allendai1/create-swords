@@ -15,7 +15,7 @@ Allen requested organizing the vault, deleting old files and updating roadmaps f
 - [[Home]] is the entry point; [[Current Status]] summarizes recorded implementation and verification limits.
 - [[Development/Roadmap]] now contains remaining implementation and validation work, without completed implementation checkboxes or superseded layout/import tasks.
 - [[Development/Code Map]] describes current recorded ownership, services, controllers, builders and tests instead of mixing the current architecture with a long append-only timeline.
-- [[Design/Core Loop Review]] and [[Design/Tycoon Upgrades]] consolidate the current opening, optional finishing and purchase chains.
+- [[Archive/Design/Core Loop Review]] and [[Design/Tycoon Upgrades]] consolidate the current opening, optional finishing and purchase chains.
 - [[Design/Game Design Document]] and [[Design/Workshop Growth]] now reflect 100% player forging, separate polish value, collect-before-reroll, bought ore slots, six owned plots, implemented purchases, roof fading and baked finished meshes. Older employee quality/recovery targets are explicitly unresolved against the newer manual-crafting rule; no new employee balance was chosen.
 - [[Random thoughts]] is the single active idea inbox. [[Archive/Design/Completed quick thoughts — 2026-10-22]] retains the completed batch's original wording.
 - [[Art/UI Design]] distinguishes the implemented backpack/chosen hotbar from its earlier iterations. [[Design/Decisions Log]] keeps dated decisions separate from current open questions.

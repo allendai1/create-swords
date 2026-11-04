@@ -3,7 +3,7 @@
   "name": "Zanbatō",
   "version": 1,
   "doubleEdged": false,
-  "note": "Exploratory draft (2026-10-23), not approved. First big sword: a two-handed slab as tall as the player, straight single edge, chisel point: the back runs straight to the point and the cut slopes from it down to the edge. Silhouette inspired by Allen's buster-sword references (References/buster sword*), without their two holes or bolted collar. Same 12-strike recipe as the other blades. Units are centimetres.",
+  "note": "Exploratory draft (2026-10-23), not approved. First big sword: a two-handed slab as tall as the player, straight single edge, chisel point: the back runs straight to the point and the cut slopes from it down to the edge. Silhouette inspired by Allen's buster-sword references (References/buster sword*), without their two holes or bolted collar. Same 10-strike recipe as the other blades. Units are centimetres.",
   "stations": 64,
   "tang": { "length": 26, "width": 3 },
   "spec": {
@@ -50,17 +50,15 @@
     "edgeThickness": 0.12
   },
   "recipe": [
-    { "stage": "lengthen", "u": 0.12, "radius": 0.3, "side": "center", "flip": false, "turn": 0 },
-    { "stage": "lengthen", "u": 0.38, "radius": 0.3, "side": "center", "flip": false, "turn": 6 },
-    { "stage": "lengthen", "u": 0.62, "radius": 0.3, "side": "center", "flip": true, "turn": -5 },
-    { "stage": "lengthen", "u": 0.88, "radius": 0.3, "side": "center", "flip": true, "turn": 4 },
-    { "stage": "taper", "u": 0.2, "radius": 0.32, "side": "edge", "flip": false, "turn": 0 },
-    { "stage": "taper", "u": 0.5, "radius": 0.32, "side": "edge", "flip": false, "turn": -6 },
-    { "stage": "taper", "u": 0.78, "radius": 0.3, "side": "spine", "flip": true, "turn": 5 },
-    { "stage": "taper", "u": 0.95, "radius": 0.25, "side": "edge", "flip": true, "turn": -4 },
-    { "stage": "tip", "u": 0.97, "radius": 0.12, "side": "edge", "flip": false, "turn": 8 },
-    { "stage": "tip", "u": 0.85, "radius": 0.16, "side": "edge", "flip": false, "turn": 4 },
-    { "stage": "tip", "u": 0.55, "radius": 0.32, "side": "edge", "flip": true, "turn": -4 },
-    { "stage": "tip", "u": 0.2, "radius": 0.32, "side": "edge", "flip": true, "turn": 0 }
+    { "stage": "lengthen", "u": 0.17, "radius": 0.4, "side": "center", "flip": false, "turn": 0 },
+    { "stage": "lengthen", "u": 0.5, "radius": 0.4, "side": "center", "flip": false, "turn": 6 },
+    { "stage": "lengthen", "u": 0.83, "radius": 0.4, "side": "center", "flip": true, "turn": -5 },
+    { "stage": "taper", "u": 0.2, "radius": 0.38, "side": "edge", "flip": true, "turn": 0 },
+    { "stage": "taper", "u": 0.55, "radius": 0.38, "side": "spine", "flip": false, "turn": -6 },
+    { "stage": "taper", "u": 0.88, "radius": 0.32, "side": "edge", "flip": false, "turn": 5 },
+    { "stage": "tip", "u": 0.97, "radius": 0.12, "side": "edge", "flip": true, "turn": 8 },
+    { "stage": "tip", "u": 0.85, "radius": 0.16, "side": "edge", "flip": true, "turn": 4 },
+    { "stage": "tip", "u": 0.55, "radius": 0.32, "side": "edge", "flip": false, "turn": -4 },
+    { "stage": "tip", "u": 0.2, "radius": 0.32, "side": "edge", "flip": false, "turn": 0 }
   ]
 }
