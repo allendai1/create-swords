@@ -16,6 +16,8 @@ import subprocess
 import sys
 from collections import defaultdict
 
+import report
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "time_prices.json")
 REF = "efficient,manager,grinder"  # engaged players set the prices; casual players take longer on the same prices
@@ -34,7 +36,7 @@ MILESTONE = {"Crafter", "UpgradedStore", "ZanbatoBlueprint", "ClaymoreBlueprint"
 # The Sword Crafter left the anchors 2026-11-02: his target is ~15 min (beside the Katana's) and his price is pinned below.
 ANCHORS = {"KatanaBlueprint": 15, "LongswordBlueprint": 40, "ZanbatoBlueprint": 240, "SeraphBlueprint": 1200}
 FIXED = {"WakizashiBlueprint": 60, "OreStand2": 75, "PolishStation": 30,  # the tutorial's buys keep their prices
-         "Crafter": 2000, "Stocker": 12000}  # Allen 2026-11-02: the first hire at ~15 min ("Yes, build it"); "Yes, both" (the Stocker)
+         "Crafter": 1400, "Stocker": 12000}  # Allen 2026-11-10: Katana and Crafter inside two sessions (was 2,000, 2026-11-02 "Yes, build it"); "Yes, both" (the Stocker)
 
 
 def sig2(x):
@@ -54,7 +56,7 @@ def income(rows):
     curves = []
     for r in rows:
         e = r["earned"]
-        mins = [k if k <= 60 else 60 + 5 * (k - 60) for k in range(len(e))]
+        mins = [report.series_minute(k) for k in range(len(e))]
         curves.append((mins, e))
     def at(t):
         vals = []

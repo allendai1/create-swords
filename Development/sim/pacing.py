@@ -32,7 +32,7 @@ def main(run, scens=None, types=None):
         p = json.loads(line)
         if (not scens or p["scenario"] in scens) and (not types or p["archetype"] in types):
             G[(p["scenario"], p["archetype"])].append(player(p))
-    print("| scenario | type | Sword Crafter | Seraph | last pad | fewest buys in an hour | waits over 15 min | longest wait |")
+    print("| scenario | type | Swordsmith | Seraph | last pad | fewest buys in an hour | waits over 15 min | longest wait |")
     print("|---|---|---|---|---|---|---|---|")
     for (s, a), g in G.items():
         med = lambda k: st.median(x[k] for x in g)

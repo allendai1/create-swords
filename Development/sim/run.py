@@ -41,11 +41,11 @@ def summarize(r, extra):
         return (at(b) - at(a)) / max(1, b - a)
 
     buys = []
-    for minute, uid, price, _ in r["purchases"]:
+    for minute, uid, price in r["purchases"]:
         k = int(minute)
         buys.append((round(minute, 2), uid, price, round(rate(k - 15, k), 1), round(rate(k, k + 15), 1)))
     progress = [0.0] + [t / 60 for t in sorted(r["progress"])] + [r["horizon_min"]]
-    gaps = [(round(a, 1), round(b - a, 1)) for a, b in zip(progress, progress[1:]) if b - a >= 10]
+    gaps = [(round(a, 1), round(b - a, 1)) for a, b in zip(progress, progress[1:]) if b - a >= report.STUCK]
     made = {str(k): [mins[min(k, len(mins) - 1)][3], mins[min(k, len(mins) - 1)][4]] for k in (5, 10, 15, 30, 60)}
 
     def loop(L):  # the player's median loop and its parts, seconds: [total, making, getting out, selling, swords]
@@ -62,8 +62,8 @@ def summarize(r, extra):
                 merges=r["merges"], buys=buys, stuck=gaps, horizon=r["horizon_min"], loop_own=loop(r["loops_own"]),
                 loop_crew=loop(r["loops_crew"]), first_loop=first_loop, gems_in=r["gems_in"], gems_out=r["gems_out"],
                 gem_levels=r["gem_levels"], gems_left=r["gems_left"], mail_done=r["mail_done"], mail_coins=round(r["mail_coins"]),
-                earned_total=round(r["earned"]), cart_bulk=r["cart_bulk"], cart_special=r["cart_special"],
-                cart_skips=r["cart_skips"], reputation=r["reputation"], orders_open=r["orders_open"])
+                earned_total=round(r["earned"]), away_coins=round(r.get("away_coins", 0)), cart_bulk=r["cart_bulk"], cart_special=r["cart_special"],
+                cart_skips=r["cart_skips"], reputation=r["reputation"], orders_open=r["orders_open"], musashi=r["musashi"])
 
 
 def work(job):
@@ -83,14 +83,19 @@ def main():
     ap.add_argument("--name", required=True)
     ap.add_argument("--players", type=int, default=200)
     ap.add_argument("--hours", type=float, default=24)
-    ap.add_argument("--archetypes", default=",".join(behavior.ARCHETYPES))
+    # Allen's profiles once allen.json is fitted (allen.py), else every type; --archetypes names any of them
+    default = "allen,newplayer" if "allen" in behavior.ARCHETYPES else ",".join(behavior.ARCHETYPES)
+    ap.add_argument("--archetypes", default=default)
     ap.add_argument("--payers", default="free")
     ap.add_argument("--scenarios", default="baseline")
     ap.add_argument("--seed", default="1")
     ap.add_argument("--procs", type=int, default=max(1, (os.cpu_count() or 2) - 1))
     ap.add_argument("--until-done", action="store_true", help="stop each player once every pad is bought (--hours caps it)")
     ap.add_argument("--player-limit", type=float, default=PLAYER_LIMIT, help="seconds of computer time per player")
+    ap.add_argument("--play-day", type=float, default=behavior.PLAY_DAY / 60, help="minutes played a day (default 60)")
     a = ap.parse_args()
+    behavior.PLAY_DAY = int(a.play_day * 60)
+    os.environ["SIM_PLAY_DAY"] = str(behavior.PLAY_DAY)  # the pool's workers import behavior afresh and read it
     seeds = [f"{a.seed}:{i}" for i in range(a.players)]  # the same players in every scenario, archetype and payer
     jobs = [(s, ar, p, seed, a.hours, a.until_done, a.player_limit) for s in a.scenarios.split(",") for ar in a.archetypes.split(",")
             for p in a.payers.split(",") for seed in seeds]
@@ -108,7 +113,7 @@ def main():
             if (i + 1) % 500 == 0:
                 print(f"{i + 1}/{len(jobs)} players, {time.time() - t0:.0f} s", flush=True)
     meta = {"name": a.name, "players": a.players, "hours": a.hours, "seed": a.seed, "scenarios": a.scenarios.split(","),
-            "archetypes": a.archetypes.split(","), "payers": a.payers.split(","), "seconds": round(time.time() - t0),
+            "archetypes": a.archetypes.split(","), "payers": a.payers.split(","), "play_day_min": a.play_day, "seconds": round(time.time() - t0),
             "exported": rules.load().raw["exportedAt"]}
     with open(os.path.join(out_dir, "meta.json"), "w", encoding="utf-8") as f:
         json.dump(meta, f)

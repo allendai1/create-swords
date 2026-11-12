@@ -1,0 +1,14 @@
+Tool: built-in image_gen editing Mystery Ingot - E Roll.png to show ruby, gold and sapphire katana alternatives.
+Final export: Mystery Ingot - Multiple Metals.png (1920 x 1080).
+
+Use case: precise-object-edit.
+Edit this Roblox mystery-ingot roll comparison thumbnail. The right side should show that a roll can yield DIFFERENT MATERIALS for the same katana, rather than only gold.
+Replace the SINGLE gold katana on the RIGHT with exactly THREE clearly separated possible-outcome katana renders grouped in a graceful compact fan:
+- LEFT sword in group: vivid RUBY RED blade, glossy red metal / gem-like facets.
+- CENTER sword in group: rich GOLD blade, bright warm metallic reflections.
+- RIGHT sword in group: vivid SAPPHIRE BLUE blade, glossy blue metal / gem-like facets.
+All three swords have EXACTLY THE SAME katana design and proportions as original: long slender gently curved blade, same small gold guard, same dark purple hilt wrap with cream diamond openings, same small gold grip ornaments and blue pommel. Only the BLADE MATERIAL changes. No different sword types, no mixed-color single blade.
+Arrange three entire swords within RIGHT panel, near-vertical with tips up: red tilted slightly left, gold upright in center, blue tilted slightly right. Keep blades, guards and handles all recognizable, not fused or crossing so much they become confusing. Use most of the right panel's height with comfortable margins. Each sword has a small restrained material-colored glow and one clean edge glint. Keep contrast and silhouettes strong at small thumbnail size. This group reads as a set of alternate roll outcomes. No extra panels, labels or numbers.
+Preserve entire LEFT panel unchanged: dark rounded 'E Roll' interaction prompt above the pure BLACK silhouette ingot, smaller glossy RED question mark centered with broad black margins, exactly one tan tabletop stand with brown post and dark foot. Preserve the slanted WHITE center divider and bright green studded baseplate / cyan sky.
+Keep the same glossy RED curved arrow with bold BLACK outline across the center pointing right toward the GROUP of three possible material swords. May shorten the arrow slightly if needed so no blade is obscured, but retain strong left-to-right flow.
+No other wording, no odds or prices, no avatars, no hands, no UI besides E Roll. Clean saturated stylized 3D Roblox game presentation, no combat. Wide 16:9 landscape target 1920x1080.

@@ -25,7 +25,7 @@
 					"Tch. Waste of time."
 				]
 			},
-			"name": "Zoro",
+			"name": "Zaro",
 			"id": "Zoro",
 			"likesBlueprint": "katana",
 			"vip": false
@@ -55,7 +55,7 @@
 					"I understand. Thank you anyway!"
 				]
 			},
-			"name": "Tanjiro",
+			"name": "Tenjiro",
 			"id": "Tanjiro",
 			"likesBlueprint": "katana",
 			"vip": false
@@ -83,7 +83,7 @@
 					"I see."
 				]
 			},
-			"name": "Giyu",
+			"name": "Giyo",
 			"id": "Giyu",
 			"likesBlueprint": "katana",
 			"vip": false
@@ -111,7 +111,7 @@
 					"Pathetic."
 				]
 			},
-			"name": "Sasuke",
+			"name": "Sasuki",
 			"id": "Sasuke",
 			"likesBlueprint": "wakizashi",
 			"vip": false
@@ -144,7 +144,7 @@
 					""
 				]
 			},
-			"name": "Trunks",
+			"name": "Tronks",
 			"id": "Trunks",
 			"likesBlueprint": "longsword",
 			"vip": false
@@ -172,7 +172,7 @@
 					"Whatever, I'm out."
 				]
 			},
-			"name": "Ichigo",
+			"name": "Ichiro",
 			"id": "Ichigo",
 			"likesBlueprint": "zanbato",
 			"vip": false
@@ -200,7 +200,7 @@
 					"Tch. Filthy prices."
 				]
 			},
-			"name": "Levi",
+			"name": "Levy",
 			"id": "Levi",
 			"likesBlueprint": "tanto",
 			"vip": false
@@ -285,7 +285,7 @@
 					"Disappointing."
 				]
 			},
-			"name": "Mihawk",
+			"name": "Myhawk",
 			"id": "Mihawk",
 			"vip": true
 		},
@@ -311,7 +311,7 @@
 					"Ha! Another time, then!"
 				]
 			},
-			"name": "Rengoku",
+			"name": "Renguko",
 			"id": "Rengoku",
 			"vip": true
 		},
@@ -337,7 +337,7 @@
 					"Waaah! Fine, I'm leaving!"
 				]
 			},
-			"name": "Zenitsu",
+			"name": "Zenetsu",
 			"id": "Zenitsu",
 			"vip": true
 		}

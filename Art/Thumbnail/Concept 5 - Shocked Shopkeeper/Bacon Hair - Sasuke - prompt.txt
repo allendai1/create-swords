@@ -1,0 +1,16 @@
+Tool: built-in image_gen with the existing shop thumbnails and Art/VIP NPCs/Sasuke (Sasuki).png.
+Final export: Bacon Hair - Sasuke.png (1920 x 1080).
+
+Use case: identity-preserve.
+Create a similar variant of image 1, the latest admiring swordcrafter shop thumbnail. Wide 16:9 landscape, target 1920x1080.
+References:
+IMAGE 1 is the base scene, composition, admiring body pose and three RED wedge-shaped comic emphasis rays.
+IMAGE 2 is the exact BACON-HAIRED shopkeeper identity to use in the left foreground, replacing the masked swordcrafter.
+IMAGE 3 is the user's actual in-game SASUKE model portrait; use that exact model as the visitor, replacing the flame-haired visitor completely.
+
+LEFT FOREGROUND: the classic Roblox bacon-haired shopkeeper from image 2, with thick chunky separated reddish-brown and gold-brown locks, white block/cylinder head, black jacket and bright blue graphic T-shirt, pale white block hands. Give him the same admiring fan pose as image 1: both chunky hands together just under his chin at upper chest, elbows tucked inward, shoulders raised and leaning forward a little eagerly toward visitor. Head in three-quarter view, most face visible to camera. Excited astonishment and admiration through huge wide eyes with pupils looking right toward Sasuke, high raised eyebrows and a delighted small open mouth. Clearly recognizable classic bacon-hair avatar, not a humanized cartoon. No hyottoko mask, no headscarf, no star kimono.
+Beside his head keep exactly THREE RED wedge-shaped tapered comic rays with thin black outlines fanning outward, matching image 1. NO exclamation marks and NO round dots.
+
+VISITOR IN RIGHT DOORWAY: use the actual Sasuke Roblox model in image 3 faithfully. Black sharp spiky hair with long black bangs, pale face, serious calm expression, one red patterned eye on viewer LEFT and one pale purple concentric patterned eye on viewer RIGHT. Same light blue-grey short-sleeved open V-neck zipper shirt, dark navy forearm guards, huge thick PURPLE ROPE BELT tied with large knot and hanging loops, deep purple/blue waist wrap, dark navy trousers and black footwear. Preserve exact colors, printed costume details and chunky rectangular Roblox geometry. He walks into the doorway, one foot slightly forward and arms naturally by his sides, complete head and body visible above/behind counter, same scale and position as visitor in image 1. Match portrait identity rather than invent a new costume. No flame hair, flame cape, burgundy uniform, headband, armor, magic or lightning. No newly invented weapons.
+
+Keep the same Japanese sword store and camera as image 1: large foreground reaction figure left, visitor right, warm wooden counter across lower middle, small red rectangular item on tan counter top, dark timber and white plaster walls, wood slat ceiling, sunlit green trees and lantern posts through doorway. Rich warm glossy stylized Roblox game render, vibrant blue-green outdoors, strong soft golden edge lighting, sharp clean two-character focus and simple molded block shapes. No text, title, logo, watermark, extra characters or split panels.

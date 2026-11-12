@@ -327,6 +327,13 @@ After a critique of the pattern pack: motifs sized from the width capped at 7 cm
 
 ![[References/Etching Table/critique-pack-2026-10-25/by-blade-katana.png]]
 
+## Lightning (2026-11-10)
+
+Stormroot is on offer again as **Lightning**, in Fracture's place (Allen: "call it Lightning"). Bolder: the trunk about twice as thick toward the tip, uneven turns, and forks about a blade width long from the turns only. Numbers and checks: [[Sessions/2026-11-10#Lightning etch replaces Fracture]].
+
+![[Prototypes/etch/lightning_preview.png]]
+*Lightning flat on the tantō, katana, longsword and zanbatō, from the canvas's own coverage (one colour, no ink or glow).*
+
 ## API references
 
 Verify current signatures and runtime constraints before implementation:

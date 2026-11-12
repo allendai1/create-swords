@@ -9,6 +9,8 @@ tags: [art, etching, blade, hilt, prototype, create-swords]
 
 # Flame Etch
 
+**Replaced 2026-11-10:** the blade's Flame is now the curled flame traced from Allen's reference, not the v4 wave below. See [[Art/Curled Flame Etch - Claude Handoff]] and [[Sessions/2026-11-10#Curled Flame etch (traced from the reference)]]. The flame guard is unchanged.
+
 **New direction, 2026-10-21:** [[Art/Animated Blade Etching]] records Allen's request to watch patterns being etched onto procedural blades, with a technical handoff and candidate pattern sheet. The animation and new patterns are not recorded as built. Keep this note's existing Flame appearance as the compatibility reference. **Built 2026-10-21:** Flame is unchanged on swords; at the Etching Table it now wipes in along the blade behind a stylus (a private copy of this same skin, band hidden then revealed; checked equal to the normal skin face by face).
 
 First etching pattern for the Etching Table idea ([[Design/Game Design Document]] §6 finishes: "Etching / Rune — trace a pattern"). An **original** flame motif — not a copy of the Demon Slayer "Rengoku" sword Allen pasted as a reference — on our procedural blades, plus a matching flame tsuba. Prototype only: a sword gets it when its record has an `etch` field; nothing in the game hands one out yet.

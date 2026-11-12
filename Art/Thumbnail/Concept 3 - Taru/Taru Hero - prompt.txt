@@ -1,0 +1,13 @@
+Tool: built-in image_gen with Studio ref 3a - Taru hero.png.
+Final export: Taru Hero.png (1920 x 1080).
+
+Use case: identity-preserve.
+Asset type: Roblox game thumbnail, wide 16:9 landscape, target 1920x1080.
+Use the supplied Studio screenshot as the exact reference for the character identity, sword design, pose and layout. This is Taru, an original Roblox swordsmith.
+Keep the character exactly recognizable: blocky Roblox swordsmith wearing the screenshot's pink-faced hyottoko mask with round blue eyes, arched black eyebrows, puffy pink cheeks and puckered asymmetrical lips, with a white headscarf tied around the head. The mask is a physical mask, not a living face. Bare pale muscular chest, black wide hakama trousers with a broad white waist tie and hanging knot tails, barefoot. Preserve these specific costume details. Do not replace the head with a different face or mask.
+Make his muscles huge and cartoon-exaggerated: enormous biceps, thick forearms, broad chest puffed out, sculpted simple abdominal blocks. Both arms raised in the SAME double-biceps flex as the reference. Maintain Roblox block geometry, chunky squared limbs and hands, simple stylized shapes rather than realistic human anatomy.
+Keep the giant black broad straight greatsword with orange glowing lava cracks planted tip-down in the ground on the character's RIGHT side as viewed by the camera, matching the screenshot: long broad nearly rectangular dark blade with an angled point, small gold guard, black wrapped hilt. Keep the whole sword readable and separate from his body. Small bright sparkles along its edge, lava cracks are bright orange against black.
+Camera very low looking upward so he towers above the viewer, same dramatic low angle as screenshot. Character dominates center-left and sword occupies right third, frame the raised fists and the bare feet with a small breathing margin, keep full headscarf in frame.
+Background: bright saturated blue sky with large soft white clouds, white plaster Japanese building with dark timber framing and terracotta roof behind the left side, pink cherry blossom trees and green trees, light gravel smithy yard. Background gently blurred to emphasize Taru and the sword. Remove readable station signage.
+Warm sunlight, golden rim light on his huge shoulders and arms, glossy stylized game materials, saturated colors, sharp clean subject edges. Premium Roblox game thumbnail.
+No text, letters, logos, watermarks, borders, extra characters or extra swords. No anime face, no photorealism, no Pixar-style rounded human character. Preserve the reference's game character and composition while polishing lighting and exaggerating muscle scale.

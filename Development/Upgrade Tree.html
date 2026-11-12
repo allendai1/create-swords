@@ -72,6 +72,25 @@ svg { display: block; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font: 500 13px var(--body); border: 1px solid var(--line); background: var(--bg); color: var(--fg); padding: 2px 10px; border-radius: 999px; cursor: pointer; }
 .note { font-size: 13px; color: var(--muted); margin: 0; max-width: 75ch; }
+/* rewire */
+.hint { font-size: 14px; color: var(--muted); }
+.rewire #tree { touch-action: none; }
+.rewire .node { cursor: grab; }
+.node.moved rect.card { stroke: var(--accent); stroke-dasharray: 5 3; stroke-width: 1.6; }
+.node.dragging { pointer-events: none; opacity: .85; }
+.node.dragging rect.card { stroke: var(--fg); stroke-width: 2; }
+.node.drop-ok rect.card { stroke: var(--c-stations); stroke-width: 3; fill: var(--bg); }
+.node.drop-bad rect.card { stroke: var(--c-heat); stroke-width: 3; }
+.need { display: inline-flex; align-items: center; border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 0 4px 0 0; }
+.need .chip { border: 0; background: none; }
+.need .del { font: 700 15px var(--body); color: var(--c-heat); background: none; border: 0; padding: 0 6px; cursor: pointer; line-height: 1; }
+.changes { background: var(--panel); border: 1px solid var(--accent); border-radius: 12px; padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
+.changes h2 { margin: 0; font-size: 16px; }
+.changes ol { margin: 0; padding-left: 22px; display: grid; gap: 6px; font-size: 14px; }
+.changes .was { color: var(--muted); }
+.changes .now { color: var(--fg); font-weight: 700; }
+.changes .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.changes textarea { width: 100%; box-sizing: border-box; min-height: 90px; font: 12px var(--mono); background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
 </style>
 
 <div class="wrap" id="app">
@@ -83,29 +102,71 @@ svg { display: block; }
     <div class="seg" role="group" aria-label="Mode">
       <button id="m-explore" aria-pressed="true">Explore</button>
       <button id="m-walk" aria-pressed="false">Walk through</button>
+      <button id="m-rewire" aria-pressed="false">Rewire</button>
+    </div>
+    <div class="seg" role="group" aria-label="Dropping a pad" id="dropmode" hidden>
+      <button id="d-replace" aria-pressed="true">Drop replaces needs</button>
+      <button id="d-add" aria-pressed="false">Drop adds a need</button>
     </div>
     <button class="btn" id="reset" hidden>Start over</button>
     <div class="stats" id="stats" hidden></div>
   </div>
+  <div class="hint" id="hint" hidden>Drag a pad onto the pad it should wait for. Drag empty space to move around.</div>
   <div class="legend" id="legend"></div>
   <div class="box" id="box"><svg id="tree" role="img" aria-label="Upgrade tree"></svg></div>
   <section class="card-info" id="info" aria-live="polite"></section>
-  <p class="note">Columns count the buys a pad waits behind: <b>Start</b> is open on a new plot, <b>+1</b> needs one pad bought first, and so on. A pad with two lines in waits for both. Crew hires cost gems as well as coins. Cart Capacity and Speed levels, gem upgrades and decorations are bought in their windows and are not shown. Times are the median of 150 simulated free players from run idle-furnace-2026-11-02.</p>
+  <section class="changes" id="changes" hidden></section>
+  <p class="note">Columns count the buys a pad waits behind: <b>Start</b> is open on a new plot, <b>+1</b> needs one pad bought first, and so on. A pad with two lines in waits for both. Crew hires cost gems as well as coins. Cart Capacity and Speed levels, gem upgrades and decorations are bought in their windows and are not shown. Times are the median of 150 simulated free players from run prices-recheck-2026-11-10, so they describe the tree before any rewiring. Rewiring is kept in this browser only: Copy changes and send the list to Claude to apply it to the game and the sim.</p>
 </div>
 
 <script>
-const NODES = [{"id":"OreStand2","name":"Ore Slot 2","price":80,"after":[],"cat":"ore","col":0,"row":1,"t":{"efficient":2,"casual":3}},{"id":"OreStand3","name":"Ore Slot 3","price":280,"after":["OreStand2"],"cat":"ore","col":1,"row":1,"t":{"efficient":7,"casual":7}},{"id":"OreStand4","name":"Ore Slot 4","price":2000,"after":["OreStand3"],"cat":"ore","col":2,"row":1,"t":{"efficient":19,"casual":30}},{"id":"OreStand5","name":"Ore Slot 5","price":9800,"after":["OreStand4"],"cat":"ore","col":3,"row":1,"t":{"efficient":56,"casual":122}},{"id":"OreStand6","name":"Ore Slot 6","price":20000,"after":["OreStand5"],"cat":"ore","col":4,"row":1,"t":{"efficient":153,"casual":248}},{"id":"MergeSlots","name":"Merge Ore Slots","price":0,"after":["OreStand6"],"cat":"ore","col":5,"row":1,"t":{"efficient":153,"casual":248}},{"id":"IngotRack","name":"Ingot Rack","price":460,"after":[],"cat":"storage","col":0,"row":5,"t":{"efficient":17,"casual":13}},{"id":"IngotRack2","name":"Ingot Rack 2","price":2000,"after":["IngotRack"],"cat":"storage","col":1,"row":6,"t":{"efficient":20,"casual":33}},{"id":"Furnace2","name":"Furnace 2","price":2800,"after":[],"cat":"heat","col":0,"row":3,"t":{"efficient":23,"casual":44}},{"id":"WakizashiBlueprint","name":"Wakizashi","price":60,"after":[],"cat":"sword","col":0,"row":0,"t":{"efficient":3,"casual":5}},{"id":"MacheteBlueprint","name":"Machete","price":360,"after":["WakizashiBlueprint"],"cat":"sword","col":1,"row":0,"t":{"efficient":5,"casual":10}},{"id":"KatanaBlueprint","name":"Katana","price":1300,"after":["MacheteBlueprint"],"cat":"sword","col":2,"row":0,"t":{"efficient":9,"casual":21}},{"id":"ScimitarBlueprint","name":"Scimitar","price":3600,"after":["KatanaBlueprint"],"cat":"sword","col":3,"row":0,"t":{"efficient":17,"casual":57}},{"id":"LongswordBlueprint","name":"Longsword","price":10200,"after":["ScimitarBlueprint"],"cat":"sword","col":4,"row":0,"t":{"efficient":46,"casual":140}},{"id":"CutlassBlueprint","name":"Cutlass","price":26000,"after":["LongswordBlueprint"],"cat":"sword","col":5,"row":0,"t":{"efficient":116,"casual":331}},{"id":"FalchionBlueprint","name":"Falchion","price":28000,"after":["CutlassBlueprint"],"cat":"sword","col":6,"row":0,"t":{"efficient":172,"casual":346}},{"id":"JianBlueprint","name":"Jian","price":50000,"after":["FalchionBlueprint"],"cat":"sword","col":7,"row":0,"t":{"efficient":211,"casual":null}},{"id":"GladiusBlueprint","name":"Gladius","price":60000,"after":["JianBlueprint"],"cat":"sword","col":8,"row":0,"t":{"efficient":218,"casual":null}},{"id":"KhopeshBlueprint","name":"Khopesh","price":150000,"after":["GladiusBlueprint"],"cat":"sword","col":9,"row":0,"t":{"efficient":313,"casual":null}},{"id":"DadaoBlueprint","name":"Dadao","price":160000,"after":["KhopeshBlueprint"],"cat":"sword","col":10,"row":0,"t":{"efficient":328,"casual":null}},{"id":"RapierBlueprint","name":"Rapier","price":270000,"after":["DadaoBlueprint"],"cat":"sword","col":11,"row":0,"t":{"efficient":434,"casual":null}},{"id":"HookSwordBlueprint","name":"Hook","price":290000,"after":["RapierBlueprint"],"cat":"sword","col":12,"row":0,"t":{"efficient":454,"casual":null}},{"id":"CrescentFangBlueprint","name":"Crescent Fang","price":370000,"after":["HookSwordBlueprint"],"cat":"sword","col":13,"row":0,"t":{"efficient":null,"casual":null}},{"id":"ShardBladeBlueprint","name":"Shard Blade","price":400000,"after":["CrescentFangBlueprint"],"cat":"sword","col":14,"row":0,"t":{"efficient":null,"casual":null}},{"id":"MoonbiteBlueprint","name":"Moonbite","price":530000,"after":["ShardBladeBlueprint"],"cat":"sword","col":15,"row":0,"t":{"efficient":null,"casual":null}},{"id":"SerpentBlueprint","name":"Serpent","price":570000,"after":["MoonbiteBlueprint"],"cat":"sword","col":16,"row":0,"t":{"efficient":null,"casual":null}},{"id":"LeviathanBlueprint","name":"Leviathan Cleaver","price":640000,"after":["SerpentBlueprint"],"cat":"sword","col":17,"row":0,"t":{"efficient":null,"casual":null}},{"id":"ThornspireBlueprint","name":"Thornspire","price":740000,"after":["LeviathanBlueprint"],"cat":"sword","col":18,"row":0,"t":{"efficient":null,"casual":null}},{"id":"SeraphBlueprint","name":"Seraph","price":840000,"after":["ThornspireBlueprint"],"cat":"sword","col":19,"row":0,"t":{"efficient":null,"casual":null}},{"id":"ZanbatoBlueprint","name":"Zanbatō","price":88000,"after":["GladiusBlueprint","BigSwordStand"],"cat":"sword","col":9,"row":1,"t":{"efficient":299,"casual":null}},{"id":"ClaymoreBlueprint","name":"Claymore","price":340000,"after":["ZanbatoBlueprint"],"cat":"sword","col":10,"row":1,"t":{"efficient":null,"casual":null}},{"id":"FlambergeBlueprint","name":"Flamberge","price":430000,"after":["ClaymoreBlueprint"],"cat":"sword","col":11,"row":1,"t":{"efficient":null,"casual":null}},{"id":"Anvil2","name":"Anvil 2","price":0,"after":["Crafter"],"cat":"crew","col":2,"row":4,"t":{"efficient":null,"casual":null}},{"id":"Furnace3","name":"Furnace 3","price":11600,"after":["Anvil3"],"cat":"heat","col":3,"row":4,"t":{"efficient":72,"casual":171}},{"id":"Anvil3","name":"Anvil 3","price":14000,"after":["Crafter"],"cat":"crew","col":2,"row":5,"t":{"efficient":66,"casual":161}},{"id":"Anvil4","name":"Anvil 4","price":22000,"after":["Anvil3"],"cat":"crew","col":3,"row":3,"t":{"efficient":124,"casual":272}},{"id":"Crafter","name":"Sword Crafter (1st hire)","price":2000,"after":["IngotRack","SwordRack"],"cat":"crew","col":1,"row":5,"t":{"efficient":18,"casual":36}},{"id":"Stocker","name":"Stocker","price":12000,"after":["Crafter"],"cat":"staff","col":2,"row":6,"t":{"efficient":61,"casual":149}},{"id":"Cashier","name":"Cashier","price":50000,"after":["UpgradedStore","Crafter"],"cat":"staff","col":4,"row":7,"t":{"efficient":368,"casual":null}},{"id":"Promoter","name":"Shop Promoter","price":40000,"after":["Crafter"],"cat":"staff","col":2,"row":7,"t":{"efficient":351,"casual":439}},{"id":"EtchingTable2","name":"Etching Table 2","price":240000,"after":["EtchingTable","EtchFlame"],"cat":"stations","col":3,"row":5,"t":{"efficient":421,"casual":null}},{"id":"Etcher","name":"Sword Etcher","price":270000,"after":["EtchingTable2"],"cat":"staff","col":4,"row":5,"t":{"efficient":468,"casual":null}},{"id":"Heat1","name":"Faster Heating I","price":580,"after":[],"cat":"heat","col":0,"row":2,"t":{"efficient":18,"casual":16}},{"id":"Heat2","name":"Faster Heating II","price":3000,"after":["Heat1"],"cat":"heat","col":1,"row":2,"t":{"efficient":25,"casual":49}},{"id":"Heat3","name":"Faster Heating III","price":5200,"after":["Heat2"],"cat":"heat","col":2,"row":2,"t":{"efficient":34,"casual":76}},{"id":"F2Heat1","name":"Furnace 2 Heating I","price":1800,"after":["Furnace2"],"cat":"heat","col":1,"row":3,"t":{"efficient":24,"casual":46}},{"id":"F2Heat2","name":"Furnace 2 Heating II","price":9000,"after":["F2Heat1"],"cat":"heat","col":2,"row":3,"t":{"efficient":51,"casual":104}},{"id":"F2Heat3","name":"Furnace 2 Heating III","price":15600,"after":["F2Heat2"],"cat":"heat","col":3,"row":2,"t":{"efficient":144,"casual":208}},{"id":"F3Heat1","name":"Furnace 3 Heating I","price":7000,"after":["Furnace3"],"cat":"heat","col":4,"row":4,"t":{"efficient":76,"casual":177}},{"id":"F3Heat2","name":"Furnace 3 Heating II","price":36000,"after":["F3Heat1"],"cat":"heat","col":5,"row":3,"t":{"efficient":190,"casual":398}},{"id":"F3Heat3","name":"Furnace 3 Heating III","price":62000,"after":["F3Heat2"],"cat":"heat","col":6,"row":2,"t":{"efficient":233,"casual":null}},{"id":"Strikes1","name":"Faster Strikes I","price":500,"after":[],"cat":"stations","col":0,"row":7,"t":{"efficient":7,"casual":14}},{"id":"Strikes2","name":"Faster Strikes II","price":2000,"after":["Strikes1"],"cat":"stations","col":1,"row":9,"t":{"efficient":14,"casual":28}},{"id":"Strikes3","name":"Faster Strikes III","price":5000,"after":["Strikes2"],"cat":"stations","col":2,"row":10,"t":{"efficient":28,"casual":64}},{"id":"Strikes4","name":"Faster Strikes IV","price":10000,"after":["Strikes3"],"cat":"stations","col":3,"row":8,"t":{"efficient":42,"casual":131}},{"id":"Strikes5","name":"Faster Strikes V","price":20000,"after":["Strikes4"],"cat":"stations","col":4,"row":9,"t":{"efficient":102,"casual":234}},{"id":"PolishStation","name":"Polishing Station","price":30,"after":[],"cat":"stations","col":0,"row":6,"t":{"efficient":1,"casual":2}},{"id":"EtchingTable","name":"Etching Table","price":1580,"after":["PolishStation"],"cat":"stations","col":1,"row":7,"t":{"efficient":12,"casual":24}},{"id":"EtchFlame","name":"Flame Etch","price":800,"after":["EtchingTable"],"cat":"cart","col":2,"row":8,"t":{"efficient":12,"casual":26}},{"id":"EtchWovenWind","name":"Woven Wind Etch","price":8000,"after":["EtchFlame"],"cat":"cart","col":3,"row":6,"t":{"efficient":38,"casual":95}},{"id":"EtchFracture","name":"Fracture Etch","price":40000,"after":["EtchWovenWind"],"cat":"cart","col":4,"row":6,"t":{"efficient":199,"casual":425}},{"id":"PolishBoost1","name":"Polish Boost I","price":4000,"after":["PolishStation2"],"cat":"stations","col":2,"row":9,"t":{"efficient":32,"casual":71}},{"id":"PolishBoost2","name":"Polish Boost II","price":16000,"after":["PolishBoost1"],"cat":"stations","col":3,"row":7,"t":{"efficient":89,"casual":220}},{"id":"PolishBoost3","name":"Polish Boost III","price":50000,"after":["PolishBoost2"],"cat":"stations","col":4,"row":8,"t":{"efficient":206,"casual":null}},{"id":"PolishStation2","name":"Polishing Station 2","price":5000,"after":["PolishStation"],"cat":"stations","col":1,"row":8,"t":{"efficient":30,"casual":67}},{"id":"SwordRack","name":"Sword Rack","price":280,"after":[],"cat":"storage","col":0,"row":4,"t":{"efficient":9,"casual":9}},{"id":"SwordRack2","name":"Sword Rack 2","price":2600,"after":["SwordRack"],"cat":"storage","col":1,"row":4,"t":{"efficient":22,"casual":41}},{"id":"WallRack2","name":"Wall Sword Rack 2","price":110,"after":[],"cat":"shop","col":0,"row":8,"t":{"efficient":6,"casual":5}},{"id":"DisplayTable1","name":"Display Table 1","price":440,"after":["WallRack2"],"cat":"shop","col":1,"row":10,"t":{"efficient":25,"casual":11}},{"id":"WallRack5","name":"Back Wall Rack","price":900,"after":["DisplayTable1"],"cat":"shop","col":2,"row":11,"t":{"efficient":35,"casual":18}},{"id":"UpgradedStore","name":"Upgraded Store","price":15000,"after":["WallRack2","DisplayTable1","WallRack5","DisplayTable2"],"cat":"shop","col":3,"row":9,"t":{"efficient":235,"casual":189}},{"id":"WallRack3","name":"Wall Sword Rack 3","price":6400,"after":["UpgradedStore"],"cat":"shop","col":4,"row":10,"t":{"efficient":236,"casual":195}},{"id":"WallRack4","name":"Wall Sword Rack 4","price":30000,"after":["WallRack3"],"cat":"shop","col":5,"row":4,"t":{"efficient":286,"casual":385}},{"id":"DisplayTable2","name":"Display Table 2","price":9000,"after":["DisplayTable1"],"cat":"shop","col":2,"row":12,"t":{"efficient":191,"casual":113}},{"id":"DisplayTable3","name":"Display Table 3","price":42000,"after":["DisplayTable2"],"cat":"shop","col":3,"row":10,"t":{"efficient":358,"casual":469}},{"id":"DisplayTable4","name":"Display Table 4","price":46000,"after":["DisplayTable3"],"cat":"shop","col":4,"row":12,"t":{"efficient":365,"casual":null}},{"id":"DisplayTable5","name":"Display Table 5","price":80000,"after":["DisplayTable4","UpgradedStore"],"cat":"shop","col":5,"row":5,"t":{"efficient":474,"casual":null}},{"id":"DisplayTable6","name":"Display Table 6","price":120000,"after":["DisplayTable5"],"cat":"shop","col":6,"row":3,"t":{"efficient":null,"casual":null}},{"id":"BigSwordStand","name":"Big Sword Stand","price":36000,"after":["UpgradedStore"],"cat":"shop","col":4,"row":11,"t":{"efficient":289,"casual":411}},{"id":"BigSwordStand2","name":"Big Sword Stand 2","price":90000,"after":["BigSwordStand"],"cat":"shop","col":5,"row":6,"t":{"efficient":null,"casual":null}},{"id":"BigSwordStand3","name":"Big Sword Stand 3","price":140000,"after":["BigSwordStand2"],"cat":"shop","col":6,"row":4,"t":{"efficient":null,"casual":null}},{"id":"Parking1","name":"Bay 1","price":2200,"after":[],"cat":"cart","col":0,"row":9,"t":{"efficient":57,"casual":37}},{"id":"Parking2","name":"Bay 2","price":44000,"after":["Parking1"],"cat":"cart","col":1,"row":11,"t":{"efficient":360,"casual":null}},{"id":"Parking3","name":"Bay 3","price":152000,"after":["Parking2"],"cat":"cart","col":2,"row":14,"t":{"efficient":null,"casual":null}},{"id":"Showcase1","name":"Showcase Stand 1","price":3000,"after":["DisplayTable1"],"cat":"cart","col":2,"row":13,"t":{"efficient":78,"casual":52}},{"id":"Showcase2","name":"Showcase Stand 2","price":25000,"after":["Showcase1"],"cat":"cart","col":3,"row":11,"t":{"efficient":280,"casual":300}},{"id":"Showcase3","name":"Showcase Stand 3","price":90000,"after":["Showcase2"],"cat":"cart","col":4,"row":13,"t":{"efficient":null,"casual":null}},{"id":"Delivery","name":"Delivery Cart","price":6200,"after":[],"cat":"cart","col":0,"row":10,"t":{"efficient":165,"casual":84}},{"id":"hire:haru","name":"Hire Haru","price":23000,"after":["Furnace3"],"cat":"crew","gems":10,"col":4,"row":3,"t":{"efficient":137,"casual":286}},{"id":"hire:mei","name":"Hire Mei","price":70000,"after":["Anvil4"],"cat":"crew","gems":25,"col":4,"row":2,"t":{"efficient":244,"casual":null}},{"id":"hire:kenji","name":"Hire Kenji","price":460000,"after":["hire:mei"],"cat":"crew","gems":40,"col":5,"row":2,"t":{"efficient":null,"casual":null}},{"id":"hire:rin","name":"Hire Rin","price":710000,"after":["hire:kenji"],"cat":"crew","gems":80,"col":6,"row":1,"t":{"efficient":null,"casual":null}}];
+const NODES = [{"id":"OreStand2","name":"Ore Slot 2","price":80,"after":[],"cat":"ore","t":{"efficient":1,"casual":1}},{"id":"OreStand3","name":"Ore Slot 3","price":280,"after":["OreStand2"],"cat":"ore","t":{"efficient":2,"casual":2}},{"id":"OreStand4","name":"Ore Slot 4","price":2000,"after":["OreStand3"],"cat":"ore","t":{"efficient":14,"casual":21}},{"id":"OreStand5","name":"Ore Slot 5","price":9800,"after":["OreStand4"],"cat":"ore","t":{"efficient":39,"casual":88}},{"id":"OreStand6","name":"Ore Slot 6","price":26000,"after":["OreStand5"],"cat":"ore","t":{"efficient":81,"casual":168}},{"id":"MergeSlots","name":"Merge Ore Slots","price":0,"after":["OreStand6"],"cat":"ore","t":{"efficient":81,"casual":169}},{"id":"IngotRack","name":"Ingot Rack","price":460,"after":[],"cat":"storage","t":{"efficient":7,"casual":4}},{"id":"IngotRack2","name":"Ingot Rack 2","price":2000,"after":["IngotRack"],"cat":"storage","t":{"efficient":15,"casual":23}},{"id":"IngotRack3","name":"Ingot Rack 3","price":8000,"after":["IngotRack2"],"cat":"storage","t":{"efficient":34,"casual":73}},{"id":"IngotRack4","name":"Ingot Rack 4","price":39000,"after":["IngotRack3"],"cat":"storage","t":{"efficient":145,"casual":235}},{"id":"Furnace2","name":"Furnace 2","price":2800,"after":[],"cat":"heat","t":{"efficient":18,"casual":33}},{"id":"WakizashiBlueprint","name":"Wakizashi","price":60,"after":[],"cat":"sword","t":{"efficient":3,"casual":3}},{"id":"MacheteBlueprint","name":"Machete","price":360,"after":["WakizashiBlueprint"],"cat":"sword","t":{"efficient":4,"casual":6}},{"id":"KatanaBlueprint","name":"Katana","price":1300,"after":["MacheteBlueprint"],"cat":"sword","t":{"efficient":6,"casual":14}},{"id":"ScimitarBlueprint","name":"Scimitar","price":3600,"after":["KatanaBlueprint"],"cat":"sword","t":{"efficient":11,"casual":41}},{"id":"LongswordBlueprint","name":"Longsword","price":13300,"after":["ScimitarBlueprint"],"cat":"sword","t":{"efficient":47,"casual":103}},{"id":"CutlassBlueprint","name":"Cutlass","price":33800,"after":["LongswordBlueprint"],"cat":"sword","t":{"efficient":92,"casual":206}},{"id":"FalchionBlueprint","name":"Falchion","price":36400,"after":["CutlassBlueprint"],"cat":"sword","t":{"efficient":99,"casual":215}},{"id":"JianBlueprint","name":"Jian","price":65000,"after":["FalchionBlueprint"],"cat":"sword","t":{"efficient":128,"casual":322}},{"id":"GladiusBlueprint","name":"Gladius","price":78000,"after":["JianBlueprint"],"cat":"sword","t":{"efficient":139,"casual":345}},{"id":"KhopeshBlueprint","name":"Khopesh","price":195000,"after":["GladiusBlueprint"],"cat":"sword","t":{"efficient":389,"casual":437}},{"id":"DadaoBlueprint","name":"Dadao","price":208000,"after":["KhopeshBlueprint"],"cat":"sword","t":{"efficient":393,"casual":468}},{"id":"RapierBlueprint","name":"Rapier","price":351000,"after":["DadaoBlueprint"],"cat":"sword","t":{"efficient":401,"casual":509}},{"id":"HookSwordBlueprint","name":"Hook","price":377000,"after":["RapierBlueprint"],"cat":"sword","t":{"efficient":408,"casual":533}},{"id":"CrescentFangBlueprint","name":"Crescent Fang","price":481000,"after":["HookSwordBlueprint"],"cat":"sword","t":{"efficient":418,"casual":577}},{"id":"ShardBladeBlueprint","name":"Shard Blade","price":520000,"after":["CrescentFangBlueprint"],"cat":"sword","t":{"efficient":429,"casual":592}},{"id":"MoonbiteBlueprint","name":"Moonbite","price":689000,"after":["ShardBladeBlueprint"],"cat":"sword","t":{"efficient":441,"casual":651}},{"id":"SerpentBlueprint","name":"Serpent","price":741000,"after":["MoonbiteBlueprint"],"cat":"sword","t":{"efficient":453,"casual":662}},{"id":"LeviathanBlueprint","name":"Leviathan Cleaver","price":832000,"after":["SerpentBlueprint"],"cat":"sword","t":{"efficient":467,"casual":675}},{"id":"ThornspireBlueprint","name":"Thornspire","price":962000,"after":["LeviathanBlueprint"],"cat":"sword","t":{"efficient":483,"casual":692}},{"id":"SeraphBlueprint","name":"Seraph","price":1090000,"after":["ThornspireBlueprint"],"cat":"sword","t":{"efficient":497,"casual":727}},{"id":"ZanbatoBlueprint","name":"Zanbatō","price":114000,"after":["GladiusBlueprint","BigSwordStand"],"cat":"sword","t":{"efficient":211,"casual":399}},{"id":"ClaymoreBlueprint","name":"Claymore","price":442000,"after":["ZanbatoBlueprint"],"cat":"sword","t":{"efficient":291,"casual":547}},{"id":"FlambergeBlueprint","name":"Flamberge","price":559000,"after":["ClaymoreBlueprint"],"cat":"sword","t":{"efficient":336,"casual":605}},{"id":"Anvil2","name":"Anvil 2","price":0,"after":["Crafter"],"cat":"crew","t":{"efficient":13,"casual":25}},{"id":"Furnace3","name":"Furnace 3","price":15100,"after":["Anvil3","Furnace2"],"cat":"heat","t":{"efficient":60,"casual":127}},{"id":"Anvil3","name":"Anvil 3","price":18200,"after":["Crafter"],"cat":"crew","t":{"efficient":57,"casual":121}},{"id":"Anvil4","name":"Anvil 4","price":28600,"after":["Anvil3"],"cat":"crew","t":{"efficient":103,"casual":183}},{"id":"Crafter","name":"Swordsmith (1st hire)","price":2000,"after":["IngotRack","SwordRack"],"cat":"crew","t":{"efficient":13,"casual":25}},{"id":"Stocker","name":"Stocker","price":15600,"after":["Crafter"],"cat":"staff","t":{"efficient":52,"casual":113}},{"id":"Cashier","name":"Cashier","price":65000,"after":["UpgradedStore","Crafter"],"cat":"staff","t":{"efficient":237,"casual":329}},{"id":"Promoter","name":"Shop Promoter","price":52000,"after":["Crafter"],"cat":"staff","t":{"efficient":227,"casual":266}},{"id":"EtchingTable2","name":"Etching Table 2","price":312000,"after":["EtchFracture"],"cat":"stations","t":{"efficient":276,"casual":496}},{"id":"Etcher","name":"Sword Etcher","price":351000,"after":["EtchingTable2"],"cat":"staff","t":{"efficient":300,"casual":520}},{"id":"Heat1","name":"Faster Heating I","price":580,"after":[],"cat":"heat","t":{"efficient":13,"casual":5}},{"id":"Heat2","name":"Faster Heating II","price":3000,"after":["Heat1"],"cat":"heat","t":{"efficient":20,"casual":38}},{"id":"Heat3","name":"Faster Heating III","price":5200,"after":["Heat2"],"cat":"heat","t":{"efficient":27,"casual":56}},{"id":"F2Heat1","name":"Furnace 2 Heating I","price":1800,"after":["Furnace2","Heat1"],"cat":"heat","t":{"efficient":18,"casual":36}},{"id":"F2Heat2","name":"Furnace 2 Heating II","price":9000,"after":["F2Heat1","Heat2"],"cat":"heat","t":{"efficient":36,"casual":78}},{"id":"F2Heat3","name":"Furnace 2 Heating III","price":20300,"after":["F2Heat2","Heat3"],"cat":"heat","t":{"efficient":67,"casual":144}},{"id":"F3Heat1","name":"Furnace 3 Heating I","price":7000,"after":["Furnace3","F2Heat1"],"cat":"heat","t":{"efficient":62,"casual":129}},{"id":"F3Heat2","name":"Furnace 3 Heating II","price":46800,"after":["F3Heat1","F2Heat2"],"cat":"heat","t":{"efficient":149,"casual":249}},{"id":"F3Heat3","name":"Furnace 3 Heating III","price":80600,"after":["F3Heat2","F2Heat3"],"cat":"heat","t":{"efficient":172,"casual":354}},{"id":"Strikes1","name":"Faster Strikes I","price":500,"after":[],"cat":"stations","t":{"efficient":4,"casual":4}},{"id":"Strikes2","name":"Faster Strikes II","price":2000,"after":["Strikes1"],"cat":"stations","t":{"efficient":6,"casual":20}},{"id":"Strikes3","name":"Faster Strikes III","price":5000,"after":["Strikes2"],"cat":"stations","t":{"efficient":22,"casual":44}},{"id":"Strikes4","name":"Faster Strikes IV","price":13000,"after":["Strikes3"],"cat":"stations","t":{"efficient":44,"casual":96}},{"id":"Strikes5","name":"Faster Strikes V","price":26000,"after":["Strikes4"],"cat":"stations","t":{"efficient":76,"casual":159}},{"id":"PolishStation","name":"Polishing Station","price":30,"after":[],"cat":"stations","t":{"efficient":1,"casual":1}},{"id":"EtchingTable","name":"Etching Table","price":1580,"after":["PolishStation"],"cat":"stations","t":{"efficient":5,"casual":16}},{"id":"EtchWovenWind","name":"Wind Etch","price":8000,"after":["EtchingTable"],"cat":"cart","t":{"efficient":31,"casual":68}},{"id":"EtchFracture","name":"Fracture Etch","price":52000,"after":["EtchWovenWind"],"cat":"cart","t":{"efficient":113,"casual":261}},{"id":"PolishBoost1","name":"Polish Boost I","price":4000,"after":["PolishStation2"],"cat":"stations","t":{"efficient":26,"casual":52}},{"id":"PolishBoost2","name":"Polish Boost II","price":20800,"after":["PolishBoost1"],"cat":"stations","t":{"efficient":71,"casual":151}},{"id":"PolishBoost3","name":"Polish Boost III","price":65000,"after":["PolishBoost2"],"cat":"stations","t":{"efficient":122,"casual":314}},{"id":"PolishStation2","name":"Polishing Station 2","price":5000,"after":["PolishStation"],"cat":"stations","t":{"efficient":24,"casual":49}},{"id":"SwordRack","name":"Sword Rack","price":280,"after":[],"cat":"storage","t":{"efficient":4,"casual":3}},{"id":"SwordRack2","name":"Sword Rack 2","price":2600,"after":["SwordRack"],"cat":"storage","t":{"efficient":17,"casual":30}},{"id":"WallRack2","name":"Wall Sword Rack 2","price":110,"after":[],"cat":"shop","t":{"efficient":4,"casual":2}},{"id":"DisplayTable1","name":"Display Table 1","price":440,"after":["WallRack2"],"cat":"shop","t":{"efficient":20,"casual":4}},{"id":"WallRack5","name":"Back Wall Rack","price":900,"after":["DisplayTable1"],"cat":"shop","t":{"efficient":28,"casual":5}},{"id":"UpgradedStore","name":"Upgraded Store","price":19500,"after":["WallRack2","DisplayTable1","WallRack5","DisplayTable2"],"cat":"shop","t":{"efficient":160,"casual":135}},{"id":"WallRack3","name":"Wall Sword Rack 3","price":6400,"after":["UpgradedStore"],"cat":"shop","t":{"efficient":161,"casual":138}},{"id":"WallRack4","name":"Wall Sword Rack 4","price":39000,"after":["WallRack3"],"cat":"shop","t":{"efficient":201,"casual":241}},{"id":"DisplayTable2","name":"Display Table 2","price":9000,"after":["DisplayTable1"],"cat":"shop","t":{"efficient":108,"casual":83}},{"id":"DisplayTable3","name":"Display Table 3","price":54600,"after":["DisplayTable2"],"cat":"shop","t":{"efficient":230,"casual":280}},{"id":"DisplayTable4","name":"Display Table 4","price":59800,"after":["DisplayTable3"],"cat":"shop","t":{"efficient":235,"casual":307}},{"id":"DisplayTable5","name":"Display Table 5","price":104000,"after":["DisplayTable4","UpgradedStore"],"cat":"shop","t":{"efficient":267,"casual":392}},{"id":"DisplayTable6","name":"Display Table 6","price":156000,"after":["DisplayTable5"],"cat":"shop","t":{"efficient":357,"casual":421}},{"id":"BigSwordStand","name":"Big Sword Stand","price":46800,"after":["UpgradedStore"],"cat":"shop","t":{"efficient":204,"casual":254}},{"id":"BigSwordStand2","name":"Big Sword Stand 2","price":117000,"after":["BigSwordStand"],"cat":"shop","t":{"efficient":324,"casual":406}},{"id":"BigSwordStand3","name":"Big Sword Stand 3","price":182000,"after":["BigSwordStand2"],"cat":"shop","t":{"efficient":385,"casual":429}},{"id":"Parking1","name":"Bay 1","price":2200,"after":[],"cat":"cart","t":{"efficient":40,"casual":28}},{"id":"Parking2","name":"Bay 2","price":57200,"after":["Parking1"],"cat":"cart","t":{"efficient":233,"casual":287}},{"id":"Parking3","name":"Bay 3","price":198000,"after":["Parking2"],"cat":"cart","t":{"efficient":455,"casual":459}},{"id":"Showcase1","name":"Showcase Stand 1","price":1500,"after":["DisplayTable1"],"cat":"cart","t":{"efficient":34,"casual":5}},{"id":"Showcase2","name":"Showcase Stand 2","price":0,"after":["Showcase1"],"cat":"cart","t":{"efficient":360,"casual":780}},{"id":"Showcase3","name":"Showcase Stand 3","price":0,"after":["Showcase2"],"cat":"cart","t":{"efficient":780,"casual":null}},{"id":"Delivery","name":"Delivery Cart","price":6200,"after":[],"cat":"cart","t":{"efficient":85,"casual":60}},{"id":"hire:haru","name":"Hire Haru","price":29900,"after":["Anvil3"],"cat":"crew","gems":10,"t":{"efficient":107,"casual":190}},{"id":"hire:mei","name":"Hire Mei","price":91000,"after":["Anvil4"],"cat":"crew","gems":25,"t":{"efficient":170,"casual":379}},{"id":"hire:kenji","name":"Hire Kenji","price":598000,"after":["hire:mei"],"cat":"crew","gems":40,"t":{"efficient":351,"casual":617}},{"id":"hire:rin","name":"Hire Rin","price":923000,"after":["hire:kenji"],"cat":"crew","gems":80,"t":{"efficient":505,"casual":788}}];
 const CATS = { sword: "Swords", crew: "Anvils and crafters", staff: "Staff", ore: "Ore slots", heat: "Furnaces and heat",
   storage: "Ingot and sword racks", stations: "Polish, etch, strikes", shop: "Shop displays", cart: "Cart and parking" };
 const W = 188, H = 44, CW = 222, RH = 54, TOP = 34, LEFT = 14;
 const by = Object.fromEntries(NODES.map(n => [n.id, n]));
-NODES.forEach(n => n.kids = []);
-NODES.forEach(n => n.after.forEach(a => by[a].kids.push(n.id)));
-const ncol = Math.max(...NODES.map(n => n.col)) + 1, nrow = Math.max(...NODES.map(n => n.row)) + 1;
+const ORDER = ["sword", "crew", "staff", "ore", "heat", "storage", "stations", "shop", "cart"];
+const KEY = "upgrade-tree-rewire-v1";
+NODES.forEach(n => n.orig = [...n.after]);
+let ncol = 0, nrow = 0;
+function relink() { NODES.forEach(n => n.kids = []); NODES.forEach(n => n.after.forEach(a => by[a].kids.push(n.id))); }
+// columns = longest chain of buys before a pad; rows sorted by kind and price, then a few barycentre sweeps so edges cross less
+function layout() {
+  const depth = {}, busy = new Set();
+  const d = i => {
+    if (i in depth) return depth[i];
+    if (busy.has(i)) throw new Error("cycle at " + i);
+    busy.add(i);
+    depth[i] = by[i].after.length ? 1 + Math.max(...by[i].after.map(d)) : 0;
+    busy.delete(i); return depth[i];
+  };
+  NODES.forEach(n => d(n.id));
+  const cols = {};
+  NODES.forEach(n => (cols[depth[n.id]] ??= []).push(n.id));
+  const ks = Object.keys(cols).map(Number).sort((a, b) => a - b);
+  ks.forEach(k => cols[k].sort((a, b) => ORDER.indexOf(by[a].cat) - ORDER.indexOf(by[b].cat) || by[a].price - by[b].price));
+  for (let r = 0; r < 6; r++) for (const k of ks.slice(1)) {
+    const pos = {}; ks.forEach(c => cols[c].forEach((i, n) => pos[i] = n));
+    const bc = i => by[i].after.reduce((t, a) => t + pos[a], 0) / by[i].after.length;
+    cols[k].sort((a, b) => bc(a) - bc(b));
+  }
+  ks.forEach(k => cols[k].forEach((i, n) => { by[i].col = k; by[i].row = n; }));
+  ncol = Math.max(...ks) + 1; nrow = Math.max(...ks.map(k => cols[k].length));
+}
+// edits saved in this browser; anything stale or cyclic is dropped
+try {
+  const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+  for (const [id, after] of Object.entries(saved)) if (by[id] && after.every(a => by[a])) by[id].after = after;
+  layout();
+} catch (e) { NODES.forEach(n => n.after = [...n.orig]); }
+relink(); layout();
+const same = (a, b) => a.length === b.length && a.every(x => b.includes(x));
+const changed = () => NODES.filter(n => !same(n.after, n.orig));
+function save() { try { localStorage.setItem(KEY, JSON.stringify(Object.fromEntries(changed().map(n => [n.id, n.after])))); } catch (e) {} }
 const fmt = n => n === 0 ? "Free" : n.toLocaleString("en-US");
 const time = m => m == null ? "not reached" : m < 60 ? `${m} min` : `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}`;
 const roots = NODES.filter(n => !n.after.length);
-let mode = "explore", sel = null, owned = new Set();
+let mode = "explore", sel = null, owned = new Set(), dropAdd = false, drag = null, pan = null, noClick = false, undoArm = 0;
 
 document.getElementById("lede").innerHTML = `<b>${roots.length}</b> upgrades are open on a new plot. Buying one opens the pads that wait for it, left to right. Tap a pad to see what it needs and what it opens, or walk through the tree buying as you go.`;
 document.getElementById("legend").innerHTML = Object.entries(CATS).map(([k, v]) => `<span><i style="background:var(--c-${k})"></i>${v}</span>`).join("");
@@ -138,6 +199,7 @@ function draw() {
     let cls = "node";
     if (sel) cls += n.id === sel ? " sel" : up.has(n.id) ? " up" : down.has(n.id) ? " down" : " faint";
     if (mode === "walk") cls += owned.has(n.id) ? " owned" : n.after.every(a => owned.has(a)) ? " open" : " locked";
+    if (mode === "rewire" && !same(n.after, n.orig)) cls += " moved";
     s += `<g class="${cls}" data-id="${n.id}" transform="translate(${x},${y})" tabindex="0" role="button" aria-label="${esc(n.name)}, ${fmt(n.price)} coins">
       <rect class="card" width="${W}" height="${H}" rx="8"/>
       <circle class="dot" cx="13" cy="${H / 2}" r="4.5" fill="var(--c-${n.cat})"/>
@@ -146,10 +208,15 @@ function draw() {
   });
   svg.innerHTML = s;
   svg.classList.toggle("walk", mode === "walk");
+  document.getElementById("app").classList.toggle("rewire", mode === "rewire");
   stats();
   info();
+  changesPanel();
 }
 
+function needChips(n) {
+  return n.after.length ? `<div class="chips">${n.after.map(i => `<span class="need"><button class="chip" data-go="${i}">${esc(by[i].name)}</button><button class="del" data-unneed="${i}" aria-label="Stop needing ${esc(by[i].name)}">×</button></span>`).join("")}</div>` : "<span>Nothing: open from the start</span>";
+}
 function chips(ids) { return ids.length ? `<div class="chips">${ids.map(i => `<button class="chip" data-go="${i}">${esc(by[i].name)}</button>`).join("")}</div>` : "<span>Nothing</span>"; }
 
 function info() {
@@ -163,9 +230,10 @@ function info() {
   const status = mode === "walk" ? (owned.has(sel) ? "Bought" : n.after.every(a => owned.has(a)) ? "On offer now" : "Locked") : "";
   el.innerHTML = `<div class="kind">${CATS[n.cat]}${status ? " · " + status : ""}</div>
     <h2>${esc(n.name)} <span class="p">${fmt(n.price)} coins${n.gems ? " + " + n.gems + " gems" : ""}</span></h2>
-    <div class="row"><span>Needs</span>${n.after.length ? chips(n.after) : "<span>Nothing: open from the start</span>"}</div>
+    <div class="row"><span>Needs</span>${mode === "rewire" ? needChips(n) : n.after.length ? chips(n.after) : "<span>Nothing: open from the start</span>"}</div>
+    ${!same(n.after, n.orig) ? `<div class="row"><span>Was</span><span>${esc(names(n.orig))} <button class="btn" data-revert="${n.id}" style="margin-left:6px;padding:2px 10px">Put back</button></span></div>` : ""}
     <div class="row"><span>Opens</span>${chips(n.kids)}</div>
-    <div class="row"><span>Bought at</span><span>efficient player ${time(n.t.efficient)}, casual player ${time(n.t.casual)}</span></div>
+    <div class="row"><span>Sim bought</span><span>efficient player ${time(n.t.efficient)}, casual player ${time(n.t.casual)}</span></div>
     ${n.id === "MergeSlots" ? `<p class="note">Merging resets Ore Slots 2–6 to unbought for more luck, and they cost 1.5× more each merge.</p>` : ""}
     ${mode === "walk" && n.after.every(a => owned.has(a)) ? `<div><button class="btn" data-buy="${n.id}">${owned.has(sel) ? "Undo this buy" : "Buy it"}</button></div>` : ""}`;
 }
@@ -180,6 +248,32 @@ function stats() {
   el.innerHTML = `<span>On offer <b>${open}</b></span><span>Bought <b>${owned.size}</b> / ${NODES.length}</span><span>Spent <b>${fmt(spent)}</b></span>`;
 }
 
+const names = ids => ids.length ? ids.map(i => by[i].name).join(" + ") : "nothing (open from the start)";
+function changeText() {
+  return `Upgrade tree rewiring (${changed().length} pads):\n` + changed().map(n =>
+    `- ${n.name} [${n.id}]: needs ${names(n.orig)} [${n.orig.join(", ") || "-"}] -> needs ${names(n.after)} [${n.after.join(", ") || "-"}]`).join("\n");
+}
+function changesPanel() {
+  const el = document.getElementById("changes"), cs = changed();
+  el.hidden = !cs.length;
+  if (!cs.length) return;
+  el.innerHTML = `<h2>Your rewiring · ${cs.length} pad${cs.length > 1 ? "s" : ""}</h2>
+    <ol>${cs.map(n => `<li><button class="chip" data-go="${n.id}">${esc(n.name)}</button> needs <span class="was"><s>${esc(names(n.orig))}</s></span> → <span class="now">${esc(names(n.after))}</span></li>`).join("")}</ol>
+    <div class="acts"><button class="btn" id="copy">Copy changes</button><button class="btn" id="undoall">${Date.now() < undoArm ? "Tap again to undo all" : "Undo all"}</button><span class="hint" id="copied"></span></div>
+    <textarea id="changetext" readonly hidden></textarea>`;
+}
+function afterEdit(id) {
+  relink(); layout(); save();
+  let gone = true; // walk-through: drop buys whose needs are no longer bought
+  while (gone) { gone = false; owned.forEach(o => { if (!by[o].after.every(a => owned.has(a))) { owned.delete(o); gone = true; } }); }
+  sel = id; draw(); scrollTo(id);
+}
+function rewire(id, target) {
+  const n = by[id];
+  if (dropAdd) { if (!n.after.includes(target)) n.after.push(target); } else n.after = [target];
+  afterEdit(id);
+}
+const canNeed = (id, target) => id !== target && !descendants(id).has(target);
 function toggleBuy(id) {
   const n = by[id];
   if (owned.has(id)) { owned.delete(id); descendants(id).forEach(d => owned.delete(d)); }
@@ -192,25 +286,83 @@ function pick(id) {
   draw();
 }
 
-document.getElementById("tree").addEventListener("click", e => { const g = e.target.closest(".node"); if (g) pick(g.dataset.id); });
+document.getElementById("tree").addEventListener("click", e => { if (noClick) { noClick = false; return; } const g = e.target.closest(".node"); if (g) pick(g.dataset.id); });
 document.getElementById("tree").addEventListener("keydown", e => { const g = e.target.closest(".node"); if (g && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); pick(g.dataset.id); } });
 document.getElementById("info").addEventListener("click", e => {
   const go = e.target.closest("[data-go]"), buy = e.target.closest("[data-buy]");
   if (go) { sel = go.dataset.go; draw(); scrollTo(sel); }
   if (buy) { toggleBuy(buy.dataset.buy); draw(); }
+  const un = e.target.closest("[data-unneed]"), rv = e.target.closest("[data-revert]");
+  if (un) { by[sel].after = by[sel].after.filter(a => a !== un.dataset.unneed); afterEdit(sel); }
+  if (rv) { by[rv.dataset.revert].after = [...by[rv.dataset.revert].orig]; afterEdit(rv.dataset.revert); }
+});
+document.getElementById("changes").addEventListener("click", e => {
+  const go = e.target.closest("[data-go]");
+  if (go) { sel = go.dataset.go; draw(); scrollTo(sel); return; }
+  if (e.target.id === "copy") {
+    const t = changeText(), done = () => document.getElementById("copied").textContent = "Copied";
+    const fallback = () => { const ta = document.getElementById("changetext"); ta.value = t; ta.hidden = false; ta.select(); document.getElementById("copied").textContent = "Select all and copy"; };
+    try { navigator.clipboard.writeText(t).then(done, fallback); } catch (err) { fallback(); }
+  }
+  if (e.target.id === "undoall") {
+    if (Date.now() < undoArm) { undoArm = 0; NODES.forEach(n => n.after = [...n.orig]); afterEdit(null); }
+    else { undoArm = Date.now() + 3000; changesPanel(); setTimeout(changesPanel, 3100); }
+  }
 });
 function scrollTo(id) {
+  if (!id) return;
   const [x, y] = xy(by[id]), box = document.getElementById("box");
   box.scrollTo({ left: Math.max(0, x - box.clientWidth / 2 + W / 2), top: Math.max(0, y - box.clientHeight / 2), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 }
+// drag a pad onto another (Rewire), or drag empty space to pan
+const svgEl = document.getElementById("tree"), boxEl = document.getElementById("box");
+svgEl.addEventListener("pointerdown", e => {
+  noClick = false;
+  const g = e.target.closest(".node");
+  if (g && mode === "rewire") { drag = { id: g.dataset.id, g, x0: e.clientX, y0: e.clientY, sl: boxEl.scrollLeft, st: boxEl.scrollTop, on: false, target: null }; svgEl.setPointerCapture(e.pointerId); }
+  else if (!g && (mode === "rewire" || e.pointerType === "mouse")) { pan = { x: e.clientX, y: e.clientY, l: boxEl.scrollLeft, t: boxEl.scrollTop, on: false }; svgEl.setPointerCapture(e.pointerId); }
+});
+svgEl.addEventListener("pointermove", e => {
+  if (pan) {
+    if (Math.hypot(e.clientX - pan.x, e.clientY - pan.y) > 4) pan.on = true;
+    boxEl.scrollLeft = pan.l - (e.clientX - pan.x); boxEl.scrollTop = pan.t - (e.clientY - pan.y); return;
+  }
+  if (!drag) return;
+  if (!drag.on) { if (Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) < 6) return; drag.on = true; drag.g.classList.add("dragging"); svgEl.appendChild(drag.g); }
+  const r = boxEl.getBoundingClientRect(), edge = 40;  // scroll the box when the pad nears its edge
+  if (e.clientX < r.left + edge) boxEl.scrollLeft -= 12; else if (e.clientX > r.right - edge) boxEl.scrollLeft += 12;
+  if (e.clientY < r.top + edge) boxEl.scrollTop -= 12; else if (e.clientY > r.bottom - edge) boxEl.scrollTop += 12;
+  const [x, y] = xy(by[drag.id]);
+  drag.g.setAttribute("transform", `translate(${x + e.clientX - drag.x0 + boxEl.scrollLeft - drag.sl},${y + e.clientY - drag.y0 + boxEl.scrollTop - drag.st})`);
+  const t = document.elementFromPoint(e.clientX, e.clientY)?.closest(".node");
+  if (drag.target && drag.target !== t) drag.target.classList.remove("drop-ok", "drop-bad");
+  drag.target = t && t !== drag.g ? t : null;
+  if (drag.target) drag.target.classList.add(canNeed(drag.id, drag.target.dataset.id) ? "drop-ok" : "drop-bad");
+});
+function endDrag() {
+  if (pan) { noClick = pan.on; pan = null; return; }
+  if (!drag) return;
+  const d = drag; drag = null;
+  if (!d.on) return;
+  noClick = true;
+  if (d.target && canNeed(d.id, d.target.dataset.id)) rewire(d.id, d.target.dataset.id); else draw();
+}
+svgEl.addEventListener("pointerup", endDrag);
+svgEl.addEventListener("pointercancel", () => { pan = null; if (drag) { drag = null; draw(); } });
 function setMode(m) {
   mode = m; sel = null;
   document.getElementById("m-explore").setAttribute("aria-pressed", m === "explore");
   document.getElementById("m-walk").setAttribute("aria-pressed", m === "walk");
+  document.getElementById("m-rewire").setAttribute("aria-pressed", m === "rewire");
+  document.getElementById("dropmode").hidden = document.getElementById("hint").hidden = m !== "rewire";
   draw();
 }
 document.getElementById("m-explore").onclick = () => setMode("explore");
 document.getElementById("m-walk").onclick = () => setMode("walk");
+document.getElementById("m-rewire").onclick = () => setMode("rewire");
+const setDrop = add => { dropAdd = add; document.getElementById("d-replace").setAttribute("aria-pressed", !add); document.getElementById("d-add").setAttribute("aria-pressed", add); };
+document.getElementById("d-replace").onclick = () => setDrop(false);
+document.getElementById("d-add").onclick = () => setDrop(true);
 document.getElementById("reset").onclick = () => { owned.clear(); sel = null; draw(); };
 draw();
 </script>

@@ -38,8 +38,17 @@ local VARIANTS = { -- material -> variant name, colour, normal, roughness, studs
 	[M.Cobblestone] = { "PaintStoneWall", "rbxassetid://102112150562734", "rbxassetid://78427713544782", "rbxassetid://87281238737955", 8, REG }, -- stone_wall_02
 	[M.Wood] = { "PaintWood", "rbxassetid://72745151340574", "rbxassetid://140198157126085", "rbxassetid://100215486081163", 6, REG }, -- wood_10
 	[M.WoodPlanks] = { "PaintPlanks", "rbxassetid://105972709052239", "rbxassetid://121504611557776", "rbxassetid://128123986434735", 8, REG }, -- wood_planks_04 (wood_11 until 2026-10-25)
-	[M.ClayRoofTiles] = { "PaintRoof", "rbxassetid://137400459495419", "rbxassetid://106493324917155", "rbxassetid://121070485923113", 6, REG }, -- painted
+	[M.ClayRoofTiles] = { "PaintRoof", "rbxassetid://97617988843288", "rbxassetid://121113510718739", "rbxassetid://121070485923113", 6, REG }, -- painted hongawara (2026-11-05; was 137400459495419 / 106493324917155)
 }
+-- round roof trims (ridges, eaves, ridge caps, knobs: Cylinder and Ball parts on roof tiles) take the roof's tone with
+-- no tiles (2026-11-05, Allen: "can you fix the clay roof tiles, they look odd"; the tiles wrapped round read as coils)
+local ROOF_TRIM = { "PaintRoofTrim", "rbxassetid://120517025417158", "", "rbxassetid://121070485923113", 6, REG }
+local function roofTrim(p, d)
+	if d == VARIANTS[M.ClayRoofTiles] and p:IsA("Part") and (p.Shape == Enum.PartType.Cylinder or p.Shape == Enum.PartType.Ball) then
+		return ROOF_TRIM
+	end
+	return d
+end
 -- dark timber (original colour value under DARK) takes the charred wood_02 instead of PaintWood
 local DARK, WOOD_DARK = 0.3, { "PaintWoodDark", "rbxassetid://93837455108828", "rbxassetid://124033836867990", "rbxassetid://137594363565195", 6, REG }
 -- WoodPlanks parts named Crate take the crate face (wood_planks_23, one per side), the workshop floor big stone tiles
@@ -155,6 +164,7 @@ variant(M.Wood, WOOD_DARK)
 variant(M.WoodPlanks, CRATE)
 variant(M.Slate, FLOOR)
 variant(M.Wood, FURNITURE)
+variant(M.ClayRoofTiles, ROOF_TRIM)
 
 local function vivid(c) -- more saturation (light colours less, so the road and plaster don't go yellow), lifted darks
 	local h, s, v = c:ToHSV()
@@ -174,7 +184,7 @@ local function add(near, name, size, cf, color, material, shape)
 	end
 	local p = Instance.new("Part")
 	p.Name, p.Size, p.CFrame, p.Color, p.Material, p.Shape = name, size, cf, color, material, shape
-	local d = VARIANTS[material]
+	local d = roofTrim(p, VARIANTS[material])
 	if d then p.MaterialVariant = d[1] end
 	p.Anchored, p.CanCollide, p.CanQuery, p.CanTouch = true, false, false, false
 	p.TopSurface, p.BottomSurface = Enum.SurfaceType.Smooth, Enum.SurfaceType.Smooth
@@ -244,6 +254,7 @@ for _, p in scope() do
 	if d == VARIANTS[M.Wood] and select(3, (p:GetAttribute("StyleTest_Color") or p.Color):ToHSV()) < DARK then d = WOOD_DARK end
 	if d == VARIANTS[M.WoodPlanks] and p.Name == "Crate" then d = CRATE end
 	if d == VARIANTS[M.Slate] and plot and p == plot.Workshop:FindFirstChild("Floor") then d = FLOOR end
+	d = roofTrim(p, d)
 	if d then set(p, "MaterialVariant", d[1]) end
 	if p.Material ~= M.Neon then set(p, "Color", vivid(p:GetAttribute("StyleTest_Color") or p.Color)) end
 end

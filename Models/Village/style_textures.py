@@ -6,7 +6,8 @@
 #   stone   -> PaintStone   (Slate, 8)       rounded cobbles with dark gaps
 #   earth   -> PaintEarth   (Ground, 32)     packed earth: big soft patches, strokes along the street, few pebbles
 #   plaster -> PaintPlaster (Plaster, 16)    cream wall wash with faint vertical strokes
-#   roof    -> PaintRoof    (ClayRoofTiles, 6) kawara rolls with a lit crest and a shadow at each course
+#   roof    -> PaintRoof    (ClayRoofTiles, 6) hongawara: wide pans and narrow round covers, soft course laps
+#   roof_trim -> PaintRoofTrim (ClayRoofTiles, 6) the roof's tone, no tiles (round trims)
 #   wood    -> PaintWood    (Wood, 8)        painted grain streaks along U, soft plank seams
 # Each also gets a gentle normal map and a flat rough roughness map (no shine on painted surfaces).
 # Run: python -I style_textures.py <out dir>, serve the folder on localhost and upload with Studio MCP upload_image.
@@ -107,17 +108,42 @@ def plaster(out):
 
 
 def roof(out):
-    rolls = 8  # tile rolls across U, courses down V
-    u = (xx * rolls) % 1.0
-    prof = np.sin(np.pi * u)  # round kawara roll
-    crest = np.exp(-((u - 0.42) / 0.12) ** 2)  # painted light on the roll's crest
-    courses = 4
+    # 2026-11-05 (Allen: "can you fix the clay roof tiles, they look odd"): hongawara, not identical barrels. Across U,
+    # 6 tiles a tile (1 stud each at 6 studs per tile): a wide concave pan, then a narrow round cover roll on its seam;
+    # down V, 4 courses with a soft lap shadow, the pans and rolls running on through it as on a real roof. Each tile
+    # gets its own tone. Was: 8 equal rolls with a hard dark band at every course (stacked-barrel look).
+    cols, courses = 6, 4
+    u = (xx * cols) % 1.0
     w = (yy * courses) % 1.0
-    lap = smooth(0.0, 0.18, w)  # shadow under the course above
-    v = 0.48 + prof * 0.22 + crest * 0.18
-    v = v * (0.72 + 0.28 * lap) - (1 - smooth(0.0, 0.10, prof)) * 0.12
-    v = paint(v + (noise(60) - 0.5) * 0.05, 7, 0.4)
-    save(out, "roof", v, warm=0.10, h=prof * lap, k=2.5)
+    col = np.floor(xx * cols).astype(int) % cols
+    row = np.floor(yy * courses).astype(int) % courses
+    R = 0.30  # the cover roll's width, centred on the tile's seam (u = 0)
+    du = (u + 0.5) % 1.0 - 0.5  # -0.5..0.5, 0 on the seam
+    t = np.clip(np.abs(du) / (R / 2), 0, 1)  # 0..1 across the roll
+    on_roll = np.abs(du) < R / 2
+    roll_h = np.sqrt(np.clip(1 - t ** 2, 0, 1))  # round cover
+    pu = np.clip((u - R / 2) / (1 - R), 0, 1)  # 0..1 across the pan
+    pan_h = 0.35 - 0.35 * np.sin(np.pi * pu)  # shallow trough
+    # light from the left: the roll's left flank lit, the pan's right side (facing left) lit
+    roll_v = 0.64 + 0.30 * roll_h - 0.22 * np.sign(du) * (1 - roll_h)
+    pan_v = 0.62 + 0.07 * (2 * pu - 1) - 0.03 * np.sin(np.pi * pu)  # right side faces the light; trough a touch darker
+    gap = smooth(0.0, 0.05, np.abs(np.abs(du) - R / 2))  # dark crease where roll meets pan
+    v = np.where(on_roll, roll_v, pan_v) * (0.80 + 0.20 * gap)
+    lap = 0.84 + 0.16 * smooth(0.0, 0.25, w)  # soft shadow under the course above
+    lip = 1.0 + 0.05 * smooth(0.90, 1.0, w)  # a little light on each tile's lower edge
+    tone = 1.0 + (rng.random((courses, cols * 2)) - 0.5) * 0.08
+    seam = np.round(xx * cols).astype(int) % cols  # a roll straddles two pans: it takes its seam's tone
+    v = v * lap * lip * np.where(on_roll, tone[row, seam * 2 + 1], tone[row, col * 2])
+    v = paint(v + (noise(50) - 0.5) * 0.04, 9, 0.25)
+    h = np.where(on_roll, 0.45 + 0.55 * roll_h, pan_h * 0.6) * (0.85 + 0.15 * smooth(0.0, 0.22, w))
+    save(out, "roof", v, warm=0.10, h=h, k=2.0)
+
+
+def roof_trim(out):
+    # 2026-11-05: PaintRoofTrim, for the round roof trims (ridges, eaves, ridge caps, wall ridges, knobs). The tile
+    # pattern wrapped round a cylinder read as a coiled spring; these get the roof's painted tone with no tiles.
+    v = 0.70 + (noise(160) - 0.5) * 0.08 + (noise(40) - 0.5) * 0.04
+    save(out, "roof_trim", paint(v, 9, 0.25), warm=0.10, h=np.zeros((N, N)), k=0.0)
 
 
 def wood(out):
@@ -136,6 +162,9 @@ def wood(out):
 if __name__ == "__main__":
     out = sys.argv[1]
     os.makedirs(out, exist_ok=True)
-    for f in (stone, earth, plaster, roof, wood):
+    only = sys.argv[2:]  # e.g. "roof" to remake one
+    for f in (stone, earth, plaster, roof, roof_trim, wood):
+        if only and f.__name__ not in only:
+            continue
         f(out)
         print(f.__name__, "ok")

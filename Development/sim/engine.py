@@ -36,6 +36,18 @@ def layout_pos(raw):
     return pos
 
 
+LOOK_WALK = 2.0  # s a customer walks between two holders on their look round (ShopService, 2026-11-05)
+STROLL = 40  # studs up or down the street a walk-in starts: the middle of ShopService.STROLL 30-50 (2026-11-07)
+
+# A recorded player buys the first of their next ORDER_LOOKAHEAD recorded buys that stands here; with none of them
+# standing, their type's own choice (the sim's pads can open in another order than they did in the game).
+ORDER_LOOKAHEAD = 3
+
+def _drop(items, x):
+    """Removes x itself, not an equal sword (two swords can be equal dicts; Orders.held keeps a particular one)."""
+    del items[next(i for i, s in enumerate(items) if s is x)]
+
+
 class Sim:
     def __init__(self, B, arche, payer, seed, hours, first_heat=timings.FIRST_HEAT, timing=None):
         self.B, self.A, self.raw = B, arche, B.raw
@@ -43,7 +55,7 @@ class Sim:
         self.horizon = hours * 3600
         self.first_heat = first_heat
         s = f"{seed}"
-        self.rng = {k: random.Random(f"{s}:{k}") for k in ("ore", "cust", "weather", "act", "crew", "mail", "cart")}
+        self.rng = {k: random.Random(f"{s}:{k}") for k in ("ore", "cust", "weather", "act", "crew", "mail", "cart", "stand", "musashi")}
         self.passes = set(behavior.PAYERS[payer])
         self.speed = self.raw["store"]["swiftSpeed"] if "SwiftBoots" in self.passes else self.raw["player"]["walkSpeed"]
         self.boost = (self.raw["store"]["moreCoins"] if "MoreCoins" in self.passes else 1) * (self.raw["store"]["vipCoins"] if "VIP" in self.passes else 1)
@@ -57,6 +69,9 @@ class Sim:
         self.q, self.seq = [], 0
         self.coins, self.gems, self.till = 0.0, 0, 0.0
         self.earned = self.spent = 0.0
+        # away earnings (SmithyCore.noteIncome / incomeRate / takeAway, 2026-11-11): coins earned with their time, the last
+        # AWAY_WINDOW minutes kept; the rate the last day ended with; coins the Cashier brought in between days
+        self.income_log, self.prev_rate, self.away_coins = [], None, 0.0
         self.owned, self.merges = set(), 0
         self.bought_n, self._pads, self._best = 0, (-1, []), {}
         self.wall_limit = None  # seconds of computer time before run() gives up on this player (run.py sets it)
@@ -66,10 +81,13 @@ class Sim:
         self.gem_levels = {g["id"]: 0 for g in self.raw["gemUpgrades"]["list"]}
         self.gems_in, self.gems_out = {}, {}  # gems by source / by what they bought
         self.day = self.streak = 0
+        self.day_start = 0.0  # self.t when today's session began (income_rate)
+        self.daily_held = False  # the first daily reward, waiting for the lessons' end (on_day)
         self.reputation = 0
         self.discovered = set()  # metals collected (Orders: a mail order's metal is one of them)
         self.orders, self.order_id, self.mail_due = [], 0, None  # open mail orders (rules.make_order dicts + id, have)
         self.mail_done, self.mail_coins = 0, 0.0
+        self.quest_times = []  # minutes each letter or mail order was handed in (allen.py compares them with a run)
         self.cart, self.cart_offers, self.cart_retry = None, [], 0.0  # cart: None home, else {back, pay, gems, count, kind}
         self.cart_bulk = self.cart_special = self.cart_skips = 0
         self.cart_waiting = 0  # offer slots waiting after a skip
@@ -88,14 +106,16 @@ class Sim:
         self._add_holder("WallRack1")
         self.stands = []  # ores waiting on the ore box (Auto Ore Roller)
         self.inshop = 0
+        self.due = False  # a walk-in came due while the shop was full (ShopService, 2026-11-10)
         self.weather = None
         self.tutorial_done = False
         self.tutorial_pulls = 0  # ForgeService tutorialPulls: a new player's pulls (Common, then Uncommon)
-        self.rolled_rare = False  # ForgeService rolledRare: a Rare or better rolled yet (ends beginner's luck)
+        self.rolled_rare = False  # a Rare or better rolled yet (ends the old beginner's luck, a scenario since 2026-11-10)
+        self.first_pull_given = False  # ForgeService firstPullGiven / d.rolled[FIRST_PULL_METAL]
         self.want_pulls = 0  # ForgeService wantPulls: pulls since the open letter's metal last came
         self.ramp = None  # (time, sales) when the tutorial ended: ShopService's walk-in ramp (2026-10-31)
         self.sold = self.own_made = self.crew_made = self.carted = self.letters = 0
-        self.missed = self.lost = self.browsed = 0
+        self.missed = self.lost = self.browsed = self.passed_on = 0
         self.letter = None  # ("IronTanto" | "Katana", since)
         self.letters_done, self.letters_offered = set(), set()
         self.hired = {}  # crafter id -> swords made
@@ -103,6 +123,8 @@ class Sim:
         self.crafter_busy = {}  # anvil -> True while its loop runs
         self.staff = {}  # role -> jobs done
         self.target = None
+        # a recorded player (behavior "allen", allen.py): their buys and gem buys still to come, in their order
+        self.order_left, self.gem_order_left = list(arche.order), list(arche.gem_order)
         self.milestones, self.progress = {}, []
         self.minutes = []  # (earned, held, spent, own made, crew made)
         self.purchases = []
@@ -111,6 +133,12 @@ class Sim:
         self.luck_got = self.luck_exp = 0.0
         self.ores_seen = [0] * len(B.rarities)
         self.cust_id = 0
+        # Musashi's stall (Shared/Musashi, 2026-11-10); off when the export (or a scenario) has no "musashi" or the
+        # game has it switched off (musashi.enabled false: ships in a later update)
+        self.mu_on = bool(self.raw.get("musashi")) and self.raw["musashi"].get("enabled", True) is not False
+        self.mu_hour, self.mu_seen = 0, -1  # wall-clock hours begun / the one whose stock was rolled (first seen)
+        self.mu_stock, self.mu_deals, self.mu_missed = [], {}, {}  # design ids, {pad: percent off}, Musashi floor counts
+        self.mu_designs, self.mu_deal_buys, self.mu_saved, self.mu_gems_saved = [], 0, 0.0, 0
 
     # ---------------------------------------------------------------- plumbing
     def push(self, dt, kind, *data):
@@ -121,14 +149,21 @@ class Sim:
         (x1, z1), (x2, z2) = self.pos[a], self.pos[b]
         return math.hypot(x1 - x2, z1 - z2) * self.T["detour"]
 
+    def street_in(self):
+        """Studs a walk-in walks from the street to the door: STROLL along the road, across to EntryPoint."""
+        return math.hypot(STROLL, self.dist("CustomerSpawn", "EntryPoint"))
+
     def walk(self, to, speed=None):
         """Seconds for the player to walk to `to` (and now be there)."""
         if to == self.at:
             return 0.0
         # a route walked in playtests (calibrate.py): its measured seconds at this player's speed; else the layout's
         measured = None if speed else timings.ROUTES.get(timings.route_key(self.at, to, "UpgradedStore" in self.owned))
-        d = measured * timings.WALK_SPEED / self.speed if measured else self.dist(self.at, to) / (speed or self.speed)
-        if self.rng["act"].random() < self.A.waste_chance:
+        spd = self.speed * (1 + self.stand_effects()["Swift"])  # Swift swords on the stands (Store.walkSpeed, 2026-11-09)
+        d = measured * timings.WALK_SPEED / spd if measured else self.dist(self.at, to) / (speed or spd)
+        # no wrong turns while the tutorial's line and arrows lead (2026-11-09, Allen: a casual player takes "at most 25%
+        # more" than his 1:57 to finish it)
+        if self.rng["act"].random() < self.A.waste_chance and self.tutorial_done:
             d += 8.0
         self.at = to
         return d
@@ -141,6 +176,10 @@ class Sim:
             self.milestones[key] = self.t / 60
 
     def add_gems(self, n, source):
+        if source in ("mail", "cart") and n > 0 and self.rng["stand"].random() < self.stand_effects()["Gems"]:
+            n += 1  # Mail swords on the stands: one more (Showcase.bonusGem, 2026-11-09)
+        if source in ("letters", "mail", "cart") and "MoreGems" in self.passes:
+            n = int(n * self.raw["store"]["moreGems"] + 0.5)  # 50% More Gems, rounded half up (SmithyCore.earnGems, 2026-11-09)
         self.gems += n
         self.gems_in[source] = self.gems_in.get(source, 0) + n
 
@@ -151,10 +190,48 @@ class Sim:
         """A sword as Orders.mismatch sees it."""
         return {"blueprintId": s["bp"], "materialId": s["metal"], "polished": s["polished"], "etch": s["etch"]}
 
+    def coin_boost(self):
+        """Store.coinBoost: the passes, then Coins swords on the stands (2026-11-09)."""
+        return self.boost * (1 + self.stand_effects()["Coins"])
+
     def earn(self, coins):
-        c = coins * self.boost
+        c = coins * self.coin_boost()
         self.coins += c
         self.earned += c
+        self.note_income(c)
+
+    def note_income(self, c):
+        """SmithyCore.noteIncome: sales, the Cashier's till, carts, orders and letters count toward the away rate."""
+        self.income_log.append((self.t, c))
+        window = self.raw["employees"]["away"]["window"] * 60
+        while self.income_log and self.income_log[0][0] <= self.t - window:
+            self.income_log.pop(0)
+
+    def income_rate(self):
+        """SmithyCore.incomeRate: coins a minute over the last AWAY_WINDOW played minutes; while today is shorter, the last
+        day's rate fills the rest (none: a short day spreads over AWAY_MIN)."""
+        a = self.raw["employees"]["away"]
+        window = a["window"]
+        total = sum(c for t, c in self.income_log if t > self.t - window * 60)
+        minutes = min((self.t - self.day_start) / 60, window)
+        if self.prev_rate is not None:
+            return (total + self.prev_rate * (window - minutes)) / window
+        return total / max(minutes, a["min"])
+
+    def settle_away(self):
+        """Between days (ShopService on join, SmithyCore.takeAway): with the Cashier hired (the sim never switches him off),
+        AWAY_SHARE of the rate the day ended with for each minute away, up to Aki's cap (the sim hires no other Cashier).
+        A day is PLAY_DAY of play in 24 h, so the time away is always past the cap. Into his till, collected as his sales are."""
+        if "cashier" not in self.staff:
+            self.prev_rate = None  # SmithyCore.awayOut saves nothing without a Cashier at work
+            return
+        a = self.raw["employees"]["away"]
+        rate = self.prev_rate = self.income_rate()
+        secs = min(24 * 3600 - behavior.PLAY_DAY, a["cap"]["aki"])
+        c = math.floor(rate * a["share"] * secs / 60)
+        self.till += c
+        self.earned += c
+        self.away_coins += c
 
     # ---------------------------------------------------------------- the plot
     def _add_holder(self, name):
@@ -177,8 +254,38 @@ class Sim:
         rain = 0
         if self.tutorial_done and self.weather and self.weather["effect"] == "WeatherLuck":
             rain = self.weather["value"]
-        beginner = 9 if self.tutorial_done and not self.rolled_rare else 0  # ForgeService BEGINNER_LUCK (2026-11-01)
-        return self.B.luck(self.merges, "LuckyOre" in self.passes) + rain + beginner
+        beginner = self.raw.get("beginnerLuck", 0) if self.tutorial_done and not self.rolled_rare else 0  # the 2026-11-01 rule (+9), now only a scenario
+        return self.B.luck(self.merges, "LuckyOre" in self.passes) + rain + beginner + self.stand_effects()["Luck"]
+
+    # --- the Showcase Stands (Shared/Showcase families, 2026-11-09) ---------------------------------------------------
+    def stand_swords(self):
+        """What the player puts on the Showcase Stands it owns: its best sword (polished and etched once it can) in its
+        rarest collected metals, a different metal a stand, as the picker lists the strongest first.
+        ponytail: never taken off sale, and every stand counts as filled."""
+        n = sum(f"Showcase{k}" in self.owned for k in (1, 2, 3))
+        if not n:
+            return []
+        S = self.raw["shop"]["showcase"]
+        metals = sorted((m for m in self.discovered if m in S["family"]),
+                        key=lambda m: (-S["tier"][self.B.metals[m]["rarity"]], m))[:n]
+        bp, pol, etched = self.best_bp(), "PolishStation" in self.owned, self.B.best_etch(self.owned) is not None
+        return [(m, bp, pol, etched) for m in metals]
+
+    def stand_effects(self):
+        """Showcase.totals over stand_swords: each family's points (pull x100) added up, x its rate, capped; Gems from Mail's."""
+        key = (sum(f"Showcase{k}" in self.owned for k in (1, 2, 3)), len(self.discovered), self.best_bp(),
+               "PolishStation" in self.owned, self.B.best_etch(self.owned) is not None)
+        if getattr(self, "_stand_key", None) == key:
+            return self._stand_eff
+        S = self.raw["shop"]["showcase"]
+        points = {}
+        for m, bp, pol, etched in self.stand_swords():
+            f = S["family"][m]
+            points[f] = points.get(f, 0) + int(self.B.showcase_pull(m, bp, pol, etched) * 100 + 0.5)
+        eff = {f: min(S["cap"][f], S["rate"][f] * points.get(f, 0)) for f in S["rate"]}
+        eff["Gems"] = min(S["gems"]["cap"], S["gems"]["rate"] * points.get("Mail", 0))
+        self._stand_key, self._stand_eff = key, eff
+        return eff
 
     def ingot_cap(self):
         return 6 * sum(r in self.owned for r in ("IngotRack", "IngotRack2", "IngotRack3", "IngotRack4"))  # six a shelf (Racks 3-4: 2026-11-03)
@@ -193,7 +300,7 @@ class Sim:
         key = (len(self.known), big)  # blueprints are only ever learned, so the count says when it changes
         if key not in self._best:
             c = [b for b in self.known if self.B.blueprints[b]["big"] == big]
-            self._best[key] = max(c, key=lambda b: self.B.blueprints[b]["basePrice"]) if c else None
+            self._best[key] = max(sorted(c), key=lambda b: self.B.blueprints[b]["basePrice"]) if c else None
         return self._best[key]
 
     def value(self, s):
@@ -208,7 +315,8 @@ class Sim:
         if self._pads[0] != self.bought_n:  # the pads on offer change only with a purchase
             self._pads = (self.bought_n, [(i, self.B.price(i, self.merges)) for i in self.B.available(self.owned)
                                           if not self.B.upgrades[i]["decor"]])
-        out = list(self._pads[1])
+        # gem pads (Showcase Stands 2-3, 2026-11-09): bought with gems, so on offer only once they're in hand
+        out = [o for o in self._pads[1] if self.gems >= self.pad_gems(o[0])]
         if not self.tutorial_done:  # TycoonService.standing: no sword pad until the tutorial's letter is sent (2026-10-31)
             out = [o for o in out if not self.B.upgrades[o[0]].get("blueprint")]
         cap = self.raw.get("padCap")
@@ -218,7 +326,13 @@ class Sim:
             started = {self.B.chain_of[i] for i in self.owned if i in self.B.chain_of}
             if self.merges:
                 started.add("Ore")
-            keep = [o for o in out if self.B.upgrades[o[0]].get("blueprint") or o[0] in always or self.B.chain_of.get(o[0]) in started]
+            # and what such a chain's next level waits for outside it (TycoonService.standing, 2026-11-05: Furnace 3 waits
+            # for Furnace 2, so Furnace 2 stands once Anvil 3 is bought)
+            waited = {a for i, u in self.B.upgrades.items() if i not in self.owned and self.B.chain_of.get(i) in started
+                      and all(b in self.owned for b in u["after"] if self.B.chain_of.get(b) == self.B.chain_of.get(i))
+                      for a in u["after"]}  # only for the chain's next level (its afters inside the chain bought)
+            keep = [o for o in out if self.B.upgrades[o[0]].get("blueprint") or o[0] in always or self.B.chain_of.get(o[0]) in started
+                    or o[0] in waited]
             hold = self.raw.get("holdFor")  # scenario: no new chain opens while this pad stands unbought
             out = keep + sorted((o for o in out if o not in keep), key=lambda o: o[1])[:0 if any(o[0] == hold for o in keep) else cap]
         D = self.raw["deliveries"]
@@ -237,12 +351,46 @@ class Sim:
                 a = c.get("after")
                 if (a is None or a in self.owned or a in self.hired) and self.gems >= (c.get("gems") or 0):
                     out.append(("hire:" + c["id"], c["coins"]))  # its gems too: listed once you have them
+        # Musashi's designs on sale, for coins (no type spends gems on swords)
+        out += [("design:" + d, self.B.designs[d]["coins"]) for d in self.mu_stock if d not in self.known]
         return out
 
+    def pad_gems(self, uid):
+        """A gem pad's gems, at Musashi's deal price while it's one of his deals."""
+        g = self.B.upgrades[uid].get("gems") or 0
+        return self.B.musashi_discounted(g, self.mu_deals[uid]) if g and uid in self.mu_deals else g
+
+    def musashi_look(self):
+        """A sensible player looks at the stall at login and when a new stock comes: the hour's stock is rolled when
+        first seen (Musashi.stock, then .seen), with its deals on the pads standing now."""
+        if not self.mu_on or self.mu_seen == self.mu_hour or not self.B.musashi_open(self.owned, self.known):
+            return
+        self.mu_seen = self.mu_hour
+        r = _Rng(self.rng["musashi"])
+        self.mu_stock = self.B.musashi_stock(r, self.known, self.mu_missed)
+        self.B.musashi_seen(self.mu_stock, self.known, self.mu_missed)
+        # shortcut: "standing" is offers(), so a gem pad counts only once its gems are in hand
+        self.mu_deals = dict(self.B.musashi_deals(r, [o[0] for o in self.offers() if o[0] in self.B.upgrades]))
+        self.target = None  # re-pick at the new prices
+
+    def on_musashi(self):
+        self.mu_hour += 1
+
     def pick_target(self):
+        """The type's pick, at Musashi's deal price when it's one of his deals (a pad it would buy anyway)."""
+        o = self._pick_target()
+        if o and o[0] in self.mu_deals and o[1] > 0:
+            return o[0], self.B.musashi_discounted(o[1], self.mu_deals[o[0]])
+        return o
+
+    def _pick_target(self):
         offers = self.offers()
         if not offers:
             return None
+        on = {o[0]: o for o in offers}
+        for uid in self.order_left[:ORDER_LOOKAHEAD]:  # a recorded player: their next buys that stand here, in their order
+            if uid in on:
+                return on[uid]
         for o in offers:  # the tutorial's one buy first (the Guide's Polishing Station, for the letter's polish), then the free merge
             if o[0] == "MergeSlots" or (o[0] == "PolishStation" and not self.tutorial_done):
                 return o
@@ -252,7 +400,7 @@ class Sim:
         best = self.B.blueprints[self.best_bp()]["basePrice"]
 
         def bp_value(uid):
-            b = self.B.upgrades[uid]["blueprint"]
+            b = uid[7:] if uid.startswith("design:") else self.B.upgrades[uid]["blueprint"]
             return 0 if self.B.blueprints[b]["big"] else self.B.blueprints[b]["basePrice"]
 
         return behavior.choose_target(self.A, self.B, offers, bp_value, best, self.grinder_ok)
@@ -260,11 +408,25 @@ class Sim:
     def buy(self, uid, price):
         self.coins -= price
         self.bought_n += 1
+        if uid in self.order_left:
+            self.order_left.remove(uid)
         self.spent += price
-        income = self.income10()
-        self.purchases.append((self.t / 60, uid, price, income))
+        self.purchases.append((self.t / 60, uid, price))
         self.progress.append(self.t)
         self.mark(uid)
+        pad_gems = self.pad_gems(uid) if uid in self.B.upgrades else None
+        if uid in self.mu_deals:  # one of Musashi's deals: the pad bought at his price
+            self.mu_deal_buys += 1
+            self.mu_saved += self.B.price(uid, self.merges) - price
+            self.mu_gems_saved += (self.B.upgrades[uid].get("gems") or 0) - (pad_gems or 0)
+            del self.mu_deals[uid]
+        if uid.startswith("design:"):  # a Musashi design: a blueprint learned (Shared/Musashi)
+            self.known.add(uid[7:])
+            self.mu_designs.append((round(self.t / 60, 1), uid[7:]))
+            return
+        if pad_gems:  # a gem pad (TycoonService, 2026-11-09)
+            self.gems -= pad_gems
+            self.gems_out["pads"] = self.gems_out.get("pads", 0) + pad_gems
         if uid.startswith("hire:"):
             cid = uid[5:]
             if self.gems < (self.B.crafters[cid].get("gems") or 0):
@@ -329,26 +491,39 @@ class Sim:
                 self.push(0.5, "crafter", a, "start")
 
     def hire_reserve(self):
-        """Gems kept for the next crafter whose gate is open (EmployeeService hires for coins + gems)."""
-        if "Crafter" not in self.owned:
-            return 0
-        E = self.raw["employees"]
-        need = [c.get("gems") or 0 for c in E["crafters"] if c["id"] not in self.hired and c["id"] != E["first"]
-                and (c.get("after") is None or c["after"] in self.owned or c["after"] in self.hired)]
+        """Gems kept for the next crafter whose gate is open (EmployeeService hires for coins + gems), or for the next gem
+        pad standing (Showcase Stands 2-3, 2026-11-09): the cheaper of the two."""
+        need = [self.B.upgrades[i]["gems"] for i in self.B.available(self.owned) if self.B.upgrades[i].get("gems")]
+        if "Crafter" in self.owned:
+            E = self.raw["employees"]
+            need += [c.get("gems") or 0 for c in E["crafters"] if c["id"] not in self.hired and c["id"] != E["first"]
+                     and (c.get("after") is None or c["after"] in self.owned or c["after"] in self.hired)]
         return min(need, default=0)
 
     def buy_gems(self):
-        """GemService "buy": Better Advertising I first (the Guide's step), then this type's pair, then the cheapest."""
+        """GemService "buy": Better Advertising I first (the Guide's step), then this type's pair, then the cheapest. Not
+        before the tutorial's letter is sent: the Guide's gem step comes after it, with the letter's gems."""
+        if not self.tutorial_done:
+            return
         while True:
             nxt = {g["id"]: g["prices"][self.gem_levels[g["id"]]] for g in self.raw["gemUpgrades"]["list"]
                    if self.gem_levels[g["id"]] < len(g["prices"])}
             if not nxt:
                 return
-            guide = self.gem_levels["Advertising"] == 0 and "Advertising" in nxt
-            pool = ["Advertising"] if guide else [g for g in behavior.GEM_GROUPS.get(self.A.gems, ()) if g in nxt] or list(nxt)
-            pick = min(pool, key=lambda g: nxt[g])
-            if self.gems < nxt[pick] or (not guide and self.gems - nxt[pick] < self.hire_reserve()):
-                return
+            if self.gem_order_left:  # a recorded player: their gem buys in their order, each once they have the gems
+                pick = self.gem_order_left[0]
+                if pick not in nxt:
+                    self.gem_order_left.pop(0)
+                    continue
+                if self.gems < nxt[pick]:
+                    return
+                self.gem_order_left.pop(0)
+            else:
+                guide = self.gem_levels["Advertising"] == 0 and "Advertising" in nxt
+                pool = ["Advertising"] if guide else [g for g in behavior.GEM_GROUPS.get(self.A.gems, ()) if g in nxt] or list(nxt)
+                pick = min(pool, key=lambda g: nxt[g])
+                if self.gems < nxt[pick] or (not guide and self.gems - nxt[pick] < self.hire_reserve()):
+                    return
             self.gems -= nxt[pick]
             self.gems_out[pick] = self.gems_out.get(pick, 0) + nxt[pick]
             self.gem_levels[pick] += 1
@@ -356,17 +531,14 @@ class Sim:
             self.progress.append(self.t)
             self.mail_clock()  # More Clients may make room
 
-    def income10(self):
-        m = int(self.t // 60)
-        if m < 1 or not self.minutes:
-            return 0.0
-        back = self.minutes[max(0, m - 10)][0]
-        return (self.earned - back) / min(10, m)
-
     # ---------------------------------------------------------------- the player's decisions
     def decide(self):
         A, r = self.A, self.rng["act"]
         self.buy_gems()
+        self.musashi_look()
+        if self.daily_held and self.lessons_done():
+            self.claim_daily()
+            self.buy_gems()
         if self.target is None or self.target[0] not in {o[0] for o in self.offers()}:
             self.target = self.pick_target()
         # 1. the letter, from the mail anywhere
@@ -381,7 +553,7 @@ class Sim:
         # 3. buy
         if self.target and self.coins >= self.target[1]:
             return self.task_buy(*self.target)
-        if A.idle_chance and r.random() < A.idle_chance:
+        if A.idle_chance and r.random() < A.idle_chance and self.tutorial_done:  # no idling while the tutorial leads
             return self.task_idle(r.uniform(*A.idle_len))
         if A.tend:
             t = self.tend_tasks()
@@ -441,7 +613,8 @@ class Sim:
         ready = [s for s in self.swords if not self.needs_finish(s) and "order" not in s]  # what task_stock places
         if ready and any(self.fits(sw, sl) for sw in ready for sl in empty):
             return self.task_stock()
-        if self.sword_rack and "Stocker" not in self.owned and empty and (A.tend or len(self.sword_rack) >= self.sword_cap() or not any(s["sword"] for s in self.slots)):
+        if (len(self.sword_rack) > len(self.held()) and "Stocker" not in self.owned and empty  # held: kept for a letter (P1)
+                and (A.tend or len(self.sword_rack) >= self.sword_cap() or not any(s["sword"] for s in self.slots))):
             return self.task_rack_to_shop()
         if "Delivery" in self.owned and A.cart != "never":
             if self.cart and self.cart["back"] <= self.t:
@@ -453,8 +626,10 @@ class Sim:
             if (self.cart is None or (out and self.cart_queue is None)) and self.t >= self.cart_retry and (
                     (A.cart == "active" and len(spare) >= max(2, cap // 2) and not empty) or len(spare) >= cap):
                 return self.task_cart(spare, queue=out)
-        if crew and A.tend and self.cold and len(self.ingot_rack) < self.ingot_cap() // 2:
-            self.cold_rack.append(self.cold.pop()[0])
+        spare = [c for c in self.cold if not self.order_for(c[0])]  # an ingot kept for a mail order stays (as sitting_back)
+        if crew and A.tend and spare and len(self.ingot_rack) < self.ingot_cap() // 2:
+            self.cold.remove(spare[-1])
+            self.cold_rack.append(spare[-1][0])
             return self.task_rack_ingots()
         return None
 
@@ -490,6 +665,8 @@ class Sim:
 
     # ---------------------------------------------------------------- the player's tasks: (seconds, then what happens)
     def run_task(self, secs, cat, done):
+        if cat not in ("wait", "idle"):
+            secs *= self.A.slack * (1.0 if self.tutorial_done else self.A.learn)  # allen.py fits slack; learn: the tutorial
         self.spend(cat, secs)
         self.push(secs, "player", done)
         return True
@@ -510,6 +687,7 @@ class Sim:
             self.add_gems(spec.get("gems") or 0, "letters")
             self.reputation += self.raw["reputation"]["commission"]
             self.letters += 1
+            self.quest_times.append(self.t / 60)
             self.letters_done.add(name)
             self.mail_clock()  # the first letter opens the mail's orders
             self.letter = None
@@ -525,13 +703,12 @@ class Sim:
         secs = self.walk("shop") + 1.0
 
         def done():
-            self.coins += self.till
-            self.earned += self.till
+            self.coins += self.till  # already counted in earned at the sale
             self.till = 0.0
         return self.run_task(secs, "stock", done)
 
     def task_buy(self, uid, price):
-        window = uid.startswith(("hire:", "Cap", "Spd"))
+        window = uid.startswith(("hire:", "Cap", "Spd", "design:"))  # shortcut: Musashi's stall as a window, no walk
         secs = self.T["menu"] if window else self.walk("pad:" + uid if "pad:" + uid in self.pos else "Anvil") + self.T["buy"]
         self.target = None
 
@@ -584,11 +761,7 @@ class Sim:
 
         def done():
             bp = self.best_bp()
-            if self.letter and self.letter[0] == "IronTanto" and metal == "Iron":
-                bp = "tanto"
-            elif self.letter and self.letter[0] == "Katana" and "katana" in self.known:
-                bp = "katana"
-            elif self.order_for(metal):
+            if self.order_for(metal):
                 order = self.order_for(metal)
                 order["have"] = "sword"
                 sw = self.make_sword(order["blueprintId"], metal, 100)
@@ -596,6 +769,10 @@ class Sim:
                 self.swords.append(sw)
                 self.own_made += 1
                 return
+            elif self.letter and self.letter[0] == "IronTanto" and metal == "Iron":
+                bp = "tanto"
+            elif self.letter and self.letter[0] == "Katana" and "katana" in self.known:
+                bp = "katana"
             else:
                 big = self.best_bp(big=True)
                 stand = [s for s in self.slots if s["big"]]
@@ -640,6 +817,8 @@ class Sim:
         def done():
             for sw, sl in placed:
                 sl["sword"], sl["claimed"] = self.placed(sw), False
+            if placed and self.sold == 0:  # ShopService: until the first sale, a display sends a customer at once
+                self.send_customer(first=True)
         return self.run_task(secs, "stock", done)
 
     def task_rack_ingots(self):
@@ -655,12 +834,15 @@ class Sim:
     def task_rack_to_shop(self):
         empty = [s for s in self.slots if s["sword"] is None and not s["claimed"]]
         take = []
+        held = self.held()  # kept for a letter (P1)
         for sw in list(self.sword_rack):
+            if any(sw is h for h in held):
+                continue
             sl = next((x for x in empty if self.fits(sw, x) and x not in [p[1] for p in take]), None)
             if sl:
                 take.append((sw, sl))
         for sw, sl in take:
-            self.sword_rack.remove(sw)
+            _drop(self.sword_rack, sw)
             sl["claimed"] = True
         secs = self.walk("SwordRack") + self.T["rack"] * len(take) + self.walk("shop") + self.T["place"] * len(take)
 
@@ -755,7 +937,7 @@ class Sim:
         """After the first letter: a new order comes Quicker Mail's gap after the last while the mail has room."""
         if "IronTanto" not in self.letters_done or self.mail_due is not None or len(self.orders) >= self.mail_slots():
             return
-        self.mail_due = self.t + self.raw["gemUpgrades"]["levels"][self.gem_levels["Mail"]]["mailGap"]
+        self.mail_due = self.t + self.raw["gemUpgrades"]["levels"][self.gem_levels["Mail"]]["mailGap"] * (1 - self.stand_effects()["Mail"])
         self.push(self.mail_due - self.t, "mail", self.mail_due)
 
     def new_order(self):
@@ -782,21 +964,35 @@ class Sim:
         """The open order an ingot of this metal was kept for (chasing players), or None."""
         return next((o for o in self.orders if o.get("have") == "ingot" and o.get("materialId") == metal), None)
 
+    def held(self):
+        """The rack swords the Stocker leaves for a letter (Orders.held, 2026-11-09, P1): for each order it works on
+        (`chase`, the game's Accept) that no sword in hand fits, the first rack sword that fits it, one an order."""
+        held = []
+        for o in self.orders:
+            if not o.get("chase") or any(self.B.order_fits(o, self.view(s)) for s in self.swords):
+                continue
+            sw = next((s for s in self.sword_rack if not any(s is h for h in held) and self.B.order_fits(o, self.view(s))), None)
+            if sw is not None:
+                held.append(sw)
+        return held
+
     def mail_fit(self):
-        """(sword index, order) for a finished sword in hand an open mail order takes, or None."""
-        if not self.orders or not self.swords:
+        """(sword, order) for a finished sword in hand, or on the Sword Rack (ShopService sends it from there since
+        2026-11-09, P1), that an open mail order takes, or None."""
+        if not self.orders or not (self.swords or self.sword_rack):
             return None
         shapes = {o["blueprintId"] for o in self.orders}  # only swords of a shape some order asks for can fit
-        swords = [(i, s) for i, s in enumerate(self.swords) if s["bp"] in shapes and not self.needs_finish(s)]
+        swords = [s for s in self.swords if s["bp"] in shapes and not self.needs_finish(s)]
+        swords += [s for s in self.sword_rack if s["bp"] in shapes]
         for o in self.orders:
-            for i, s in swords:
+            for s in swords:
                 if s["bp"] == o["blueprintId"] and self.B.order_fits(o, self.view(s)) and s.get("order", o) is o:
-                    return i, o
+                    return s, o
         return None
 
-    def task_mail(self, i, o):
+    def task_mail(self, sw, o):
         """Hand the sword in from the mail (anywhere): PAY x its value, its metal at no less than a typical ingot, x the shop boost, + gems."""
-        sw = self.swords.pop(i)
+        _drop(self.swords if any(sw is s for s in self.swords) else self.sword_rack, sw)
         self.orders.remove(o)
         for s in self.swords:  # a sword made for this order but beaten to it by another that fit: free again
             if s.get("order") is o:
@@ -806,30 +1002,55 @@ class Sim:
             pay = self.B.order_pay(self.value(sw), self.B.metal_multiplier(sw["metal"]), self.B.typical_metal(self.B.luck(self.merges)),
                                     self.B.shop_boost(self.owned))
             self.earn(pay)
-            self.mail_coins += pay * self.boost
+            self.mail_coins += pay * self.coin_boost()
             self.add_gems(o["gems"], "mail")
             self.reputation += self.raw["reputation"]["order"]
             self.mail_done += 1
+            self.quest_times.append(self.t / 60)
             self.progress.append(self.t)
             self.mail_clock()
         return self.run_task(self.T["letter"], "letters", done)
 
     def on_day(self):
-        """A new day's session (behavior.PLAY_DAY of play): today's daily reward. Between days the cart came back and the
-        mail filled up: they run on the server clock while you are away."""
+        """A new day's session (behavior.PLAY_DAY of play): today's daily reward. Between days the cart came back, the
+        mail filled up and the Cashier earned (settle_away): they run on the server clock while you are away."""
         if self.day > 0:
+            self.settle_away()
+            self.income_log = []
+            self.day_start = self.t
             if self.cart and self.cart["back"] > self.t and self.cart["back"] != float("inf"):
                 self.cart["back"] = self.t
             if "IronTanto" in self.letters_done:
                 while len(self.orders) < self.mail_slots():
                     self.new_order()
                 self.mail_due = None
-        self.day += 1
-        _, gems = self.B.daily(self.streak, self.day - 1, self.day)
-        self.streak += 1
-        self.add_gems(gems, "daily")
+        if self.day == 0 and not self.lessons_done():
+            # GemController: the first daily window waits for the lessons' end (the letter sent, then the gem step);
+            # decide() claims it then. shortcut: a second day that comes first finds it still held and gives nothing
+            # more (a player an hour into the tutorial), fine unless the sim's first hour is ever that slow
+            self.daily_held = True
+        else:
+            self.claim_daily()
         if self.t + behavior.PLAY_DAY < self.horizon:
             self.push(behavior.PLAY_DAY, "day")
+        if self.mu_on:  # a new wall-clock hour since the last session; shortcut: each session starts at a random minute
+            self.mu_hour += 1  # of the hour, so a 1 h session sees the next stock come once, at the hour mark
+            self.push(self.raw["musashi"]["clock"] * (1 - self.rng["musashi"].random()), "musashi")
+
+    def lessons_done(self):
+        """MyPlot.lessonsDone: the tutorial's letter sent and the gem step's buy made."""
+        return self.tutorial_done and any(self.gem_levels.values())
+
+    def claim_daily(self):
+        self.daily_held = False
+        self.day += 1
+        _, gift = self.B.daily(self.streak, self.day - 1, self.day)
+        self.streak += 1
+        self.add_gems(gift.get("gems", 0), "daily")
+        if gift.get("coinMinutes"):  # coins the game gives unboosted (GemService), counted as earned
+            c = self.B.gift_coins(gift["coinMinutes"], self.B.coin_rate(self.earned, self.t))
+            self.coins += c
+            self.earned += c
 
     def task_ore(self):
         """Pull until the box shows something worth keeping (or collect the Auto Ore Roller's), take what's kept."""
@@ -865,7 +1086,7 @@ class Sim:
         second (wantPulls); for a new player who has collected nothing and made nothing, a Common, then an Uncommon
         (tutorialPulls); else Materials.roll."""
         spec = next((c for c in self.raw["commissions"] if self.letter and c["id"] == self.letter[0]), None)
-        if spec and spec.get("materialId"):
+        if spec and spec.get("materialId") and not self.tutorial_done:  # the tutorial only (2026-11-08)
             self.want_pulls += 1
             if self.want_pulls >= 2 or self.next_number() < 1 / 3:
                 self.want_pulls = 0
@@ -876,6 +1097,12 @@ class Sim:
             if rarity:
                 pool = [m for m in self.B.metals.values() if m["rarity"] == rarity]
                 return pool[self.next_integer(1, len(pool)) - 1]["id"]
+        # ForgeService FIRST_PULL_METAL (Allen 2026-11-10, "Legendary"): the first stand rolled after the tutorial brings a
+        # Mythril for a player whose roller has never rolled one; the other stands and later pulls roll the usual odds
+        gift = self.raw.get("firstPull", "Mythril")
+        if gift and self.tutorial_done and not self.first_pull_given:
+            self.first_pull_given = True
+            return gift
         return self.B.roll(self, luck)
 
     def next_number(self):  # rules.roll draws through this Sim (the ore stream)
@@ -886,6 +1113,8 @@ class Sim:
 
     def count_luck(self, res, luck):
         for m in res:
+            if m == self.raw.get("firstPull", "Mythril"):
+                self.first_pull_given = True  # rolled already (d.rolled), in the tutorial or as the gift
             if self.B.rarity_index[self.B.metals[m]["rarity"]] >= 2:
                 self.rolled_rare = True
             self.ores_seen[self.B.rarity_index[self.B.metals[m]["rarity"]]] += 1
@@ -966,23 +1195,37 @@ class Sim:
                 if k < 1:
                     tlo, thi = S["tutorialGap"]
                     lo, hi = tlo + (lo - tlo) * k, thi + (hi - thi) * k
-        if "Promoter" in self.staff:
+        if "promoter" in self.staff:
             f *= self.B.perk("promoter", self.staff["promoter"])
-        # ShopService.showcasePull (2026-11-02): each Showcase Stand owned holds a sword and brings walk-ins sooner
-        # ponytail: every stand counts as filled at the plain pull, its sword not taken from sale; rare swords pull 2x in game
-        f *= 1 - self.raw["shop"].get("showcasePull", 0) * sum(f"Showcase{k}" in self.owned for k in (1, 2, 3))
-        self.push(r.uniform(lo * f, hi * f), "spawn")
-        # ShopService.sendCustomer: nobody past the shop's room
-        room = self.raw["shop"]["walkIns"] + ("Promoter" in self.staff) + sum(f"Parking{k}" in self.owned for k in (1, 2, 3))
-        if self.inshop >= room:
+        # ShopService.showcasePull: each Showcase Stand owned holds a sword and brings walk-ins sooner by its pull
+        # (Showcase.pull, 2026-11-04). ponytail: every stand counts as filled, its sword not taken from sale, with the best
+        # sword known in a Rare metal, polished once the Polishing Station is bought, etched once an etch is
+        f *= 1 - self.stand_effects()["Customers"]  # since 2026-11-09 only Customers swords, capped (Showcase families)
+        gap = r.uniform(lo * f, hi * f)
+        # ShopService (2026-11-10): a walk-in due while the shop is full waits for room (within a second of one leaving),
+        # and the next gap starts once they're sent
+        if self.send_customer() == "full":
+            self.due = True
             return
+        self.push(gap, "spawn")
+
+    def send_customer(self, first=False):
+        """ShopService.sendCustomer. first: the tutorial's customer, sent the moment a sword goes on display before the
+        first sale (ShopService, since 2026-10-22), fading in at CustomerSpawn with no stroll up the street (2026-11-09)."""
+        r = self.rng["cust"]
+        # ShopService.sendCustomer: nobody past the shop's room
+        # the Promoter adds +1 / +2 / +3 by level (Employees.promoterCrowd, 2026-11-07)
+        crowd = self.B.promoter_crowd(self.staff["promoter"]) if "promoter" in self.staff else 0
+        room = self.raw["shop"]["walkIns"] + crowd + sum(f"Parking{k}" in self.owned for k in (1, 2, 3))
+        if self.inshop >= room:
+            return "full"
         choices = [s for s in self.slots if s["sword"] is not None and not s["claimed"]]
         if not choices:  # runCustomer's browseFor (2026-10-31): nothing free, they wait BROWSE_WAIT inside and leave
             if self.sold == 0:  # not before the first sale (Allen 2026-10-29)
                 return
             self.inshop += 1
             self.browsed += 1
-            there = (self.dist("CustomerSpawn", "EntryPoint") + self.dist("EntryPoint", "shop")) / self.raw["shop"]["npcWalkSpeed"]
+            there = (self.street_in() + self.dist("EntryPoint", "shop")) / self.raw["shop"]["npcWalkSpeed"]
             # their room frees when they give up, not once out (sendCustomer's free())
             # ponytail: a sword freed during the wait isn't taken up; the game's browser would go for it
             self.push(there + self.raw["shop"]["browseWait"], "browsed")
@@ -990,6 +1233,9 @@ class Sim:
         vip = None
         if self.tutorial_done:
             vip = self.raw["gemUpgrades"]["levels"][self.gem_levels["Vip"]]["vipChance"] * (self.weather["value"] if self.weather_is("WeatherVip") else 1)
+            if "VIP" in self.passes:  # the VIP pass: VIP customers twice as often (Store.VIP_CUSTOMERS, 2026-11-07)
+                vip *= self.raw["store"].get("vipCustomers", 2)
+            vip += self.stand_effects()["Vip"]  # VIP swords on the stands, after the multipliers (2026-11-09)
         cid = self.B.pick_customer(_Rng(r), vip)
         slot = choices[r.randint(0, len(choices) - 1)]
         for s in choices:
@@ -998,37 +1244,65 @@ class Sim:
                 break
         slot["claimed"] = True
         self.inshop += 1
-        if "Promoter" in self.staff:
+        if "promoter" in self.staff:
             self.staff["promoter"] += 1
-        walk = (self.dist("CustomerSpawn", "EntryPoint") + self.dist("EntryPoint", slot["holder"])) / self.raw["shop"]["npcWalkSpeed"]
-        self.push(walk + 2.5, "offer", slot, cid, None, 0)
+        street = self.dist("CustomerSpawn", "EntryPoint") if first else self.street_in()
+        walk = (street + self.dist("EntryPoint", slot["holder"])) / self.raw["shop"]["npcWalkSpeed"]
+        # ShopService (2026-11-05): a look over up to browseLooks other swords on sale, lookTime s each, then remarkTime s
+        # reading theirs. ponytail: LOOK_WALK s between holders, not measured
+        S = self.raw["shop"]
+        looks = min(S.get("browseLooks", 0), sum(1 for s in self.slots if s["sword"] is not None) - 1)
+        self.push(walk + max(0, looks) * (S.get("lookTime", 0) + LOOK_WALK) + S.get("remarkTime", 2.5), "offer", slot, cid, None, 0)
 
-    def on_offer(self, slot, cid, offer, declines):
+    def on_offer(self, slot, cid, offer, declines, passed=0):
         sw = slot["sword"]
         value = self.value(sw)
+        if offer is None and self.sold >= 2 and not self.B.customers[cid].get("vip"):
+            # ShopService.runCustomer (2026-11-10, More Sales): an offer at the buy chance (the level, + polish, + etch),
+            # else they pass and try one other free sword (a 1.5 s beat, the walk, its read), then leave
+            G = self.raw["gemUpgrades"]
+            p = min(1, G["levels"][self.gem_levels["Sales"]]["buyChance"] + (G["buyPolished"] if sw["polished"] else 0)
+                    + (G["buyEtched"] if sw["etch"] else 0))
+            if self.rng["cust"].random() >= p:
+                self.passed_on += 1
+                other = [s for s in self.slots if s is not slot and s["sword"] is not None and not s["claimed"]] if passed == 0 else []
+                if not other:
+                    return self.leave(slot)
+                slot["claimed"] = False
+                nxt = other[self.rng["cust"].randint(0, len(other) - 1)]
+                nxt["claimed"] = True
+                return self.push(1.5 + LOOK_WALK + self.raw["shop"].get("remarkTime", 2.5), "offer", nxt, cid, None, 0, passed + 1)
         if offer is None:
             liked = self.sold > 0 and self.B.likes(cid, sw["bp"], sw["pct"])
             offer = value if self.sold == 0 else self.B.offer(cid, value, liked, _Rng(self.rng["cust"]))
-        if "Cashier" in self.staff and self.sold >= 2:
-            delay = self.B.perk("cashier", self.staff["cashier"])
-            accept = self.B.cashier_sells(offer, value, None)
-        else:
-            c = self.B.customers[cid]
-            if self.rng["cust"].random() < self.offer_miss:
-                self.push(c.get("waits") or self.raw["shop"]["offerTimeout"], "answer", slot, cid, offer, declines, None, value)
-                return
-            # an answer comes before the card times out (a later one is a miss, counted above)
-            delay = min(self.rng["cust"].expovariate(1 / self.offer_react), (c.get("waits") or self.raw["shop"]["offerTimeout"]) - 0.5)
-            accept = not (self.A.haggle and declines == 0 and offer < 1.1 * value and c["raiseChance"] >= 0.3 and self.sold >= 2)
-        self.push(delay, "answer", slot, cid, offer, declines, accept, value)
+        c = self.B.customers[cid]
+        # ShopService.runCustomer (2026-11-09): with the Cashier your card still shows, for his answer time (his perk); a
+        # card you don't answer by then is his: he sells by his setting (cashierSells, default any offer) into his till
+        clerk = "cashier" in self.staff and self.sold >= 2
+        timeout = self.B.perk("cashier", self.staff["cashier"]) if clerk else (c.get("waits") or self.raw["shop"]["offerTimeout"])
+        # the tutorial points at the card ("Accept the offer!"): nobody misses it, and each type answers at its own
+        # pace (Archetype.react), not the measured habits, which came from feature tests with nobody watching the shop
+        tutorial = not self.tutorial_done
+        react = self.A.react if tutorial else self.offer_react
+        delay = None if self.rng["cust"].random() < (0.0 if tutorial else self.offer_miss) else self.rng["cust"].expovariate(1 / react)
+        if clerk and (delay is None or delay >= timeout):
+            return self.push(timeout, "answer", slot, cid, offer, declines, self.B.cashier_sells(offer, value, None), value, True)
+        if delay is None:  # missed: they leave when the card times out
+            return self.push(timeout, "answer", slot, cid, offer, declines, None, value, False)
+        # an answer comes before the card times out (a later one is a miss, counted above)
+        accept = not (self.A.haggle and declines == 0 and offer < 1.1 * value and c["raiseChance"] >= 0.3 and self.sold >= 2)
+        self.push(min(delay, timeout - 0.5), "answer", slot, cid, offer, declines, accept, value, False)
 
-    def on_answer(self, slot, cid, offer, declines, accept, value):
+    def on_answer(self, slot, cid, offer, declines, accept, value, cashier=False):
         if accept is None:  # no answer in time: they leave
             self.missed += 1
             return self.leave(slot)
         if accept:
-            if "Cashier" in self.staff and self.sold >= 2:
-                self.till += offer * self.boost
+            if cashier:
+                c = offer * self.coin_boost()
+                self.till += c
+                self.earned += c
+                self.note_income(c)
                 self.staff["cashier"] += 1
             else:
                 self.earn(offer)
@@ -1042,7 +1316,7 @@ class Sim:
                 self.maybe_katana_letter()
             slot["sword"] = None
             slot["claimed"] = False
-            self.inshop -= 1
+            self.room_freed()
             return
         declines += 1
         teach = self.sold == 1 and declines == 1
@@ -1066,10 +1340,18 @@ class Sim:
 
     def leave(self, slot):
         slot["claimed"] = False
-        self.inshop -= 1
+        self.room_freed()
 
     def on_browsed(self):
+        self.room_freed()
+
+    def room_freed(self):
+        """sendCustomer's free(): one shopper fewer; a walk-in that came due while full is sent on the spawn loop's next
+        1 s check (ShopService, 2026-11-10)."""
         self.inshop -= 1
+        if self.due:
+            self.due = False
+            self.push(1.0, "spawn")
 
     def on_letter(self, name):
         if name not in self.letters_done:
@@ -1104,10 +1386,10 @@ class Sim:
                 return self.crew_waits(anvil, "rackFull")
             if not self.ingot_rack:
                 return self.crew_waits(anvil, "noIngots")
-            # up to `batch` of the cheapest, no more than the Finished Sword Rack has room for (EmployeeService, 2026-11-03)
-            # ponytail: one hook per crafter sword (crafters make no big swords)
+            # as many of the cheapest as it carries at its level (Employees.crafterCarry: 1 at Lv. 1-2 since 2026-11-05), no more than the Finished
+            # Sword Rack has room for (EmployeeService). ponytail: one hook per crafter sword (crafters make no big swords)
             metals = []
-            for _ in range(min(self.raw["employees"].get("batch", 1), self.sword_cap() - self.hooks(self.sword_rack), len(self.ingot_rack))):
+            for _ in range(min(self.B.crafter_carry(lv), self.sword_cap() - self.hooks(self.sword_rack), len(self.ingot_rack))):
                 m = min(self.ingot_rack, key=self.B.metal_multiplier)
                 self.ingot_rack.remove(m)
                 metals.append(m)
@@ -1128,20 +1410,27 @@ class Sim:
             if not free:
                 self.crew_wait["furnace"] = self.crew_wait.get("furnace", 0.0) + 2.0
                 return self.push(2.0, "crafter", anvil, "furnace", job)
-            f = free[0]
-            heat = self.B.heat_time(self.owned, f) * len(job["metals"])  # each in turn at the one furnace
-            self.furnaces[f] = {"who": cid, "metal": job["metals"][0], "ready": self.t + heat}
-            job["forge"] = f
-            return self.push(self.dist("IngotRack", f) / walk + heat, "crafter", anvil, "forge", job)
+            # each ingot into the next free furnace, so free furnaces heat together (2026-11-04); in rounds when fewer.
+            # ponytail: the walk between furnaces and a furnace freeing up mid-trip are left out
+            use = free[:len(job["metals"])]
+            rounds = -(-len(job["metals"]) // len(use))
+            heat = max(self.B.heat_time(self.owned, f) for f in use) * rounds
+            for f in use:
+                self.furnaces[f] = {"who": cid, "metal": job["metals"][0], "ready": self.t + heat}
+            job["forges"] = use
+            return self.push(self.dist("IngotRack", use[0]) / walk + heat, "crafter", anvil, "forge", job)
         if phase == "forge":
-            self.furnaces[job["forge"]] = None
-            secs = self.dist(job["forge"], anvil) / walk + self.B.level_seconds(lv, self.B.crafters[cid]["forge"]) * len(job["metals"])
+            for f in job["forges"]:
+                self.furnaces[f] = None
+            secs = self.dist(job["forges"][0], anvil) / walk + self.B.level_seconds(lv, self.B.crafters[cid]["forge"]) * len(job["metals"])
             return self.push(secs, "crafter", anvil, "polish", job)
         if phase == "polish":
             secs = 0.0
+            # either Polishing Station since 2026-11-04. ponytail: the sim never modelled waiting for a station, so Station 2
+            # changes nothing here; distances stay Station 1's
             job["polished"] = "PolishStation" in self.owned
             if job["polished"]:
-                secs = self.dist(anvil, "PolishStation") / walk + self.B.level_seconds(lv, self.raw["employees"]["polishSeconds"]) * len(job["metals"])
+                secs = self.dist(anvil, "PolishStation") / walk + self.B.level_seconds(lv, self.B.crafters[cid]["polish"]) * len(job["metals"])  # each crafter's own (2026-11-04)
             return self.push(secs + self.dist("PolishStation" if job["polished"] else anvil, "SwordRack") / walk, "crafter", anvil, "rack", job)
         if phase == "rack":
             while job["metals"]:  # racked one by one; a full rack holds the rest in hand
@@ -1160,20 +1449,30 @@ class Sim:
         if "Stocker" not in self.owned:
             return
         speed = self.B.staff_walk("stocker", self.staff["stocker"])
-        etcher = "Etcher" in self.owned and self.B.best_etch(self.owned) is not None  # he has a pattern
         free = [x for x in self.slots if x["sword"] is None and not x["claimed"]]
-        for sw in self.sword_rack if free else ():
-            if etcher and sw["etch"] is None:
+        room = self.B.carry(self.B.staff_level(self.staff["stocker"], self.raw["employees"]["staffScale"])[0])
+        loads = []  # as many swords a trip as he carries at his level (2026-11-04), each to a free holder it fits
+        # etched swords first, then any (2026-11-05, Allen: "have stocker prioritize etched swords, but if there's none
+        # then just grab a sword"); he no longer leaves un-etched ones for the Etcher
+        held = self.held()  # kept for an accepted letter: the mail sends it (Orders.held, 2026-11-09, P1)
+        for sw in sorted(self.sword_rack, key=lambda s: s["etch"] is None) if free else ():
+            if len(loads) >= room:
+                break
+            if any(sw is h for h in held):
                 continue
-            sl = next((x for x in free if self.fits(sw, x)), None)
+            sl = next((x for x in free if self.fits(sw, x) and not x["claimed"]), None)
             if sl:
-                self.sword_rack.remove(sw)
+                _drop(self.sword_rack, sw)
                 sl["claimed"] = True
-                there = self.dist("SwordRack", sl["holder"]) / speed
-                self.staff["stocker"] += 1
-                self.push(there + self.T["place"], "stocked", sl, sw)
-                return self.push(2 * there + self.T["place"], "stocker")
-        self.push(3.0, "stocker")
+                loads.append((sl, sw))
+        if not loads:
+            return self.push(3.0, "stocker")
+        # ponytail: holder to holder taken as the farther one's way from the rack, each placed on the way there
+        far = max(self.dist("SwordRack", sl["holder"]) for sl, _ in loads) / speed
+        for k, (sl, sw) in enumerate(loads, 1):
+            self.staff["stocker"] += 1
+            self.push(self.dist("SwordRack", sl["holder"]) / speed + self.T["place"] * k, "stocked", sl, sw)
+        return self.push(2 * far + self.T["place"] * len(loads), "stocker")
 
     def on_stocked(self, sl, sw):
         sl["sword"], sl["claimed"] = self.placed(sw), False
@@ -1217,7 +1516,7 @@ class Sim:
                     "letter": self.on_letter, "day": self.on_day, "mail": self.on_mail, "cart_offer": self.on_cart_offer, "crafter": self.on_crafter,
                     "stocker": self.on_stocker, "stocked": self.on_stocked, "etcher": self.on_etcher, "etched": self.on_etched,
                     "weather": self.on_weather, "autoroll": self.on_autoroll, "sample": self.on_sample,
-                    "browsed": self.on_browsed}
+                    "browsed": self.on_browsed, "musashi": self.on_musashi}
         still = 0  # events in a row at one instant: a loop that takes no time would never end
         start, n = time.monotonic(), 0
         while self.q:
@@ -1253,13 +1552,15 @@ class Sim:
         exp = self.luck_exp or 1
         return {"milestones": dict(self.milestones, **self.gem_milestones()), "minutes": self.minutes, "purchases": self.purchases, "use": self.use,
                 "crew_wait": self.crew_wait, "progress": self.progress, "luck": self.luck_got / exp, "ores": self.ores_seen,
-                "sold": self.sold, "carted": self.carted, "missed": self.missed, "lost": self.lost, "browsed": self.browsed, "letters": self.letters,
-                "own_made": self.own_made, "crew_made": self.crew_made, "earned": self.earned, "coins": self.coins,
+                "sold": self.sold, "carted": self.carted, "missed": self.missed, "lost": self.lost, "browsed": self.browsed, "passed_on": self.passed_on, "letters": self.letters,
+                "own_made": self.own_made, "crew_made": self.crew_made, "earned": self.earned, "away_coins": self.away_coins, "coins": self.coins,
                 "merges": self.merges, "horizon_min": (self.t if self.done else self.horizon) / 60, "loops_own": self.loops_own, "loops_crew": self.loops_crew,
                 "first_pull": self.first_pull, "gems_in": self.gems_in, "gems_out": self.gems_out, "gem_levels": self.gem_levels,
                 "mail_done": self.mail_done, "mail_coins": self.mail_coins, "cart_bulk": self.cart_bulk,
                 "cart_special": self.cart_special, "cart_skips": self.cart_skips, "reputation": self.reputation,
-                "orders_open": len(self.orders), "days": self.day, "gems_left": self.gems}
+                "orders_open": len(self.orders), "days": self.day, "gems_left": self.gems, "quests": self.quest_times,
+                "musashi": {"designs": self.mu_designs, "deals": self.mu_deal_buys, "saved": round(self.mu_saved),
+                            "gems_saved": self.mu_gems_saved}}
 
 
 class _Rng:

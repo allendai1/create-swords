@@ -30,7 +30,7 @@ TARGETS = {"KatanaBlueprint": 15, "Crafter": 15, "LongswordBlueprint": 40, "Merg
            "Stocker": 210, "FalchionBlueprint": 240, "Merge2": 240, "hire:mei": 360, "GladiusBlueprint": 380, "Promoter": 400,
            "Merge3": 420, "Cashier": 450, "ZanbatoBlueprint": 240, "Etcher": 510, "GemPairLv3": 600, "hire:kenji": 630,
            "hire:rin": 750, "SeraphBlueprint": 1200, "GemPairLv5": 1200}
-NAMES = {"KatanaBlueprint": "Katana", "LongswordBlueprint": "Longsword", "Crafter": "Sword Crafter", "Merge1": "1st merge",
+NAMES = {"KatanaBlueprint": "Katana", "LongswordBlueprint": "Longsword", "Crafter": "Swordsmith", "Merge1": "1st merge",
          "hire:haru": "Haru (2nd crafter)", "GemsAllLv1": "Gems: all Lv. 1", "Stocker": "Stocker", "FalchionBlueprint": "Falchion",
          "Merge2": "2nd merge", "hire:mei": "Mei (3rd crafter)", "GladiusBlueprint": "Gladius", "Promoter": "Shop Promoter",
          "Merge3": "3rd merge", "Cashier": "Cashier", "ZanbatoBlueprint": "Zanbatō", "Etcher": "Sword Etcher",
@@ -62,6 +62,7 @@ def fmt_min(m):
 
 
 def series_minute(k):
+    """The minute of sample k in a player's 'earned' series (run.series: every minute to 60, then every 5)."""
     return k if k <= 60 else 60 + 5 * (k - 60)
 
 
@@ -265,8 +266,8 @@ def write(out_dir):
             if t > horizon:
                 continue
             a = max(0, t - 10) if t <= 60 else t - 30
-            xs = [income(p, a, t) for p in g]
-            row.append(f"{pct(xs, 50):,.0f}<br><span class='mut'>{pct(xs, 10):,.0f}–{pct(xs, 90):,.0f}</span>")
+            xs = [income(p, a, t) for p in g if p["horizon"] >= t]  # finished players left out, as time_model.income
+            row.append(f"{pct(xs, 50):,.0f}<br><span class='mut'>{pct(xs, 10):,.0f}–{pct(xs, 90):,.0f}</span>" if xs else "—")
         rows.append(row)
     parts.append("<p class='note'>Coins a minute (over the 10 minutes before, or 30 after the first hour): median, P10–P90.</p>")
     parts.append(table(["group"] + [fmt_min(t) for t in CHECK if t <= horizon], rows))
@@ -275,7 +276,9 @@ def write(out_dir):
     for i, k in enumerate(free):
         pts = []
         for t in range(10, int(horizon) + 1, 10 if horizon <= 120 else 30):
-            pts.append((t, pct([income(p, t - 10, t) for p in G[k]], 50)))
+            xs = [income(p, t - 10, t) for p in G[k] if p["horizon"] >= t]
+            if xs:
+                pts.append((t, pct(xs, 50)))
         lines.append((k[1], pts, COLOURS[i % len(COLOURS)]))
     parts.append(chart(lines, f"Median coins a minute ({base[0][2]})"))
 
@@ -348,7 +351,7 @@ def write(out_dir):
 
     # 8. gems, mail and the cart
     parts.append("<h2>8. Gems, mail orders and the cart</h2>")
-    srcs, sinks = ["daily", "letters", "mail", "cart", "starter"], ["Advertising", "Vip", "Clients", "Mail", "hires"]
+    srcs, sinks = ["daily", "letters", "mail", "cart", "starter"], ["Advertising", "Vip", "Clients", "Mail", "hires", "pads"]
     rows = []
     for k in base:
         g = G[k]
@@ -423,7 +426,7 @@ def note(meta, G, base, out_dir):
              + (f"measured in playtests for {', '.join(timings.MEASURED)}, the rest estimates" if timings.MEASURED else "estimates")
              + " ([[Development/Gameplay Simulator Plan]]).", "",
              "Main point, median (`pacing.py` for more):"]
-    lines += [f"- **{k[1]} · {k[2]}:** Sword Crafter {fmt_min(pct([when(p, HEADLINE) for p in G[k]], 50))}, "
+    lines += [f"- **{k[1]} · {k[2]}:** Swordsmith {fmt_min(pct([when(p, HEADLINE) for p in G[k]], 50))}, "
               f"{pct([pacing.player(p)['long'] for p in G[k]], 50):.0f} waits over 15 min between buys" for k in base]
     lines += ["", "Median time to each target, by payer (10th–90th percentile in the full report):"]
     for payer in dict.fromkeys(k[2] for k in base):

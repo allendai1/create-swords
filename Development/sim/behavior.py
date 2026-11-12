@@ -2,7 +2,9 @@
 (those are in rules.py): each archetype is a stated policy plus noise, and a conclusion only counts if it survives
 changing these numbers (vault: Development/Gameplay Simulator Plan §5-6)."""
 
+import json
 import math
+import os
 from dataclasses import dataclass, field, replace
 
 import timings
@@ -29,16 +31,22 @@ class Archetype:
                        # sword that happens to fit (Allen 2026-10-29: casual players "will do a mail order 10% of the time")
     gems: str = "cheapest"  # gem shop: "mail" | "customers" (that pair first, then the rest) | "cheapest" next level
     sit_back: float = 0.0  # own forging given up once the crew runs the shop (engine.sitting_back; ESTIMATE, 2026-10-29)
+    order: tuple = ()  # a recorded player's purchases in order (engine ids: pads, "hire:<id>", "MergeSlots", "Cap<n>")
+    gem_order: tuple = ()  # and their gem buys in order (gem upgrade ids, one per level)
+    slack: float = 1.0  # all-in seconds per action over the measured hand times (engine.run_task; allen.py fits it)
+    learn: float = 1.0  # and on top of it while the tutorial runs: reading the lines, finding the controls
 
 
 ARCHETYPES = {
-    "casual": Archetype("casual", "cheapest", keep=1, rack_keep=0, polish=True, etch=False, haggle=False, miss=0.10,
+    # learn 1.2: a casual player finishes the tutorial about 20% after an efficient one (2026-11-09, Allen: "my number
+    # [1:57] is probably close to what an efficient player should be, and casual is probably at most 25% more")
+    "casual": Archetype("casual", "cheapest", keep=1, rack_keep=0, polish=True, etch=False, haggle=False, miss=0.05,
                         react=6.0, idle_chance=0.05, idle_len=(20, 90), waste_chance=0.10, tend=False, cart="overflow",
-                        mail=0.1, sit_back=0.7),
+                        mail=0.1, sit_back=0.7, learn=1.2),
     "efficient": Archetype("efficient", "income", keep=2, rack_keep=1, polish=True, etch=True, haggle=False, miss=0.02,
                            react=2.0, idle_chance=0.02, idle_len=(5, 20), waste_chance=0.02, tend=False, cart="overflow",
                            gems="customers", sit_back=0.3),
-    "automator": Archetype("automator", "crew", keep=2, rack_keep=0, polish=True, etch=False, haggle=False, miss=0.06,
+    "automator": Archetype("automator", "crew", keep=2, rack_keep=0, polish=True, etch=False, haggle=False, miss=0.04,
                            react=5.0, idle_chance=0.04, idle_len=(20, 90), waste_chance=0.08, tend=False, cart="overflow", sit_back=0.8),
     "rusher": Archetype("rusher", "blueprints", keep=2, rack_keep=1, polish=True, etch=True, haggle=False, miss=0.03,
                         react=2.0, idle_chance=0.03, idle_len=(5, 20), waste_chance=0.02, tend=False, cart="overflow",
@@ -51,24 +59,24 @@ ARCHETYPES = {
                          gems="mail", sit_back=0.3),
 }
 
-# Paying players (Shared/Store): the passes each tier owns from the start; the Starter Pack is 100 gems and a Gold ingot
+# Paying players (Shared/Store): the passes each tier owns from the start; the Starter Pack is 100 gems and 5,000 coins (2026-11-11; 250 gems from 2026-11-08)
 PAYERS = {
     "free": (),
     "starter": ("StarterPack",),
-    "allpasses": ("StarterPack", "AutoRoller", "MoreCoins", "LuckyOre", "VIP", "SwiftBoots"),
+    "allpasses": ("StarterPack", "AutoRoller", "MoreCoins", "MoreGems", "LuckyOre", "VIP", "SwiftBoots"),
 }
 
 # The gem shop's pairs (Allen 2026-10-29: gem buys differ by type: Manager and Grinder mail first, Efficient and Rusher
 # customers first, Casual (and the Automator, not stated) the cheapest next level). Better Advertising I comes first for
 # everyone: the Guide's gem shop step.
 GEM_GROUPS = {"customers": ("Advertising", "Vip"), "mail": ("Clients", "Mail")}
-PLAY_DAY = 3600  # seconds played a day (Allen 2026-10-29: "1 h a day"); a daily reward each day, the cart and mail catch up between
+PLAY_DAY = int(__import__("os").environ.get("SIM_PLAY_DAY", 3600))  # run.py --play-day sets it for the workers; seconds played a day (Allen 2026-10-29: "1 h a day"); a daily reward each day, the cart and mail catch up between
 
 
 def category(uid, B):
     """What a purchase is for (behaviour's grouping; the ids are the game's)."""
     u = B.upgrades.get(uid)
-    if u and u.get("blueprint"):
+    if (u and u.get("blueprint")) or uid.startswith("design:"):  # a Musashi design is a sword like a blueprint pad
         return "blueprint"
     if u and u.get("etch"):  # the etch pads (2026-11-01): bought like the stations
         return "stations"
@@ -145,20 +153,64 @@ def _goal(arche, B, offers, cheapest, value_of_bp, best_value, grinder_ok):
     return cheapest
 
 
-# Offer cards from Allen's playtests (2026-10-29, Allen: "Yes, use mine"): once timings.OFFERS is measured, every type
-# misses and answers as he did, times these (miss, answer time). Casual is worse; the Manager, who watches the shop, better.
-OFFER_SCALE = {"casual": (1.25, 1.5), "manager": (0.5, 0.5)}
+# Allen as the reference player (2026-11-09, Allen: "instead of different profiles, just use me as an average or above
+# average player, and record how quickly im progressing"): allen.py fits allen.json to his recorded run, so "allen" buys
+# what he bought in his order, with his gem buys and his pace (`slack`), and past his list as ALLEN_BASE would.
+# "newplayer" is him NEW_PLAYER_SLACK times slower, answering offer cards as the casual type does (Claude's default:
+# a new player doesn't know the game as its maker does).
+ALLEN_BASE = "efficient"
+NEW_PLAYER_SLACK = 1.25  # 2026-11-09, Allen: a casual player takes "at most 25% more" (1.4 before, Claude's guess)
+ALLEN_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "allen.json")
+
+
+def allen_profiles(j):
+    """The "allen" and "newplayer" archetypes from an allen.json dict."""
+    allen = replace(ARCHETYPES[ALLEN_BASE], name="allen", order=tuple(j["order"]), gem_order=tuple(j["gem_order"]),
+                    slack=j["slack"])
+    return {"allen": allen, "newplayer": replace(allen, name="newplayer", slack=j["slack"] * NEW_PLAYER_SLACK)}
+
+
+if os.path.exists(ALLEN_PATH):
+    with open(ALLEN_PATH, encoding="utf-8") as _f:
+        ARCHETYPES.update(allen_profiles(json.load(_f)))
+
+# "live": the casual type with live players' habits (2026-11-11, Allen: "Add it", from the ad-day analytics): pads in the
+# order real players bought them (average minutes played, only pads `min_players` or more bought; after them the casual
+# pick), offer cards missed at the live share and answered at the live average. live.json holds the numbers.
+LIVE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "live.json")
+
+
+def live_profile(j):
+    # "moved": a pad that took another's place in the game since the data was read stands at that pad's minutes
+    times = {uid: tn for uid, tn in j["pads"].items() if uid not in j.get("moved", {}).values()}
+    for uid, was in j.get("moved", {}).items():
+        times[uid] = j["pads"][was]
+    pads = sorted((t, uid) for uid, (t, n) in times.items() if n >= j["min_players"])
+    offers = j["offers"]
+    total = sum(n for n, _ in offers.values())
+    return replace(ARCHETYPES["casual"], name="live", order=tuple(uid for _, uid in pads),
+                   miss=round(offers["Missed"][0] / total, 3), react=offers["Accepted"][1], slack=j["slack"])
+
+
+if os.path.exists(LIVE_PATH):
+    with open(LIVE_PATH, encoding="utf-8") as _f:
+        ARCHETYPES["live"] = live_profile(json.load(_f))
+
+
+# Offer cards. Missed: each type's own `miss`, 1-5% (2026-11-09, Allen: "about 95-100% of players aren't missing it";
+# the 38.6% measured 2026-10-29 came from feature tests with nobody watching the shop). Answer time: Allen's measured
+# median once calibrate.py has a real run (timings.OFFERS), times these (only the second number is used now); else `react`.
+OFFER_SCALE = {"casual": (1.25, 1.5), "manager": (0.5, 0.5), "newplayer": (1.25, 1.5)}
 
 
 def offer_habits(arche, miss=None):
-    """(chance an offer card goes unanswered, mean seconds to answer one) for this type; `miss` replaces the measured
+    """(chance an offer card goes unanswered, mean seconds to answer one) for this type; `miss` replaces the type's
     share missed (a scenario)."""
     m = timings.OFFERS
+    share = arche.miss if miss is None else miss
     if not m:
-        return arche.miss, arche.react
-    sm, sr = OFFER_SCALE.get(arche.name, (1.0, 1.0))
-    base = m["miss"] if miss is None else miss
-    return min(0.9, base * sm), m["react"] / math.log(2) * sr  # answers are exponential: mean = median / ln 2
+        return share, arche.react
+    return share, m["react"] / math.log(2) * OFFER_SCALE.get(arche.name, (1.0, 1.0))[1]  # exponential: mean = median / ln 2
 
 
 def with_overrides(arche, **kw):

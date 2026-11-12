@@ -1,0 +1,28 @@
+Tool: built-in image_gen using staged full/isolated sword racks and existing green-baseplate thumbnail style.
+Final export: Collect Swords - Full Racks.png (1920 x 1080).
+
+Use case: ads-marketing.
+Create a wide 16:9 Roblox sword-collecting game thumbnail, target 1920x1080.
+IMAGE 1: staged pair of sword racks, authoritative rack geometry and actual sword designs.
+IMAGE 2: isolated straight-on rack reference to make every sword design visible. Its grey/blue background is NOT part of the asset.
+IMAGE 3: ONLY reference for bright classic green studded Roblox baseplate, cyan sky and punchy glossy thumbnail presentation. Do not copy its mystery ingot, divider, arrow, E Roll, or katana outcome arrangement.
+
+HERO SUBJECT: the two actual brown WOODEN SWORD RACKS, standing next to each other, each with exactly FIVE DIFFERENT swords hung blade-down, as pictured. Full rack bases, posts, cross rails and all handles/tips must be visible with small margins. Keep their open rectangular low-poly construction: chunky brown timber posts at both ends, broad foot plank, upper hanging crossbar at guard level, thinner lower cross-rail.
+Preserve the sword silhouettes, order, color schemes and grip/guard details from references. They are real game items, not a generic invented weapon collection.
+LEFT rack, left-to-right:
+1 a broad dark curved blade with green/blue/red iridescent coloring, navy wrapped hilt, blue round pommel and gold guard;
+2 slim pale green-to-icy-blue angular sword with gold pommel and guard;
+3 slender curved dark ruby-red blade with navy wrapped hilt and blue hooked pommel;
+4 red-and-black hooked sword whose blade tip curls back upward, red grip and tall gold crescent guard;
+5 long rich deep BLUE patterned broad straight blade with ornate GOLD drooping branched crossguard and red hilt topped by large gold round pommel.
+RIGHT rack, left-to-right:
+1 long pale ICE BLUE ornate sword with sculpted golden branching guard and cyan faceted gem pommel;
+2 bright white highly ornate cutout/jagged blade with red grip and gold pommel;
+3 long broad faceted icy BLUE rectangular blade on dark navy hilt with bright cyan wing-like pommel;
+4 slender serpentine pastel RAINBOW blade with gold guard and red grip;
+5 wavy pale blue ICE blade with dark navy wrapped hilt, gold small guard and large cyan jewel pommel.
+Keep all as simple recognizable Roblox game prop silhouettes and glossy colored materials. Do not redraw every sword into the same katana. No duplicates.
+
+COMPOSITION: both racks are the central main subject, spanning lower two-thirds of frame, large readable swords and bright material contrast. Mostly front-on view, camera a little lower than the Studio screenshot to feel substantial, with slight depth and warm contact shadows. Racks sit together on a bright GREEN STUDDED ROBLOX BASEPLATE, regular raised square studs receding toward horizon. Clean cyan/blue sky behind, bright sun, no shop building or courtyard. Each sword gets clean glossy rim highlights and a few restrained tiny edge glints, no enormous glows obscuring shape.
+At TOP CENTER, above all handles, large TWO-LINE heading 'COLLECT' then 'SWORDS', chunky friendly rounded uppercase lettering, cream-white COLLECT and bright gold-yellow SWORDS, thick BLACK outline and soft shadow. Strong phone-size readability. Keep title separate from swords and do not let text cover pommels.
+Stylized glossy 3D Roblox thumbnail, vivid saturated colors, crisp clean toy-like geometry, appealing lighting, strong focus on variety of collectible swords. No people, hands, mystery ingots, numbers, price tags, E prompts, arrows or divider. No extra swords or racks. No other words, no logos, no watermark, no editor UI, no selection outlines.

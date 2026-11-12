@@ -1,0 +1,14 @@
+Tool: built-in image_gen (compositing with local reference images).
+Final export: Three Swords - Mystery.png (1920 x 1080).
+
+Use case: compositing.
+Create a finished Roblox game discovery thumbnail as a composite using the attached real game sword renders. Wide 16:9 landscape, 1920x1080.
+Input 1: pug/shark/magpie image is ONLY a reference for the three-panel layout, slanted white dividers and strong thumbnail readability. Do NOT include any animals.
+Input 2: steel Tanto sword, use this exact existing sword design for the left panel.
+Input 3: gold Katana sword, use this exact existing sword design for the middle panel.
+Input 4: Butter Stick gold sword, use its exact distinctive rectangular block-on-katana-hilt outline for the right panel but fill its ENTIRE body, blade, guard and handle SOLID PURE BLACK with no visible surface detail. Preserve its shape. It must be a silhouette, not a rendered gold sword.
+Layout: exactly three tall side-by-side panels separated by two thick clean WHITE diagonal bars leaning to the right as they rise. An immediate progression from cheap starter to valuable gold sword to mysterious secret sword. No title, prices, words, logos, watermarks or extra objects.
+Left panel: muted flat light grey backdrop with restrained soft spotlight, real small steel Tanto, blade up, full sword visible, centered, distinctly smaller in height than the Katana, about 60 percent of image height. Preserve its silver blade, purple wrapped cream hilt, gold guard and blue pommel.
+Middle panel: saturated royal-blue backdrop with luminous soft blue radial light and a few crisp sparkles; real gleaming gold Katana, blade up, full sword visible, dominating nearly 86 percent of image height. Preserve exact long slender curved blade silhouette, purple wrapped cream hilt, gold guard and blue pommel. Delicate bright edge glint and clean white outer rim for readability.
+Right panel: deep rich PURPLE backdrop with bright purple radial rays, real Butter Stick as an entirely solid BLACK silhouette, blade up, full sword visible and large, about 88 percent image height. Maintain the thick simple rectangular blade on the much narrower wrapped hilt outline. Soft violet-white glow just OUTSIDE its outline separates the black shape from backdrop. A single enormous glossy RED 3D QUESTION MARK floats clearly in front of the center of the black blade, strong red with bright specular highlight and dark beveled extrusion. It must read as a recognizable question mark at small size and leave the rectangular blade silhouette recognizable.
+Styling: clean premium Roblox thumbnail using the supplied stylized game objects, saturated clean graphic backgrounds, crisp composited edges. Preserve source assets, proportions, materials and simple game geometry. No new swords, no photographic realism, no characters. Each subject stays within its panel. Good deliberate space around all sword tips and pommels. High visual impact when viewed at 400x225.

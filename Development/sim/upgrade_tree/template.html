@@ -72,6 +72,25 @@ svg { display: block; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font: 500 13px var(--body); border: 1px solid var(--line); background: var(--bg); color: var(--fg); padding: 2px 10px; border-radius: 999px; cursor: pointer; }
 .note { font-size: 13px; color: var(--muted); margin: 0; max-width: 75ch; }
+/* rewire */
+.hint { font-size: 14px; color: var(--muted); }
+.rewire #tree { touch-action: none; }
+.rewire .node { cursor: grab; }
+.node.moved rect.card { stroke: var(--accent); stroke-dasharray: 5 3; stroke-width: 1.6; }
+.node.dragging { pointer-events: none; opacity: .85; }
+.node.dragging rect.card { stroke: var(--fg); stroke-width: 2; }
+.node.drop-ok rect.card { stroke: var(--c-stations); stroke-width: 3; fill: var(--bg); }
+.node.drop-bad rect.card { stroke: var(--c-heat); stroke-width: 3; }
+.need { display: inline-flex; align-items: center; border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 0 4px 0 0; }
+.need .chip { border: 0; background: none; }
+.need .del { font: 700 15px var(--body); color: var(--c-heat); background: none; border: 0; padding: 0 6px; cursor: pointer; line-height: 1; }
+.changes { background: var(--panel); border: 1px solid var(--accent); border-radius: 12px; padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
+.changes h2 { margin: 0; font-size: 16px; }
+.changes ol { margin: 0; padding-left: 22px; display: grid; gap: 6px; font-size: 14px; }
+.changes .was { color: var(--muted); }
+.changes .now { color: var(--fg); font-weight: 700; }
+.changes .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.changes textarea { width: 100%; box-sizing: border-box; min-height: 90px; font: 12px var(--mono); background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
 </style>
 
 <div class="wrap" id="app">
@@ -83,14 +102,21 @@ svg { display: block; }
     <div class="seg" role="group" aria-label="Mode">
       <button id="m-explore" aria-pressed="true">Explore</button>
       <button id="m-walk" aria-pressed="false">Walk through</button>
+      <button id="m-rewire" aria-pressed="false">Rewire</button>
+    </div>
+    <div class="seg" role="group" aria-label="Dropping a pad" id="dropmode" hidden>
+      <button id="d-replace" aria-pressed="true">Drop replaces needs</button>
+      <button id="d-add" aria-pressed="false">Drop adds a need</button>
     </div>
     <button class="btn" id="reset" hidden>Start over</button>
     <div class="stats" id="stats" hidden></div>
   </div>
+  <div class="hint" id="hint" hidden>Drag a pad onto the pad it should wait for. Drag empty space to move around.</div>
   <div class="legend" id="legend"></div>
   <div class="box" id="box"><svg id="tree" role="img" aria-label="Upgrade tree"></svg></div>
   <section class="card-info" id="info" aria-live="polite"></section>
-  <p class="note">Columns count the buys a pad waits behind: <b>Start</b> is open on a new plot, <b>+1</b> needs one pad bought first, and so on. A pad with two lines in waits for both. Crew hires cost gems as well as coins. Cart Capacity and Speed levels, gem upgrades and decorations are bought in their windows and are not shown. Times are the median of 150 simulated free players from run {{RUN}}.</p>
+  <section class="changes" id="changes" hidden></section>
+  <p class="note">Columns count the buys a pad waits behind: <b>Start</b> is open on a new plot, <b>+1</b> needs one pad bought first, and so on. A pad with two lines in waits for both. Crew hires cost gems as well as coins. Cart Capacity and Speed levels, gem upgrades and decorations are bought in their windows and are not shown. Times are the median of 150 simulated free players from run {{RUN}}, so they describe the tree before any rewiring. Rewiring is kept in this browser only: Copy changes and send the list to Claude to apply it to the game and the sim.</p>
 </div>
 
 <script>
@@ -99,13 +125,48 @@ const CATS = { sword: "Swords", crew: "Anvils and crafters", staff: "Staff", ore
   storage: "Ingot and sword racks", stations: "Polish, etch, strikes", shop: "Shop displays", cart: "Cart and parking" };
 const W = 188, H = 44, CW = 222, RH = 54, TOP = 34, LEFT = 14;
 const by = Object.fromEntries(NODES.map(n => [n.id, n]));
-NODES.forEach(n => n.kids = []);
-NODES.forEach(n => n.after.forEach(a => by[a].kids.push(n.id)));
-const ncol = Math.max(...NODES.map(n => n.col)) + 1, nrow = Math.max(...NODES.map(n => n.row)) + 1;
+const ORDER = ["sword", "crew", "staff", "ore", "heat", "storage", "stations", "shop", "cart"];
+const KEY = "upgrade-tree-rewire-v1";
+NODES.forEach(n => n.orig = [...n.after]);
+let ncol = 0, nrow = 0;
+function relink() { NODES.forEach(n => n.kids = []); NODES.forEach(n => n.after.forEach(a => by[a].kids.push(n.id))); }
+// columns = longest chain of buys before a pad; rows sorted by kind and price, then a few barycentre sweeps so edges cross less
+function layout() {
+  const depth = {}, busy = new Set();
+  const d = i => {
+    if (i in depth) return depth[i];
+    if (busy.has(i)) throw new Error("cycle at " + i);
+    busy.add(i);
+    depth[i] = by[i].after.length ? 1 + Math.max(...by[i].after.map(d)) : 0;
+    busy.delete(i); return depth[i];
+  };
+  NODES.forEach(n => d(n.id));
+  const cols = {};
+  NODES.forEach(n => (cols[depth[n.id]] ??= []).push(n.id));
+  const ks = Object.keys(cols).map(Number).sort((a, b) => a - b);
+  ks.forEach(k => cols[k].sort((a, b) => ORDER.indexOf(by[a].cat) - ORDER.indexOf(by[b].cat) || by[a].price - by[b].price));
+  for (let r = 0; r < 6; r++) for (const k of ks.slice(1)) {
+    const pos = {}; ks.forEach(c => cols[c].forEach((i, n) => pos[i] = n));
+    const bc = i => by[i].after.reduce((t, a) => t + pos[a], 0) / by[i].after.length;
+    cols[k].sort((a, b) => bc(a) - bc(b));
+  }
+  ks.forEach(k => cols[k].forEach((i, n) => { by[i].col = k; by[i].row = n; }));
+  ncol = Math.max(...ks) + 1; nrow = Math.max(...ks.map(k => cols[k].length));
+}
+// edits saved in this browser; anything stale or cyclic is dropped
+try {
+  const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+  for (const [id, after] of Object.entries(saved)) if (by[id] && after.every(a => by[a])) by[id].after = after;
+  layout();
+} catch (e) { NODES.forEach(n => n.after = [...n.orig]); }
+relink(); layout();
+const same = (a, b) => a.length === b.length && a.every(x => b.includes(x));
+const changed = () => NODES.filter(n => !same(n.after, n.orig));
+function save() { try { localStorage.setItem(KEY, JSON.stringify(Object.fromEntries(changed().map(n => [n.id, n.after])))); } catch (e) {} }
 const fmt = n => n === 0 ? "Free" : n.toLocaleString("en-US");
 const time = m => m == null ? "not reached" : m < 60 ? `${m} min` : `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}`;
 const roots = NODES.filter(n => !n.after.length);
-let mode = "explore", sel = null, owned = new Set();
+let mode = "explore", sel = null, owned = new Set(), dropAdd = false, drag = null, pan = null, noClick = false, undoArm = 0;
 
 document.getElementById("lede").innerHTML = `<b>${roots.length}</b> upgrades are open on a new plot. Buying one opens the pads that wait for it, left to right. Tap a pad to see what it needs and what it opens, or walk through the tree buying as you go.`;
 document.getElementById("legend").innerHTML = Object.entries(CATS).map(([k, v]) => `<span><i style="background:var(--c-${k})"></i>${v}</span>`).join("");
@@ -138,6 +199,7 @@ function draw() {
     let cls = "node";
     if (sel) cls += n.id === sel ? " sel" : up.has(n.id) ? " up" : down.has(n.id) ? " down" : " faint";
     if (mode === "walk") cls += owned.has(n.id) ? " owned" : n.after.every(a => owned.has(a)) ? " open" : " locked";
+    if (mode === "rewire" && !same(n.after, n.orig)) cls += " moved";
     s += `<g class="${cls}" data-id="${n.id}" transform="translate(${x},${y})" tabindex="0" role="button" aria-label="${esc(n.name)}, ${fmt(n.price)} coins">
       <rect class="card" width="${W}" height="${H}" rx="8"/>
       <circle class="dot" cx="13" cy="${H / 2}" r="4.5" fill="var(--c-${n.cat})"/>
@@ -146,10 +208,15 @@ function draw() {
   });
   svg.innerHTML = s;
   svg.classList.toggle("walk", mode === "walk");
+  document.getElementById("app").classList.toggle("rewire", mode === "rewire");
   stats();
   info();
+  changesPanel();
 }
 
+function needChips(n) {
+  return n.after.length ? `<div class="chips">${n.after.map(i => `<span class="need"><button class="chip" data-go="${i}">${esc(by[i].name)}</button><button class="del" data-unneed="${i}" aria-label="Stop needing ${esc(by[i].name)}">×</button></span>`).join("")}</div>` : "<span>Nothing: open from the start</span>";
+}
 function chips(ids) { return ids.length ? `<div class="chips">${ids.map(i => `<button class="chip" data-go="${i}">${esc(by[i].name)}</button>`).join("")}</div>` : "<span>Nothing</span>"; }
 
 function info() {
@@ -163,9 +230,10 @@ function info() {
   const status = mode === "walk" ? (owned.has(sel) ? "Bought" : n.after.every(a => owned.has(a)) ? "On offer now" : "Locked") : "";
   el.innerHTML = `<div class="kind">${CATS[n.cat]}${status ? " · " + status : ""}</div>
     <h2>${esc(n.name)} <span class="p">${fmt(n.price)} coins${n.gems ? " + " + n.gems + " gems" : ""}</span></h2>
-    <div class="row"><span>Needs</span>${n.after.length ? chips(n.after) : "<span>Nothing: open from the start</span>"}</div>
+    <div class="row"><span>Needs</span>${mode === "rewire" ? needChips(n) : n.after.length ? chips(n.after) : "<span>Nothing: open from the start</span>"}</div>
+    ${!same(n.after, n.orig) ? `<div class="row"><span>Was</span><span>${esc(names(n.orig))} <button class="btn" data-revert="${n.id}" style="margin-left:6px;padding:2px 10px">Put back</button></span></div>` : ""}
     <div class="row"><span>Opens</span>${chips(n.kids)}</div>
-    <div class="row"><span>Bought at</span><span>efficient player ${time(n.t.efficient)}, casual player ${time(n.t.casual)}</span></div>
+    <div class="row"><span>Sim bought</span><span>efficient player ${time(n.t.efficient)}, casual player ${time(n.t.casual)}</span></div>
     ${n.id === "MergeSlots" ? `<p class="note">Merging resets Ore Slots 2–6 to unbought for more luck, and they cost 1.5× more each merge.</p>` : ""}
     ${mode === "walk" && n.after.every(a => owned.has(a)) ? `<div><button class="btn" data-buy="${n.id}">${owned.has(sel) ? "Undo this buy" : "Buy it"}</button></div>` : ""}`;
 }
@@ -180,6 +248,32 @@ function stats() {
   el.innerHTML = `<span>On offer <b>${open}</b></span><span>Bought <b>${owned.size}</b> / ${NODES.length}</span><span>Spent <b>${fmt(spent)}</b></span>`;
 }
 
+const names = ids => ids.length ? ids.map(i => by[i].name).join(" + ") : "nothing (open from the start)";
+function changeText() {
+  return `Upgrade tree rewiring (${changed().length} pads):\n` + changed().map(n =>
+    `- ${n.name} [${n.id}]: needs ${names(n.orig)} [${n.orig.join(", ") || "-"}] -> needs ${names(n.after)} [${n.after.join(", ") || "-"}]`).join("\n");
+}
+function changesPanel() {
+  const el = document.getElementById("changes"), cs = changed();
+  el.hidden = !cs.length;
+  if (!cs.length) return;
+  el.innerHTML = `<h2>Your rewiring · ${cs.length} pad${cs.length > 1 ? "s" : ""}</h2>
+    <ol>${cs.map(n => `<li><button class="chip" data-go="${n.id}">${esc(n.name)}</button> needs <span class="was"><s>${esc(names(n.orig))}</s></span> → <span class="now">${esc(names(n.after))}</span></li>`).join("")}</ol>
+    <div class="acts"><button class="btn" id="copy">Copy changes</button><button class="btn" id="undoall">${Date.now() < undoArm ? "Tap again to undo all" : "Undo all"}</button><span class="hint" id="copied"></span></div>
+    <textarea id="changetext" readonly hidden></textarea>`;
+}
+function afterEdit(id) {
+  relink(); layout(); save();
+  let gone = true; // walk-through: drop buys whose needs are no longer bought
+  while (gone) { gone = false; owned.forEach(o => { if (!by[o].after.every(a => owned.has(a))) { owned.delete(o); gone = true; } }); }
+  sel = id; draw(); scrollTo(id);
+}
+function rewire(id, target) {
+  const n = by[id];
+  if (dropAdd) { if (!n.after.includes(target)) n.after.push(target); } else n.after = [target];
+  afterEdit(id);
+}
+const canNeed = (id, target) => id !== target && !descendants(id).has(target);
 function toggleBuy(id) {
   const n = by[id];
   if (owned.has(id)) { owned.delete(id); descendants(id).forEach(d => owned.delete(d)); }
@@ -192,25 +286,83 @@ function pick(id) {
   draw();
 }
 
-document.getElementById("tree").addEventListener("click", e => { const g = e.target.closest(".node"); if (g) pick(g.dataset.id); });
+document.getElementById("tree").addEventListener("click", e => { if (noClick) { noClick = false; return; } const g = e.target.closest(".node"); if (g) pick(g.dataset.id); });
 document.getElementById("tree").addEventListener("keydown", e => { const g = e.target.closest(".node"); if (g && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); pick(g.dataset.id); } });
 document.getElementById("info").addEventListener("click", e => {
   const go = e.target.closest("[data-go]"), buy = e.target.closest("[data-buy]");
   if (go) { sel = go.dataset.go; draw(); scrollTo(sel); }
   if (buy) { toggleBuy(buy.dataset.buy); draw(); }
+  const un = e.target.closest("[data-unneed]"), rv = e.target.closest("[data-revert]");
+  if (un) { by[sel].after = by[sel].after.filter(a => a !== un.dataset.unneed); afterEdit(sel); }
+  if (rv) { by[rv.dataset.revert].after = [...by[rv.dataset.revert].orig]; afterEdit(rv.dataset.revert); }
+});
+document.getElementById("changes").addEventListener("click", e => {
+  const go = e.target.closest("[data-go]");
+  if (go) { sel = go.dataset.go; draw(); scrollTo(sel); return; }
+  if (e.target.id === "copy") {
+    const t = changeText(), done = () => document.getElementById("copied").textContent = "Copied";
+    const fallback = () => { const ta = document.getElementById("changetext"); ta.value = t; ta.hidden = false; ta.select(); document.getElementById("copied").textContent = "Select all and copy"; };
+    try { navigator.clipboard.writeText(t).then(done, fallback); } catch (err) { fallback(); }
+  }
+  if (e.target.id === "undoall") {
+    if (Date.now() < undoArm) { undoArm = 0; NODES.forEach(n => n.after = [...n.orig]); afterEdit(null); }
+    else { undoArm = Date.now() + 3000; changesPanel(); setTimeout(changesPanel, 3100); }
+  }
 });
 function scrollTo(id) {
+  if (!id) return;
   const [x, y] = xy(by[id]), box = document.getElementById("box");
   box.scrollTo({ left: Math.max(0, x - box.clientWidth / 2 + W / 2), top: Math.max(0, y - box.clientHeight / 2), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 }
+// drag a pad onto another (Rewire), or drag empty space to pan
+const svgEl = document.getElementById("tree"), boxEl = document.getElementById("box");
+svgEl.addEventListener("pointerdown", e => {
+  noClick = false;
+  const g = e.target.closest(".node");
+  if (g && mode === "rewire") { drag = { id: g.dataset.id, g, x0: e.clientX, y0: e.clientY, sl: boxEl.scrollLeft, st: boxEl.scrollTop, on: false, target: null }; svgEl.setPointerCapture(e.pointerId); }
+  else if (!g && (mode === "rewire" || e.pointerType === "mouse")) { pan = { x: e.clientX, y: e.clientY, l: boxEl.scrollLeft, t: boxEl.scrollTop, on: false }; svgEl.setPointerCapture(e.pointerId); }
+});
+svgEl.addEventListener("pointermove", e => {
+  if (pan) {
+    if (Math.hypot(e.clientX - pan.x, e.clientY - pan.y) > 4) pan.on = true;
+    boxEl.scrollLeft = pan.l - (e.clientX - pan.x); boxEl.scrollTop = pan.t - (e.clientY - pan.y); return;
+  }
+  if (!drag) return;
+  if (!drag.on) { if (Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) < 6) return; drag.on = true; drag.g.classList.add("dragging"); svgEl.appendChild(drag.g); }
+  const r = boxEl.getBoundingClientRect(), edge = 40;  // scroll the box when the pad nears its edge
+  if (e.clientX < r.left + edge) boxEl.scrollLeft -= 12; else if (e.clientX > r.right - edge) boxEl.scrollLeft += 12;
+  if (e.clientY < r.top + edge) boxEl.scrollTop -= 12; else if (e.clientY > r.bottom - edge) boxEl.scrollTop += 12;
+  const [x, y] = xy(by[drag.id]);
+  drag.g.setAttribute("transform", `translate(${x + e.clientX - drag.x0 + boxEl.scrollLeft - drag.sl},${y + e.clientY - drag.y0 + boxEl.scrollTop - drag.st})`);
+  const t = document.elementFromPoint(e.clientX, e.clientY)?.closest(".node");
+  if (drag.target && drag.target !== t) drag.target.classList.remove("drop-ok", "drop-bad");
+  drag.target = t && t !== drag.g ? t : null;
+  if (drag.target) drag.target.classList.add(canNeed(drag.id, drag.target.dataset.id) ? "drop-ok" : "drop-bad");
+});
+function endDrag() {
+  if (pan) { noClick = pan.on; pan = null; return; }
+  if (!drag) return;
+  const d = drag; drag = null;
+  if (!d.on) return;
+  noClick = true;
+  if (d.target && canNeed(d.id, d.target.dataset.id)) rewire(d.id, d.target.dataset.id); else draw();
+}
+svgEl.addEventListener("pointerup", endDrag);
+svgEl.addEventListener("pointercancel", () => { pan = null; if (drag) { drag = null; draw(); } });
 function setMode(m) {
   mode = m; sel = null;
   document.getElementById("m-explore").setAttribute("aria-pressed", m === "explore");
   document.getElementById("m-walk").setAttribute("aria-pressed", m === "walk");
+  document.getElementById("m-rewire").setAttribute("aria-pressed", m === "rewire");
+  document.getElementById("dropmode").hidden = document.getElementById("hint").hidden = m !== "rewire";
   draw();
 }
 document.getElementById("m-explore").onclick = () => setMode("explore");
 document.getElementById("m-walk").onclick = () => setMode("walk");
+document.getElementById("m-rewire").onclick = () => setMode("rewire");
+const setDrop = add => { dropAdd = add; document.getElementById("d-replace").setAttribute("aria-pressed", !add); document.getElementById("d-add").setAttribute("aria-pressed", add); };
+document.getElementById("d-replace").onclick = () => setDrop(false);
+document.getElementById("d-add").onclick = () => setDrop(true);
 document.getElementById("reset").onclick = () => { owned.clear(); sel = null; draw(); };
 draw();
 </script>

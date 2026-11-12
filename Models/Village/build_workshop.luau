@@ -1,3 +1,4 @@
+-- 2026-11-05: no kanji on the station signs (Allen: "remove any japanese text in the decorations").
 -- build_workshop.luau: the workshop's layout and furniture (2026-10-22).
 -- Allen: "Redesign the workshop interior using this screenshot as the starting point" (a top view of the old layout):
 -- supply chest in the back-left corner, furnaces freestanding on a shared stone hearth, the anvil in front of them on a
@@ -235,9 +236,9 @@ local function label(p, face, lines)
 	end
 	g.Parent = p
 end
-local function sign(m, zc, kanji, name)
+local function sign(m, zc, word)
 	-- arms from the band beam (x -23.45, y 10.04…10.34) out over the counter's front, knee braces under them, cords down
-	-- to a dark board in a cedar frame with the station's kanji and name in gold and cream
+	-- to a dark board in a cedar frame with the station's name in gold
 	for _, s in { -1, 1 } do
 		local z = zc + s * 1.15
 		box(m, "SignArm", -23.45, -20.5, 10.04, 10.34, z - 0.13, z + 0.13, C.timberDk, M.Wood) -- under the band's bottom: no shared face
@@ -246,7 +247,8 @@ local function sign(m, zc, kanji, name)
 	end
 	box(m, "SignFrame", -20.85, -20.75, 8.25, 9.55, zc - 1.4, zc + 1.4, C.cedar, M.Wood)
 	local board = box(m, "Sign", -20.79, -20.67, 8.35, 9.45, zc - 1.3, zc + 1.3, C.plinth, M.Wood)
-	label(board, Enum.NormalId.Right, { { kanji, 70, Color3.fromRGB(222, 178, 92) }, { name, 30, Color3.fromRGB(240, 228, 204) } })
+	-- one English word since 2026-11-05 (Allen: "theres different texts": "Polish" beside "POLISHING"); 80 so "Polish" fits inside the board
+	label(board, Enum.NormalId.Right, { { word, 80, Color3.fromRGB(222, 178, 92) } })
 end
 
 do -- hilt assembly: a hilt vise at the back end, a big tsuba on a stand at the front, guards on the wall
@@ -288,7 +290,7 @@ do -- hilt assembly: a hilt vise at the back end, a big tsuba on a stand at the 
 		box(m, "HiltCap", -23.33, -23.17, 6.35, 6.47, z - 0.11, z + 0.11, C.brass, M.Metal)
 		box(m, "HiltCord", -23.27, -23.23, 7.6, 7.7, z - 0.03, z + 0.03, C.cloth, M.Fabric)
 	end
-	sign(m, (z0 + z1) / 2, "柄", "HILT BENCH")
+	sign(m, (z0 + z1) / 2, "Hilts")
 end
 
 do -- polishing: a wide stone on a cedar bed, a water bucket, graded stones and cloths on the wall
@@ -333,7 +335,7 @@ do -- polishing: a wide stone on a cedar bed, a water bucket, graded stones and 
 	box(m, "ClothRail", WALL, -23.3, 7.4, 7.6, z1 - 1.75, z1 - 0.15, C.timberDk, M.Wood)
 	box(m, "HangingCloth", -23.3, -23.27, 6.0, 7.4, z1 - 1.6, z1 - 1.05, C.cloth, M.Fabric)
 	box(m, "HangingCloth", -23.3, -23.27, 6.2, 7.4, z1 - 0.9, z1 - 0.35, C.indigo, M.Fabric)
-	sign(m, (z0 + z1) / 2, "研", "POLISHING")
+	sign(m, (z0 + z1) / 2, "Polish")
 end
 
 do -- etching: a blade cradle with a practice blank, a chisel case and an andon lamp, a pattern scroll on the wall
@@ -395,7 +397,7 @@ do -- etching: a blade cradle with a practice blank, a chisel case and an andon 
 		cyl(m, "ChiselHandle", 0.5, 0.1, L(-23.35, 6.2, z) * UPRIGHT, C.brass, M.Metal)
 		box(m, "ChiselTip", -23.37, -23.33, 5.55, 5.96, z - 0.03, z + 0.03, C.steel, M.Metal)
 	end
-	sign(m, zc, "彫", "ETCHING")
+	sign(m, zc, "Etch")
 end
 
 -- ---------------------------------------------------------------- ore loot box (back-left corner)
@@ -441,7 +443,8 @@ do
 	box(m, "Hearth", HEARTH.x0, HEARTH.x1, FLOOR, HEARTH.top, HEARTH.z0 + 0.5, HEARTH.z1, C.stoneDk, M.Slate, { solid = true })
 	box(m, "HearthKerb", HEARTH.x0 - 0.1, HEARTH.x1 + 0.1, FLOOR, HEARTH.top + 0.08, HEARTH.z0, HEARTH.z0 + 0.5, C.stone, M.Cobblestone, { solid = true })
 	-- a round stone under the anvil and the smith: the room's focal point
-	cyl(m, "AnvilStone", 0.06, 9, L(ANVIL_X, FLOOR + 0.03, ANVIL_Z - 0.3) * UPRIGHT, C.stoneDk, M.Slate, { solid = true })
+	-- (the AnvilStone disc under the blueprint pads went 2026-10-28, Allen: "remove the circular pad in the workshop area
+	-- under the sword upgrade")
 
 	-- the right wall above the finishing bench is dressed by each station (its own racks, sample sword and sign)
 
@@ -552,19 +555,16 @@ do
 			local rack = d:FindFirstChild("Rack")
 			if rack then rack:Destroy() end
 			local m = fresh(d, "Shelf")
-			for s = -1, 1, 2 do
-				local px = CX + s * (HW - 0.25)
-				dbox(m, "Post", px - 0.25, px + 0.25, 0.15, CAP + 0.05, 0.15, 1.55, wood, M.Wood, solid)
-				for _, y in { TIERS[1], TIERS[2], TIERS[3], CAP - 0.3 } do -- a gold cap at each board's end, with a stud
-					dbox(m, "Corner", px - 0.21, px + 0.21, y - 0.4, y + 0.1, 1.55, 1.6, C.brass, M.Metal)
-					part(m, "Stud", Vector3.new(0.18, 0.18, 0.08), D(px, y - 0.15, 1.64) * CFrame.Angles(0, 0, math.pi / 4), C.brass, M.Metal)
-				end
-			end
-			dbox(m, "Back", CX - HW + 0.45, CX + HW - 0.45, 0.25, CAP + 0.07, 0.1, 0.3, planks, M.WoodPlanks, solid)
-			dbox(m, "Kick", CX - HW + 0.45, CX + HW - 0.45, 0.15, TIERS[1] - 0.25, 1.15, 1.3, woodDk, M.Wood, solid)
-			dbox(m, "Top", CX - HW - 0.05, CX + HW + 0.05, CAP, CAP + 0.4, 0.2, 1.75, wood, M.Wood, solid)
+			-- a floating shelf: just the boards and their cradles (2026-10-28, Allen: "Remove the Stud and Corner and Crest and 2
+			-- Gables from all the shelves", then "try removing everything from the shelf besides the 3 Boards", keeping the
+			-- cradles); the posts, back, kick and top are gone
 			for k, top in TIERS do
 				dbox(m, "Board", CX - HW + 0.45, CX + HW - 0.45, top - 0.3, top, 0.2, 1.4, wood, M.Wood, solid)
+				-- two brackets under it, 0.7 in from its ends (2026-10-28, Allen: "add 2 holders underneath like in the reference")
+				for s = -1, 1, 2 do
+					local bx = CX + s * (HW - 0.45 - 0.7)
+					dbox(m, "Bracket", bx - 0.2, bx + 0.2, top - 1.01, top - 0.29, 0.2, 1.0, woodDk, M.Wood)
+				end
 				local axis = top + AXIS
 				-- cradles under the grip and under the blade: a foot, a prong behind the sword and a low lip in front of it;
 				-- the blade's foot is lower, as a katana's spine drops toward the tip (edge up)
@@ -579,11 +579,6 @@ do
 				if slot then -- the sword's x along the wall, its y (the Handle's) into the wall, edge up
 					slot.CFrame = O * CFrame.fromMatrix(Vector3.new(CX - MID, axis, SZ), Vector3.xAxis, -Vector3.zAxis, Vector3.yAxis)
 				end
-			end
-			-- crest: a board on the top with a shallow gable over its middle
-			dbox(m, "Crest", CX - HW + 0.7, CX + HW - 0.7, CAP + 0.35, CAP + 1.0, 0.25, 0.55, wood, M.Wood)
-			for s = -1, 1, 2 do
-				part(m, "Gable", Vector3.new(0.38, 0.6, 1.6), D(CX + s * 0.8, CAP + 1.25, 0.4) * CFrame.fromMatrix(Vector3.zero, Vector3.new(0, 0, s), Vector3.yAxis), wood, M.Wood, { wedge = true })
 			end
 			if d:FindFirstChild("InspectPoint") then d.InspectPoint.CFrame = D(CX, 3, 3.5) end -- where a customer looks from
 		end

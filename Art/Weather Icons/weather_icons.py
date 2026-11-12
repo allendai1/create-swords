@@ -175,10 +175,43 @@ def rainbow(path):
     c.save(path)
 
 
-for name, fn in (("Sunny", sunny), ("Snow", snow), ("Rain", rain), ("Rainbow", rainbow)):
+# ---- Golden Hour (2026-11-09) ----------------------------------------------------------------------
+def sparkle(cx, cy, r):
+    """A four-point star."""
+    w = r * 0.3
+    return poly([(cx, cy - r), (cx + w, cy - w), (cx + r, cy), (cx + w, cy + w), (cx, cy + r), (cx - w, cy + w),
+                 (cx - r, cy), (cx - w, cy - w)])
+
+
+def golden(path):
+    """A low sun on the horizon, rays fanning up, two sparkles: every boost at once."""
+    c = Canvas()
+    cx, cy = N / 2, 660
+    rays = np.zeros((N, N), bool)
+    for deg in (-90, -54, -18, 18, 54, 90):
+        t = math.radians(deg - 90)
+        u = (math.cos(t), math.sin(t))
+        v = (-u[1], u[0])
+        r0, r1, w = 250, 420, 80
+        rays |= poly([(cx + u[0] * r0 + v[0] * w, cy + u[1] * r0 + v[1] * w), (cx + u[0] * r1, cy + u[1] * r1),
+                      (cx + u[0] * r0 - v[0] * w, cy + u[1] * r0 - v[1] * w)])
+    rays = rounded(rays, 24) & (np.mgrid[0:N, 0:N][0] <= cy)
+    c.piece(rays, (214, 112, 18), (250, 150, 30), (255, 190, 80), d=22, hi=np.zeros((N, N), bool))
+    disc = ellipse(cx, cy, 270, 270) & (np.mgrid[0:N, 0:N][0] <= cy)
+    c.piece(disc, (236, 150, 16), (255, 196, 40), (255, 232, 120), d=40, glint=glint_at(cx - 120, cy - 150, 50))
+    ground = rounded(poly([(150, cy + 10), (874, cy + 10), (874, cy + 130), (150, cy + 130)]), 40)
+    c.piece(ground, (190, 110, 30), (226, 146, 48), (246, 184, 90), d=24)
+    stars = sparkle(200, 230, 90) | sparkle(830, 300, 70)
+    c.piece(stars, (240, 190, 40), (255, 226, 90), (255, 248, 190), d=14, hi=np.zeros((N, N), bool))
+    c.save(path)
+
+
+for name, fn in (("Sunny", sunny), ("Snow", snow), ("Rain", rain), ("Rainbow", rainbow), ("GoldenHour", golden)):
     fn(f"{OUT}/Weather {name} 256px.png")
 
-# side-by-side sheet with the pack's cloud for comparison
+# side-by-side sheet with the pack's cloud for comparison (when its path is given)
+if len(sys.argv) < 3:
+    sys.exit()
 sheet = Image.new("RGBA", (256 * 5, 256), (60, 60, 60, 255))
 pack = Image.open(sys.argv[2]).convert("RGBA")
 for i, im in enumerate([pack] + [Image.open(f"{OUT}/Weather {n} 256px.png") for n in ("Sunny", "Snow", "Rain", "Rainbow")]):

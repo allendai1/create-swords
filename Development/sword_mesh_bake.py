@@ -8,7 +8,9 @@
 import http.server, json, os, re, struct, sys, tempfile, urllib.error, urllib.parse, urllib.request, uuid
 
 API = "https://apis.roblox.com/assets/v1/"
-CREATOR = "14722022"
+# Uploads go to the group that owns the game (Swordsmith, group 336242048, since 2026-11-09): a group place can't
+# InsertService:LoadAsset a user-owned upload ("User is not authorized to access Asset", 2026-11-10).
+CREATOR = {"groupId": "336242048"}
 OUT = os.path.join(tempfile.gettempdir(), "sword_mesh_bake")
 
 
@@ -61,7 +63,7 @@ def call(req):
 
 def upload(name, glb):
     meta = {"assetType": "Model", "displayName": "SwordMesh " + name, "description": "Create Swords! baked sword mesh",
-            "creationContext": {"creator": {"userId": CREATOR}}}
+            "creationContext": {"creator": CREATOR}}
     bd = uuid.uuid4().hex
     body = (f'--{bd}\r\nContent-Disposition: form-data; name="request"\r\n\r\n{json.dumps(meta)}\r\n'
             f'--{bd}\r\nContent-Disposition: form-data; name="fileContent"; filename="mesh.glb"\r\n'

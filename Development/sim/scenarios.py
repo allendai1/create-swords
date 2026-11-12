@@ -59,6 +59,8 @@ def _milestone(raw, crafter, small, keep=frozenset()):
 
 SCENARIOS = {
     "baseline": lambda raw, t: None,
+    # Musashi's stall off (built 2026-11-10): the game before it
+    "no-musashi": lambda raw, t: raw.pop("musashi", None),
     "prices-10": lambda raw, t: _upgrade_prices(raw, 0.9),
     "prices+10": lambda raw, t: _upgrade_prices(raw, 1.1),
     "prices+20": lambda raw, t: _upgrade_prices(raw, 1.2),
@@ -109,6 +111,13 @@ SCENARIOS = {
     # since 2026-10-31 a begun chain's next levels stand past the cap (balance.json chains), so capN caps new chains only
     **{f"cap{n}": (lambda n: lambda raw, t: raw.update(padCap=n))(n) for n in (1, 2, 3, 4, 5)},
     "no-cap": lambda raw, t: raw.update(padCap=0),
+    # the Longsword-Gladius stretch (2026-11-10 proposal), the coins up to the Zanbato kept (387,300 with its stand):
+    # "even" is x2 a step; "value" prices the five by what they add and moves the 134,100 saved onto the Zanbato
+    "swords-even": lambda raw, t: _set_prices(raw, {"LongswordBlueprint": 7200, "CutlassBlueprint": 14400,
+                                                    "FalchionBlueprint": 29000, "JianBlueprint": 58000, "GladiusBlueprint": 115000}),
+    "swords-value": lambda raw, t: _set_prices(raw, {"LongswordBlueprint": 5400, "CutlassBlueprint": 9000,
+                                                     "FalchionBlueprint": 16000, "JianBlueprint": 24000, "GladiusBlueprint": 38000,
+                                                     "ZanbatoBlueprint": 248000}),
 }
 
 
@@ -144,6 +153,16 @@ def _overhaul(raw, t):
 
 
 SCENARIOS["overhaul"] = _overhaul
+
+
+def _haru_furnace3(raw, t):
+    """Haru's gate before 2026-11-07: he waited for Furnace 3 (now Anvil 3)."""
+    for c in raw["employees"]["crafters"]:
+        if c["id"] == "haru":
+            c["after"] = "Furnace3"
+
+
+SCENARIOS["haru-furnace3"] = _haru_furnace3
 
 
 def _crafter_price(raw, price):
@@ -226,3 +245,23 @@ SCENARIOS["first2k-no-sit-back"] = lambda raw, t: (_hire_first(raw, 2000, ("Ingo
 # stands unbought (begun chains and the next sword still do)
 SCENARIOS["crafter-goal"] = lambda raw, t: raw.__setitem__("goalFirst", ["Crafter"])
 SCENARIOS["crafter-hold"] = lambda raw, t: raw.__setitem__("holdFor", "Crafter")
+
+# Katana and Sword Crafter inside two 10-15 min sessions (Allen 2026-11-10: "main attractions, they should get it in
+# two sessions or less"): the hire below the pads casual players buy before him today (1,500-2,000 each)
+SCENARIOS["c1400"] = lambda raw, t: _crafter_price(raw, 1400)  # straight after the Katana (1,300)
+SCENARIOS["c1k"] = lambda raw, t: _crafter_price(raw, 1000)  # before the Katana
+SCENARIOS["c1k-k900"] = lambda raw, t: _set_prices(raw, {"Crafter": 1000, "KatanaBlueprint": 900})
+SCENARIOS["c1k-goal"] = lambda raw, t: (_crafter_price(raw, 1000), raw.__setitem__("goalFirst", ["Crafter"]))
+
+# the first pull after the tutorial: the game's guaranteed Mythril (2026-11-10) against the old beginner's luck (+9 until
+# a Rare or better, 2026-11-01) and against nothing
+SCENARIOS["beginner-luck"] = lambda raw, t: (raw.__setitem__("beginnerLuck", 9), raw.__setitem__("firstPull", None))
+SCENARIOS["no-beginner-luck"] = lambda raw, t: raw.__setitem__("firstPull", None)
+# the Cashier's away earnings off (2026-11-11): the game before them, to compare
+SCENARIOS["no-away"] = lambda raw, t: raw["employees"]["away"].update(share=0)
+
+# a guaranteed ingot on the first pull after the tutorial instead of beginner's luck (Allen 2026-11-10: "shouldnt we just
+# always give them an epic ... that way all players are still starting equal", "or what about legendary?"): one fixed
+# metal on the first stand, the other stands and every later pull at normal odds
+for _n, _m in (("rare", "Silver"), ("epic", "Gold"), ("legendary", "Mythril")):
+    SCENARIOS[f"first-{_n}"] = (lambda m: lambda raw, t: (raw.__setitem__("beginnerLuck", 0), raw.__setitem__("firstPull", m)))(_m)

@@ -1,0 +1,19 @@
+Tool: built-in image_gen for the two-sword pose; exact supplied Sword Smith PNG composited afterward without redrawing lettering.
+Final export: Sword Smith - Taru Dual Swords - 512.png (512 x 512).
+Rebuild: output/thumbnails/create-sword-smith-icon.ps1 -BaseFile 'Taru Dual Swords - square base.png' -IconFile 'Sword Smith - Taru Dual Swords - 512.png'
+
+Use case: identity-preserve.
+Edit IMAGE 1, square Taru character icon base, into a proud TWO-SWORD showcase pose. Preserve this same character, costume, mask, huge muscles, sunny Japanese workshop background, saturated sky, warm rim lighting and glossy blocky Roblox render.
+The character must be visibly HOLDING TWO DIFFERENT SWORDS, one grip in EACH hand:
+IMAGE 2: SHARD BLADE, pale blue-white diamond blade, angular notched silhouette with two cut-ins, gold flared leaf guard with cyan crystal spikes, dark purple grip, bright blue faceted jewel pommel.
+IMAGE 3: MAGMA STEEL ZANBATO, broad simple black/dark rectangular greatsword blade with angled pointed end and glowing orange branching lava cracks, small gold guard, purple and cream wrapped hilt, blue pommel.
+Use the actual two reference designs faithfully. Clearly show cool pale BLUE Shard versus dark ORANGE-cracked Magma Steel sword. Exactly TWO total, no extra freestanding sword beside him.
+
+POSE / COMPOSITION:
+Taru stands proudly facing the viewer, feet apart, chest puffed out, huge bare muscular shoulders and arms. Change his empty double-biceps fists into a two-sword display: arms extended moderately out to the sides with elbows bent, hands around upper-waist / lower-chest height. Each simple chunky Roblox block hand firmly wraps one sword HILT below its gold guard; visible proper hand-to-grip contact. Sword grips are not floating or held by the blade.
+On viewer LEFT, his hand holds the magma greatsword pointing UP and slightly OUTWARD to upper-left.
+On viewer RIGHT, his hand holds the Shard Blade pointing UP and slightly OUTWARD to upper-right.
+The two raised swords form a broad open V framing his masked face and muscular torso, do not cross or obscure his face, headscarf, chest or each other. Scale and reframe the character slightly as needed to keep BOTH sword tips, hilts, pommels, both arms and the character's head visible WITHIN the square. Prioritize clear head, muscles, two swords and readable grip. Do not crop off sword tips. Full body if possible; can crop a little floor for close game-icon framing.
+This is a calm heroic display, no swing, no opponent, no fight, no injury. Keep Taru's exact fixed pink hyottoko mask with blue eyes, arched black painted eyebrows, puffy cheeks and puckered lips; white patterned headscarf; black hakama, large white waist tie and bare feet.
+Keep the sky, blurred white plaster dark-timber Japanese shop and cherry blossoms, soft sunlight and crisp game props.
+Leave lower-left clothing/background relatively uncomplicated for the user's existing Sword Smith logo, which is added afterward. NO generated lettering or logo. Native square 1:1 image for a 512x512 icon.

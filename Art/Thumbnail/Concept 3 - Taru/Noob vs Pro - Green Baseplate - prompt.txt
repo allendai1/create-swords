@@ -1,0 +1,21 @@
+Tool: built-in image_gen using user character screenshot, Studio ref 3b, Taru Hero, and established green-baseplate comparison layout.
+Final export: Noob vs Pro - Green Baseplate.png (1920 x 1080).
+
+Use case: ads-marketing.
+Create a wide 16:9 Roblox swordsmith character comparison thumbnail, target 1920x1080.
+Reference 1: user's tiny screenshot shows the two actual characters (large muscular crafter and small clothed crafter). IMPORTANT re-order them: SMALL GUY LEFT, BIG GUY RIGHT.
+Reference 2: higher resolution Studio screenshot of small Taise on left and large Taru flexing on right, authoritative costume/character reference.
+Reference 3: polished Taru hero render, authoritative large character mask, anatomy styling, white headscarf, white waist tie, glossy finish and huge double-biceps pose.
+Reference 4: ONLY the green studded baseplate, blue sky, white slanted center divider and punchy comparison-thumbnail visual style. Do not copy mystery ingot, E Roll, swords or arrow.
+
+Exactly TWO panels with a single clean WHITE slanted divider from full top edge to bottom edge down the middle, subtly leaning right at top like reference 4.
+LEFT PANEL:
+Large heading at top reads exactly 'NOOB', chunky rounded white uppercase letters with bold BLACK outline and small soft shadow.
+Below heading, the SMALL crafter, clearly shorter and slimmer: same rigid pink hyottoko mask with round blue eyes, painted black eyebrows, puffy cheeks and puckered sideways lips; white patterned headscarf tied at side; olive-green simple kimono/work jacket with dark lapels; thin white/grey waist sash; navy-black vertically pleated hakama and dark footwear. Classic Roblox rectangular torso, narrow block limbs, simple pale block hands. Modest slightly hunched posture with arms down and shoulders drooping, feet planted. Do not make him flex. He fills about 52-58% image height, full body visible, enough empty space above to make size contrast obvious.
+RIGHT PANEL:
+Top heading exactly 'PRO', bold bright warm YELLOW uppercase rounded letters with thick BLACK outline and small soft shadow.
+Below heading, the HUGE Taru: bare pale muscular chest and abs, tremendously enlarged biceps, broad shoulders, thick blocky forearms, black flowing wide hakama, large white waist tie with hanging knot tails, bare feet, exact same rigid pink hyottoko mask and white headscarf as reference 3. Both arms raised in proud DOUBLE-BICEPS FLEX, chest puffed out. Cartoon-exaggerated muscular Roblox geometry, not realistic human. Full body visible including fists and feet, filling about 76-80% image height; considerably taller and wider than left character. Keep heading unobscured, leave comfortable top and outer-edge margins around fists.
+Both masks remain fixed and identical in their painted expression; do not invent laughing, angry or sad living faces. Difference comes from BODY SIZE, clothing and pose. Two separate full characters, not one merged body. Big pro remains fully on RIGHT, small noob fully on LEFT.
+
+BACKGROUND in both panels: bright classic GREEN ROBLOX BASEPLATE with regular raised SQUARE studs receding in perspective, and a clean cyan-blue sky above the horizon, same style as reference 4. Keep ground simple, no buildings, no trees, no village, no props. Characters stand on same ground baseline near bottom. Warm sun, soft contact shadows, golden rim on big crafter muscles, glossy stylized toy/game materials, crisp clean silhouettes and saturated colors. Readable at 400x225.
+NO swords or weapons in this version, no ingots, no stands, no arrow, no E prompt, no other words, no logo or watermark. ONLY text is NOOB over left and PRO over right.

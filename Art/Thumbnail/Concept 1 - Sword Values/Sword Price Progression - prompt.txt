@@ -1,0 +1,19 @@
+Tool: built-in image_gen using the progression screenshot and actual sword assets.
+Final export: Sword Price Progression.png (1920 x 1080).
+Price provenance: Development/sim/balance.json and rules.py sword_value at 80% forge quality, unpolished, Wooden hilt, no seat or etch bonus: Steel Tanto 30, Gold Katana 550, Dragonsteel Flamberge 22800. These are exported base values, not fixed customer sale offers.
+
+Use case: compositing.
+Create a wide 16:9 Roblox game thumbnail, target 1920x1080, showing THREE SWORDS with their values INCREASING LEFT TO RIGHT, inspired by image 1's three-stage progression composition.
+Image 1 is ONLY for the clear small-to-large progression, price-label placement, bright cyan sky and two curved red arrows. Do NOT include its avatars, crates or businesses.
+Image 2 is the exact STEEL TANTO for the small left sword.
+Image 3 is the exact GOLD KATANA for the middle sword.
+Image 4 is the exact DRAGONSTEEL FLAMBERGE for the large right sword.
+Use the actual sword silhouettes and recognizable details from those assets, not three generic swords.
+
+Arrange three separate upright floating sword presentation renders, blades UP and hilts DOWN, all entire swords visible with comfortable margins. Their bottom pommels align near the lower edge, each with a subtle contact shadow on a bright GREEN STUDDED ROBLOX BASEPLATE. Same regular raised SQUARE studs and clean cyan-blue sky as the previous thumbnails. No characters, no stands, no racks or extra objects.
+LEFT at x~17%: small modest steel Tanto, silver blade, purple-and-cream diamond wrapped hilt with gold small guard and blue pommel, about 40-45% frame height. Preserve asset proportions. Put the exact price '$30' ABOVE this sword, large rounded WHITE lettering with thick BLACK outline. It is the lowest price.
+MIDDLE at x~50%: visibly longer gleaming gold Katana, gently curved slender gold blade, gold guard, purple-and-cream wrapped hilt and blue pommel, about 60% frame height. Exact price '$550' ABOVE it in bold rounded warm YELLOW lettering with thick BLACK outline.
+RIGHT at x~82%: much larger impressive Dragonsteel Flamberge, about 76% frame height: SAME deep red wavy undulating blade as asset, small gold dragon-like upper guards, long broad dark-purple two-handed grip, straight gold horizontal crossguard with central circular gold ring, large faceted BLUE jewel pommel. Keep all these distinctive shapes and deep red metal finish faithfully. Add crisp warm edge light and small tasteful glint, not flames or giant magic aura. Exact price '$22,800' ABOVE it, bold rounded bright LIME-GREEN lettering with thick BLACK outline, clearly the highest value. Do not put currency on its blade.
+Price labels rise in the frame from left to right along with the sword sizes, similar to image 1, but every label remains inside frame and separated from sword tip. Prices are exactly '$30', '$550', '$22,800' with proper dollar signs and comma. NO plus signs and no other title or words.
+Between left and middle swords: one curved glossy RED arrow with BLACK outline pointing toward middle sword. Between middle and right: a second matching curved RED arrow with BLACK outline pointing toward right sword. Keep both arrows above hilts, in gaps between blades, without covering any price or sword. Simple chunky arrowheads and white small highlights.
+Clean comparison/progression graphic with a single cohesive background, no panel dividers in this version. Glossy stylized 3D Roblox game objects, vibrant colors, sharp clean edges, clear strong silhouettes, sunny lighting. Emphasize SMALL cheap starter -> medium gold sword -> HUGE high-value wavy Dragonsteel sword. No avatars, hands, UI, logos, watermark, extra text, hidden silhouettes or question marks.

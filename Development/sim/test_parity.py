@@ -149,6 +149,12 @@ class Employees(unittest.TestCase):
             self.assertEqual(B.crafter_quality(c["crafter"], c["level"]), c["out"], c)
             self.assertTrue(close(B.level_seconds(c["level"], B.crafters[c["crafter"]]["forge"]), c["seconds"]), c)
             self.assertTrue(close(B.crafter_walk(c["crafter"], c["level"]), c["walk"]), c)
+            self.assertEqual(B.crafter_carry(c["level"]), c["carry"], c)
+            self.assertTrue(close(B.level_seconds(c["level"], B.crafters[c["crafter"]]["polish"]), c["polish"]), c)
+
+    def test_showcase_pull(self):
+        for c in G["showcasePull"]:
+            self.assertTrue(close(B.showcase_pull(c["materialId"], c["blueprintId"], c["polished"], c["etched"]), c["out"]), c)
 
     def test_perk(self):
         for c in G["perk"]:
@@ -186,12 +192,22 @@ class Misc(unittest.TestCase):
 
     def test_daily(self):
         for c in G["daily"]:
-            self.assertEqual(B.daily(c["streak"], c["last"], c["today"]), (c["day"], c["gems"]), c)
+            self.assertEqual(B.daily(c["streak"], c["last"], c["today"]), (c["day"], c.get("gems", 0)), c)  # claimed: no gift
 
     def test_pack_for(self):
         for c in G["packFor"]:
             key, amount = B.pack_for(c["currency"], c["short"])
             self.assertEqual([key or "", amount or 0], c["out"], c)
+
+
+class Musashi(unittest.TestCase):
+    def test_percent(self):
+        for c in G["musashiPercent"]:
+            self.assertEqual(B.musashi_percent(rules.FakeRng(c["seq"])), c["out"], c)
+
+    def test_discounted(self):
+        for c in G["musashiDiscounted"]:
+            self.assertEqual(B.musashi_discounted(c["price"], c["pct"]), c["out"], c)
 
 
 if __name__ == "__main__":

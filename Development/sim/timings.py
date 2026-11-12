@@ -38,6 +38,11 @@ if os.path.exists(_path):
     ROUTES = {k: v["median"] for k, v in _j.get("routes", {}).items()}
     WALK_SPEED = _j.get("walk_speed")
     OFFERS = _j.get("offers")  # your offer cards: median answer seconds, share missed, n (behavior.offer_habits)
+# PolishController's WIPE_PER_CM went 0.5 -> 0.33 (2026-11-07, Allen: "takes a bit more passes"); the playtests above
+# polished at 0.5. shortcut: the old median scaled by the rate; drop this once a playtest after 2026-11-07 is calibrated.
+POLISH_SLOWER = 0.5 / 0.33
+if "polish" in MEASURED:
+    MEASURED["polish"] *= POLISH_SLOWER
 T = dict(ESTIMATE, **MEASURED)
 
 

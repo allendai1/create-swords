@@ -14,7 +14,7 @@ Start with [[Current Status]] for the recorded build and verification limits, th
 | Note | Purpose |
 |---|---|
 | [[Design/Economy Pass 2]] | Built 2026-10-27, not played: prices for players who pick rare ore, a spine of goals (the next sword, the next employee) to about 13 h, stage gates, three working crafters, the Zanbatō, the lid and the bag's trash |
-| [[Design/Monetization Plan]] | Decided 2026-10-27; the six passes, the Auto Ore Roller's button and the Shop page built, not played: passes (Auto Ore Roller with its popup by the roller, 50% More Coins, Lucky Ore, VIP, Swift Boots), one Starter Pack, weather for Robux or gems, coin and gem packs, the odds panel and the paid-random-item rules |
+| [[Design/Monetization Plan]] | Decided 2026-10-27; the six passes, the Auto Ore Roller's button and the Shop page built, not played: passes (Auto Ore Roller with its popup by the roller, 50% More Coins, Lucky Metal, VIP, Swift Boots), one Starter Pack, weather for Robux or gems, coin and gem packs, the odds panel and the paid-random-item rules |
 | [[Design/Game Design Document]] | Confirmed game direction, with unbuilt scope identified |
 | [[Design/Pottery Tutorial Review]] | Timestamped reference-video analysis and proposed onboarding lessons |
 | [[Design/Tycoon Upgrades]] | Current starting plot, branching purchases and recorded prices |

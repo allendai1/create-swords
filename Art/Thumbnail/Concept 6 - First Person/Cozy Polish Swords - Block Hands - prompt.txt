@@ -1,0 +1,15 @@
+Tool: built-in image_gen editing Cozy Polish Swords.png using supplied classic Roblox hand reference.
+Final export: Cozy Polish Swords - Block Hands.png (1920 x 1080).
+
+Use case: precise-object-edit.
+Edit IMAGE 1, the cozy first-person POLISH SWORDS thumbnail.
+Change ONLY the player's hands and forearm geometry to match IMAGE 2's classic Roblox first-person hands. Everything else stays identical: katana design and placement, cloth, slab, workbench, blue trough, scenery, lighting, composition and exact POLISH SWORDS title.
+
+HAND CORRECTION:
+The existing yellow rounded Lego-like C claws are wrong. Replace BOTH with classic WHITE Roblox hands matching image 2: broad solid blocky white grips at the ends of squared arms, large flat planes, clean angular silhouettes, squared/block palms and simple angular U-shaped grip notches. Slightly softened bevels only, NOT smooth donut-like curves, not cylindrical claws, not realistic fingers, not detailed humanoid hands.
+Use the reference's chunky white angular hand/cuff forms, smooth white plastic-like finish with warm sunlight shading, attached naturally to the existing charcoal squared sleeves. Squarer arms and wrists, proportional hands.
+LEFT: a WHITE block hand grips and supports the katana's dark wrapped hilt from the near/bottom side. Keep thumb/palm abstraction minimal and angular as in reference. Hilt remains visible.
+RIGHT: a WHITE block hand presses and holds the folded cream cloth against the flat blade; a broad squared back of hand and simple angular grip rather than yellow curved hook. Cloth still between hand and blade. Keep natural first-person wrist angle and correct alignment of hand with forearm.
+Only two hands and two arms, both entering from bottom frame edges in same positions as before. No fingers protruding, no extra thumbs, no additional tools.
+Image 2 is ONLY a HAND SHAPE reference: do not copy hammer, anvil, fiery weapon, green studded floor or +1 text.
+Keep soft cozy saturated 3D game render and warm sunny illumination; the hand geometry is classic blocky Roblox. Preserve the entire rest of image 1 as closely as possible. Wide 16:9 landscape, target 1920x1080.

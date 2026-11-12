@@ -1,0 +1,15 @@
+Tool: built-in image_gen using supplied three-shelf sword display Studio screenshot.
+Final export: Cozy Sell Swords.png (1920 x 1080).
+
+Use case: ads-marketing.
+Create a polished cozy Roblox sword-shop game thumbnail from the supplied Studio screenshot. Wide 16:9 landscape, target 1920x1080.
+The three stacked wooden display shelves with their actual colorful katanas are the HERO SUBJECT. Preserve the existing swords and order faithfully:
+TOP shelf: ruby-red gently curved slim katana blade, dark navy-purple wrapped hilt with white/cream diamond openings, bright blue pommel, small gold guard.
+MIDDLE shelf: royal sapphire BLUE gently curved slim katana blade, dark red wrapped hilt with cream diamond openings, gold pommel and guard.
+BOTTOM shelf: rich GOLD gently curved slim katana blade, dark navy-purple wrapped hilt with cream diamond openings, bright blue pommel, gold guard.
+All swords horizontal, hilts LEFT and tips RIGHT, each supported on two small dark wooden display cradles. Exactly THREE swords on exactly THREE shelves. Keep their recognizable low-poly Roblox shape, slim single-edged silhouettes, simple material facets and wrapping details. Don't replace with generic fantasy swords, don't add sheaths or extra blades.
+
+Composition: close inviting frontal/slightly three-quarter view of the wall display, shelves stacked across the left and middle two-thirds of landscape frame. Space them neatly so each sword is large and easy to distinguish, fit all three entire swords and shelf ends in-frame. Shelf boards are thick warm chestnut wood with subtle grain, softly beveled edges and visible chunky brackets, matching screenshot. Wall is soft warm cream plaster with very subtle handmade texture, dark wood shop framing at extreme edges. A little soft greenery and cherry blossom color is visible through a window at far RIGHT, with sunny golden light streaming in. A small warm paper lantern can sit near upper-left edge, unobtrusive, not blocking swords.
+Make the swords look lovingly displayed in a cozy artisan Japanese shop: glossy vibrant red, blue, gold blades, small tasteful white edge glints on the metal, clean bright gold guards, soft warm sunlight and gentle shadows under shelves. Gold sword especially lustrous, no magic auras or flames. Rich honey-colored light on wood, calm welcoming atmosphere, clean saturated colors and toy-like chunky Roblox geometry. Premium cozy stylized 3D game art, not photographic realism, no combat, no characters or hands.
+
+At UPPER RIGHT in the clear right-hand column, add exactly two stacked words: 'SELL' then 'SWORDS'. Very large friendly round chunky cream-white bubble lettering with a thick cocoa-brown outline and soft rounded shadow, the cozy crafting-game thumbnail style. Keep typography clear of all swords; no other wording or prices. Gentle background blur only at far edges, swords sharp. No mouse pointer, UI, watermark, logos or borders.

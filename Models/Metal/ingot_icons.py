@@ -5,6 +5,9 @@
 # Every capture uses the same camera, so one fixed crop frames them all alike. The wall is keyed out (its colour is
 # read from the bottom-right corner, away from the sun glare and the HUD), the key colour's spill is pulled from the
 # edges, and the result is shrunk premultiplied (no coloured halo) to a 256 px square PNG with alpha.
+# 2026-11-06 (Allen picked the corner view "G"): the ingot drawn in a ViewportFrame (the book card's View lighting, true
+# colours, no sky in the metal) yawed +45 degrees, camera 3.855 studs off at 34 degrees down onto (0, -0.15, 0), FOV 48.1
+# (the old 480 px crop of FOV 70), eight 360 px frames to a capture; shots are {"file", "box": [x, y, size]}.
 # Run: python -I ingot_icons.py <out dir> <manifest.json>   (manifest: {"Iron": "capture.jpg", "Rainbow Alloy": [green, magenta]})
 import json, os, sys
 import numpy as np
@@ -15,19 +18,25 @@ SIZE = 256
 LO, HI = 30, 120  # key strength (0-255) from fully kept to fully cut
 
 
-def shot(path):  # the crop, its key strength per pixel and whether the wall is magenta
+def shot(path, box=None):  # the crop, its key strength per pixel and whether the wall is magenta
+    # box (x, y, size): one cell of a grid capture (2026-11-06: eight ViewportFrame ingots per capture); else the centre crop
     a = np.asarray(Image.open(path).convert("RGB")).astype(np.float32)
     corner = a[-40:, -40:].reshape(-1, 3).mean(0)
     magenta = corner[0] > corner[1]  # green wall: g wins; magenta wall: r (and b) win
-    cx = a.shape[1] // 2  # the Studio window's width varies; the ingot is always in the middle
-    c = a[Y0:Y1, cx - HALF:cx + HALF]
+    if box:
+        x, y, s = box
+        c = a[y:y + s, x:x + s]
+    else:
+        cx = a.shape[1] // 2  # the Studio window's width varies; the ingot is always in the middle
+        c = a[Y0:Y1, cx - HALF:cx + HALF]
     r, g, b = c[..., 0], c[..., 1], c[..., 2]
     return c, (np.minimum(r, b) - g) if magenta else (g - np.maximum(r, b)), magenta
 
 
 def icon(path):  # path: a capture, or [green, magenta] captures of a metal with both key colours in it (Rainbow Alloy,
     # 2026-10-23): each pixel then comes from the photo whose wall it looks least like
-    shots = [shot(p) for p in (path if isinstance(path, list) else [path])]
+    # a shot is a file, or {"file": ..., "box": [x, y, size]} for a grid cell
+    shots = [shot(p["file"], p["box"]) if isinstance(p, dict) else shot(p) for p in (path if isinstance(path, list) else [path])]
     c, key, magenta = shots[0]
     magenta = np.full(key.shape, magenta)
     for c2, key2, m2 in shots[1:]:

@@ -99,7 +99,7 @@ Allen (2026-10-22): "use this persons profile's inventory for decals for icons w
 | Fire | 15403144776 |
 | Boat | 15403171301 |
 | Speed | 15403173277 |
-| Scroll | 15403175197 (image `rbxassetid://15403175166`: the request board's "New order" card, 2026-10-23; the HUD menu's Mail button and the inbox's "New order" row since the same day; the inbox row was removed on 2026-10-24) |
+| Scroll | 15403175197 (image `rbxassetid://15403175166`: the request board's "New order" card, 2026-10-23; the HUD menu's Mail button and the inbox's "New order" row since the same day; the inbox row was removed on 2026-10-24; the ore label's "wants this!" pill and the picker cards' `Quest` badge since 2026-11-11) |
 | Home | 15403180883 |
 | Card | 15403192483 |
 | Bolt | 15403203797 |
@@ -124,7 +124,7 @@ Allen (2026-10-22): "use this persons profile's inventory for decals for icons w
 
 107 decals listed 2026-10-22 through the public inventory API; the six "Png - 2024-04-…" are unnamed.
 
-**Not VectorIcons:** the Mail button's mailbox is Allen's own art (2026-10-26), orange with a dark border: `Art/mailbox-icon.png` (his transparent file, trimmed, 512 px), decal 103960883488169, image `rbxassetid://87335653488899`. Superseded the same day: a recolour of his blue one (decal 132568019447809, image 98478920552645), his blue one (decal 102623846338085 with a black background from a bad cut-out; fixed as 110906521404418, unused), and the Creator Store decal 112139392490051 "Buzon1" by Fontanero24 (image `rbxassetid://94916333436167`).
+**Since 2026-11-11 the Mail button and the Showcase Mail stat use the Scroll again** (`rbxassetid://15403175166`, [[Sessions/2026-11-11#Mail icon: the scroll]]); the mailbox below is unused. **Not VectorIcons:** the Mail button's mailbox is Allen's own art (2026-10-26), orange with a dark border: `Art/mailbox-icon.png` (his transparent file, trimmed, 512 px), decal 103960883488169, image `rbxassetid://87335653488899`. Superseded the same day: a recolour of his blue one (decal 132568019447809, image 98478920552645), his blue one (decal 102623846338085 with a black background from a bad cut-out; fixed as 110906521404418, unused), and the Creator Store decal 112139392490051 "Buzon1" by Fontanero24 (image `rbxassetid://94916333436167`).
 
 ## Free Icon Pack (in use since 2026-10-26)
 
@@ -138,7 +138,7 @@ Allen (2026-10-26): "I added a free icon pack to our vault. can we swap out our 
 | Lock 15402948246 | Lock | 123617506863506 | rbxassetid://111896329341217 | crew window's locked cards, the Auto Ore Roller button's lock |
 | — | Auto Open | 116762899492598 | rbxassetid://130317504294180 | the Auto Ore Roller button and its Shop card (2026-10-27) |
 | — | Chest | 71703985235233 | rbxassetid://121901041887054 | the Shop's Starter Pack card (2026-10-27) |
-| — | Clover | 136570391206190 | rbxassetid://131251258477861 | the Shop's Lucky Ore card (2026-10-27) |
+| — | Clover | 136570391206190 | rbxassetid://131251258477861 | the Shop's Lucky Metal card (2026-10-27) |
 | — | VIP | 89655182198190 | rbxassetid://114203217172057 | the Shop's VIP card (2026-10-27) |
 | — | Red Shoe | 89424205690369 | rbxassetid://100968152074624 | the Shop's Swift Boots card (2026-10-27) |
 | — | Golden Robux | 108709281854166 | rbxassetid://116184965509442 | Robux prices on the Shop's Buy buttons (2026-10-27) |
@@ -146,7 +146,8 @@ Allen (2026-10-26): "I added a free icon pack to our vault. can we swap out our 
 | Backpack 15402958715 | Backpack | 85448936637490 | rbxassetid://83638941769486 | hotbar bag button, shop holders' pick-up marker |
 | Gift 15402967660 | Red Gift | 123454384742660 | rbxassetid://116105182486029 | daily reward button |
 | Sword 15402990643 | Sword | 120797359447545 | rbxassetid://120814567140305 | collection book button |
-| Settings 15402995645 | Settings 1 | 113271219896211 | rbxassetid://99173641572787 | Settings button |
+| Settings 15402995645 | Settings 1 | 113271219896211 | rbxassetid://99173641572787 | the gear inside the Settings window's Sound row (the HUD's Settings button until 2026-11-11) |
+| (new, 2026-11-11) | Settings White | 116790758200538 | rbxassetid://73104270676507 | HUD Settings button (Allen's pick; plain white, not 1st Outline) |
 | Storage 15403012566 | Box | 136691697931552 | rbxassetid://98414707930956 | Deliveries title, cart, crate, pinned order |
 | Friends 15403044988 | Friend | 104991759325989 | rbxassetid://135122114385259 | crew button |
 | House 15403056677 | Red House | 118630475635288 | rbxassetid://105855767508083 | store upgrades button, trip step 1 |
@@ -160,7 +161,7 @@ Allen (2026-10-26): "I added a free icon pack to our vault. can we swap out our 
 | (new, 2026-10-28) | Cursor | 88331796722612 | rbxassetid://133171470730444 | the ghost cursors (`HiltSeatGui.Ghost`, `SpotlightGui.Ghost`) and the action card's tap icon on phones (`ActionGui.Action.Row.Key.Tap`), Fixes 2026-10-28; uploaded through Open Cloud the same day |
 | (new, 2026-10-29) | Yellow Pencil | 120099822977965 | rbxassetid://118651920601553 | the Decorate button (`DecorateGui.Bar.Button.Icon`); uploaded through Open Cloud the same day |
 | (new, 2026-10-29) | Newspaper | 84057899692702 | rbxassetid://107527990961861 | Gem Shop: Better Advertising (`GemController.ICONS`) |
-| (new, 2026-10-29) | Add Player | 82371815001127 | rbxassetid://88703652327500 | Gem Shop: More Clients |
+| (new, 2026-10-29) | Add Player | 82371815001127 | rbxassetid://88703652327500 | Gem Shop: More Clients; the top bar Invite icon (`InviteController`, 2026-11-11) |
 | (new, 2026-10-29) | Clock | 84555907209561 | rbxassetid://111560518823098 | Gem Shop: Quicker Mail (More VIPs reuses VIP) |
 | (new, 2026-10-29) | Rays 8 (generated, `Art/Rays/make_rays.py`) | 73902782556492 | rbxassetid://134553992083874 | Book sword-card trial |
 | (new, 2026-10-29) | Rays 12 (generated) | 72061563758965 | rbxassetid://83620843088174 | Book sword cards (`CollectionGui.Templates.Entry.HalftoneClip.Rays`) |
@@ -171,6 +172,11 @@ Allen (2026-10-26): "I added a free icon pack to our vault. can we swap out our 
 | (new, 2026-10-31) | Hammer | 124434057088650 | rbxassetid://99067729549436 | the Auto Anvil's switch (`AnvilHud.Auto.Icon`) and its Shop card (`MenuGui.ShopWindow…Grid.AutoAnvil.Icon`); uploaded through Open Cloud the same day |
 | (new, 2026-11-03) | Full Body | 118674563903488 | rbxassetid://96517349143124 | the top bar's customer count (`MenuController`); uploaded through Open Cloud the same day |
 | (2026-11-03) | Chest, Purple Diamond (reused) | — | rbxassetid://121901041887054, rbxassetid://103295659547066 | Daily Reward's day 7 tile and the gem piles (`GemGui.Templates.Day7`, `Day.Content.Gem`) |
+| Upgrades button (was Stats, 2026-11-07) | Yellow House | 117323187468112 | rbxassetid://118316543611583 | the STORE button (`MenuGui.Buttons.Upgrades`), Allen: "use this icon for the STORE"; also trip step 4. Stats now sits on the store's Stats tab (`StatsTab.Icon`) |
+| (new, 2026-11-07) | Green Upgrade 1st Outline (tilted) | 118884637893934 | rbxassetid://111969856980519 | the store's Upgrades tab for an hour; unused since (no dark outline) |
+| (new, 2026-11-07) | Green Upgrade 1st 64px (tilted, outlined) | 76774379864814 | rbxassetid://95133996028485 | the store's Upgrades tab (`GemGui…Tabs.Pill.UpgradesTab.Icon`); Allen: "use Green Upgrade 1st 64 px" |
+| (new, 2026-11-07) | Green Upgrade 2nd Outline (straight) | 93713401176903 | rbxassetid://90083406186896 | not used upright; uploaded the same day |
+| (new, 2026-11-07) | Green Upgrade 2nd Outline turned 180° | 129622986004812 | rbxassetid://97625707508282 | the tutorial's floor arrows (`GuideLook.Arrow`, a Beam lays the image's vertical along the way); Allen: "use this not tilted one for our tutorial arrow" |
 | (new, 2026-11-01) | Blue Pencil | 74976205523480 | rbxassetid://135907823788203 | the Auto Etch Shop card (`MenuGui.ShopWindow…Grid.AutoEtch.Icon`) and the Automation Pack card's three icons; uploaded through Open Cloud the same day |
 
 Claude's picks where the pack had several: Purple Diamond (the old gem was purple; Blue Diamond is the alternative), Red Gift, Red Shopping Cart (or a Red / Golden Shopping Bag), Lighting for speed (or Yellow Shoe), Red House vs Yellow House to keep the trip's start and end apart (the Red House stays only on trip step 1 since the Upgrades button became Stats). `ServerStorage.UIPackCopies` (another session's UI-pack experiment) still holds the old ids.
@@ -195,3 +201,5 @@ Allen (2026-10-28): "Instead of the weather being text, have [an icon] on the bo
 | Snow | `Art/Weather Icons/Weather Snow 256px.png` | 92434272203147 | rbxassetid://126239471090216 |
 | Rain | `Art/Weather Icons/Weather Rain 256px.png` | 100747657646529 | rbxassetid://77332354838190 |
 | Rainbow | `Art/Weather Icons/Weather Rainbow 256px.png` | 87803876739033 | rbxassetid://130216775479362 |
+
+- **Crown** (2026-11-09): the Free Icon Pack's Crown 1st Outline 256px, decal 127257653719167, image `rbxassetid://81592771203103` (also the Everything Bundle pass's icon on Roblox). The Shop's Everything Bundle card. [[Sessions/2026-11-09#Everything Bundle; the Shop wider, three cards a row]]

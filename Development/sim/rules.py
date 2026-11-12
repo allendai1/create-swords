@@ -54,6 +54,7 @@ class Balance:
         self.customers.update({i: self.customers["VIP"] for i in b["customers"]["castVips"]})  # named VIPs deal as the VIP
         self.walk_ins = [c for c in b["customers"]["list"] if not c["vip"]]
         self.crafters = {c["id"]: c for c in b["employees"]["crafters"]}
+        self.designs = {d["id"]: d for d in (b.get("musashi") or {}).get("designs", [])}  # Musashi's stall (2026-11-10)
 
     # --- Shared/Materials -----------------------------------------------------------------------------------------
     def odds(self, luck=1.0):
@@ -71,6 +72,18 @@ class Balance:
         """Materials.multiplier (1 for unknown ids)."""
         m = self.metals.get(metal_id)
         return self.rarities[self.rarity_index[m["rarity"]]]["multiplier"] if m else 1
+
+    def showcase_pull(self, metal_id, blueprint_id, polished, etched, rarity=None):
+        """Showcase.pull (2026-11-04): a Showcase Stand sword's pull; `rarity` stands in for a metal id."""
+        S = self.raw["shop"]["showcase"]
+        m = self.metals.get(metal_id)
+        tier = rarity or (m["rarity"] if m else None)
+        pull = S["tier"].get(tier, 0) if tier else 0
+        bp = self.blueprints.get(blueprint_id)
+        if bp:
+            # the sword type's steps 0-6 along the chain (Showcase.SWORD, 2026-11-09); unlisted: difficulty past 1
+            pull += S["typeStep"] * S.get("sword", {}).get(blueprint_id, max(0, bp["difficulty"] - 1))
+        return pull + (S["polish"] if polished else 0) + (S["etch"] if etched else 0)
 
     def climbs(self, metal_id):
         """Materials.climbs: tiers an ore climbs from Common in the roll's show."""
@@ -148,13 +161,11 @@ class Balance:
         return max(offer + 1, _round(offer * (1 + bump)))
 
     def pick_customer(self, rng, vip_chance=None):
-        """Customers.pick: a VIP at vip_chance (None in the tutorial; half are named ones), else a walk-in by weight.
-        ponytail: named clients (CAST_CHANCE, only while their sword is shown) aren't modelled."""
+        """Customers.pick: a VIP at vip_chance (None in the tutorial; always a named character, 2026-11-07), else a
+        walk-in by weight. ponytail: named clients (CAST_CHANCE, only while their sword is shown) aren't modelled."""
         if vip_chance is not None and rng.next_number() < vip_chance:
-            cast = self.raw["customers"]["castVips"]  # named VIPs: the VIP's numbers, another face (2026-11-01)
-            if cast and rng.next_number() < self.raw["customers"]["castVipShare"]:
-                return cast[rng.next_integer(1, len(cast)) - 1]
-            return "VIP"
+            cast = self.raw["customers"]["castVips"]  # Customers.vips: every named character, the VIP's numbers
+            return cast[rng.next_integer(1, len(cast)) - 1]
         x = rng.next_number() * sum(c["weight"] for c in self.walk_ins)
         for c in self.walk_ins:
             x -= c["weight"]
@@ -182,8 +193,9 @@ class Balance:
         return sum(r["multiplier"] * o / 100 for r, o in zip(self.rarities, self.odds(luck)))
 
     def _pick_blueprint(self, rng, known):
-        """Orders' pickBlueprint: the three most valuable non-big known swords, 3:2:1."""
-        top = sorted(((self.blueprints[i]["basePrice"], i) for i in known if i in self.blueprints and not self.blueprints[i]["big"]),
+        """Orders' pickBlueprint: the three most valuable non-big known swords, 3:2:1; never a shop's design (Musashi's)."""
+        top = sorted(((self.blueprints[i]["basePrice"], i) for i in known if i in self.blueprints and not self.blueprints[i]["big"]
+                      and not self.blueprints[i].get("shop")),
                      key=lambda t: (-t[0], t[1]))
         if not top:
             return known[rng.next_integer(1, len(known)) - 1]
@@ -259,23 +271,41 @@ class Balance:
         return {"kind": kind, "need": need, "count": count, "gems": gems, "recipient": recipient}
 
     def daily(self, streak, last, today):
-        """GemUpgrades.daily: (streak day 1-7, gems), or (0, 0) when today's is claimed."""
+        """GemUpgrades.daily: (streak day 1-7, its gift {gems?, coinMinutes?, ingot?}), or (0, 0) when today's is
+        claimed (since 2026-11-08 a gift table, was gems)."""
         if last >= today:
             return 0, 0
         days = self.raw["gemUpgrades"]["daily"]
         day = streak % len(days) + 1
         return day, days[day - 1]
 
+    COIN_FLOOR = 50  # GemUpgrades.COIN_FLOOR; shortcut: not in the export yet, add it to ExportBalance if it changes
+
+    def coin_rate(self, coins_earned, played_seconds):
+        """GemUpgrades.coinRate: coins a minute for a coin day, the lifetime average, at least COIN_FLOOR."""
+        return max(self.COIN_FLOOR, coins_earned / max(played_seconds / 60, 1))
+
+    @staticmethod
+    def gift_coins(minutes, rate):
+        """GemUpgrades.coins: minutes of income, rounded to two significant figures (Luau math.round: half away from 0)."""
+        n = minutes * rate
+        unit = 10 ** max(0, math.floor(math.log10(max(n, 1))) - 1)
+        return math.floor(n / unit + 0.5) * unit
+
     # --- Shared/Upgrades ----------------------------------------------------------------------------------------
     def price(self, upgrade_id, merges=0):
-        """Upgrades.price: Ore Slots cost MERGE_PRICE more per merge, compounding, to the nearest 10 (2026-11-02)."""
-        p = self.upgrades[upgrade_id]["price"]
+        """Upgrades.price: Ore Slots cost MERGE_PRICE more per merge, compounding, to the nearest 10 (2026-11-02); before
+        the first merge an Ore Slot's `first` price, when it has one (2026-11-12)."""
+        u = self.upgrades[upgrade_id]
+        p = u["price"]
         if not upgrade_id.startswith("OreStand"):
             return p
+        if merges == 0 and u.get("first"):
+            return u["first"]
         return 10 * math.floor(p * self.raw["merge"]["price"] ** merges / 10 + 0.5)  # Luau math.round: half away from 0
 
     def luck(self, merges, lucky_ore=False):
-        """Upgrades.luck (+ Store.luckBonus with the Lucky Ore pass)."""
+        """Upgrades.luck (+ Store.luckBonus with the Lucky Metal pass)."""
         return 1 + self.raw["merge"]["luck"] * merges + (self.raw["store"]["luckyOre"] if lucky_ore else 0)
 
     def heat_time(self, owned, forge="Forge"):
@@ -306,11 +336,6 @@ class Balance:
         mine = [e for e in self.etches.values() if e["id"] in ids and not e.get("retired")]
         return max(mine, key=lambda e: e["bonus"])["id"] if mine else None
 
-    def etch_bonus(self, owned):
-        """The best owned pattern's bonus, 0 with none."""
-        e = self.best_etch(owned)
-        return self.etches[e]["bonus"] if e else 0.0
-
     def available(self, owned):
         """The pads on offer: not owned, every `after` owned (TycoonService). Decorations are bought in a window."""
         return [i for i in self.upgrade_order if i not in owned and all(a in owned for a in self.upgrades[i]["after"])]
@@ -334,9 +359,25 @@ class Balance:
         top = len(self.raw["employees"]["levelAt"])
         return rng_range[0] + (rng_range[1] - rng_range[0]) * (level - 1) / (top - 1)
 
+    def carry(self, level):
+        """Employees.carry: swords the Stocker takes a trip at this level (2026-11-04)."""
+        c = self.raw["employees"]["carry"]
+        return c[max(1, min(level, len(c))) - 1]
+
+    def crafter_carry(self, level):
+        """Employees.crafterCarry: ingots a sword crafter takes a trip at this level (one at Lv. 1-2 since 2026-11-05)."""
+        c = self.raw["employees"]["crafterCarry"]
+        return c[max(1, min(level, len(c))) - 1]
+
     def crafter_walk(self, crafter_id, level):
         """Employees.crafterWalk: walk speed lerped by level (2026-11-03)."""
         return self.level_seconds(level, self.crafters[crafter_id]["walk"])
+
+    def promoter_crowd(self, count):
+        """Employees.promoterCrowd: customers the Shop Promoter adds at once, by level (+1 / +2 / +3, 2026-11-07)."""
+        c = self.raw["employees"]["promoterCrowd"]
+        level = self.staff_level(count, self.raw["employees"]["staffScale"])[0]
+        return c[max(1, min(level, len(c))) - 1]
 
     def perk(self, role, count):
         """Employees.perk."""
@@ -355,8 +396,9 @@ class Balance:
         return self.raw["employees"]["staff"]["cashier"]["setting"]
 
     def cashier_sells(self, offer, value, setting):
-        """Employees.cashierSells."""
-        return offer * 100 >= value * (100 + self.cashier_percent(setting))
+        """Employees.cashierSells: the bottom step (+15% since 2026-11-08) sells any offer."""
+        pct = self.cashier_percent(setting)
+        return pct <= self.raw["employees"]["cashier"]["min"] or offer * 100 >= value * (100 + pct)
 
     # --- Shared/Reputation, Deliveries, Store -------------------------------------------------------------------
     def reputation_level(self, points):
@@ -388,3 +430,63 @@ class Balance:
         decoys = set(s.get("decoys", []))
         best = min(((n, k) for k, n in packs.items() if n >= short and k not in decoys), default=None)
         return (best[1], best[0]) if best else (None, None)
+
+    # --- Shared/Musashi (2026-11-10) ----------------------------------------------------------------------------
+    def musashi_open(self, owned, known):
+        """Musashi's stall stands for this player: the gate's upgrade owned (and its blueprint known, if the export has one;
+        since 2026-11-10 the game opens on the Sword Crafter alone)."""
+        g = self.raw["musashi"]["gate"]
+        return g["upgrade"] in owned and (g.get("blueprint") is None or g["blueprint"] in known)
+
+    def _qualifying(self, known):
+        return [d for d in self.raw["musashi"]["designs"] if d["pinned"] in known and d["id"] not in known]
+
+    def musashi_stock(self, rng, known, missed):
+        """Musashi.stock: design ids for one stock. Each qualifying design (its pinned sword known, itself not) rolls its
+        tier's chance; one missed floor-1 stocks running is forced in; at most `slots`, forced first, the rest at random
+        among those rolled in. shortcut: the sim's own random draws, not Roblox's Random (no golden vectors)."""
+        M = self.raw["musashi"]
+        forced, rolled = [], []
+        for d in self._qualifying(known):
+            if missed.get(d["id"], 0) >= M["floor"] - 1:
+                forced.append(d["id"])
+            elif rng.next_number() < M["chance"][d["tier"]]:
+                rolled.append(d["id"])
+        stock = forced[:M["slots"]]
+        while rolled and len(stock) < M["slots"]:
+            stock.append(rolled.pop(rng.next_integer(1, len(rolled)) - 1))
+        return stock
+
+    def musashi_seen(self, stock, known, missed):
+        """Musashi.seen: once a stock is first seen, each qualifying design not in it missed one more, those in it cleared."""
+        for d in self._qualifying(known):
+            if d["id"] in stock:
+                missed.pop(d["id"], None)
+            else:
+                missed[d["id"]] = missed.get(d["id"], 0) + 1
+        return missed
+
+    def musashi_deals(self, rng, standing):
+        """Musashi.deals: [(upgrade id, percent off)], `deals` picked at random among the standing pads that cost
+        something (coins or gems; not the merge, not decorations)."""
+        pool = [i for i in standing if i in self.upgrades and i != "MergeSlots" and not self.upgrades[i]["decor"]
+                and (self.upgrades[i]["price"] > 0 or (self.upgrades[i].get("gems") or 0) > 0)]
+        out = []
+        while pool and len(out) < self.raw["musashi"]["deals"]:
+            out.append((pool.pop(rng.next_integer(1, len(pool)) - 1), self.musashi_percent(rng)))
+        return out
+
+    def musashi_percent(self, rng):
+        """Musashi.percent: a percent off by the discounts' weights."""
+        D = self.raw["musashi"]["discounts"]
+        x = rng.next_number() * sum(w for _, w in D)
+        for pct, w in D:
+            x -= w
+            if x < 0:
+                return pct
+        return D[-1][0]
+
+    @staticmethod
+    def musashi_discounted(price, pct):
+        """Musashi.discounted: the price pct% off, rounded, at least 1."""
+        return max(1, _round(price * (100 - pct) / 100))

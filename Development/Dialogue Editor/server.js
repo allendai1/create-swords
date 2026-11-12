@@ -11,8 +11,17 @@ const WRITABLE = { "/studio": "studio.json", "/edits": "edits.json" };
 const TYPES = { ".html": "text/html; charset=utf-8", ".json": "application/json; charset=utf-8", ".js": "text/javascript" };
 
 http.createServer((req, res) => {
-	res.setHeader("Access-Control-Allow-Origin", "*");
-	if (req.method === "OPTIONS") return res.end();
+	// Only this page and Studio may write: a browser marks another site's request with its Origin (Studio sends none),
+	// and the Host check stops DNS rebinding. No CORS headers, so other sites can't read the files either.
+	const host = req.headers.host, origin = req.headers.origin;
+	if (host !== `127.0.0.1:${PORT}` && host !== `localhost:${PORT}`) {
+		res.statusCode = 403;
+		return res.end("forbidden");
+	}
+	if (req.method !== "GET" && origin && origin !== `http://${host}`) {
+		res.statusCode = 403;
+		return res.end("forbidden");
+	}
 	const url = req.url.split("?")[0];
 	if (req.method === "POST" && WRITABLE[url]) {
 		let body = "";

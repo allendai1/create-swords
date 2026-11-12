@@ -1,0 +1,17 @@
+Tool: built-in image_gen with supplied arrow-outline and interaction-prompt references.
+Final export: Mystery Ingot - E Roll.png (1920 x 1080).
+
+Smaller question mark / arrow-outline edit:
+Use case: precise-object-edit.
+Edit IMAGE 1, the green Roblox baseplate comparison thumbnail. Make exactly TWO small changes, keep everything else as close to identical as possible:
+1. Make the red question mark on the black ingot SMALLER: scale the whole mark INCLUDING its dot to about 60% of its current width and height, centered on the black silhouette's front face. Leave a generous black margin around it on all sides; it must no longer touch or extend beyond the ingot's top or base. Preserve the glossy red 3D shape, highlight and centered placement. Do NOT shrink the ingot, stand or any other object.
+2. Give the red curved arrow a strong clean BLACK OUTLINE like the arrow in IMAGE 2. Replace the arrow's current white outer stroke with a bold crisp near-black stroke, about 8-12 pixels thick at 1920 resolution. Keep same curved red arrow shape, position, scale, right-pointing direction, glossy red fill and highlight. The black contour must be the visible outer boundary, not white. Do not add text to the arrow.
+
+Keep everything else unchanged: bright green studded baseplate, cyan sky, single slanted WHITE divider, one tan stand, one pure black ingot silhouette, one gold katana with purple cream-diamond wrapped hilt and blue pommel, golden glow, lighting and composition. Reference 2 is ONLY for black arrow outline styling; do not copy its words, people or buildings. No letters, numbers, logos, watermarks or extra objects. The red question mark is the only glyph. Wide 16:9 landscape, target 1920x1080.
+
+Interaction badge edit:
+Use case: precise-object-edit.
+Edit IMAGE 1 (the green baseplate split comparison thumbnail with the SMALL red question mark and BLACK outlined red arrow). Add ONE interaction prompt above the mystery ingot in the LEFT panel. Keep every existing object unchanged.
+Prompt styling follows IMAGE 2's 'E Steal' prompt, but EXACT wording must be 'E Roll'. Use a wide very dark charcoal rounded rectangle with slight soft shadow. On its left, a medium-grey square keycap with rounded corners, thin white border, and a centered bold WHITE uppercase 'E'. To its right, the word 'Roll' in large friendly bold slightly hand-drawn rounded WHITE lettering. Correct spelling is R-o-l-l, only initial R capitalized.
+Place this prompt centered horizontally ABOVE the ingot in the clear blue sky area of the LEFT half, with a comfortable visible gap between prompt and black ingot. Width roughly one-quarter of full thumbnail and height roughly one-eighth. Keep it fully on left side of divider, no overlaps with question mark, arrow or ingot, readable at phone size.
+Preserve everything else EXACTLY: small glossy red question mark centered with broad black margins on pure black ingot silhouette, single tan pedestal, thick BLACK outlined glossy red arrow crossing the divider, slanted WHITE middle divider, green studded baseplate, cyan sky, large gold katana with purple wrapped grip and blue pommel, gold glow and glints. No other text, no hands, no cursors, no characters. Do not copy reference 2's weapon, forge or environment; only its interaction badge styling. Wide 16:9 landscape target 1920x1080.

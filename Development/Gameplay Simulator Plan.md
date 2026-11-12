@@ -2,7 +2,7 @@
 
 Allen (2026-10-29): build a gameplay simulation system to balance progression, economy, resource probabilities and the player experience. It should simulate thousands of players, run experiments on prices, drops, crafting times, sale values and upgrade costs, and compare them. His preference: a custom Python simulator, independent of Studio, with a shared source of truth for balance data.
 
-Status: **built** in `Development/sim` (steps 1–2 below); runs are in `Development/Sim Runs/`. See also [[Design/Economy Review — 2026-10-29]] and [[Development/economy_model.py]].
+Status: **built** in `Development/sim` (steps 1–2 below); runs are in `Development/Sim Runs/`. See also [[Design/Economy Review — 2026-10-29]]; `economy_model.py`, the older one-player model, was retired 2026-11-10, so the sim is the one pacing model.
 
 ## 1. Verdict
 
@@ -183,7 +183,7 @@ These aren't guessed. Each needs a check in the code or Allen's call:
 6. **The Big Sword Stand:** one slot, restocked how often, and does a waiting big sword block anything?
 7. **Session start and the tutorial:** fixed steps and timings (the tutorial gap is 12–22 s; the letter delay is 45 s) and whether the Guide forces an order.
 8. **Gems:** every source (daily, orders, deliveries, letters, passes) and sink. v1 can treat gem upgrade levels as bought at fixed times, as the model does now.
-9. **Passes and products** (Lucky Ore, Swift Boots, coin passes): v1 runs without them. Add a "paying player" archetype later.
+9. **Passes and products** (Lucky Metal, Swift Boots, coin passes): v1 runs without them. Add a "paying player" archetype later.
 
 **Timings that need measuring (playtest log):** walking (the detour factor), and the hand-action times: lever pull, carrying, forge minigame, hilt seat, polish, etch, stocking a holder, opening and answering an offer, mail, cart packing. Also reaction times.
 
@@ -212,7 +212,7 @@ Mail orders, the cart, the gem shop timing and passes are added once v1's number
   - Hand actions with no stated time get placeholder distributions, each marked `ESTIMATE` in `timings.json`. The report prints which of its results depend on them.
   - The `PlaytestLog` calibration (§4.5) stays planned for later.
 - **Paid items: included in v1.**
-  - A "paying player" switch can be set on any archetype: which passes it owns (Lucky Ore: luck one merge higher; Swift Boots: WalkSpeed 20; the coin passes' sale boost; the Auto Ore Roller) and when it buys gem packs.
+  - A "paying player" switch can be set on any archetype: which passes it owns (Lucky Metal: luck one merge higher; Swift Boots: WalkSpeed 20; the coin passes' sale boost; the Auto Ore Roller) and when it buys gem packs.
   - The numbers come from the export (`Shared/Store`, `GemUpgrades`).
   - The report always shows free and paying players side by side, so paid items never hide inside the free curve.
 
@@ -236,7 +236,7 @@ Mail orders, the cart, the gem shop timing and passes are added once v1's number
 - **Paying players: several tiers,** shown side by side:
   - free;
   - Starter Pack;
-  - all the gameplay passes (Lucky Ore, Swift Boots, the coin passes, the Auto Ore Roller).
+  - all the gameplay passes (Lucky Metal, Swift Boots, the coin passes, the Auto Ore Roller).
 - **Stuck:** 10 minutes with no purchase, unlock or new sword.
 - **Reports:** a short vault note in `Development/` per run, with the full HTML report and the per-player CSV beside it.
 - **Logistics are modelled:** the player (or the Stocker) walks ingots to the Ingot Rack and swords from the Finished Sword Rack to the shop. Crafters wait when the rack is empty or full, so keeping up costs real walking.
@@ -311,7 +311,7 @@ Re-export after any balance change. A red test means the game and the simulator 
 - **Cart:** Bulk Orders at 0.8×, never a big sword, with its trip time and 1 + n÷3 gems.
 - **Weather:** a 5-minute spell, never the same twice in a row; Rain adds luck.
 - **Merges:** Merge Ore Slots resets Ore Slots 2–6.
-- **Passes:** the coin boost and Lucky Ore luck, Swift Boots walking at 20, the Starter Pack's 100 gems and Gold ingot.
+- **Passes:** the coin boost and Lucky Metal luck, Swift Boots walking at 20, the Starter Pack's 100 gems and Gold ingot.
 
 **Walking:** plot-space distance × 1.3 detour ÷ walk speed.
 
@@ -461,6 +461,7 @@ All of these are now modelled.
 
 **Days:**
 - 24 h of play = 24 days of 1 h (`behavior.PLAY_DAY`), each with a daily claim (`GemUpgrades.daily`: 5, 5, 10, 10, 15, 15, 30, looping).
+- `run.py --play-day <minutes>` plays another day length (2026-11-10; default 60). It sets `SIM_PLAY_DAY` for the pool's workers, which `behavior.PLAY_DAY` reads.
 - Between days, the cart comes back and the mail fills to More Clients' count. Both run on `os.time` in the game. Nothing else runs offline.
 
 **Mail orders** (Shared/Orders, ShopService.refillOrders):
@@ -821,3 +822,11 @@ Run until done (free, 150 seeds):
 - Gems never run out of use within the game. They're the scarcer currency all the way through.
 - **Double mail gems:** +200–700 gems for the types that work orders (Automator 1,620 → 2,143, Grinder 2,403 → 3,009), about one more gem level each, and 0.1–1.6 h earlier to finish. Casual gets nothing (3 → 6 mail gems): it works only 10% of orders.
 - Gems by source to the finish (Efficient): daily 275, letters 5, mail 236, cart 601.
+
+## Allen as the reference player (2026-11-09)
+
+Allen's recorded run replaces the guessed player types as the default: `allen.py` fits the sim to his timeline and `run.py` runs "allen" and "newplayer" once `allen.json` exists. How to record and run it: the header of `Development/sim/allen.py`. [[Sessions/2026-11-09#The sim: Allen as the reference player]]
+
+## The live player type (2026-11-11)
+
+`ARCHETYPES["live"]` is casual with real players' habits from the ad-day analytics, in `live.json`: the pads in their live order (7+ players), 37.5% of offers missed, 7.8 s answers, slack 1.6. With slack 1.6 it buys the Katana at 20.0 min (live 19.4), the Sword Crafter at 23.6 (24.6), the Scimitar at 30.3 (31.9) and Furnace 2 at 39.5 (39.5). Cheap early pads still come too early. The live data covers about the first 45 minutes; past that it follows casual. [[Sessions/2026-11-11#The "live" player type]]

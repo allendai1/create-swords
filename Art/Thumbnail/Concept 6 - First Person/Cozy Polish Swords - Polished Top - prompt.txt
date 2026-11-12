@@ -1,0 +1,11 @@
+Tool: built-in image_gen editing Partially Polished thumbnail to show upper/lower lengthwise material contrast.
+Final export: Cozy Polish Swords - Polished Top.png (1920 x 1080).
+
+Use case: precise-object-edit.
+Edit this cozy Roblox crafting thumbnail of a stationary decorative katana on a polishing slab. Change ONLY how the polished and unpolished finishes are divided.
+Replace the current LEFT-versus-RIGHT finish division with TOP-versus-BOTTOM across the blade's WIDTH:
+The UPPER HALF of the visible blade face, nearest its upper/back edge, must be glossy polished bright saturated RED with crisp BLACK markings and a clean white reflection.
+The LOWER HALF of the visible blade face, nearest its lower cream cutting edge, must be matte dusty muted red/grey with subdued dark markings and fine cloudy sanding scuffs.
+These two bands run LENGTHWISE continuously from the hilt all the way to the tip, following the long diagonal curve of the sword. The boundary between shiny upper band and dull lower band runs parallel to the sword's long edges, down the middle of the visible blade face. Both upper polished band and lower unfinished band exist at EVERY position along the blade, not separate portions near hilt and tip. One sword only, same exact shape and thickness; do not split it into separate swords or panels.
+Preserve the original red-and-black stripe pattern across both bands; only surface finish differs. Make top glossy and lower matte visually clear, not rusty or damaged. The thin white polishing circle stays near the blade midpoint and straddles this lengthwise boundary. No mouse pointer, no hands.
+Keep everything else unchanged: exact katana location, hilt, guard, slab, table, water trough, towel, brush, cozy sunny garden lighting, and POLISH SWORDS lettering. Same wide 16:9 framing, target 1920x1080. This is a nonviolent game crafting scene with no people or action.

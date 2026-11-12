@@ -1,3 +1,4 @@
+-- 2026-11-05: English signs (Allen: "remove any japanese text in the decorations").
 -- build_shops.luau: the shop and its back-room workshop as one street townhouse (2026-10-21).
 -- Allen, first: "Make our normal shop and upgraded shop blend seamlessly with the surrounding houses ... we can have
 -- the smelting and sword creation process inside a building as well". Then his layout References/Concept Art/shop
@@ -314,12 +315,7 @@ local function shopFront(m, transomCol)
 		local x0, x1 = FRONT_POSTS[i] + 0.45, FRONT_POSTS[i + 1] - 0.45
 		local cx, cw = (x0 + x1) / 2, x1 - x0
 		if i == 4 then
-			local nw = cw / 5
-			for k = 0, 4 do
-				local strip = part(m, "Noren", Vector3.new(nw - 0.08, 2.7, 0.08), L(x0 + nw * (k + 0.5), OT - 1.35, F0 - 0.95), C.indigo, M.Fabric)
-				if k == 2 then label(strip, "刀", C.paper) end
-			end
-			part(m, "NorenRod", Vector3.new(cw + 0.1, 0.15, 0.15), L(cx, OT + 0.05, F0 - 0.95), C.timberDk, M.Wood)
+			-- the entrance: open, no noren (Fixes2 2026-10-28, Allen: "remove these entrance curtains")
 		else
 			part(m, "Kick", Vector3.new(cw + 0.1, 1.2, 0.35), L(cx, 0.9, F0 - 0.25), C.timberDk, M.Wood, { solid = true })
 			part(m, "Rail", Vector3.new(cw + 0.1, 0.4, 0.35), L(cx, OT + 0.2, F0 - 0.25), C.timberDk, M.Wood)
@@ -333,8 +329,7 @@ local function shopFront(m, transomCol)
 	part(m, "Beam", Vector3.new(2 * XS, 0.8, 0.7), L(0, OT + 0.75, F0 - 0.3), C.timberDk, M.Wood)
 	part(m, "Transom", Vector3.new(2 * XS - 0.4, G - OT - 1.25, 0.1), L(0, (OT + 1.15 + G - 0.1) / 2, F0 - 0.1), transomCol, M.Plaster)
 	part(m, "FrontPlate", Vector3.new(2 * XS + 0.2, 0.7, 0.5), L(0, G - 0.37, F0 - 0.27), C.timberDk, M.Wood) -- 0.02 off the posts' back faces
-	local sign = part(m, "Signboard", Vector3.new(1.5, 4.4, 0.3), L(13, OT - 2.3, F0 - 1.1), C.timber, M.Wood)
-	label(sign, "刀剣", C.black, true)
+	-- no vertical SWORDS board by the door since 2026-11-05 (Allen: "remove the swords sign")
 end
 
 local function shopRoom(model, U)
@@ -383,18 +378,24 @@ local function shopRoom(model, U)
 		end
 		part(roof, "Gutter", Vector3.new(2 * HW - 0.2, 0.35, 0.35), L(0, yLo - 0.45, zLo + 0.05), C.pipe, M.Metal, { shape = Enum.PartType.Cylinder })
 		cyl(roof, "Downpipe", yLo - 0.75, 0.3, L(-(HW - 0.6), 0.3 + (yLo - 0.75) / 2, zLo + 0.05), C.pipe, M.Metal)
-		-- a bigger signboard in a gold frame (Allen 2026-10-22: "more grand"); its top stays under the upper windows' surrounds
-		local kanban = part(roof, "Kanban", Vector3.new(17, 2.2, 0.35), L(0, G + 2.4, F1 - 1.3), C.timberDk, M.Wood)
-		label(kanban, "刀鍛冶", C.gold)
+		-- a bigger signboard in a gold frame (Allen 2026-10-22: "more grand"); its top stays under the upper windows' surrounds.
+		-- It stands on the pent roof near its front edge, on two short posts (2026-11-05, Allen: "name is cut off": against
+		-- the wall the roof's slope hid its lower half).
+		local KY, KZ = G + 1.97, -3.0
+		local kanban = part(roof, "Kanban", Vector3.new(17, 2.2, 0.35), L(0, KY, KZ), C.timberDk, M.Wood)
+		label(kanban, "Swordsmith", C.gold)
 		for _, e in { { 0, 1.1, 17.24, 0.14 }, { 0, -1.1, 17.24, 0.14 }, { 8.55, 0, 0.14, 2.06 }, { -8.55, 0, 0.14, 2.06 } } do
-			part(roof, "KanbanFrame", Vector3.new(e[3], e[4], 0.08), L(e[1], G + 2.4 + e[2], F1 - 1.49), C.gold, M.Metal)
+			part(roof, "KanbanFrame", Vector3.new(e[3], e[4], 0.08), L(e[1], KY + e[2], KZ - 0.19), C.gold, M.Metal)
+		end
+		for _, x in { -6, 6 } do
+			part(roof, if x < 0 then "KanbanPostL" else "KanbanPostR", Vector3.new(0.3, 1.0, 0.3), L(x, KY - 0.77, KZ + 0.4), C.timberDk, M.Wood)
 		end
 		mainRoof(roof, { front = F1, D = SZ, H = H, pitch = 26, ovF = 2.6, ovB = 0.2, ovS = 0.6, ridgeH = 1.8, oni = true, roofCol = C.tileDk, gableCol = C.kuroPl })
 		for sgn = -1, 1, 2 do chochin(shell, L(sgn * 9, G - 1.6, -2.4), C.red) end
 	else
 		-- one storey under a deep eave; the signboard stands on the roof above it (the eave hides the transom)
 		local kanban = part(roof, "Kanban", Vector3.new(9, 2.0, 0.35), L(0, 11.4 + LIFT, -0.6), C.timberDk, M.Wood)
-		label(kanban, "刀鍛冶", C.paper)
+		label(kanban, "Swordsmith", C.paper)
 		-- ovF 3.5, not the low houses' 3.6: next to one of the same height their fascias would share a plane
 		mainRoof(roof, { front = F0, D = PZ, H = H, pitch = 26, ovF = 3.5, ovB = 0.2, ovS = 0.6, ridgeH = 0.9, roofCol = C.tile, gableCol = C.plaster })
 		for sgn = -1, 1, 2 do chochin(shell, L(sgn * 9, G - 3.2, -0.9), C.red) end
