@@ -35,6 +35,7 @@ class Archetype:
     gem_order: tuple = ()  # and their gem buys in order (gem upgrade ids, one per level)
     slack: float = 1.0  # all-in seconds per action over the measured hand times (engine.run_task; allen.py fits it)
     learn: float = 1.0  # and on top of it while the tutorial runs: reading the lines, finding the controls
+    forge: float = 100.0  # forge percent of your own swords (AnvilScore; live players average 97, ForgeGrade 2026-11-12)
 
 
 ARCHETYPES = {
@@ -176,7 +177,8 @@ if os.path.exists(ALLEN_PATH):
 
 # "live": the casual type with live players' habits (2026-11-11, Allen: "Add it", from the ad-day analytics): pads in the
 # order real players bought them (average minutes played, only pads `min_players` or more bought; after them the casual
-# pick), offer cards missed at the live share and answered at the live average. live.json holds the numbers.
+# pick), offer cards missed at the live share and answered at the live average; since 2026-11-12 also the share of mail
+# orders worked (filled / arrived), etching once the table is bought, and the average forge percent. live.json holds the numbers.
 LIVE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "live.json")
 
 
@@ -188,8 +190,10 @@ def live_profile(j):
     pads = sorted((t, uid) for uid, (t, n) in times.items() if n >= j["min_players"])
     offers = j["offers"]
     total = sum(n for n, _ in offers.values())
-    return replace(ARCHETYPES["casual"], name="live", order=tuple(uid for _, uid in pads),
-                   miss=round(offers["Missed"][0] / total, 3), react=offers["Accepted"][1], slack=j["slack"])
+    base = ARCHETYPES["casual"]
+    return replace(base, name="live", order=tuple(uid for _, uid in pads),
+                   miss=round(offers["Missed"][0] / total, 3), react=offers["Accepted"][1], slack=j["slack"],
+                   mail=j.get("mail", base.mail), etch=j.get("etch", base.etch), forge=j.get("forge", base.forge))
 
 
 if os.path.exists(LIVE_PATH):

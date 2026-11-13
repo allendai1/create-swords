@@ -203,3 +203,5 @@ Allen (2026-10-28): "Instead of the weather being text, have [an icon] on the bo
 | Rainbow | `Art/Weather Icons/Weather Rainbow 256px.png` | 87803876739033 | rbxassetid://130216775479362 |
 
 - **Crown** (2026-11-09): the Free Icon Pack's Crown 1st Outline 256px, decal 127257653719167, image `rbxassetid://81592771203103` (also the Everything Bundle pass's icon on Roblox). The Shop's Everything Bundle card. [[Sessions/2026-11-09#Everything Bundle; the Shop wider, three cards a row]]
+
+- **2026-11-12:** Chest **1st** (no outline), 256 px: decal 109768194435051, image `rbxassetid://116002538286713`, the Shop's Starter Pack card (Allen: "can we use this with less of a border"); the outlined chest (121901041887054) stays on the HUD STARTER button. [[Sessions/2026-11-12]]

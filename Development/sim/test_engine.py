@@ -1,5 +1,6 @@
 """Engine sanity checks (no game rules here: test_parity.py has those). python -m unittest test_engine"""
 
+import math
 import unittest
 
 import engine
@@ -150,9 +151,10 @@ class Engine(unittest.TestCase):
         self.assertEqual(sim.inshop, B.raw["shop"]["walkIns"] + 1)
 
     def test_cashier_earns_while_away(self):
-        """SmithyCore.takeAway (2026-11-11): 20% of the last 15 minutes' coins a minute, for Aki's 2 h, into his till;
-        nothing without a Cashier; a short next day blends in the rate the last one ended with."""
+        """SmithyCore.takeAway (2026-11-11; 10% since 2026-11-13, was 20%): 10% of the last 15 minutes' coins a minute,
+        for Aki's 2 h, into his till; nothing without a Cashier; a short next day blends in the rate the last one ended with."""
         sim = engine.Sim(B, engine.behavior.ARCHETYPES["efficient"], "free", "t:5", 1)
+        sim.slots = []  # no swords on display: the income share alone
         sim.t = 3600.0
         sim.note_income(3000.0)  # 3,000 in the window: 200 a minute
         sim.settle_away()
@@ -160,10 +162,33 @@ class Engine(unittest.TestCase):
         sim.staff["cashier"] = 0
         sim.note_income(0.0)
         sim.settle_away()
-        self.assertEqual(sim.away_coins, 200 * 0.2 * 120)  # 4,800
-        self.assertEqual(sim.till, 4800)
+        self.assertEqual(sim.away_coins, 200 * 0.1 * 120)  # 2,400
+        self.assertEqual(sim.till, 2400)
         sim.income_log, sim.day_start, sim.t = [], 3600.0, 3600.0 + 300  # 5 minutes into a new day, nothing earned
         self.assertAlmostEqual(sim.income_rate(), 200 * 10 / 15)
+
+    def test_shop_sells_displays_while_away(self):
+        """ShopService away selling (2026-11-13): over Aki's 2 h a customer every 90-150 s (the sim: 120 s, 60 of them)
+        buys a displayed sword at its value with the boost, the most valuable first; a claimed one and the rest stay."""
+        sim = engine.Sim(B, engine.behavior.ARCHETYPES["efficient"], "free", "t:5", 1)
+        sim.staff["cashier"] = 0
+        bp = sim.best_bp()
+        cheap, dear, held = sim.make_sword(bp, "Iron", 0.5), sim.make_sword(bp, "Iron", 1.0), sim.make_sword(bp, "Iron", 1.0)
+        slot = lambda sw, claimed=False: {"holder": "WallRack1", "big": False, "sword": sw, "claimed": claimed}
+        sim.slots = [slot(cheap), slot(dear), slot(held, True), slot(None)]
+        sim.settle_away()  # no income: only the swords
+        self.assertEqual(sim.away_sold, 2)
+        self.assertEqual(sim.away_coins, math.floor((sim.value(cheap) + sim.value(dear)) * sim.coin_boost() + 0.5))
+        self.assertIs(sim.slots[2]["sword"], held)
+        self.assertEqual([s["sword"] for s in sim.slots[:2]], [None, None])
+        swords = [sim.make_sword(bp, "Iron", 0.3 + i / 100) for i in range(70)]
+        sim.slots = [slot(sw) for sw in swords]
+        sim.settle_away()
+        self.assertEqual(sim.away_sold, 2 + 60)  # 7,200 s / 120 s
+        left = [s["sword"] for s in sim.slots if s["sword"]]
+        self.assertEqual(len(left), 10)
+        gone = [sw for sw in swords if not any(sw is k for k in left)]
+        self.assertLessEqual(max(map(sim.value, left)), min(map(sim.value, gone)))  # the cheapest ten stay
 
     def test_tending_keeps_an_orders_ingot(self):
         """A Manager racking ingots for the crew skips one kept for a mail order (as sitting_back does)."""

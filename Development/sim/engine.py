@@ -71,7 +71,7 @@ class Sim:
         self.earned = self.spent = 0.0
         # away earnings (SmithyCore.noteIncome / incomeRate / takeAway, 2026-11-11): coins earned with their time, the last
         # AWAY_WINDOW minutes kept; the rate the last day ended with; coins the Cashier brought in between days
-        self.income_log, self.prev_rate, self.away_coins = [], None, 0.0
+        self.income_log, self.prev_rate, self.away_coins, self.away_sold = [], None, 0.0, 0
         self.owned, self.merges = set(), 0
         self.bought_n, self._pads, self._best = 0, (-1, []), {}
         self.wall_limit = None  # seconds of computer time before run() gives up on this player (run.py sets it)
@@ -220,7 +220,8 @@ class Sim:
 
     def settle_away(self):
         """Between days (ShopService on join, SmithyCore.takeAway): with the Cashier hired (the sim never switches him off),
-        AWAY_SHARE of the rate the day ended with for each minute away, up to Aki's cap (the sim hires no other Cashier).
+        AWAY_SHARE of the rate the day ended with for each minute away, up to Aki's cap (the sim hires no other Cashier),
+        plus the displayed swords customers bought meanwhile.
         A day is PLAY_DAY of play in 24 h, so the time away is always past the cap. Into his till, collected as his sales are."""
         if "cashier" not in self.staff:
             self.prev_rate = None  # SmithyCore.awayOut saves nothing without a Cashier at work
@@ -229,6 +230,17 @@ class Sim:
         rate = self.prev_rate = self.income_rate()
         secs = min(24 * 3600 - behavior.PLAY_DAY, a["cap"]["aki"])
         c = math.floor(rate * a["share"] * secs / 60)
+        # away selling (ShopService on join, 2026-11-13): a customer every AWAY_PACE seconds buys a displayed sword at its
+        # value with the boost, the most valuable first; those swords are gone. Counted as sales, not as income.
+        # shortcut: the pace's mean, not the game's one random draw a stretch (keeps the customer stream as it was)
+        n = int(secs // (sum(a["pace"]) / 2))
+        full = sorted((s for s in self.slots if s["sword"] and not s["claimed"]), key=lambda s: -self.value(s["sword"]))[:n]
+        if full:  # SmithyCore.boosted on the swords' total
+            c += math.floor(sum(self.value(slot["sword"]) for slot in full) * self.coin_boost() + 0.5)  # Luau math.round
+        for slot in full:
+            slot["sword"] = None
+        self.sold += len(full)
+        self.away_sold += len(full)
         self.till += c
         self.earned += c
         self.away_coins += c
@@ -764,7 +776,7 @@ class Sim:
             if self.order_for(metal):
                 order = self.order_for(metal)
                 order["have"] = "sword"
-                sw = self.make_sword(order["blueprintId"], metal, 100)
+                sw = self.make_sword(order["blueprintId"], metal, self.A.forge)
                 sw["t"], sw["order"] = {"ore": ore_t, "forged": self.t}, order
                 self.swords.append(sw)
                 self.own_made += 1
@@ -778,7 +790,7 @@ class Sim:
                 stand = [s for s in self.slots if s["big"]]
                 if big and stand and all(s["sword"] is None for s in stand) and not any(self.B.blueprints[s["bp"]]["big"] for s in self.swords):
                     bp = big
-            sw = self.make_sword(bp, metal, 100)
+            sw = self.make_sword(bp, metal, self.A.forge)
             sw["t"] = {"ore": ore_t, "forged": self.t}
             self.swords.append(sw)
             self.own_made += 1

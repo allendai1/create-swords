@@ -1,36 +1,268 @@
 {
-  "source": "Analytics Query API, universe 10769630190, 2026-11-11 06:30-21:00 UTC: Milestone CustomEventAvgValue (minutes played, lifetime) and CustomEventCountUser by CustomField1; OfferAnswer CustomEventCount and AvgValue by CustomField1. Vault: Sessions/2026-11-11#Live data vs the simulator's casual player",
-  "min_players": 7,
-  "slack": 1.6,
-  "moved": {"KatanaBlueprint": "MacheteBlueprint"},
-  "moved_note": "2026-11-11: the Machete left the chain and the Katana took its place (800 after the Wakizashi); in the live order the Katana stands where players bought the Machete",
-  "slack_note": "fitted 2026-11-11 over 40 players a value (1.0, 1.3, 1.6, 2.0): 1.6 puts the Katana at 20.0 (live 19.4), the Crafter 23.6 (24.6), the Scimitar 30.3 (31.9), Furnace 2 39.5 (39.5); the cheap early pads stay early at any slack",
-  "pads": {
-    "PolishStation": [3.4, 70],
-    "WakizashiBlueprint": [5.9, 53],
-    "OreStand2": [10.0, 59],
-    "MacheteBlueprint": [11.8, 37],
-    "IngotRack": [13.5, 35],
-    "SwordRack": [14.8, 29],
-    "WallRack2": [15.1, 37],
-    "Heat1": [15.6, 32],
-    "Strikes1": [17.3, 27],
-    "KatanaBlueprint": [19.4, 28],
-    "OreStand3": [19.9, 36],
-    "DisplayTable1": [22.8, 21],
-    "Crafter": [24.6, 12],
-    "ScimitarBlueprint": [31.9, 14],
-    "EtchingTable": [32.4, 12],
-    "Strikes2": [35.7, 10],
-    "Furnace2": [39.5, 13],
-    "Parking1": [39.8, 8],
-    "WallRack5": [42.6, 11],
-    "Showcase1": [43.6, 9],
-    "Heat2": [44.8, 8],
-    "LongswordBlueprint": [44.9, 7],
-    "OreStand4": [50.5, 15],
-    "Delivery": [56.9, 5],
-    "IngotRack2": [49.3, 3]
-  },
-  "offers": {"Accepted": [868, 7.8], "Missed": [604, 33.6], "Declined": [138, 9.7]}
+ "source": "Analytics Query API, universe 10769630190, refreshed 2026-11-12 19:20 UTC: pads from 2026-11-12 00:00 UTC on (after the Machete left the chain; 499 new players), Milestone CustomEventAvgValue (minutes played, lifetime) and CustomEventCountUser by CustomField1, CustomField3 Pad; OfferAnswer, MailOrder sessions, SwordFinish and ForgeGrade from 2026-11-10 on. Vault: Sessions/2026-11-12#Analytics re-read: afternoon",
+ "min_players": 7,
+ "slack": 1.6,
+ "slack_note": "re-fitted 2026-11-12 on that day's data, 40 players at 1.3 / 1.6 / 2.0: 1.6 kept (Wakizashi 6.0 vs live 6.0, Ore Stand 2 15.8 vs 15.0, Katana 15.4 vs 14.8, Scimitar 32.8 vs 31.1; the Crafter 22.5 vs 27.4 and Display Table 18.6 vs 22.3 fit 2.0 better). Past ~30 min the live averages are only the players still playing (9% of joiners) and match the efficient type (Longsword 33.9 vs efficient 31.6, Stocker 49.7 vs 50.7)",
+ "mail": 0.51,
+ "mail_note": "MailOrder funnel sessions 2026-11-10 to 2026-11-12 19:20 UTC: 703 arrived, 486 accepted, 362 filled (filled / arrived); the casual type works on 10%",
+ "etch": true,
+ "etch_note": "SwordFinish 2026-11-12: 187 Etched; players who buy the Etching Table use it (casual etches never)",
+ "forge": 97.5,
+ "forge_note": "ForgeGrade 2026-11-10 to 2026-11-12 19:20 UTC: 4633 swords, average percent (the sim assumed 100)",
+ "pads": {
+  "PolishStation": [
+   3.19,
+   241
+  ],
+  "WakizashiBlueprint": [
+   5.9,
+   173
+  ],
+  "WallRack2": [
+   11.04,
+   118
+  ],
+  "OreStand2": [
+   12.37,
+   193
+  ],
+  "IngotRack": [
+   13.06,
+   93
+  ],
+  "KatanaBlueprint": [
+   14.03,
+   77
+  ],
+  "SwordRack": [
+   14.38,
+   91
+  ],
+  "Heat1": [
+   15.08,
+   84
+  ],
+  "Strikes1": [
+   16.76,
+   63
+  ],
+  "DisplayTable1": [
+   22.38,
+   65
+  ],
+  "OreStand3": [
+   23.96,
+   110
+  ],
+  "EtchingTable": [
+   27.37,
+   39
+  ],
+  "Crafter": [
+   28.67,
+   44
+  ],
+  "Heat2": [
+   30.66,
+   21
+  ],
+  "Strikes2": [
+   30.76,
+   20
+  ],
+  "ScimitarBlueprint": [
+   31.93,
+   40
+  ],
+  "Furnace2": [
+   35.29,
+   29
+  ],
+  "LongswordBlueprint": [
+   37.94,
+   22
+  ],
+  "WallRack5": [
+   38.96,
+   26
+  ],
+  "Showcase1": [
+   39.58,
+   18
+  ],
+  "F2Heat1": [
+   41.47,
+   22
+  ],
+  "Parking1": [
+   42.22,
+   22
+  ],
+  "IngotRack2": [
+   50.53,
+   20
+  ],
+  "EtchWovenWind": [
+   52.76,
+   13
+  ],
+  "SwordRack2": [
+   53.25,
+   23
+  ],
+  "Stocker": [
+   53.38,
+   16
+  ],
+  "Delivery": [
+   54,
+   20
+  ],
+  "CutlassBlueprint": [
+   59.92,
+   9
+  ],
+  "OreStand4": [
+   60.5,
+   38
+  ],
+  "PolishStation2": [
+   62.78,
+   12
+  ],
+  "Heat3": [
+   70.38,
+   8
+  ],
+  "Anvil3": [
+   71.55,
+   6
+  ],
+  "DisplayTable2": [
+   73.2,
+   7
+  ],
+  "Strikes3": [
+   74.48,
+   6
+  ],
+  "IngotRack3": [
+   84.72,
+   4
+  ],
+  "PolishBoost1": [
+   87.61,
+   7
+  ],
+  "F2Heat2": [
+   90.12,
+   6
+  ],
+  "UpgradedStore": [
+   90.4,
+   3
+  ],
+  "Strikes4": [
+   96.47,
+   3
+  ],
+  "WallRack3": [
+   97.5,
+   2
+  ],
+  "FalchionBlueprint": [
+   97.7,
+   2
+  ],
+  "Furnace3": [
+   98.9,
+   1
+  ],
+  "F3Heat1": [
+   110.9,
+   1
+  ],
+  "OreStand5": [
+   120.07,
+   18
+  ],
+  "OreStand6": [
+   172.63,
+   5
+  ],
+  "Anvil4": [
+   205,
+   1
+  ],
+  "IngotRack4": [
+   210.1,
+   1
+  ],
+  "JianBlueprint": [
+   220.3,
+   1
+  ],
+  "F3Heat2": [
+   230,
+   1
+  ],
+  "BigSwordStand": [
+   234,
+   1
+  ],
+  "DisplayTable3": [
+   238.8,
+   1
+  ],
+  "F3Heat3": [
+   249.2,
+   1
+  ],
+  "GladiusBlueprint": [
+   271.1,
+   1
+  ],
+  "DisplayTable4": [
+   283.7,
+   1
+  ],
+  "Parking2": [
+   284.2,
+   1
+  ],
+  "ZanbatoBlueprint": [
+   288.6,
+   1
+  ],
+  "Promoter": [
+   291.4,
+   1
+  ],
+  "KhopeshBlueprint": [
+   292.9,
+   1
+  ],
+  "EtchingTable2": [
+   293,
+   1
+  ],
+  "DadaoBlueprint": [
+   309.5,
+   1
+  ]
+ },
+ "offers": {
+  "Accepted": [
+   3757,
+   9.5
+  ],
+  "Missed": [
+   2665,
+   37.3
+  ],
+  "Declined": [
+   574,
+   8.7
+  ]
+ }
 }

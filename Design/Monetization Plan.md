@@ -30,7 +30,7 @@ Builds on [[Design/Game Design Document#15. Monetization (Robux)|GDD §15]] (its
 | **50% More Coins** | Every coin you earn ×1.5: sales, carts, orders | 199 R$ | → 9 h 18 | Allen chose +50% over the draft's 2× (which made it 7 h 15) |
 | **Lucky Metal** | Luck one merge higher (+0.5), on top of your merges | 149 R$ | → 12 h 58 | **Paid random item:** the odds panel before buying (§4). Close to Create Pottery!'s Lucky Clay (about ×1.7 on Rare+) |
 | **VIP** | +10% on every sale; a gold name tag; VIP customers twice as often (since 2026-11-07) | 299 R$ | → 12 h 12 | Allen: "+10% on every sale", in place of the draft's golden rack |
-| **Swift Boots** | Walk 50% faster (WalkSpeed 16 → 24, since 2026-11-09; 20 before) | 99 R$ | not modelled | Kept by default; plots are walk-heavy |
+| **Swift Boots** | Walk 50% faster (WalkSpeed 16 → 24, since 2026-11-09; 20 before) | 19 R$ (since 2026-11-12; 99 before) | not modelled | Kept by default; plots are walk-heavy |
 
 | Time to | Katana | Longsword | Crafter | Falchion | Gladius | Zanbatō | Rin |
 |---|---|---|---|---|---|---|---|
@@ -500,3 +500,48 @@ Allen: "Yes, 2x Gems". Gems from letters, mail orders and carts are doubled (`St
 - Shop card and bundle tile: "2x Gems" / "2x gems from orders". Everything Bundle: 599 R$, its nine passes 1,321 R$ apart (about 55% off). [[Sessions/2026-11-11#2x Gems]]
 
 **Lucky Rolls in the Shop (2026-11-12):** one card with ×5 / ×15 / ×30 chips, a Buy for the picked pack and an Odds button, in place of three cards. [[Sessions/2026-11-12#Lucky Rolls: one Shop card with size chips]]
+
+## Price change (2026-11-12)
+
+Allen: "reduce price of speed gamepass, its unimportant honestly so it should be very cheap"; "Set it to 19 robux". Swordsmith Tycoon (10769630190), Open Cloud PATCH (204 each).
+
+| Item | Id | Was | Now |
+|---|---|---|---|
+| Swift Boots (pass) | 2074456550 | 99 | **19 R$** |
+| Gift: Swift Boots | 3730309469 | 99 | **19 R$** |
+
+- **Checked:** both read back at 19, on sale, RegionalPricing kept. Now the cheapest pass (the next are 49). Auto Anvil (129) was once priced as "half the cheapest pass"; not changed. Not seen in the Shop in Play. [[Sessions/2026-11-12#Notes 11-12-26: first five builds]]
+
+## Live results to 2026-11-12
+
+0 purchases from 1,245 Robux prompts (1,249 players, 10–12 Nov). Half the prompts (616) are the shortfall offer that opens by itself; the Shop got 37 players to press Buy, 0 bought. Every Shop item read back on sale. A real live purchase works (Allen bought the Starter Pack, 2026-11-12). [[Sessions/2026-11-12#Monetization: no purchases since launch]]
+
+## Shortfall offer opt-in (2026-11-12)
+
+Allen: "Yes make it opt-in". Short of coins or gems no longer opens Roblox's prompt; the counter's + pulses and opens the Shop at Currency. Built in Studio, not played or published. Measure it on the Shop funnel (Opened → Pressed Buy → Bought) after publishing. [[Sessions/2026-11-12#Shortfall offer made opt-in]]
+
+Same day, the **pack card** replaced the pulse as the main cue (Allen: "Yes, build that"): "Missing 120 coins", the covering pack and its Buy, not modal, 4 s, at most every 2 min. `PassPrompt` CF3 Offer now counts its Buy taps. [[Sessions/2026-11-12#Pack card: missing coins and the covering pack]]
+
+- **2026-11-13:** the shortfall pack card (PackOffer) shows on every unaffordable tap, not once per 120 s (Allen). Track "Offer"-source purchases after release.
+
+- **2026-11-13:** Starter Pack is a 24 h limited offer from first join (save field `starterEnds`), countdown on the card and the HUD button, gone for good at zero (Allen). Watch its conversion against before.
+
+## Price cuts (2026-11-13)
+
+Allen: "lets lower some prices", then "yes, make bigger bag 39 robux, auto-ore roller to 49 robux, auto anvil to 49 robux" and "Yes change prices accordingly" (Claude had proposed 2x Coins 249, Everything Bundle 449, Auto Ore Roller 99, and the Automation Pack about 129). Swordsmith Tycoon (10769630190) only, Open Cloud PATCH of `price` (204 each), passes and their Gift products.
+
+| Item | Pass id | Gift id | Was | Now |
+|---|---|---|---|---|
+| 2x Coins | 2074216539 | 3730309447 | 349 | **249 R$** |
+| Everything Bundle | 2075914814 | 3730309487 | 599 | **449 R$** |
+| Auto Ore Roller | 2075830643 | 3730309427 | 149 | **49 R$** |
+| Bigger Bag | 2075410974 | 3730309473 | 49 | **39 R$** |
+| Auto Anvil | 2075458562 | 3730309438 | 129 | **49 R$** |
+| Automation Pack | 2076118417 | 3730309485 | 179 | **129 R$** |
+
+- **Checked:** read back 12 / 12 at the new price, on sale, managed pricing on, RegionalPricing kept.
+- **Claude's view, given once:** 0 of 1,245 prompts bought was a playtime problem more than a price one (only 110 players past 30 min); cheaper passes earn less per sale and are hard to raise again.
+- **Kept:** 200 Gems at 399 (Allen's decoy, 2026-11-02) and everything at 9–49 R$.
+- **Bundle:** its passes now add up to 901 R$, so 449 is about 50% off. The Automation Pack's four passes add up to 196, so 129 is about 34% off.
+- `Shared/Store` comments updated for 2x Coins and the Bundle; the Shop reads live prices. The simulator has no Robux prices.
+- **Next:** compare `PassPrompt` buys per prompt before and after, once the drop-off fixes are published too.

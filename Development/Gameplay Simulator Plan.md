@@ -830,3 +830,9 @@ Allen's recorded run replaces the guessed player types as the default: `allen.py
 ## The live player type (2026-11-11)
 
 `ARCHETYPES["live"]` is casual with real players' habits from the ad-day analytics, in `live.json`: the pads in their live order (7+ players), 37.5% of offers missed, 7.8 s answers, slack 1.6. With slack 1.6 it buys the Katana at 20.0 min (live 19.4), the Sword Crafter at 23.6 (24.6), the Scimitar at 30.3 (31.9) and Furnace 2 at 39.5 (39.5). Cheap early pads still come too early. The live data covers about the first 45 minutes; past that it follows casual. [[Sessions/2026-11-11#The "live" player type]]
+
+### Live type refresh (2026-11-12)
+
+`live.json` rebuilt from 2026-11-12 (338 new players, after the Machete left the chain): 29 pads with 7+ players in their live order, 41% of offers missed, 10.0 s answers. New fields: `mail` 0.56 (mail orders filled of those arrived), `etch` true, `forge` 97.1 (the new `Archetype.forge`, the percent your own swords are forged at; 100 for the other types). Slack 1.6 kept after a re-fit at 1.3 / 1.6 / 2.0. Past ~30 minutes the live averages come from the 9% still playing and match the efficient type, not live. [[Sessions/2026-11-12#Analytics: progression pace and the simulator]]
+
+Refreshed again 2026-11-12, 19:20 UTC (499 new players since the Machete left the chain): mail 0.51, forge 97.5, 38% of offers missed, 9.5 s answers. Pad times on the main chain moved less than a minute; slack 1.6 kept. [[Sessions/2026-11-12#Analytics re-read: afternoon]].
